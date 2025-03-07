@@ -5,19 +5,19 @@ VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TaskBoard", "TaskBoard", "{F63EF151-0D91-4CF0-9B27-93658EC37D57}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TasksBoard", "TasksBoard", "{F63EF151-0D91-4CF0-9B27-93658EC37D57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBoard.API", "Services\TaskBoard\TaskBoard.API\TaskBoard.API.csproj", "{08561223-6F35-48EE-98C8-8ED16149F8A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.API", "Services\TasksBoard\TasksBoard.API\TasksBoard.API.csproj", "{08561223-6F35-48EE-98C8-8ED16149F8A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBoard.Application", "Services\TaskBoard\TaskBoard.Application\TaskBoard.Application.csproj", "{BBAAC423-FBA8-4FE1-9185-2F482ADAC52F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.Application", "Services\TasksBoard\TasksBoard.Application\TasksBoard.Application.csproj", "{BBAAC423-FBA8-4FE1-9185-2F482ADAC52F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBoard.Infrastructure", "Services\TaskBoard\TaskBoard.Infrastructure\TaskBoard.Infrastructure.csproj", "{19FCA2F8-336C-4BC5-8F97-04F7F11E0555}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.Infrastructure", "Services\TasksBoard\TasksBoard.Infrastructure\TasksBoard.Infrastructure.csproj", "{19FCA2F8-336C-4BC5-8F97-04F7F11E0555}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{3C61DA57-25FB-4367-871A-D150F562672F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Blocks", "BuildingBlocks\Common.Blocks\Common.Blocks.csproj", "{C8588BDC-93B3-486F-B632-41070C7F800B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBoard.Domain", "Services\TaskBoard\TaskBoard.Domain\TaskBoard.Domain.csproj", "{D8845823-89B4-4E0A-9C59-8C9D01E944BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.Domain", "Services\TasksBoard\TasksBoard.Domain\TasksBoard.Domain.csproj", "{D8845823-89B4-4E0A-9C59-8C9D01E944BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

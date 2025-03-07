@@ -6,8 +6,8 @@ namespace Common.Blocks.Interfaces.Repositories
     {
         Task<T?> GetAsync(Guid id, CancellationToken cancellationToken = default);
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
-        Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
-        Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
-        Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
     }
 }

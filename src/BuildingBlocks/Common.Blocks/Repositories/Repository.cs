@@ -53,23 +53,11 @@ namespace Common.Blocks.Repositories
         /// <param name="entity">Database entity.</param>
         /// <returns>Id of new entity</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual void Add(T entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            await DbSet.AddAsync(entity, cancellationToken);
-
-            try
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in {nameof(entity)}: " + ex.Message);
-                throw;
-            }
-
-            return entity;
+            DbSet.Add(entity);
         }
 
         /// <summary>
@@ -78,23 +66,11 @@ namespace Common.Blocks.Repositories
         /// <param name="entity">Database entity.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual void Update(T entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            Context.Entry(entity).State = EntityState.Modified;
-
-            try
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in {nameof(entity)}: " + ex.Message);
-                throw;
-            }
-
-            return entity;
+            DbSet.Update(entity);
         }
 
         /// <summary>
@@ -103,10 +79,9 @@ namespace Common.Blocks.Repositories
         /// <param name="id">Id of database entity.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual void Delete(T entity)
         {
-            Context.Set<T>().Remove(entity);
-            await Context.SaveChangesAsync(cancellationToken);
+            DbSet.Remove(entity);
         }
 
         public void Dispose()
