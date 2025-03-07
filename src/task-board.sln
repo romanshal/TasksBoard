@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Blocks", "BuildingBlocks\Common.Blocks\Common.Blocks.csproj", "{C8588BDC-93B3-486F-B632-41070C7F800B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBoard.Domain", "Services\TaskBoard\TaskBoard.Domain\TaskBoard.Domain.csproj", "{D8845823-89B4-4E0A-9C59-8C9D01E944BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C8588BDC-93B3-486F-B632-41070C7F800B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8588BDC-93B3-486F-B632-41070C7F800B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8588BDC-93B3-486F-B632-41070C7F800B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{BBAAC423-FBA8-4FE1-9185-2F482ADAC52F} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
 		{19FCA2F8-336C-4BC5-8F97-04F7F11E0555} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
 		{C8588BDC-93B3-486F-B632-41070C7F800B} = {3C61DA57-25FB-4367-871A-D150F562672F}
+		{D8845823-89B4-4E0A-9C59-8C9D01E944BB} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {035AB995-90D6-4002-8BCD-783C17C3C72D}

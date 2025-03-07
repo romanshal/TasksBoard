@@ -1,9 +1,9 @@
 ﻿using Common.Blocks.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using TaskBoard.Infrastructure.Entities;
+using TaskBoard.Domain.Entities;
 
-namespace TaskBoard.Infrastructure.Contexts
+namespace TaskBoard.Infrastructure.Data.Contexts
 {
     public class TaskBoardDbContext : DbContext
     {

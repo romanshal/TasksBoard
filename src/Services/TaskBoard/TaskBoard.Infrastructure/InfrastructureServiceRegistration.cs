@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TaskBoard.Infrastructure.Contexts;
-using TaskBoard.Infrastructure.Interfaces.Repositories;
-using TaskBoard.Infrastructure.Repositories;
+using TaskBoard.Domain.Interfaces.UnitOfWorks;
+using TaskBoard.Infrastructure.Data.Contexts;
+using TaskBoard.Infrastructure.UnitOfWorks;
 
 namespace TaskBoard.Infrastructure
 {
@@ -16,7 +18,8 @@ namespace TaskBoard.Infrastructure
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-            services.AddTransient<INoticeRepository, NoticeRepository>();
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

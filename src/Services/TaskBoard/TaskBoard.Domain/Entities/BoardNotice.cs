@@ -1,6 +1,6 @@
 ﻿using Common.Blocks.Entities;
 
-namespace TaskBoard.Infrastructure.Entities
+namespace TaskBoard.Domain.Entities
 {
     public class BoardNotice : BaseEntity
     {

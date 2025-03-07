@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TaskBoard.Infrastructure.Entities;
+using TaskBoard.Domain.Entities;
 
-namespace TaskBoard.Infrastructure.Configurations
+namespace TaskBoard.Infrastructure.Data.Configurations
 {
     public class BoardMemberConfiguration : IEntityTypeConfiguration<BoardMember>
     {
