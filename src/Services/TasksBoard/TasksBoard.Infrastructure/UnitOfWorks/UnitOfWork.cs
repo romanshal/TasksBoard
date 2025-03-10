@@ -1,15 +1,15 @@
 ﻿using Common.Blocks.Entities;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Infrastructure.Data.Contexts;
 
 namespace TasksBoard.Infrastructure.UnitOfWorks
 {
-    public class UnitOfWork(DbContext context, ILoggerFactory loggerFactory) : IUnitOfWork
+    public class UnitOfWork(TasksBoardDbContext context, ILoggerFactory loggerFactory) : IUnitOfWork
     {
-        private readonly DbContext _context = context;
+        private readonly TasksBoardDbContext _context = context;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
         private readonly Dictionary<Type, object> _repositories = [];
 

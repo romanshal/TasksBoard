@@ -44,7 +44,24 @@ namespace Common.Blocks.Repositories
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await DbSet.ToListAsync(cancellationToken);
+            return await DbSet
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Get paginated entities from database.
+        /// </summary>
+        /// <param name="pageIndex">Page index</param>
+        /// <param name="pageSize">Page size</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<T>> GetPaginatedAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
         }
 
         /// <summary>
@@ -53,11 +70,16 @@ namespace Common.Blocks.Repositories
         /// <param name="entity">Database entity.</param>
         /// <returns>Id of new entity</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual void Add(T entity)
+        public virtual async Task Add(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             DbSet.Add(entity);
+
+            if (needSaveChanges)
+            {
+                await Context.SaveChangesAsync(cancellationToken);
+            }
         }
 
         /// <summary>
@@ -66,11 +88,16 @@ namespace Common.Blocks.Repositories
         /// <param name="entity">Database entity.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual void Update(T entity)
+        public virtual async Task Update(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             DbSet.Update(entity);
+
+            if (needSaveChanges)
+            {
+                await Context.SaveChangesAsync(cancellationToken);
+            }
         }
 
         /// <summary>
@@ -78,10 +105,23 @@ namespace Common.Blocks.Repositories
         /// </summary>
         /// <param name="id">Id of database entity.</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public virtual void Delete(T entity)
+        public virtual async Task Delete(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default)
         {
             DbSet.Remove(entity);
+
+            if (needSaveChanges)
+            {
+                await Context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Return count in sequence.
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task<int> CountAsync(CancellationToken cancellationToken = default)
+        {
+            return await DbSet.CountAsync(cancellationToken);
         }
 
         public void Dispose()

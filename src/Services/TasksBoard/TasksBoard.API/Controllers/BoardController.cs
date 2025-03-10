@@ -5,6 +5,7 @@ using TasksBoard.Application.Features.Boards.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.Boards.Commands.UpdateBoard;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Features.Boards.Queries.GetBoards;
+using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards;
 
 namespace TasksBoard.API.Controllers
 {
@@ -28,6 +29,15 @@ namespace TasksBoard.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{pageIndex:int}/{pageSize:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPaginatedBoardsAsync(int pageIndex = 1, int pageSize = 10)
+        {
+            var result = await _mediator.Send(new GetPaginatedBoardsQuery { PageIndex = pageIndex, PageSize = pageSize });
+            return Ok(result);
+        }
+
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,7 +45,7 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
         {
             var result = await _mediator.Send(new GetBoardByIdQuery { Id = id });
-            if(result is null)
+            if (result is null)
             {
                 return NotFound();
             }
@@ -44,7 +54,7 @@ namespace TasksBoard.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateBoardAsync(CreateBoardCommand command)
@@ -55,7 +65,7 @@ namespace TasksBoard.API.Controllers
                 return BadRequest();
             }
 
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = result }, result);
+            return Created(Url.Action(nameof(GetByIdAsync), new { id = result }), command);
         }
 
         [HttpPut]
@@ -80,7 +90,6 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid id)
         {
             await _mediator.Send(new DeleteBoardCommand { Id = id });
-
             return Ok();
         }
     }

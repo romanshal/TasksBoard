@@ -13,6 +13,11 @@ namespace TasksBoard.Infrastructure.Data.Contexts
         public DbSet<BoardPermission> BoardPermissions { get; set; }
         public DbSet<BoardMemberPermission> BoardMemberPermissions { get; set; }
 
+        public TasksBoardDbContext(DbContextOptions<TasksBoardDbContext> options) : base(options)
+        {
+            //Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

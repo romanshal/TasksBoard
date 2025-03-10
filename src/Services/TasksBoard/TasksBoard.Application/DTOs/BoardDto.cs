@@ -2,6 +2,9 @@
 {
     public class BoardDto
     {
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
+        public required Guid OwnerId { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
     }
 }

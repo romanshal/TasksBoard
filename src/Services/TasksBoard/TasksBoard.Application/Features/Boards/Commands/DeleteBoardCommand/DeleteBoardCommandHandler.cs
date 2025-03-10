@@ -26,8 +26,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoardCommand
                 throw new NotFoundException<Board>($"Board with id '{request.Id}' not found.");
             }
 
-            _unitOfWork.GetRepository<Board>().Delete(board);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.GetRepository<Board>().Delete(board, true, cancellationToken);
 
             return Unit.Value;
         }

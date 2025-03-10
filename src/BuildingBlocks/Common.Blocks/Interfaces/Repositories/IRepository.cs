@@ -6,8 +6,10 @@ namespace Common.Blocks.Interfaces.Repositories
     {
         Task<T?> GetAsync(Guid id, CancellationToken cancellationToken = default);
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<IEnumerable<T>> GetPaginatedAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);
+        Task Add(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default);
+        Task Update(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default);
+        Task Delete(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default);
+        Task<int> CountAsync(CancellationToken cancellationToken = default);
     }
 }

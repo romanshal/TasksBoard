@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common.Blocks.Exceptons
+﻿namespace Common.Blocks.Exceptons
 {
     public class NotFoundException<T> : Exception where T : class
     {

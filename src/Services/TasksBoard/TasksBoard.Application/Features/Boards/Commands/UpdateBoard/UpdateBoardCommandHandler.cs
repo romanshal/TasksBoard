@@ -2,9 +2,6 @@
 using Common.Blocks.Exceptons;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -31,8 +28,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.UpdateBoard
 
             var updateBoard = _mapper.Map<Board>(request);
 
-            _unitOfWork.GetRepository<Board>().Update(updateBoard);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.GetRepository<Board>().Update(updateBoard, true, cancellationToken);
 
             if (updateBoard.Id == Guid.Empty)
             {
