@@ -6,9 +6,10 @@ namespace TasksBoard.Domain.Entities
     {
         public required Guid AuthorId { get; set; }
         public required Guid BoardId { get; set; }
+        public required Guid NoticeStatusId { get; set; }
         public required string Definition { get; set; }
-        public bool Status { get; set; }
 
         public virtual Board Board { get; set; }
+        public virtual BoardNoticeStatus BoardNoticeStatus { get; set; }
     }
 }

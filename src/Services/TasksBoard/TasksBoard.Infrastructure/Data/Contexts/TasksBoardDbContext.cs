@@ -5,18 +5,14 @@ using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Infrastructure.Data.Contexts
 {
-    public class TasksBoardDbContext : DbContext
+    public class TasksBoardDbContext(DbContextOptions<TasksBoardDbContext> options) : DbContext(options)
     {
         public DbSet<Board> Boards { get; set; }
         public DbSet<BoardNotice> BoardNotices { get; set; }
         public DbSet<BoardMember> BoardMembers { get; set; }
         public DbSet<BoardPermission> BoardPermissions { get; set; }
         public DbSet<BoardMemberPermission> BoardMemberPermissions { get; set; }
-
-        public TasksBoardDbContext(DbContextOptions<TasksBoardDbContext> options) : base(options)
-        {
-            //Database.EnsureCreated();
-        }
+        public DbSet<BoardNoticeStatus> BoardNoticeStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

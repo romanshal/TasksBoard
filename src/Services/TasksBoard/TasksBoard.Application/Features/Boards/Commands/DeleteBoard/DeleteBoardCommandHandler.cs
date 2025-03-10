@@ -1,21 +1,18 @@
-﻿using AutoMapper;
-using Common.Blocks.Exceptons;
+﻿using Common.Blocks.Exceptons;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
-namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoardCommand
+namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoard
 {
     public class DeleteBoardCommandHandler(
         ILogger<GetBoardByIdQueryHandler> logger,
-        IUnitOfWork unitOfWork,
-        IMapper mapper) : IRequestHandler<DeleteBoardCommand, Unit>
+        IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardCommand, Unit>
     {
         private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IMapper _mapper = mapper;
 
         public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
         {

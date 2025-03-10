@@ -61,6 +61,7 @@ namespace Common.Blocks.Repositories
                 .AsNoTracking()
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
+                .OrderBy(e => e.Id)
                 .ToListAsync(cancellationToken);
         }
 

@@ -2,8 +2,11 @@
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
 using Microsoft.Extensions.Logging;
+using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
+using TasksBoard.Infrastructure.Repositories;
 
 namespace TasksBoard.Infrastructure.UnitOfWorks
 {
@@ -27,6 +30,22 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
             }
 
             return (IRepository<T>)value;
+        }
+
+        public IBoardNoticeRepository GetBoardNoticeRepository()
+        {
+            var type = typeof(BoardNotice);
+
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardNotice>))
+            {
+                var repositoryInstance = new BoardNoticeRepository(_context, _loggerFactory);
+
+                value = repositoryInstance;
+
+                _repositories[type] = repositoryInstance;
+            }
+
+            return (IBoardNoticeRepository)value;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

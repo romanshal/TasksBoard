@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.Exceptons;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
@@ -19,6 +20,11 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
         public async Task<BoardDto> Handle(GetBoardByIdQuery request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.Id, cancellationToken);
+            if (board is null)
+            {
+                _logger.LogWarning($"Board with id '{request.Id}' was not found.");
+                throw new NotFoundException<Board>($"Board with id '{request.Id}' was not found.");
+            }
 
             var boardDto = _mapper.Map<BoardDto>(board);
 

@@ -24,7 +24,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotic
 
             if (notice.Id == Guid.Empty)
             {
-                _logger.LogError("Can't create new board.");
+                _logger.LogError("Can't create new board noticc.");
                 throw new ArgumentException(nameof(notice));
             }
 

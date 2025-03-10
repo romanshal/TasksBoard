@@ -1,6 +1,7 @@
 using Common.Blocks.Extensions;
 using TasksBoard.Application;
 using TasksBoard.Infrastructure;
+using TasksBoard.Infrastructure.Data.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,14 @@ builder.Services
     .AddApplicationServices();
 
 var app = builder.Build();
+
+app.MigrateDatabase<TasksBoardDbContext>((context, services) =>
+{
+    var logger = services.GetService<ILogger<DataSeedMaker>>();
+    DataSeedMaker
+        .SeedAsync(context, logger!)
+        .Wait();
+});
 
 if (app.Environment.IsDevelopment())
 {

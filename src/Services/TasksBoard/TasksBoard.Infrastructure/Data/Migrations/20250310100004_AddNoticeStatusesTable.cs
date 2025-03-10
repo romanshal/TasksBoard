@@ -1,0 +1,74 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace TasksBoard.Infrastructure.Data.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddNoticeStatusesTable : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<Guid>(
+                name: "NoticeStatusId",
+                table: "boardnotices",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.CreateTable(
+                name: "boardnoticestatuses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_boardnoticestatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_boardnotices_NoticeStatusId",
+                table: "boardnotices",
+                column: "NoticeStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_boardnoticestatuses_Name",
+                table: "boardnoticestatuses",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_boardnotices_boardnoticestatuses_NoticeStatusId",
+                table: "boardnotices",
+                column: "NoticeStatusId",
+                principalTable: "boardnoticestatuses",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropForeignKey(
+                name: "FK_boardnotices_boardnoticestatuses_NoticeStatusId",
+                table: "boardnotices");
+
+            migrationBuilder.DropTable(
+                name: "boardnoticestatuses");
+
+            migrationBuilder.DropIndex(
+                name: "IX_boardnotices_NoticeStatusId",
+                table: "boardnotices");
+
+            migrationBuilder.DropColumn(
+                name: "NoticeStatusId",
+                table: "boardnotices");
+        }
+    }
+}

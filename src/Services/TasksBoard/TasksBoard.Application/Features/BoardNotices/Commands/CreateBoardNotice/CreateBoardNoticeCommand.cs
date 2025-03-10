@@ -6,6 +6,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotic
     {
         public required Guid AuthorId { get; set; }
         public required Guid BoardId { get; set; }
+        public required Guid NoticeStatusId { get; set; }
         public required string Definition { get; set; }
     }
 }

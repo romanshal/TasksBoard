@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -11,9 +12,11 @@ using TasksBoard.Infrastructure.Data.Contexts;
 namespace TasksBoard.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TasksBoardDbContext))]
-    partial class TasksBoardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250310100004_AddNoticeStatusesTable")]
+    partial class AddNoticeStatusesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,6 +124,9 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("NoticeStatusId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
