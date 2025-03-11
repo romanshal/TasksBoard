@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Common.Blocks.Exceptons;
+﻿using Common.Blocks.Exceptons;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
@@ -21,7 +20,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.UpdateBoard
             if (board is null)
             {
                 _logger.LogWarning($"Board with id '{request.Id}' not found.");
-                throw new NotFoundException<Board>($"Board with id '{request.Id}' not found.");
+                throw new NotFoundException($"Board with id '{request.Id}' not found.");
             }
 
             board.Name = request.Name;

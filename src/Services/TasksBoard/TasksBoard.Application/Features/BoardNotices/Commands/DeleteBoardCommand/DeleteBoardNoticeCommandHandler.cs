@@ -20,7 +20,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Commands.DeleteBoardComma
             if (boardNotice is null)
             {
                 _logger.LogWarning($"Board notice with id '{request.Id}' not found.");
-                throw new NotFoundException<Board>($"Board notice with id '{request.Id}' not found.");
+                throw new NotFoundException($"Board notice with id '{request.Id}' not found.");
             }
 
             await _unitOfWork.GetRepository<BoardNotice>().Delete(boardNotice, true, cancellationToken);

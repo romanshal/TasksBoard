@@ -20,7 +20,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoard
             if (board is null)
             {
                 _logger.LogWarning($"Board with id '{request.Id}' not found.");
-                throw new NotFoundException<Board>($"Board with id '{request.Id}' not found.");
+                throw new NotFoundException($"Board with id '{request.Id}' not found.");
             }
 
             await _unitOfWork.GetRepository<Board>().Delete(board, true, cancellationToken);

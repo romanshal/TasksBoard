@@ -1,8 +1,7 @@
 ﻿namespace TasksBoard.Application.DTOs
 {
-    public class BoardNoticeStatusDto
+    public class BoardNoticeStatusDto : BaseDto
     {
-        public required Guid Id { get; set; }
         public required string Name { get; set; }
     }
 }

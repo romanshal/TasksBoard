@@ -23,7 +23,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
             if (board is null)
             {
                 _logger.LogWarning($"Board with id '{request.Id}' was not found.");
-                throw new NotFoundException<Board>($"Board with id '{request.Id}' was not found.");
+                throw new NotFoundException($"Board with id '{request.Id}' was not found.");
             }
 
             var boardDto = _mapper.Map<BoardDto>(board);

@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using Common.Blocks.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Application.Features.Boards.Commands.DeleteBoard;
 using TasksBoard.Application.Features.Boards.Commands.UpdateBoard;
@@ -26,7 +28,9 @@ namespace TasksBoard.API.Controllers
             if (!result.Any())
                 return NoContent();
 
-            return Ok(result);
+            var response = new ResultResponse<IEnumerable<BoardDto>>(result);
+
+            return Ok(response);
         }
 
         [HttpGet("{pageIndex:int}/{pageSize:int}")]
@@ -35,7 +39,10 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> GetPaginatedBoardsAsync(int pageIndex = 1, int pageSize = 10)
         {
             var result = await _mediator.Send(new GetPaginatedBoardsQuery { PageIndex = pageIndex, PageSize = pageSize });
-            return Ok(result);
+
+            var response = new ResultResponse<PaginatedList<BoardDto>>(result);
+
+            return Ok(response);
         }
 
         [HttpGet("{id:guid}")]
@@ -50,7 +57,9 @@ namespace TasksBoard.API.Controllers
                 return NotFound();
             }
 
-            return Ok(result);
+            var response = new ResultResponse<BoardDto>(result);
+
+            return Ok(response);
         }
 
         [HttpPost]
@@ -65,7 +74,9 @@ namespace TasksBoard.API.Controllers
                 return BadRequest();
             }
 
-            return Created(Url.Action(nameof(GetBoardByIdAsync), new { id = result }), command);
+            var response = new ResultResponse<Guid>(result);
+
+            return Created(Url.Action(nameof(GetBoardByIdAsync), new { id = result }), response);
         }
 
         [HttpPut]
@@ -80,7 +91,9 @@ namespace TasksBoard.API.Controllers
                 return BadRequest();
             }
 
-            return Ok(result);
+            var response = new ResultResponse<Guid>(result);
+
+            return Ok(response);
         }
 
         [HttpDelete("{id:guid}")]
@@ -90,7 +103,10 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid id)
         {
             await _mediator.Send(new DeleteBoardCommand { Id = id });
-            return Ok();
+
+            var response = new Response();
+
+            return Ok(response);
         }
     }
 }

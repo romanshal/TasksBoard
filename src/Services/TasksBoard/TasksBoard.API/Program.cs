@@ -1,4 +1,10 @@
 using Common.Blocks.Extensions;
+using Common.Blocks.Middlewares;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Reflection;
+using TasksBoard.API.Behaviours;
 using TasksBoard.Application;
 using TasksBoard.Infrastructure;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -18,6 +24,20 @@ var connectionString = builder.Configuration.GetConnectionString("TasksBoardDbCo
 builder.Services
     .AddInfrastructureServices(connectionString)
     .AddApplicationServices();
+
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.Authority = "https://localhost:7134";
+
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+    });
 
 var app = builder.Build();
 
@@ -42,6 +62,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExeptionWrappingMiddleware();
 
 app.UseAuthentication();
 app.UseAuthorization();

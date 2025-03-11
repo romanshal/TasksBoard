@@ -19,6 +19,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Blocks", "BuildingBl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.Domain", "Services\TasksBoard\TasksBoard.Domain\TasksBoard.Domain.csproj", "{D8845823-89B4-4E0A-9C59-8C9D01E944BB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{446DD790-D01F-4BFB-86A5-2BB726DDBED3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.API", "Services\Authentication\Authentication.API\Authentication.API.csproj", "{B36B4604-1B1D-45E1-87DE-52B6394EDBC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Infrastructure", "Services\Authentication\Authentication.Infrastructure\Authentication.Infrastructure.csproj", "{A4F2462E-1CA2-4105-B584-734160EF54B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Domain", "Services\Authentication\Authentication.Domain\Authentication.Domain.csproj", "{35739596-ABD6-4D5F-98F5-297A30A250F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +53,18 @@ Global
 		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8845823-89B4-4E0A-9C59-8C9D01E944BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B36B4604-1B1D-45E1-87DE-52B6394EDBC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B36B4604-1B1D-45E1-87DE-52B6394EDBC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B36B4604-1B1D-45E1-87DE-52B6394EDBC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B36B4604-1B1D-45E1-87DE-52B6394EDBC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F2462E-1CA2-4105-B584-734160EF54B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F2462E-1CA2-4105-B584-734160EF54B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F2462E-1CA2-4105-B584-734160EF54B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F2462E-1CA2-4105-B584-734160EF54B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35739596-ABD6-4D5F-98F5-297A30A250F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35739596-ABD6-4D5F-98F5-297A30A250F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35739596-ABD6-4D5F-98F5-297A30A250F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35739596-ABD6-4D5F-98F5-297A30A250F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +76,10 @@ Global
 		{19FCA2F8-336C-4BC5-8F97-04F7F11E0555} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
 		{C8588BDC-93B3-486F-B632-41070C7F800B} = {3C61DA57-25FB-4367-871A-D150F562672F}
 		{D8845823-89B4-4E0A-9C59-8C9D01E944BB} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
+		{446DD790-D01F-4BFB-86A5-2BB726DDBED3} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{B36B4604-1B1D-45E1-87DE-52B6394EDBC6} = {446DD790-D01F-4BFB-86A5-2BB726DDBED3}
+		{A4F2462E-1CA2-4105-B584-734160EF54B8} = {446DD790-D01F-4BFB-86A5-2BB726DDBED3}
+		{35739596-ABD6-4D5F-98F5-297A30A250F7} = {446DD790-D01F-4BFB-86A5-2BB726DDBED3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {035AB995-90D6-4002-8BCD-783C17C3C72D}

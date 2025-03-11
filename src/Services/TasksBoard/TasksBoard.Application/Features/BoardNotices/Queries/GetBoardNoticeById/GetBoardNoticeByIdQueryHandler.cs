@@ -23,7 +23,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
             if (boardNotice is null)
             {
                 _logger.LogWarning($"Board notice with id '{request.Id}' was not found.");
-                throw new NotFoundException<BoardNotice>($"Board notice with id '{request.Id}' was not found.");
+                throw new NotFoundException($"Board notice with id '{request.Id}' was not found.");
             }
             var boardNoticeDto = _mapper.Map<BoardNoticeDto>(boardNotice);
 

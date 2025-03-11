@@ -4,7 +4,6 @@ using Common.Blocks.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNotices
@@ -16,7 +15,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetPaginatedBoardNoticesQueryHandler> _logger = logger;
-        private readonly IMapper _mapper = mapper; 
+        private readonly IMapper _mapper = mapper;
 
         public async Task<PaginatedList<BoardNoticeDto>> Handle(GetPaginatedBoardNoticesQuery request, CancellationToken cancellationToken)
         {

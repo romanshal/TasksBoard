@@ -1,8 +1,8 @@
 ﻿namespace Common.Blocks.Exceptons
 {
-    public class NotFoundException<T> : Exception where T : class
+    public class NotFoundException : Exception
     {
-        public NotFoundException() : base($"Entity '{nameof(T)}' was not found.")
+        public NotFoundException() : base($"Entity was not found.")
         {
         }
 
