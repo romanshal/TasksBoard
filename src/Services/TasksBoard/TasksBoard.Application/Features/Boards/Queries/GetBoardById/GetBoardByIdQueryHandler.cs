@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;

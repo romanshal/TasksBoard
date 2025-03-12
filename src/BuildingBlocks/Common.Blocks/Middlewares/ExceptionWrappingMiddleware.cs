@@ -1,4 +1,4 @@
-﻿using Common.Blocks.Exceptons;
+﻿using Common.Blocks.Exceptions;
 using Common.Blocks.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;

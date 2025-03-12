@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Blocks.Exceptions;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;

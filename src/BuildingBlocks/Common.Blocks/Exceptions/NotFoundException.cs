@@ -1,4 +1,4 @@
-﻿namespace Common.Blocks.Exceptons
+﻿namespace Common.Blocks.Exceptions
 {
     public class NotFoundException : Exception
     {
