@@ -1,19 +1,25 @@
-using Authentication.API.Configurations;
+using Authentication.Application;
 using Authentication.Domain.Entities;
 using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Common.Blocks.Extensions;
+using Common.Blocks.Middlewares;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
+
+builder.Services.AddSwaggerGetWithAuth("Authentication API");
 
 var conntectionString = builder.Configuration.GetConnectionString("AuthenticationDbConnection") ?? throw new InvalidOperationException("Connection string 'AuthenticationDbConnection' not found");
-builder.Services.AddInfrastructureServices(conntectionString);
+
+builder.Services
+    .AddInfrastructureServices(conntectionString)
+    .AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
 {
@@ -29,70 +35,50 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
 
 builder.Services.AddAuthentication(config =>
 {
-    config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+    config.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
     config.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-    .AddCookie(config =>
-    {
-        config.Cookie.Name = "IdentityServer.Cookies";
-    });
+
+});
 //.AddGoogle(config =>
 //{
 //    config.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");
 //    config.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientSecret' not found.");
 //});
 
-builder.Services.AddIdentityServer(options =>
-{
-    options.UserInteraction.LoginUrl = "/Authentication/Login";
-    options.UserInteraction.LogoutUrl = "/Authentication/Logout";
-
-    options.Events.RaiseErrorEvents = true;
-    options.Events.RaiseInformationEvents = true;
-    options.Events.RaiseFailureEvents = true;
-    options.Events.RaiseSuccessEvents = true;
-})
-    .AddAspNetIdentity<ApplicationUser>()
-    .AddDeveloperSigningCredential()
-    .AddInMemoryApiResources(IdentityServerConfiguration.ApiResources)
-    .AddInMemoryIdentityResources(IdentityServerConfiguration.IdentityResources)
-    .AddInMemoryApiScopes(IdentityServerConfiguration.ApiScopes)
-    .AddInMemoryClients(IdentityServerConfiguration.Clients);
-
 var app = builder.Build();
 
-//app.MigrateDatabase<AuthenticationDbContext>((context, services) =>
-//{
-//    var logger = services.GetService<ILogger<DataSeedMaker>>();
-//    DataSeedMaker
-//        .SeedAsync(context, logger!)
-//        .Wait();
-//});
+app.MigrateDatabase<AuthenticationDbContext>((context, services) =>
+{
+    var logger = services.GetService<ILogger<DataSeedMaker>>();
+    DataSeedMaker
+        .SeedAsync(context, logger!)
+        .Wait();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
+
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Authentication.API v1");
+        options.RoutePrefix = string.Empty;
+    });
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
+
+app.UseExeptionWrappingMiddleware();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseIdentityServer();
-
-app.MapStaticAssets();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Authentication}/{action=Login}")
-    .WithStaticAssets();
+app.MapControllers();
 
 app.Run();

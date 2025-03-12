@@ -31,6 +31,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Angular.Client", "Services\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.API", "Services\Authentication\Authentication.API\Authentication.API.csproj", "{C3947B59-5338-4DCC-8144-87FBE681D549}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Application", "Services\Authentication\Authentication.Application\Authentication.Application.csproj", "{6CAF3025-E845-4275-9BF0-BD8519BB5C5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{C3947B59-5338-4DCC-8144-87FBE681D549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3947B59-5338-4DCC-8144-87FBE681D549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3947B59-5338-4DCC-8144-87FBE681D549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CAF3025-E845-4275-9BF0-BD8519BB5C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAF3025-E845-4275-9BF0-BD8519BB5C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAF3025-E845-4275-9BF0-BD8519BB5C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAF3025-E845-4275-9BF0-BD8519BB5C5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{97F9673A-5EFD-4797-A480-61021F90DE51} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{F089294E-CFD4-13F5-A423-5174CBC07012} = {97F9673A-5EFD-4797-A480-61021F90DE51}
 		{C3947B59-5338-4DCC-8144-87FBE681D549} = {446DD790-D01F-4BFB-86A5-2BB726DDBED3}
+		{6CAF3025-E845-4275-9BF0-BD8519BB5C5B} = {446DD790-D01F-4BFB-86A5-2BB726DDBED3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {035AB995-90D6-4002-8BCD-783C17C3C72D}

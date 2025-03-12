@@ -3,6 +3,7 @@ using Common.Blocks.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace Common.Blocks.Middlewares
@@ -38,6 +39,8 @@ namespace Common.Blocks.Middlewares
                 ArgumentNullException or ValidationException => HttpStatusCode.BadRequest,
                 NotFoundException => HttpStatusCode.NotFound,
                 NotImplementedException => HttpStatusCode.NotImplemented,
+                LockedException => HttpStatusCode.Locked,
+                SigninFaultedException or UnauthorizedException or SecurityTokenException => HttpStatusCode.Unauthorized,
                 _ => HttpStatusCode.InternalServerError,
             };
         }
