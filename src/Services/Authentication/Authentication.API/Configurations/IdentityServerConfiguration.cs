@@ -38,14 +38,35 @@ namespace Authentication.API.Configurations
                         IdentityServerConstants.StandardScopes.Profile,
                         "TasksBoardAPI"
                     },
-                    AllowedCorsOrigins = {
+                    AllowedCorsOrigins =
+                    {
+                        //https
+                        "http://localhost:5255",
+                        "https://localhost:7055",
 
+                        //Docker compose
+                        "http://coffeeshop.client.mvc:8080",
+                        "https://localhost:9003"
                     },
-                    RedirectUris = {
+                    RedirectUris =
+                    {
+                        //https
+                        "http://localhost:5255/signin-oidc",
+                        "https://localhost:7055/signin-oidc",
 
+                        //Docker compose
+                        "http://coffeeshop.client.mvc:8080/signin-oidc",
+                        "https://localhost:9003/signin-oidc"
                     },
-                    PostLogoutRedirectUris = {
+                    PostLogoutRedirectUris =
+                    {
+                        //https
+                        "http://localhost:5255/signout-callback-oidc",
+                        "https://localhost:7055/signout-callback-oidc",
 
+                        //Docker compose
+                        "http://coffeeshop.client.mvc:8080/signout-callback-oidc",
+                        "http://localhost:9003/signout-callback-oidc"
                     },
                     AllowAccessTokensViaBrowser = true,
                     AllowOfflineAccess = true,

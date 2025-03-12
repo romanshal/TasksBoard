@@ -39,7 +39,7 @@ namespace TasksBoard.API.Controllers
             var result = await _mediator.Send(new GetPaginatedBoardNoticesQuery { BoardId = boardId, PageIndex = pageIndex, PageSize = pageSize });
 
             var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
-            
+
             return Ok(response);
         }
 

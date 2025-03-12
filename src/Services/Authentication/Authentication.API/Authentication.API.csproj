@@ -4,27 +4,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>811be7b5-f7fd-4692-a9f4-1864c4bf4142</UserSecretsId>
+    <UserSecretsId>d62ed4f4-7fb7-43b9-acb1-89052f3f9a8f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HigginsSoft.IdentityServer8" Version="8.0.4" />
     <PackageReference Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.4" />
-    <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+    <ProjectReference Include="..\Authentication.Domain\Authentication.Domain.csproj" />
     <ProjectReference Include="..\Authentication.Infrastructure\Authentication.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Authentication.API.Controllers
 {
     [AllowAnonymous]
-    [Route("/")]
     public class AuthenticationController(SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IIdentityServerInteractionService interactionService,
@@ -20,7 +19,6 @@ namespace Authentication.API.Controllers
         private readonly IIdentityServerInteractionService _interactionService = interactionService;
 
         [HttpGet]
-        [Route("login")]
         public async Task<IActionResult> LoginAsync(string returnUrl)
         {
             var viewModel = new LoginViewModel
@@ -33,7 +31,6 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost]
-        [Route("login")]
         public async Task<IActionResult> LoginAsync(LoginViewModel viewModel)
         {
             var context = await _interactionService.GetAuthorizationContextAsync(viewModel.ReturnUrl);

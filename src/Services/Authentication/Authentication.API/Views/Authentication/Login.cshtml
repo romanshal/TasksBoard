@@ -7,7 +7,7 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-            <form asp-controller="Auth" asp-action="Login" id="account" method="post">
+            <form asp-controller="Authentication" asp-action="Login" id="account" method="post">
                 <input type="hidden" asp-for="ReturnUrl" />
 
                 <div class="mb-3">
@@ -33,7 +33,7 @@
 
                 <div>
                     <p>
-                        <a asp-controller="Auth" asp-action="Register"
+                        <a asp-controller="Authentication" asp-action="Register"
                            asp-route-returnUrl="@Model.ReturnUrl" class="switch-button">Register</a>
                     </p>
                 </div>
