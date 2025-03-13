@@ -1,7 +1,6 @@
 using Common.Blocks.Extensions;
 using Common.Blocks.Middlewares;
 using FluentValidation;
-using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -51,8 +50,8 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            NameClaimType = JwtClaimTypes.Name,
-            RoleClaimType = JwtClaimTypes.Role,
+            //NameClaimType = JwtClaimTypes.Name,
+            //RoleClaimType = JwtClaimTypes.Role,
         };
     });
 
@@ -61,7 +60,7 @@ builder.Services.AddAuthorizationBuilder()
     {
         policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
-        policy.RequireClaim("role", "Admin");
+        policy.RequireClaim("role", "admin");
     });
 
 var app = builder.Build();

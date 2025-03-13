@@ -47,7 +47,9 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
                 throw new Exception($"Signin is not allowed for user {request.Username}."); //TODO: change this later
             }
 
-            var token = _tokenProvider.Create(new CreateTokenModel { UserId = user.Id, UserEmail = user.Email! });
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            var token = _tokenProvider.Create(new CreateTokenModel(user, userClaims));
 
             var saveTokenResult = await _userManager.SetAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token", token.RefreshToken);
             if (!saveTokenResult.Succeeded)

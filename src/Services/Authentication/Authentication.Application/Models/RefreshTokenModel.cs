@@ -1,8 +1,11 @@
-﻿namespace Authentication.Application.Models
+﻿using Authentication.Domain.Entities;
+using System.Security.Claims;
+
+namespace Authentication.Application.Models
 {
-    public class RefreshTokenModel : CreateTokenModel
+    public class RefreshTokenModel(ApplicationUser user, IEnumerable<Claim> userClaims, string refreshToken, string storedRefreshToken) : CreateTokenModel(user, userClaims)
     {
-        public required string RefreshToken { get; set; }
-        public required string StoredRefreshToken { get; set; }
+        public string RefreshToken { get; set; } = refreshToken;
+        public string StoredRefreshToken { get; set; } = storedRefreshToken;
     }
 }

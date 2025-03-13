@@ -45,7 +45,12 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
                 throw new Exception($"Can't reate new user with username: {request.Username}. Errors: {string.Join("; ", createResult.Errors)}.");
             }
 
-            var addClaimResult = await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "user"));
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Role, "user")
+            };
+
+            var addClaimResult = await _userManager.AddClaimsAsync(user, claims);
             if (!addClaimResult.Succeeded)
             {
                 _logger.LogCritical($"Can't add claim role to user: {request.Username}. Errors: {string.Join("; ", addClaimResult.Errors)}.");
@@ -54,7 +59,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
 
             await _signInManager.SignInAsync(user, false);
 
-            var token = _tokenProvider.Create(new CreateTokenModel { UserId = user.Id, UserEmail = user.Email });
+            var token = _tokenProvider.Create(new CreateTokenModel(user, claims));
 
             var saveTokenResult = await _userManager.SetAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token", token.RefreshToken);
             if (!saveTokenResult.Succeeded)

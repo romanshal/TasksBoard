@@ -23,15 +23,11 @@ namespace Authentication.Application.Providers
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(
-                [
-                    new Claim(JwtRegisteredClaimNames.Sub, model.UserId.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, model.UserEmail!)
-                ]),
+                Subject = new ClaimsIdentity(model.UserClaims),
                 Expires = DateTime.Now.AddMinutes(_jwtConfig.ExpirationInMinutes),
                 SigningCredentials = credentionals,
                 Issuer = _jwtConfig.Issuer,
-                Audience = _jwtConfig.Audience
+                Audience = _jwtConfig.Audience,
             };
 
             var handler = new JsonWebTokenHandler();
@@ -54,6 +50,7 @@ namespace Authentication.Application.Providers
             {
                 UserId = request.UserId,
                 UserEmail = request.UserEmail,
+                UserClaims = request.UserClaims
             });
         }
 

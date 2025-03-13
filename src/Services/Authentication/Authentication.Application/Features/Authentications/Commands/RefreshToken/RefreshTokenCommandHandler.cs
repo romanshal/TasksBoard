@@ -35,13 +35,9 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
                 throw new UnauthorizedException("Invalid refresh token.");
             }
 
-            var token = _tokenProvider.Refresh(new RefreshTokenModel 
-            {
-                UserId = user.Id,
-                UserEmail = user.Email!,
-                RefreshToken = request.RefreshToken,
-                StoredRefreshToken = storedResfreshToken,
-            });
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            var token = _tokenProvider.Refresh(new RefreshTokenModel(user, userClaims, request.RefreshToken, storedResfreshToken));
 
             return token;
         }
