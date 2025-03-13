@@ -1,26 +1,23 @@
 ﻿using Authentication.Application.Dtos;
 using Authentication.Application.Features.Authentications.Commands.Login;
+using Authentication.Application.Interfaces.Services;
 using Authentication.Domain.Entities;
+using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Common.Blocks.Exceptions;
-using System.Security.Claims;
-using Authentication.Application.Providers;
-using Authentication.Application.Models;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Authentication.Application.Features.Authentications.Commands.Register
 {
     public class RegisterCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        TokenProvider tokenProvider,
+        ITokenService tokenService,
         ILogger<LoginCommandHandler> logger) : IRequestHandler<RegisterCommand, AuthenticationDto>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly TokenProvider _tokenProvider = tokenProvider;
+        private readonly ITokenService _tokenService = tokenService;
         private readonly ILogger<LoginCommandHandler> _logger = logger;
 
         public async Task<AuthenticationDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -45,28 +42,17 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
                 throw new Exception($"Can't reate new user with username: {request.Username}. Errors: {string.Join("; ", createResult.Errors)}.");
             }
 
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.Role, "user")
-            };
+            var addRoleResult = await _userManager.AddToRoleAsync(user, "user");
 
-            var addClaimResult = await _userManager.AddClaimsAsync(user, claims);
-            if (!addClaimResult.Succeeded)
+            if (!addRoleResult.Succeeded)
             {
-                _logger.LogCritical($"Can't add claim role to user: {request.Username}. Errors: {string.Join("; ", addClaimResult.Errors)}.");
-                throw new Exception($"Can't add claim role to user: {request.Username}. Errors: {string.Join("; ", addClaimResult.Errors)}.");
+                _logger.LogCritical($"Can't add role to user: {request.Username}. Errors: {string.Join("; ", addRoleResult.Errors)}.");
+                throw new Exception($"Can't add role to user: {request.Username}. Errors: {string.Join("; ", addRoleResult.Errors)}.");
             }
 
             await _signInManager.SignInAsync(user, false);
 
-            var token = _tokenProvider.Create(new CreateTokenModel(user, claims));
-
-            var saveTokenResult = await _userManager.SetAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token", token.RefreshToken);
-            if (!saveTokenResult.Succeeded)
-            {
-                _logger.LogCritical($"Can't save refresh token for user: {request.Username}. Errors: {string.Join("; ", saveTokenResult.Errors)}");
-                throw new Exception($"Can't save refresh token for user: {request.Username}. Errors: {string.Join("; ", saveTokenResult.Errors)}");
-            }
+            var token = await _tokenService.GenerateTokenAsync(user);
 
             _logger.LogInformation($"Success register for user: {request.Username}.");
 

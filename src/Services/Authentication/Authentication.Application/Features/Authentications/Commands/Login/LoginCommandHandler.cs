@@ -1,24 +1,22 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Models;
-using Authentication.Application.Providers;
+using Authentication.Application.Interfaces.Services;
 using Authentication.Domain.Entities;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Authentication.Application.Features.Authentications.Commands.Login
 {
     public class LoginCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        TokenProvider tokenProvider,
+        ITokenService tokenService,
         ILogger<LoginCommandHandler> logger) : IRequestHandler<LoginCommand, AuthenticationDto>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly TokenProvider _tokenProvider = tokenProvider;
+        private readonly ITokenService _tokenService = tokenService;
         private readonly ILogger<LoginCommandHandler> _logger = logger;
 
         public async Task<AuthenticationDto> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -47,16 +45,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
                 throw new Exception($"Signin is not allowed for user {request.Username}."); //TODO: change this later
             }
 
-            var userClaims = await _userManager.GetClaimsAsync(user);
-
-            var token = _tokenProvider.Create(new CreateTokenModel(user, userClaims));
-
-            var saveTokenResult = await _userManager.SetAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token", token.RefreshToken);
-            if (!saveTokenResult.Succeeded)
-            {
-                _logger.LogCritical($"Can't save refresh token for user: {request.Username}. Errors: {string.Join("; ", saveTokenResult.Errors)}");
-                throw new Exception($"Can't save refresh token for user: {request.Username}. Errors: {string.Join("; ", saveTokenResult.Errors)}");
-            }
+            var token = await _tokenService.GenerateTokenAsync(user);
 
             _logger.LogInformation($"Success signin for user: {request.Username}.");
 

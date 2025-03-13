@@ -1,5 +1,6 @@
 ﻿using Authentication.Application.Configurations;
 using Authentication.Application.Dtos;
+using Authentication.Application.Interfaces.Providers;
 using Authentication.Application.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -10,7 +11,7 @@ using System.Text;
 
 namespace Authentication.Application.Providers
 {
-    public class TokenProvider(IOptions<JwtCofiguration> options)
+    public class TokenProvider(IOptions<JwtCofiguration> options) : ITokenProvider
     {
         private readonly JwtCofiguration _jwtConfig = options.Value;
 
