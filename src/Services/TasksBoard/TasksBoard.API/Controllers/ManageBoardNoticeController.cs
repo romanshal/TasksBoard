@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 
@@ -16,6 +17,24 @@ namespace TasksBoard.API.Controllers
     {
         private readonly ILogger<ManageBoardNoticeController> _logger = logger;
         private readonly IMediator _mediator = mediator;
+
+        [HttpPost("board/{boardId:guid}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var response = new ResultResponse<Guid>(result);
+
+            return Ok(response);
+        }
 
         [HttpPut("board/{boardId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

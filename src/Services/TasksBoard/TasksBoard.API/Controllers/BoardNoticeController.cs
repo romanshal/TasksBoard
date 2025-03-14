@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeById;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNotices;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId;
@@ -132,25 +131,6 @@ namespace TasksBoard.API.Controllers
             var response = new ResultResponse<BoardNoticeDto>(result);
 
             return Ok(response);
-        }
-
-        //TODO: add permission check
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBoardNoticeAsync(CreateBoardNoticeCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var response = new ResultResponse<Guid>(result);
-
-            return Created(Url.Action(nameof(GetBoardNoticeByIdAsync), new { id = result }), response);
         }
     }
 }

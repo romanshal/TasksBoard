@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
-namespace TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotice
+namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice
 {
     public class CreateBoardNoticeCommandHandler(
         IUnitOfWork unitOfWork,

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotice;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Mappings

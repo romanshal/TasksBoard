@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotice
+namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice
 {
     public class CreateBoardNoticeCommand : IRequest<Guid>
     {
