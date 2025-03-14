@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using TasksBoard.API.Constants.Messages;
-using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
+using TasksBoard.Application.Models.Requests.ManageBoardNotices;
 
 namespace TasksBoard.API.Validators.BoardNotices
 {
-    public class UpdateBoardNoticeValidator : AbstractValidator<UpdateBoardNoticeCommand>
+    public class UpdateBoardNoticeValidator : AbstractValidator<UpdateBoardNoticeRequest>
     {
         public UpdateBoardNoticeValidator()
         {

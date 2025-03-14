@@ -1,18 +1,15 @@
 ﻿using FluentValidation;
 using TasksBoard.API.Constants.Messages;
-using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
+using TasksBoard.Application.Models.Requests.ManageBoardNotices;
 
 namespace TasksBoard.API.Validators.BoardNotices
 {
-    public class CreateBoardNoticeValidator : AbstractValidator<CreateBoardNoticeCommand>
+    public class CreateBoardNoticeValidator : AbstractValidator<CreateBoardNoticeRequest>
     {
         public CreateBoardNoticeValidator()
         {
             RuleFor(x => x.AuthorId)
                 .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardNoticeMessages.AuthorIdRequired);
-
-            RuleFor(x => x.BoardId)
-                .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardNoticeMessages.BoardIdRequired);
 
             RuleFor(x => x.NoticeStatusId)
                 .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardNoticeMessages.StatusIdRequired);
