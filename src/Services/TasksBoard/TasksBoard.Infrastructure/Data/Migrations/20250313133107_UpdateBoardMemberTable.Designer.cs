@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -11,9 +12,11 @@ using TasksBoard.Infrastructure.Data.Contexts;
 namespace TasksBoard.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TasksBoardDbContext))]
-    partial class TasksBoardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250313133107_UpdateBoardMemberTable")]
+    partial class UpdateBoardMemberTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,9 +169,6 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<int>("AccessLevel")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");

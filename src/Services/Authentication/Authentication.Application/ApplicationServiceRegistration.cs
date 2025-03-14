@@ -1,8 +1,8 @@
-﻿using Authentication.Application.Configurations;
-using Authentication.Application.Interfaces.Providers;
+﻿using Authentication.Application.Interfaces.Providers;
 using Authentication.Application.Interfaces.Services;
 using Authentication.Application.Providers;
 using Authentication.Application.Services;
+using Common.Blocks.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;

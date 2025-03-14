@@ -10,7 +10,9 @@ using TasksBoard.Infrastructure.Repositories;
 
 namespace TasksBoard.Infrastructure.UnitOfWorks
 {
-    public class UnitOfWork(TasksBoardDbContext context, ILoggerFactory loggerFactory) : IUnitOfWork
+    public class UnitOfWork(
+        TasksBoardDbContext context, 
+        ILoggerFactory loggerFactory) : IUnitOfWork
     {
         private readonly TasksBoardDbContext _context = context;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
@@ -46,6 +48,22 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
             }
 
             return (IBoardNoticeRepository)value;
+        }
+
+        public IBoardRepository GetBoardRepository()
+        {
+            var type = typeof(Board);
+
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board>))
+            {
+                var repositoryInstance = new BoardRepository(_context, _loggerFactory);
+
+                value = repositoryInstance;
+
+                _repositories[type] = repositoryInstance;
+            }
+
+            return (IBoardRepository)value;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

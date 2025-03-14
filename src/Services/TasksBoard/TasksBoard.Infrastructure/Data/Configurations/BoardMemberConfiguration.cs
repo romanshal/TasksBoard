@@ -12,6 +12,13 @@ namespace TasksBoard.Infrastructure.Data.Configurations
                 .HasKey(k => k.Id);
 
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
+
+            builder.HasIndex(p => new
+            {
+                p.BoardId,
+                p.AccountId
+            })
+                .IsUnique();
         }
     }
 }

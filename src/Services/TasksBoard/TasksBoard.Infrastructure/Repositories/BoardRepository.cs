@@ -1,0 +1,32 @@
+﻿using Common.Blocks.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Infrastructure.Data.Contexts;
+
+namespace TasksBoard.Infrastructure.Repositories
+{
+    public class BoardRepository(
+        TasksBoardDbContext context,
+        ILoggerFactory loggerFactory) : Repository<Board>(context, loggerFactory), IBoardRepository
+    {
+        public async Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .Where(board => board.BoardMembers.Any(member => member.AccountId == userId))
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .OrderBy(e => e.Id)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<bool> HasAccessAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .AnyAsync(board => board.Id == boardId && board.BoardMembers.Any(member => member.AccountId == userId), cancellationToken);
+        }
+    }
+}

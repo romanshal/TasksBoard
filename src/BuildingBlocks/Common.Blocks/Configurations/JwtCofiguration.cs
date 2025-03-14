@@ -1,4 +1,4 @@
-﻿namespace Authentication.Application.Configurations
+﻿namespace Common.Blocks.Configurations
 {
     public class JwtCofiguration
     {

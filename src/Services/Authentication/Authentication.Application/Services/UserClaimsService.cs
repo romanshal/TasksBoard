@@ -1,6 +1,7 @@
 ﻿using Authentication.Application.Interfaces.Services;
 using Authentication.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Authentication.Application.Services
@@ -14,7 +15,13 @@ namespace Authentication.Application.Services
 
         public async Task<IEnumerable<Claim>> GetUserClaimsAsync(ApplicationUser user)
         {
-            var claims = new List<Claim>();
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
 
             //user roles claims
             var userRoles = await _userManager.GetRolesAsync(user);
