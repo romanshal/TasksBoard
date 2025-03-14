@@ -4,7 +4,8 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 {
     public class UpdateBoardNoticeCommand : IRequest<Guid>
     {
-        public required Guid Id { get; set; }
+        public required Guid BoardId { get; set; }
+        public required Guid NoticeId { get; set; }
         public required string Definition { get; set; }
         public Guid NoticeStatusId { get; set; }
     }

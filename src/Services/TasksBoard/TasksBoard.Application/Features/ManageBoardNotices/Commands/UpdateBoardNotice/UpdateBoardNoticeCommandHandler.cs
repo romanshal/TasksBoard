@@ -16,11 +16,18 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 
         public async Task<Guid> Handle(UpdateBoardNoticeCommand request, CancellationToken cancellationToken)
         {
-            var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.Id, cancellationToken);
+            var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId);
+            if (!boardExist)
+            {
+                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+            }
+
+            var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.NoticeId, cancellationToken);
             if (boardNotice is null)
             {
-                _logger.LogWarning($"Board notice with id '{request.Id}' not found.");
-                throw new NotFoundException($"Board notice with id '{request.Id}' not found.");
+                _logger.LogWarning($"Board notice with id '{request.NoticeId}' not found.");
+                throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
             }
 
             boardNotice.Definition = request.Definition;
@@ -33,6 +40,8 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
                 _logger.LogError("Can't update board notice.");
                 throw new ArgumentException(nameof(boardNotice));
             }
+
+            _logger.LogInformation($"Board notice with id '{boardNotice.Id}' updated in board with id '{request.BoardId}'.");
 
             return boardNotice.Id;
         }

@@ -12,6 +12,7 @@ namespace TasksBoard.API.Controllers
     [ApiController]
     [HasBoardAccess]
     [HasBoardPermission("manage_notice")]
+    [Route("api/managenotices")]
     public class ManageBoardNoticeController(
         IMediator mediator,
         ILogger<ManageBoardNoticeController> logger) : ControllerBase
@@ -57,8 +58,16 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeCommand command)
+        public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request)
         {
+            var command = new UpdateBoardNoticeCommand 
+            { 
+                BoardId = boardId,
+                NoticeId = request.NoticeId,
+                Definition = request.Definition,
+                NoticeStatusId = request.NoticeStatusId
+            };
+
             var result = await _mediator.Send(command);
             if (result == Guid.Empty)
             {
@@ -70,14 +79,18 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("board/{boardId:guid}/{id:guid}")]
+        [HttpDelete("board/{boardId:guid}/notice/{noticeId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid id)
+        public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
         {
-            await _mediator.Send(new DeleteBoardNoticeCommand { Id = id });
+            await _mediator.Send(new DeleteBoardNoticeCommand 
+            { 
+                BoardId = boardId,
+                NoticeId = noticeId 
+            });
 
             var response = new Response();
 

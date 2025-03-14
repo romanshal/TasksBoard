@@ -4,6 +4,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoar
 {
     public class DeleteBoardNoticeCommand : IRequest<Unit>
     {
-        public required Guid Id { get; set; }
+        public required Guid BoardId { get; set; }
+        public required Guid NoticeId { get; set; }
     }
 }
