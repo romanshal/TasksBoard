@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard;
 using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
+using TasksBoard.Application.Models.Requests.ManageBoards;
 
 namespace TasksBoard.API.Controllers
 {
@@ -24,9 +25,14 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardAsync([FromRoute] Guid boardId, UpdateBoardCommand command)
+        public async Task<IActionResult> UpdateBoardAsync([FromRoute] Guid boardId, UpdateBoardRequest request)
         {
-            command.Id = boardId;
+            var command = new UpdateBoardCommand
+            {
+                BoardId = boardId,
+                Name = request.Name,
+                Description = request.Description
+            };
 
             var result = await _mediator.Send(command);
             if (result == Guid.Empty)

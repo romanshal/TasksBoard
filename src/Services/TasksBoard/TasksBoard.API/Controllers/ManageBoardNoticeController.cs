@@ -5,7 +5,7 @@ using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
-using TasksBoard.Application.Models.Requests.BoardNotices;
+using TasksBoard.Application.Models.Requests.ManageBoardNotices;
 
 namespace TasksBoard.API.Controllers
 {
@@ -27,7 +27,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeRequest request)
         {
-            var command = new CreateBoardNoticeCommand 
+            var command = new CreateBoardNoticeCommand
             {
                 BoardId = boardId,
                 AuthorId = request.AuthorId,
@@ -60,8 +60,8 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request)
         {
-            var command = new UpdateBoardNoticeCommand 
-            { 
+            var command = new UpdateBoardNoticeCommand
+            {
                 BoardId = boardId,
                 NoticeId = request.NoticeId,
                 Definition = request.Definition,
@@ -86,10 +86,10 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
         {
-            await _mediator.Send(new DeleteBoardNoticeCommand 
-            { 
+            await _mediator.Send(new DeleteBoardNoticeCommand
+            {
                 BoardId = boardId,
-                NoticeId = noticeId 
+                NoticeId = noticeId
             });
 
             var response = new Response();

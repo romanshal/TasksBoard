@@ -8,7 +8,7 @@ using TasksBoard.Infrastructure.Data.Contexts;
 namespace TasksBoard.Infrastructure.Repositories
 {
     public class BoardNoticeRepository(
-        TasksBoardDbContext context, 
+        TasksBoardDbContext context,
         ILoggerFactory loggerFactory) : Repository<BoardNotice>(context, loggerFactory), IBoardNoticeRepository
     {
         public async Task<IEnumerable<BoardNotice>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
@@ -62,7 +62,7 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
-                .CountAsync(notice =>notice.BoardId == boardId && notice.AuthorId == userId, cancellationToken);
+                .CountAsync(notice => notice.BoardId == boardId && notice.AuthorId == userId, cancellationToken);
         }
     }
 }

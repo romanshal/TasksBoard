@@ -11,7 +11,7 @@ using TasksBoard.Infrastructure.Repositories;
 namespace TasksBoard.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
-        TasksBoardDbContext context, 
+        TasksBoardDbContext context,
         ILoggerFactory loggerFactory) : IUnitOfWork
     {
         private readonly TasksBoardDbContext _context = context;

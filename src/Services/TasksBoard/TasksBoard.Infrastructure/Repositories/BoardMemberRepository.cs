@@ -8,7 +8,7 @@ using TasksBoard.Infrastructure.Data.Contexts;
 namespace TasksBoard.Infrastructure.Repositories
 {
     public class BoardMemberRepository(
-        TasksBoardDbContext context, 
+        TasksBoardDbContext context,
         ILoggerFactory loggerFactory) : Repository<BoardMember>(context, loggerFactory), IBoardMemberRepository
     {
         public async Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)

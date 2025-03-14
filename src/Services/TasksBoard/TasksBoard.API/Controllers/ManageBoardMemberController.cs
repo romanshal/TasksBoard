@@ -1,7 +1,6 @@
 ﻿using Common.Blocks.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
@@ -31,7 +30,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetBoardMemberPermissionsAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
         {
-            var result = await _mediator.Send(new GetBoardMemberPermissionsQuery 
+            var result = await _mediator.Send(new GetBoardMemberPermissionsQuery
             {
                 BoardId = boardId,
                 MemberId = memberId
@@ -73,7 +72,7 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> AddBoardPermissionsToBoardMemberAsync([FromRoute] Guid boardId, AddBoardMemberPermissionsRequest request)
         {
             var command = new AddBoardMemberPermissionsCommand
-            { 
+            {
                 BoardId = boardId,
                 MemberId = request.MemberId,
                 Permissions = request.Permissions

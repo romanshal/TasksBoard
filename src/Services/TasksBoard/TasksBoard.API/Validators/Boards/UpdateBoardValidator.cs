@@ -11,7 +11,7 @@ namespace TasksBoard.API.Validators.Boards
             RuleFor(x => x.Name)
                 .NotNull().NotEmpty().WithMessage(BoardMessages.BoardNameRequired);
 
-            RuleFor(x => x.Id)
+            RuleFor(x => x.BoardId)
                 .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardMessages.BoardIdRequired);
         }
     }

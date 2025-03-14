@@ -1,4 +1,4 @@
-﻿namespace TasksBoard.Application.Models.Requests.BoardNotices
+﻿namespace TasksBoard.Application.Models.Requests.ManageBoardNotices
 {
     public class UpdateBoardNoticeRequest
     {

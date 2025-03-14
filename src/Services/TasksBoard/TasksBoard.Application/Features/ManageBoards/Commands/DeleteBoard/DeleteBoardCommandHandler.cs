@@ -25,6 +25,8 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
 
             await _unitOfWork.GetRepository<Board>().Delete(board, true, cancellationToken);
 
+            _logger.LogInformation($"Board with id '{board.Id}' deleted'.");
+
             return Unit.Value;
         }
     }

@@ -28,10 +28,10 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesAsync(int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetPaginatedListQuery<BoardNoticeDto> 
-            { 
-                PageIndex = pageIndex, 
-                PageSize = pageSize 
+            var result = await _mediator.Send(new GetPaginatedListQuery<BoardNoticeDto>
+            {
+                PageIndex = pageIndex,
+                PageSize = pageSize
             });
 
             var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
@@ -46,11 +46,11 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetPaginatedBoardNoticesByBoardIdQuery 
-            { 
+            var result = await _mediator.Send(new GetPaginatedBoardNoticesByBoardIdQuery
+            {
                 BoardId = boardId,
-                PageIndex = pageIndex, 
-                PageSize = pageSize 
+                PageIndex = pageIndex,
+                PageSize = pageSize
             });
 
             var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
@@ -85,7 +85,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByUserIdAndBoardIdAsync([FromRoute] Guid userId, [FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetPaginatedBoardNoticesByUserIdAndBoardIdQuery 
+            var result = await _mediator.Send(new GetPaginatedBoardNoticesByUserIdAndBoardIdQuery
             {
                 UserId = userId,
                 BoardId = boardId,

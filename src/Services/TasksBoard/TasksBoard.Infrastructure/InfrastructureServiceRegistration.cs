@@ -12,8 +12,8 @@ namespace TasksBoard.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<TasksBoardDbContext>(options => 
-            { 
+            services.AddDbContext<TasksBoardDbContext>(options =>
+            {
                 options.UseNpgsql(connectionString);
                 options.UseLazyLoadingProxies();
             });

@@ -25,7 +25,7 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> GetPaginatedBoardMembersByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
             var result = await _mediator.Send(new GetPaginatedBoardMembersByBoardIdQuery
-            { 
+            {
                 BoardId = boardId,
                 PageIndex = pageIndex,
                 PageSize = pageSize
