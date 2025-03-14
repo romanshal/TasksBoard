@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
-using TasksBoard.Application.Features.Boards.Commands.DeleteBoard;
-using TasksBoard.Application.Features.Boards.Commands.UpdateBoard;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Features.Boards.Queries.GetBoards;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId;

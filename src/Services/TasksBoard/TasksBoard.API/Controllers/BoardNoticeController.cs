@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotice;
-using TasksBoard.Application.Features.BoardNotices.Commands.DeleteBoardCommand;
-using TasksBoard.Application.Features.BoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeById;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNotices;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId;
