@@ -8,7 +8,7 @@ namespace TasksBoard.API.Validators.BoardNotices
     {
         public UpdateBoardNoticeValidator()
         {
-            RuleFor(x => x.Id)
+            RuleFor(x => x.NoticeId)
                 .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardNoticeMessages.BoardNoticeIdRequired);
 
             RuleFor(x => x.NoticeStatusId)
