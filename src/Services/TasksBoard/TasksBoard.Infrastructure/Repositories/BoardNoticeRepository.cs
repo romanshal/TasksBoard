@@ -43,5 +43,26 @@ namespace TasksBoard.Infrastructure.Repositories
                 .OrderBy(e => e.Id)
                 .ToListAsync(cancellationToken);
         }
+
+        public async Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .CountAsync(notice => notice.BoardId == boardId, cancellationToken);
+        }
+
+        public async Task<int> CountByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .CountAsync(notice => notice.AuthorId == userId, cancellationToken);
+        }
+
+        public async Task<int> CountByBoardIdAndUserIdAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .CountAsync(notice =>notice.BoardId == boardId && notice.AuthorId == userId, cancellationToken);
+        }
     }
 }

@@ -1,19 +1,23 @@
-﻿using Common.Blocks.Exceptions;
+﻿using AutoMapper;
+using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using TasksBoard.Application.DTOs;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
-namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember
+namespace TasksBoard.Application.Features.ManageBoardMembers.Queries
 {
-    public class DeleteBoardMemberCommandHandler(
-        ILogger<DeleteBoardMemberCommandHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardMemberCommand, Unit>
+    public class GetBoardMemberPermissionsQueryHandler(
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        ILogger<GetBoardMemberPermissionsQueryHandler> logger) : IRequestHandler<GetBoardMemberPermissionsQuery, IEnumerable<BoardMemberPermissionDto>>
     {
-        private readonly ILogger<DeleteBoardMemberCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IMapper _mapper = mapper;
+        private readonly ILogger<GetBoardMemberPermissionsQueryHandler> _logger = logger;
 
-        public async Task<Unit> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<BoardMemberPermissionDto>> Handle(GetBoardMemberPermissionsQuery request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
@@ -29,11 +33,11 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
                 throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 
-            await _unitOfWork.GetBoardMemberRepository().Delete(member, true, cancellationToken);
+            var permissions = member.BoardMemberPermissions.ToList();
 
-            _logger.LogInformation($"Board member with account id '{member.AccountId}' deleted from boar with id '{request.BoardId}'.");
+            var permissionsDto = _mapper.Map<IEnumerable<BoardMemberPermissionDto>>(permissions);
 
-            return Unit.Value;
+            return permissionsDto;
         }
     }
 }

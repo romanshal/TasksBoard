@@ -4,16 +4,16 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
-namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember
+namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand
 {
-    public class DeleteBoardMemberCommandHandler(
-        ILogger<DeleteBoardMemberCommandHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardMemberCommand, Unit>
+    public class AddBoardMemberPermissionsCommandHandler(
+        ILogger<AddBoardMemberPermissionsCommandHandler> logger,
+        IUnitOfWork unitOfWork) : IRequestHandler<AddBoardMemberPermissionsCommand, Unit>
     {
-        private readonly ILogger<DeleteBoardMemberCommandHandler> _logger = logger;
+        private readonly ILogger<AddBoardMemberPermissionsCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Unit> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(AddBoardMemberPermissionsCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
@@ -29,9 +29,15 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
                 throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 
-            await _unitOfWork.GetBoardMemberRepository().Delete(member, true, cancellationToken);
+            member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
+            {
+                BoardMemberId = request.MemberId,
+                BoardPermissionId = permission
+            })];
 
-            _logger.LogInformation($"Board member with account id '{member.AccountId}' deleted from boar with id '{request.BoardId}'.");
+            await _unitOfWork.GetBoardMemberRepository().Update(member, true, cancellationToken);
+
+            _logger.LogInformation($"Add new permissions for board member with account id '{member.AccountId}' on board '{request.BoardId}'.");
 
             return Unit.Value;
         }

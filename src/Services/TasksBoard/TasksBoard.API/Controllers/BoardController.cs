@@ -6,7 +6,6 @@ using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
-using TasksBoard.Application.Features.Boards.Queries.GetBoards;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId;
 using TasksBoard.Application.Models;
 
@@ -20,24 +19,6 @@ namespace TasksBoard.API.Controllers
     {
         private readonly ILogger<BoardController> _logger = logger;
         private readonly IMediator _mediator = mediator;
-
-        [HttpGet]
-        [Authorize(Policy = "AdminOnly")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllBoardsAsync()
-        {
-            var result = await _mediator.Send(new GetBoardsQuery());
-            if (!result.Any())
-                return NoContent();
-
-            var response = new ResultResponse<IEnumerable<BoardDto>>(result);
-
-            return Ok(response);
-        }
 
         [HttpGet("{pageIndex:int}/{pageSize:int}")]
         [Authorize(Policy = "AdminOnly")]
@@ -74,6 +55,7 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
+        //TODO: add permission check
         [HttpGet("user/{userId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

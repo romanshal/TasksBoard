@@ -134,6 +134,19 @@ namespace Common.Blocks.Repositories
             return await DbSet.CountAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// If any element exist in database.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        public virtual async Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .AnyAsync(entity => entity.Id == id, cancellationToken);
+        }
+
         public void Dispose()
         {
             Dispose(true);

@@ -12,8 +12,11 @@ namespace TasksBoard.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<TasksBoardDbContext>(
-                options => options.UseNpgsql(connectionString));
+            services.AddDbContext<TasksBoardDbContext>(options => 
+            { 
+                options.UseNpgsql(connectionString);
+                options.UseLazyLoadingProxies();
+            });
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

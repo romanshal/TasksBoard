@@ -5,6 +5,6 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
     public class DeleteBoardMemberCommand : IRequest<Unit>
     {
         public Guid BoardId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid MemberId { get; set; }
     }
 }

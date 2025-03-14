@@ -4,5 +4,6 @@
     {
         public Guid BoardId { get; set; }
         public Guid AccountId { get; set; }
+        public bool IsOwner { get; set; }
     }
 }

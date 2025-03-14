@@ -7,5 +7,6 @@ namespace TasksBoard.Domain.Interfaces.Repositories
     {
         Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);
         Task<bool> HasAccessAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default);
+        Task<int> CountByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
     }
 }

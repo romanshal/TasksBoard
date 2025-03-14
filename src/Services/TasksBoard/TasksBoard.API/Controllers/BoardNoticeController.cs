@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeById;
-using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNotices;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserIdAndBoardId;
@@ -21,21 +20,6 @@ namespace TasksBoard.API.Controllers
     {
         private readonly ILogger<BoardController> _logger = logger;
         private readonly IMediator _mediator = mediator;
-
-        [HttpGet]
-        [Authorize(Policy = "AdminOnly")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllBoardNoticeAsync()
-        {
-            var result = await _mediator.Send(new GetBoardNoticesQuery());
-
-            var response = new ResultResponse<IEnumerable<BoardNoticeDto>>(result);
-
-            return Ok(response);
-        }
 
         [HttpGet("{pageIndex:int}/{pageSize:int}")]
         [Authorize(Policy = "AdminOnly")]

@@ -19,7 +19,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
 
         public async Task<PaginatedList<BoardDto>> Handle(GetPaginatedBoardsByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var count = await _unitOfWork.GetBoardRepository().CountAsync(cancellationToken);
+            var count = await _unitOfWork.GetBoardRepository().CountByUserIdAsync(request.UserId, cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No boards entities in database.");

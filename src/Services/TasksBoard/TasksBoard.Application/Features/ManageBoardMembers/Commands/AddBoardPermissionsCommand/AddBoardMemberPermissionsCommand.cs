@@ -2,10 +2,10 @@
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand
 {
-    public class AddBoardPermissionsCommand : IRequest<Unit>
+    public class AddBoardMemberPermissionsCommand : IRequest<Unit>
     {
         public Guid BoardId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid MemberId { get; set; }
         public Guid[] Permissions { get; set; }
     }
 }

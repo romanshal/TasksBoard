@@ -33,6 +33,8 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
                 throw new InvalidOperationException("Can't create new board. No rows were affected.");
             }
 
+            _logger.LogInformation($"Created new board with id '{board.Id}'.");
+
             return board.Id;
         }
 

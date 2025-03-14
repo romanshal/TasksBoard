@@ -28,5 +28,12 @@ namespace TasksBoard.Infrastructure.Repositories
                 .AsNoTracking()
                 .AnyAsync(board => board.Id == boardId && board.BoardMembers.Any(member => member.AccountId == userId), cancellationToken);
         }
+
+        public async Task<int> CountByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .CountAsync(board => board.BoardMembers.Any(member => member.AccountId == userId));
+        }
     }
 }

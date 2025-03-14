@@ -15,7 +15,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
 
         public async Task<Guid> Handle(AddBoardMemberCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetBoardRepository().GetAsync(request.BoardId, cancellationToken);
+            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
@@ -29,16 +29,14 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 throw new AlreadyExistException($"Member is already exist in board '{board.Name}'.");
             }
 
-            var permissions = request.Permissions.Select(permission => new BoardMemberPermission
-            {
-                BoardPermissionId = permission
-            });
-
             member = new BoardMember
             {
                 BoardId = request.BoardId,
                 AccountId = request.UserId,
-                BoardMemberPermissions = (ICollection<BoardMemberPermission>)permissions
+                BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
+                {
+                    BoardPermissionId = permission
+                })]
             };
 
             await _unitOfWork.GetBoardMemberRepository().Add(member, true, cancellationToken);
@@ -48,6 +46,8 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 _logger.LogError("Can't add new board member.");
                 throw new ArgumentException(nameof(member));
             }
+
+            _logger.LogInformation($"Board member with account id '{member.AccountId}' added to board with id '{request.BoardId}'.");
 
             return member.Id;
         }

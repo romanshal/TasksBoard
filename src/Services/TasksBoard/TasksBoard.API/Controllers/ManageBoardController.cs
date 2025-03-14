@@ -8,11 +8,12 @@ using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
 namespace TasksBoard.API.Controllers
 {
     [ApiController]
+    [Route("api/manageboards")]
     [HasBoardAccess]
     [HasBoardPermission("manage_board")]
     public class ManageBoardController(
         IMediator mediator,
-        Logger<ManageBoardController> logger) : ControllerBase
+        ILogger<ManageBoardController> logger) : ControllerBase
     {
         private readonly ILogger<ManageBoardController> _logger = logger;
         private readonly IMediator _mediator = mediator;

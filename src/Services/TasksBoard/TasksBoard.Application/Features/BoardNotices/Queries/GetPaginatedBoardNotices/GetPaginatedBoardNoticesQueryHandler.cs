@@ -28,11 +28,11 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
                 return new PaginatedList<BoardNoticeDto>([], request.PageIndex, request.PageSize);
             }
 
-            var boards = await _unitOfWork.GetRepository<BoardNotice>().GetPaginatedAsync(request.PageIndex, request.PageSize, cancellationToken);
+            var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetPaginatedAsync(request.PageIndex, request.PageSize, cancellationToken);
 
-            var boardsDto = _mapper.Map<IEnumerable<BoardNoticeDto>>(boards);
+            var boardNoticeDto = _mapper.Map<IEnumerable<BoardNoticeDto>>(boardNotice);
 
-            return boardsDto.ToPaginatedList(request.PageIndex, request.PageSize, count);
+            return boardNoticeDto.ToPaginatedList(request.PageIndex, request.PageSize, count);
         }
     }
 }

@@ -68,9 +68,9 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
         public IBoardMemberRepository GetBoardMemberRepository()
         {
-            var type = typeof(Board);
+            var type = typeof(BoardMember);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMember>))
             {
                 var repositoryInstance = new BoardMemberRepository(_context, _loggerFactory);
 

@@ -5,12 +5,13 @@ using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
+using TasksBoard.Application.Models.Requests.BoardNotices;
 
 namespace TasksBoard.API.Controllers
 {
     [ApiController]
     [HasBoardAccess]
-    [HasBoardPermission("manage_notices")]
+    [HasBoardPermission("manage_notice")]
     public class ManageBoardNoticeController(
         IMediator mediator,
         ILogger<ManageBoardNoticeController> logger) : ControllerBase
@@ -23,8 +24,16 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeCommand command)
+        public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeRequest request)
         {
+            var command = new CreateBoardNoticeCommand 
+            {
+                BoardId = boardId,
+                AuthorId = request.AuthorId,
+                Definition = request.Definition,
+                NoticeStatusId = request.NoticeStatusId
+            };
+
             var result = await _mediator.Send(command);
             if (result == Guid.Empty)
             {
@@ -33,7 +42,14 @@ namespace TasksBoard.API.Controllers
 
             var response = new ResultResponse<Guid>(result);
 
-            return Ok(response);
+            var locationUrl = Url.Action(
+                action: nameof(BoardController.GetBoardByIdAsync),
+                controller: nameof(BoardController),
+                values: new { boardId },
+                protocol: Request.Scheme
+                );
+
+            return Created(locationUrl, response);
         }
 
         [HttpPut("board/{boardId:guid}")]

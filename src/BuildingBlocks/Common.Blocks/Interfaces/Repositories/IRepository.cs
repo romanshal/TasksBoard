@@ -63,5 +63,13 @@ namespace Common.Blocks.Interfaces.Repositories
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         Task<int> CountAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// If any element exist in database.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

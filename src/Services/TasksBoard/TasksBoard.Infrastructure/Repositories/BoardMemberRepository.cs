@@ -28,5 +28,12 @@ namespace TasksBoard.Infrastructure.Repositories
             return await DbSet
                 .FirstOrDefaultAsync(member => member.BoardId == boardId && member.AccountId == userId, cancellationToken);
         }
+
+        public async Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .CountAsync(member => member.BoardId == boardId, cancellationToken);
+        }
     }
 }
