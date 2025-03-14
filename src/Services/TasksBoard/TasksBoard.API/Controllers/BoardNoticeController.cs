@@ -2,15 +2,17 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.BoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.BoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeById;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNotices;
-using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNotices;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId;
+using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserIdAndBoardId;
+using TasksBoard.Application.Models;
 
 namespace TasksBoard.API.Controllers
 {
@@ -45,7 +47,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesAsync(int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetPaginatedBoardNoticesQuery 
+            var result = await _mediator.Send(new GetPaginatedListQuery<BoardNoticeDto> 
             { 
                 PageIndex = pageIndex, 
                 PageSize = pageSize 
@@ -57,6 +59,7 @@ namespace TasksBoard.API.Controllers
         }
 
         [HttpGet("board/{boardId:Guid}")]
+        [HasBoardAccess]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -75,6 +78,7 @@ namespace TasksBoard.API.Controllers
         }
 
         [HttpGet("user/{userId:Guid}")]
+        [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -92,6 +96,28 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("user/{userId:Guid}/board/{boardId:Guid}")]
+        [HasBoardAccess]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPaginatedBoardNoticesByUserIdAndBoardIdAsync([FromRoute] Guid userId, [FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
+        {
+            var result = await _mediator.Send(new GetPaginatedBoardNoticesByUserIdAndBoardIdQuery 
+            {
+                UserId = userId,
+                BoardId = boardId,
+                PageIndex = pageIndex,
+                PageSize = pageSize
+            });
+
+            var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
+
+            return Ok(response);
+        }
+
+        //TODO: add permission check
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -110,6 +136,7 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
+        //TODO: add permission check
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -126,38 +153,6 @@ namespace TasksBoard.API.Controllers
             var response = new ResultResponse<Guid>(result);
 
             return Created(Url.Action(nameof(GetBoardNoticeByIdAsync), new { id = result }), response);
-        }
-
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardNoticeAsync(UpdateBoardNoticeCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
-        }
-
-        [HttpDelete("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid id)
-        {
-            await _mediator.Send(new DeleteBoardNoticeCommand { Id = id });
-
-            var response = new Response();
-
-            return Ok(response);
         }
     }
 }

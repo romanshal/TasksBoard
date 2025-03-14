@@ -2,9 +2,9 @@
 using MediatR;
 using TasksBoard.Application.DTOs;
 
-namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards
+namespace TasksBoard.Application.Models
 {
-    public class GetPaginatedBoardsQuery : IRequest<PaginatedList<BoardDto>>
+    public class GetPaginatedListQuery<T> : IRequest<PaginatedList<T>> where T : BaseDto
     {
         public required int PageIndex { get; set; }
         public required int PageSize { get; set; }

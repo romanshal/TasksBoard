@@ -57,7 +57,7 @@ namespace TasksBoard.Infrastructure.Data.Contexts
                     new BoardPermission
                     {
                         Id = Guid.NewGuid(),
-                        Name = "manage_notice",
+                        Name = "manage_notices",
                         AccessLevel = 1
                     },
                     new BoardPermission
@@ -69,8 +69,14 @@ namespace TasksBoard.Infrastructure.Data.Contexts
                     new BoardPermission
                     {
                         Id = Guid.NewGuid(),
-                        Name = "manage_board",
+                        Name = "manage_members",
                         AccessLevel = 3
+                    },
+                    new BoardPermission
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "manage_board",
+                        AccessLevel = 4
                     }
                 ];
         }

@@ -9,6 +9,7 @@ namespace TasksBoard.Domain.Interfaces.UnitOfWorks
         IRepository<T> GetRepository<T>() where T : BaseEntity;
         IBoardNoticeRepository GetBoardNoticeRepository();
         IBoardRepository GetBoardRepository();
+        IBoardMemberRepository GetBoardMemberRepository();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

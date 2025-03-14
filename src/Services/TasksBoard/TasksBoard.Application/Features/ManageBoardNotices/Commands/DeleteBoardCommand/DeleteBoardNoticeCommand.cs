@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace TasksBoard.Application.Features.BoardNotices.Commands.DeleteBoardCommand
+namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand
 {
     public class DeleteBoardNoticeCommand : IRequest<Unit>
     {

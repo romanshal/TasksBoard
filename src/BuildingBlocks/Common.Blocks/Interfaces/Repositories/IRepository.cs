@@ -30,16 +30,6 @@ namespace Common.Blocks.Interfaces.Repositories
         Task<IEnumerable<T>> GetPaginatedAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Get paginated entities from database by id.
-        /// </summary>
-        /// <param name="id">Entity id.</param>
-        /// <param name="pageIndex">Page index.</param>
-        /// <param name="pageSize">Page size.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> GetPaginatedByIdAsync(Guid id, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Add new entity to database.
         /// </summary>
         /// <param name="entity">Database entity.</param>

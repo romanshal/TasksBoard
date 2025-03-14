@@ -1,13 +1,10 @@
-﻿using Common.Blocks.Models;
-using MediatR;
-using TasksBoard.Application.DTOs;
+﻿using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Models;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId
 {
-    public class GetPaginatedBoardNoticesByBoardIdQuery : IRequest<PaginatedList<BoardNoticeDto>>
+    public class GetPaginatedBoardNoticesByBoardIdQuery : GetPaginatedListQuery<BoardNoticeDto>
     {
         public required Guid BoardId { get; set; }
-        public required int PageIndex { get; set; }
-        public required int PageSize { get; set; }
     }
 }

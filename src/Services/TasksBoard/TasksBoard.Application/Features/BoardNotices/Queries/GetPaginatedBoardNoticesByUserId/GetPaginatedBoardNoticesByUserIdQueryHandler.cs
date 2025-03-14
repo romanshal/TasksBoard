@@ -3,14 +3,7 @@ using Common.Blocks.Extensions;
 using Common.Blocks.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNotices;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId

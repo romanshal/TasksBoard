@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoard
+namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
 {
     public class DeleteBoardCommand : IRequest<Unit>
     {

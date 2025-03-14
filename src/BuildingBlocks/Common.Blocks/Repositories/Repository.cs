@@ -69,25 +69,6 @@ namespace Common.Blocks.Repositories
         }
 
         /// <summary>
-        /// Get paginated entities from database by id.
-        /// </summary>
-        /// <param name="id">Entity id.</param>
-        /// <param name="pageIndex">Page index.</param>
-        /// <param name="pageSize">Page size.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<IEnumerable<T>> GetPaginatedByIdAsync(Guid id, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
-        {
-            return await DbSet
-                .AsNoTracking()
-                .Where(entity => entity.Id == id)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .OrderBy(e => e.Id)
-                .ToListAsync(cancellationToken);
-        }
-
-        /// <summary>
         /// Add new entity to database.
         /// </summary>
         /// <param name="entity">Database entity.</param>

@@ -1,0 +1,8 @@
+﻿namespace TasksBoard.Application.DTOs
+{
+    public class BoardMemberDto : BaseDto
+    {
+        public Guid BoardId { get; set; }
+        public Guid AccountId { get; set; }
+    }
+}

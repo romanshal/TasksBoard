@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using TasksBoard.API.Constants.Messages;
-using TasksBoard.Application.Features.BoardNotices.Commands.UpdateBoardNotice;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 
 namespace TasksBoard.API.Validators.BoardNotices
 {

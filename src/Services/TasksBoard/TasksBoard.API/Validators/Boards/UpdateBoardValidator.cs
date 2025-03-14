@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using TasksBoard.API.Constants.Messages;
-using TasksBoard.Application.Features.Boards.Commands.UpdateBoard;
+using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
 
 namespace TasksBoard.API.Validators.Boards
 {

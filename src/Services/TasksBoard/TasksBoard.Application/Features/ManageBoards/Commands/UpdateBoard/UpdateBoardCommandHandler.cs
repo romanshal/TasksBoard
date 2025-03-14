@@ -5,16 +5,16 @@ using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
-namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoard
+namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
-    public class DeleteBoardCommandHandler(
+    public class UpdateBoardCommandHandler(
         ILogger<GetBoardByIdQueryHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardCommand, Unit>
+        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Guid>
     {
         private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.Id, cancellationToken);
             if (board is null)
@@ -23,9 +23,18 @@ namespace TasksBoard.Application.Features.Boards.Commands.DeleteBoard
                 throw new NotFoundException($"Board with id '{request.Id}' not found.");
             }
 
-            await _unitOfWork.GetRepository<Board>().Delete(board, true, cancellationToken);
+            board.Name = request.Name;
+            board.Description = request.Description;
 
-            return Unit.Value;
+            await _unitOfWork.GetRepository<Board>().Update(board, true, cancellationToken);
+
+            if (board.Id == Guid.Empty)
+            {
+                _logger.LogError("Can't update board.");
+                throw new ArgumentException(nameof(board));
+            }
+
+            return board.Id;
         }
     }
 }

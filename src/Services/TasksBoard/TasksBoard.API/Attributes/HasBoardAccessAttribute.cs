@@ -5,7 +5,7 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.API.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class HasBoardAccessAttribute : Attribute, IAsyncActionFilter
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -25,9 +25,9 @@ namespace TasksBoard.API.Attributes
                 return;
             }
 
-            if (!context.ActionArguments.TryGetValue("id", out var entityIdObj))
+            if (!context.ActionArguments.TryGetValue("boardId", out var entityIdObj))
             {
-                context.Result = new BadRequestObjectResult("Invalid or missing entity ID.");
+                context.Result = new UnprocessableEntityObjectResult("Invalid or missing entity ID.");
                 return;
             }
 

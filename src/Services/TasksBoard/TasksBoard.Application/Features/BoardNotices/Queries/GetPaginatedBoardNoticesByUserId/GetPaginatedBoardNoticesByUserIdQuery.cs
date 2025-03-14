@@ -1,8 +1,9 @@
-﻿using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNotices;
+﻿using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Models;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId
 {
-    public class GetPaginatedBoardNoticesByUserIdQuery : GetPaginatedBoardNoticesQuery
+    public class GetPaginatedBoardNoticesByUserIdQuery : GetPaginatedListQuery<BoardNoticeDto>
     {
         public Guid UserId { get; set; }
     }

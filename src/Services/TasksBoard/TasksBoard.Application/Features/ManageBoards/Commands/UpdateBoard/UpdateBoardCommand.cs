@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace TasksBoard.Application.Features.Boards.Commands.UpdateBoard
+namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
     public class UpdateBoardCommand : IRequest<Guid>
     {

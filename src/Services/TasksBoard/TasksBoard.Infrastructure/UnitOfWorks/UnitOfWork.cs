@@ -66,6 +66,22 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
             return (IBoardRepository)value;
         }
 
+        public IBoardMemberRepository GetBoardMemberRepository()
+        {
+            var type = typeof(Board);
+
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board>))
+            {
+                var repositoryInstance = new BoardMemberRepository(_context, _loggerFactory);
+
+                value = repositoryInstance;
+
+                _repositories[type] = repositoryInstance;
+            }
+
+            return (IBoardMemberRepository)value;
+        }
+
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken);
@@ -75,5 +91,21 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
         {
             _context.Dispose();
         }
+
+        //private R GetRepository<R, E>() where R : Repository<E>, new() where E : BaseEntity
+        //{
+        //    var type = typeof(E);
+
+        //    if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<E>))
+        //    {
+        //        var repositoryInstance = Repository<E>.CreateInstanse<E>(_context, _loggerFactory);
+
+        //        value = repositoryInstance;
+
+        //        _repositories[type] = repositoryInstance;
+        //    }
+
+        //    return (R)value;
+        //}
     }
 }
