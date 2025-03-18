@@ -8,13 +8,15 @@ import { Observable } from 'rxjs/internal/Observable';
 })
 export class ApiService {
   private baseUrl: string = environment.apiUrl;
-  private getBoardsUrl = '/api/boards/'
+  private boardController = '/api/boards'
+
+  private boardByIdUrl = '/board/'
 
   constructor(
     private http: HttpClient
   ) { }
 
-  get<T>(): Observable<T> {
-    return this.http.get<T>(this.baseUrl + this.getBoardsUrl);
+  getBoardById(boardId: string): Observable<any> {
+    return this.http.get(this.baseUrl + this.boardController + this.boardByIdUrl + boardId);
   }
 }

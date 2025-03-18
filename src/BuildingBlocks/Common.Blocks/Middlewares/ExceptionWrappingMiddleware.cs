@@ -29,7 +29,10 @@ namespace Common.Blocks.Middlewares
             httpContext.Response.StatusCode = (int)GetErrorCode(ex);
             var responseDate = GetResponseDate(ex);
 
-            return httpContext.Response.WriteAsync(responseDate.ToString());
+            httpContext.Response.ContentType = "application/json";
+            var jsonResponse = System.Text.Json.JsonSerializer.Serialize(responseDate);
+
+            return httpContext.Response.WriteAsync(jsonResponse);
         }
 
         private static HttpStatusCode GetErrorCode(Exception ex)

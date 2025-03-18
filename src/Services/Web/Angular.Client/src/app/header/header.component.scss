@@ -2,28 +2,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #343a40;
-  color: white;
-  padding: 15px 30px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  background-color: #f8f9f9;
+  border-bottom: 1px solid #e3e6e8;
+  font-family: Arial, sans-serif;
 
-  .logo h1 {
-    font-size: 1.5rem;
-    margin: 0;
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f48024;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
   }
 
-  .navigation {
-    display: flex;
+  .search-bar {
+    flex: 1;
+    margin: 0 20px;
 
-    .nav-link {
-      margin-left: 20px;
-      text-decoration: none;
-      color: white;
-      font-size: 1rem;
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+
+      &:focus {
+        border-color: #0077cc;
+        outline: none;
+      }
     }
+  }
 
-    .nav-link:hover {
-      text-decoration: underline;
+  .nav-links {
+    display: flex;
+    gap: 15px;
+
+    a {
+      text-decoration: none;
+      color: #0077cc;
+      font-size: 16px;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

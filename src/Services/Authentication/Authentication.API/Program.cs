@@ -13,6 +13,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+        .WithOrigins("http://localhost:64688")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
 builder.Services.AddSwaggerGetWithAuth("Authentication API");
 
 var conntectionString = builder.Configuration.GetConnectionString("AuthenticationDbConnection") ?? throw new InvalidOperationException("Connection string 'AuthenticationDbConnection' not found");
@@ -59,6 +68,7 @@ app.MigrateDatabase<AuthenticationDbContext>((context, services) =>
         .Wait();
 });
 
+app.UseCors("AllowSpecificOrigin");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -72,6 +82,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseExeptionWrappingMiddleware();
@@ -79,6 +90,6 @@ app.UseExeptionWrappingMiddleware();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.Run();

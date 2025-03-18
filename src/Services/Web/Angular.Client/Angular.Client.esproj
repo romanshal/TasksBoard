@@ -8,7 +8,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\Angular.Client\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\common\services\" />
     <Folder Include="src\app\common\models\" />
   </ItemGroup>
 </Project>
