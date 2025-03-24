@@ -5,9 +5,10 @@ import { LoginComponent } from './auth/login/login.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BadRequestComponent } from './bad-request/bad-request.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
+import { AuthGuard } from './auth/guard/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: MainComponent },
+  { path: '', component: MainComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
 
   { path: 'bad-request', component: BadRequestComponent },

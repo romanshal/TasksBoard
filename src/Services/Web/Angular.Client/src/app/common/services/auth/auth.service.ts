@@ -10,7 +10,7 @@ import { TokenResponseModel } from '../../models/auth/auth.token.model';
 })
 export class AuthService {
   private baseUrl: string = environment.authUrl;
-  
+
   constructor(
     private http: HttpClient
   ) { }

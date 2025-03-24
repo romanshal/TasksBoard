@@ -33,7 +33,7 @@ export class LoginComponent {
         this.sessionService.setAccessToken(result.AccessToken);
         this.sessionService.setRefreshToken(result.RefreshToken);
 
-        this.router.navigate(['/']);
+        window.location.href = '/';
       },
       error: (error) => {
         alert('Error!');

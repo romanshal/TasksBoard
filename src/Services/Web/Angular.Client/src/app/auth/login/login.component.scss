@@ -1,4 +1,4 @@
-$primary-color: #3498db;
+$primary-color: #1D63ED;
 $secondary-color: #8e44ad;
 $text-color: #333;
 $form-background: #ffffff;
@@ -10,81 +10,157 @@ $border-radius: 8px;
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-}
 
-.login-form {
-  background-color: $form-background;
-  padding: 25px;
-  border-radius: $border-radius;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  .login-section {
+    background-color: $form-background;
+    padding: 30px;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #c9cace;
 
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: $text-color;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-
-    label {
-        font-size: 14px;
-        color: darken($text-color, 10%);
-        font-weight: 600;
-        display: block;
-        margin-bottom: 5px;
-        text-transform: capitalize;
-        cursor: pointer;
-        transition: color 0.3s ease;
-  
-        &:hover {
-          color: $primary-color;
-        }
-    }  
-
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid lighten($text-color, 40%);
-      border-radius: 4px;
-      box-sizing: border-box;
-
-      &:focus {
-        border-color: $primary-color;
-        outline: none;
-        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    header {
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: $text-color;
       }
     }
-  }
 
-  button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    color: #fff;
-    background-color: $primary-color;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    .login-form {
 
-    &:hover {
-      background-color: darken($primary-color, 10%);
+      .form-group {
+        margin-bottom: 15px;
+
+        label {
+          font-size: 14px;
+          color: darken($text-color, 10%);
+          font-weight: 600;
+          display: block;
+          margin-bottom: 5px;
+          text-transform: capitalize;
+          cursor: pointer;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: $primary-color;
+          }
+        }
+
+        input {
+          width: 100%;
+          padding: 10px;
+          font-size: 16px;
+          border: 1px solid lighten($text-color, 40%);
+          border-radius: 4px;
+          box-sizing: border-box;
+
+          &:focus {
+            border-color: $primary-color;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+          }
+        }
+      }
+
+      button {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        color: #fff;
+        background-color: $primary-color;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
     }
-  }
-}
 
-// Адаптивные стили
-@media screen and (max-width: 768px) {
-  .login-form {
-    padding: 20px;
-    width: 90%;
-  }
+    // Адаптивные стили
+    @media screen and (max-width: 768px) {
+      .login-form {
+        padding: 20px;
+        width: 90%;
+      }
 
-  h2 {
-    font-size: 18px;
+      h2 {
+        font-size: 18px;
+      }
+    }
+
+    .br {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      text-transform: uppercase;
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      margin: 0;
+      padding: 24px 0 0 0;
+
+      span {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 500;
+        display: contents;
+      }
+
+      span::before {
+        content: "";
+        border-bottom: 1px solid #c9cace;
+        flex: 1 0 auto;
+        height: .5em;
+        margin-right: 6px;
+      }
+
+      span::after {
+        content: "";
+        border-bottom: 1px solid #c9cace;
+        flex: 1 0 auto;
+        height: .5em;
+        margin-left: 6px;
+      }
+    }
+
+    .login-externals {
+      margin-top: 15px;
+
+      button {
+        display: flex;
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        color: $text-color;
+        background-color: #ffffff;
+        border: 1px solid #c9cace;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: lightgray;
+        }
+
+        .google-logo {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: 50%;
+          background-image: url('../../../assets/icons/google.svg');
+        }
+
+        .google-description {
+          margin-left: 35px;
+        }
+      }
+    }
   }
 }

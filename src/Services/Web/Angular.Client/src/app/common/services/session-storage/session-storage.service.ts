@@ -30,4 +30,9 @@ export class SessionStorageService {
     setRefreshToken(value: string){
         sessionStorage.setItem(this.refreshTokenKey, value);
     }
+
+    logout(){
+        sessionStorage.removeItem(this.accessTokenKey);
+        sessionStorage.removeItem(this.refreshTokenKey);
+    }
 }

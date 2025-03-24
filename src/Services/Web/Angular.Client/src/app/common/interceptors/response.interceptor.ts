@@ -15,13 +15,13 @@ export class ResponseInterceptor implements HttpInterceptor {
   constructor(private router: Router) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    //const excludedRoutes = ['/login', '/register'];
+    const excludedRoutes = ['/login', '/register'];
 
-    //const isExcluded = excludedRoutes.some(route => req.url.includes(route));
+    const isExcluded = excludedRoutes.some(route => req.url.includes(route));
 
-    //if (isExcluded) {
-    //  return next.handle(req); // Просто пропускаем запрос
-    //}
+    if (isExcluded) {
+     return next.handle(req); // Просто пропускаем запрос
+    }
 
     return next.handle(req).pipe(
       catchError((error: any) => {

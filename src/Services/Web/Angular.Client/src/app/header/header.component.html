@@ -1,11 +1,34 @@
 <header class="header">
-  <div class="logo">
-    <a href="/">ClickingUp</a>
+  <div class="header-primary">
+    <nav class="nav-links">
+      <div class="logo">
+        <a href="/">ClickingUp</a>
+      </div>
+      <div>
+        <a href="/about">About</a>
+      </div>
+
+      <div>
+        <a href="/privacy">Privacy</a>
+      </div>
+    </nav>
   </div>
-  <nav class="nav-links">
-    <a href="/about">About</a>
-  </nav>
-  <div class="search-bar">
-    <input type="text" placeholder="Search...">
+
+  <div class="header-secondary">
+    <div class="header-item search-bar">
+      <input type="text" placeholder="Search...">
+    </div> 
+
+    <div class="header-item" *ngIf="!isAuthenticated">
+      <button (click)="signin()">Sign in</button>
+    </div>
+
+    <div class="header-item" *ngIf="!isAuthenticated">
+      <button (click)="signup()">Sign up</button>
+    </div>
+
+    <div class="header-item" *ngIf="isAuthenticated">
+      <button (click)="logout()">Logout</button>
+    </div>
   </div>
 </header>
