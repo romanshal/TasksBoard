@@ -24,6 +24,8 @@ namespace Authentication.Application
             services.AddScoped<IUserClaimsService, UserClaimsService>();
             services.AddScoped<ITokenService, TokenService>();
 
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             return services;
         }
     }

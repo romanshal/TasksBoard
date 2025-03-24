@@ -23,6 +23,14 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost]
+        [Route("external")]
+        public async Task<IActionResult> ExternalLoginAsync(ExternalLoginCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPost]
         [Route("register")]
         public async Task<IActionResult> RegisterAsync(RegisterCommand command)
         {

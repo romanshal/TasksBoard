@@ -50,7 +50,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
                 throw new Exception($"Can't add role to user: {request.Username}. Errors: {string.Join("; ", addRoleResult.Errors)}.");
             }
 
-            await _signInManager.SignInAsync(user, false);
+            await _signInManager.SignInAsync(user, false, "Password");
 
             var token = await _tokenService.GenerateTokenAsync(user);
 

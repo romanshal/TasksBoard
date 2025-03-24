@@ -4,7 +4,9 @@ using Authentication.Application.Interfaces.Services;
 using Authentication.Application.Models;
 using Authentication.Domain.Entities;
 using Common.Blocks.Exceptions;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -14,12 +16,14 @@ namespace Authentication.Application.Services
         ITokenProvider tokenProvider,
         IUserClaimsService userClaims,
         UserManager<ApplicationUser> userManager,
+        IConfiguration configuration,
         ILogger<TokenService> logger) : ITokenService
     {
         private readonly ITokenProvider _tokenProvider = tokenProvider;
         private readonly IUserClaimsService _userClaims = userClaims;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly ILogger<TokenService> _logger = logger;
+        private readonly IConfiguration _configuration = configuration;
 
         public async Task<AuthenticationDto> GenerateTokenAsync(ApplicationUser user)
         {
@@ -47,6 +51,20 @@ namespace Authentication.Application.Services
             }
 
             return await GenerateTokenAsync(user);
+        }
+
+        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string? provider, string? tokenId)
+        {
+            var clientId = _configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");
+
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = [clientId]
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(tokenId, settings);
+
+            return payload;
         }
     }
 }

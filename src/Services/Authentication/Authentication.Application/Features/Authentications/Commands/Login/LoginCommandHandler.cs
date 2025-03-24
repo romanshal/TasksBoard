@@ -45,6 +45,8 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
                 throw new Exception($"Signin is not allowed for user {request.Username}."); //TODO: change this later
             }
 
+            //await _signInManager.SignInAsync(user, false, "Password");
+
             var token = await _tokenService.GenerateTokenAsync(user);
 
             _logger.LogInformation($"Success signin for user: {request.Username}.");

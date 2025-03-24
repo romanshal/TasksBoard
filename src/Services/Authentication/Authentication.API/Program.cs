@@ -4,8 +4,6 @@ using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Extensions;
 using Common.Blocks.Middlewares;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,25 +36,15 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
     config.Password.RequireUppercase = false;
     config.Password.RequireLowercase = false;
 })
+.AddEntityFrameworkStores<AuthenticationDbContext>()
+.AddDefaultTokenProviders();
 
-    .AddEntityFrameworkStores<AuthenticationDbContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddAuthentication(config =>
-{
-    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-
-    config.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-
-});
-//.AddGoogle(config =>
-//{
-//    config.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");
-//    config.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientSecret' not found.");
-//});
+builder.Services.AddJwtAuthentication(builder.Configuration)
+    .AddGoogle(config =>
+    {
+        config.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");
+        config.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientSecret' not found.");
+    });
 
 var app = builder.Build();
 

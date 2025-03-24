@@ -8,8 +8,9 @@ $border-radius: 8px;
 .login-container {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 80vh;
+  min-height: 90vh;
 
   .login-section {
     background-color: $form-background;
@@ -19,6 +20,7 @@ $border-radius: 8px;
     width: 100%;
     max-width: 300px;
     border: 1px solid #c9cace;
+    margin-bottom: 30px;
 
     header {
       h2 {
@@ -29,6 +31,27 @@ $border-radius: 8px;
     }
 
     .login-form {
+
+      .login-error {
+        display: flex;
+        justify-content: start;
+        padding: 15px;
+
+        .error-logo {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: 50%;
+          background-image: url('../../../assets/icons/error.svg');
+        }
+
+        .error-description {
+          margin-left: 35px;
+          color: #FF0000;
+        }
+      }
 
       .form-group {
         margin-bottom: 15px;
@@ -135,6 +158,7 @@ $border-radius: 8px;
         display: flex;
         width: 100%;
         padding: 15px;
+        margin: 10px 0px;
         font-size: 16px;
         color: $text-color;
         background-color: #ffffff;
@@ -160,6 +184,44 @@ $border-radius: 8px;
         .google-description {
           margin-left: 35px;
         }
+
+        .facebook-logo {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: 50%;
+          background-image: url('../../../assets/icons/facebook.svg');
+        }
+
+        .facebook-description {
+          margin-left: 35px;
+        }
+      }
+    }
+  }
+
+  .register-section {
+    background-color: $form-background;
+    padding: 30px;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #c9cace;
+
+    .signup-card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: #333;
+
+      a {
+        font-weight: 700 !important;
+        font-size: 18px;
+        text-decoration: underline;
       }
     }
   }

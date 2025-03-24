@@ -6,9 +6,10 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { BadRequestComponent } from './bad-request/bad-request.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AuthGuard } from './auth/guard/auth.guard';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 const routes: Routes = [
-  { path: '', component: MainComponent, canActivate: [AuthGuard] },
+  { path: '', component: MainComponent },
   { path: 'login', component: LoginComponent },
 
   { path: 'bad-request', component: BadRequestComponent },
@@ -19,7 +20,10 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes),
+    OAuthModule.forRoot()
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
