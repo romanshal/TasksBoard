@@ -7,10 +7,12 @@ import { BadRequestComponent } from './bad-request/bad-request.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AuthGuard } from './auth/guard/auth.guard';
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { BoardComponent } from './board/board.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'board', component: BoardComponent },
 
   { path: 'bad-request', component: BadRequestComponent },
   { path: 'forbidden', component: ForbiddenComponent },

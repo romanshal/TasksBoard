@@ -16,6 +16,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { BadRequestComponent } from './bad-request/bad-request.component';
+import { BoardComponent } from './board/board.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { BadRequestComponent } from './bad-request/bad-request.component';
     MainComponent,
     NotFoundComponent,
     ForbiddenComponent,
-    BadRequestComponent
+    BadRequestComponent,
+    BoardComponent
   ],
   imports: [
     BrowserModule,

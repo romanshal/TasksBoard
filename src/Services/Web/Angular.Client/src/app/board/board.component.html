@@ -1,0 +1,14 @@
+<!-- <div class="wooden-board">
+    <div class="wood-bg"></div>
+    <div class="wood-overlay"></div>
+    <div class="wood-cracks"></div>
+</div> -->
+<div class="board-container">
+    <div class="note-board">
+        <div class="note-wrapper" *ngFor="let note of notes; let i = index"
+            [ngStyle]="{'transform': 'rotate(' + noteStyles[i].rotation + 'deg)'}">
+            <div class="note" [ngStyle]="{'background-color': noteStyles[i].backgroundColor}">
+                {{ note }}
+            </div>
+        </div>
+    </div>
