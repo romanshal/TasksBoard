@@ -17,6 +17,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { BadRequestComponent } from './bad-request/bad-request.component';
 import { BoardComponent } from './board/board.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { BoardComponent } from './board/board.component';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,

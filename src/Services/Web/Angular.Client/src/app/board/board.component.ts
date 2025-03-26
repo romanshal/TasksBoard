@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { BoardService } from '../common/services/board/board.service';
 import { BoardModel } from '../common/models/board/board.model';
-import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
 import { BoardNoticeService } from '../common/services/board-notice/board-notice.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { ActivatedRoute } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface NoteStyle {
   value: any;
@@ -15,41 +15,45 @@ export class BoardNoticeForView {
     public Definition: string,
     public BackgroundColor: string,
     public Rotation: string
-  ) {}
+  ) { }
 }
 
 @Component({
   selector: 'app-board',
   standalone: false,
   templateUrl: './board.component.html',
-  styleUrl: './board.component.scss'
+  styleUrl: './board.component.scss',
+  animations: [
+    trigger('modalContainerAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0 }))
+      ])
+    ]),
+    trigger('modalContentAnimation', [
+      transition(':enter', [
+        style({ transform: 'scale(0.8)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ transform: 'scale(0.8)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class BoardComponent implements OnInit {
   boardId!: string;
   board!: BoardModel;
   private userId: any;
-  
+
   notesForView: BoardNoticeForView[] = [];
   pageIndex = 1;
   pageSize = 10;
-  totalPages = 0;
-  // notes: string[] = [
-  //   'Заметка 1',
-  //   'Заметка 2',
-  //   'Заметка 3',
-  //   'Заметка 4',
-  //   'Заметка 5',
-  //   'Заметка 6',
-  //   'Заметка 7',
-  //   'Заметка 8',
-  //   'Заметка 9',
-  //   'Заметка 10',
-  //   'Заметка 11',
-  //   'Заметка 12',
-  //   'Заметка 13',
-  //   'Заметка 14',
-  //   'Заметка 15'
-  // ];
+  totalPages = 1;
+  totalCount = 0;
 
   noteStyles: NoteStyle[] = [];
 
@@ -70,7 +74,7 @@ export class BoardComponent implements OnInit {
     { value: '3deg' },
     { value: '2.5deg' },
     { value: '2deg' },
-    
+
     { value: '-2deg' },
     { value: '-2.5deg' },
     { value: '-3deg' },
@@ -105,10 +109,11 @@ export class BoardComponent implements OnInit {
   private getBoardNotices(pageIndex: number, pageSise: number) {
     this.boardNoticeService.getBoardNoticesByBoardId(this.boardId, pageIndex, pageSise).subscribe(result => {
       if (result) {
-        this.notesForView = result.Items.map(item => { return new BoardNoticeForView(item.Definition, this.getRandomColor(), this.getRandomRotation())})
+        this.notesForView = result.Items.map(item => { return new BoardNoticeForView(item.Definition, this.getRandomColor(), this.getRandomRotation()) })
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;
         this.totalPages = result.PagesCount;
+        this.totalCount = result.TotalCount
       }
     });
   }
@@ -118,7 +123,7 @@ export class BoardComponent implements OnInit {
     return this.colors[randomIndex].value;
   }
 
-  getRandomRotation(){
+  getRandomRotation() {
     const randomIndex = Math.floor(Math.random() * this.rotations.length);
     return this.rotations[randomIndex].value;
   }
@@ -136,11 +141,15 @@ export class BoardComponent implements OnInit {
       return [1, '...', this.pageIndex - 1, this.pageIndex, this.pageIndex + 1, '...', this.totalPages];
     }
 
-    return [1, '...', ...Array.from({ length: 9 }, (_, i) => this.totalPages - 9 + i)];
+    return [1, '...', ...Array.from({ length: 9 }, (_, i) => this.totalPages - 8 + i)];
   }
 
   goToPage(page: number | string): void {
     if (typeof page === 'number') {
+      if (page === this.pageIndex) {
+        return;
+      }
+
       this.pageIndex = page;
 
       this.getBoardNotices(this.pageIndex, this.pageSize);
@@ -160,6 +169,37 @@ export class BoardComponent implements OnInit {
       this.pageIndex++;
 
       this.getBoardNotices(this.pageIndex, this.pageSize);
+    }
+  }
+
+
+
+
+
+
+  isModalOpen = false;
+  textInput: string = '';
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+  }
+
+  onContainerClick(event: MouseEvent): void {
+    // Если кликнули по затемнённой области вне модального окна
+    if ((event.target as HTMLElement).classList.contains('modal-container')) {
+      this.closeModal();
+    }
+  }
+
+  // Закрытие модального окна по клавише ESC
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapePress(event: KeyboardEvent) {
+    if (this.isModalOpen) {
+      this.closeModal();
     }
   }
 }

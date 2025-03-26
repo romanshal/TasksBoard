@@ -1,7 +1,16 @@
 <div class="board-container">
     <div class="board-wrapper">
+        <div class="note-actions">
+            <button class="note-add-button" (click)="openModal()">
+                <i class="fa-solid fa-plus">
+
+                </i>
+                Добавить
+            </button>
+        </div>
         <div class="note-board">
-            <div class="note-wrapper" *ngFor="let note of notesForView; let i = index" [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }">
+            <div class="note-wrapper" *ngFor="let note of notesForView; let i = index"
+                [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }">
                 <div class="note" [ngStyle]="{'background-color': note.BackgroundColor }">
                     {{ note.Definition }}
                 </div>
@@ -10,21 +19,34 @@
 
         <div class="pagination">
             <button class="nav-button prev" [class.disabled]="pageIndex === 1" (click)="previousPage()">
-              Назад
+                <i class="fa-solid fa-chevron-left">Назад</i>
             </button>
-          
+
             <ng-container *ngFor="let page of pagesToDisplay">
-              <button class="page-button" [class.active]="page === pageIndex" (click)="goToPage(page)" *ngIf="page !== '...'; else dotsTemplate">
-                {{ page }}
-              </button>
-              <ng-template #dotsTemplate>
-                <span class="dots">...</span>
-              </ng-template>
+                <button class="page-button" [class.active]="page === pageIndex" (click)="goToPage(page)"
+                    *ngIf="page !== '...'; else dotsTemplate">
+                    {{ page }}
+                </button>
+                <ng-template #dotsTemplate>
+                    <span class="dots">...</span>
+                </ng-template>
             </ng-container>
-          
+
             <button class="nav-button next" [class.disabled]="pageIndex === totalPages" (click)="nextPage()">
-              Далее
+                Далее<i class="fa-solid fa-chevron-right"></i>
             </button>
-          </div>
+        </div>
     </div>
+</div>
+
+
+
+<div class="modal-container" *ngIf="isModalOpen" [@modalContainerAnimation] (click)="onContainerClick($event)">
+  <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()">
+    <textarea
+      class="modal-textarea"
+      placeholder="Введите текст..."
+      [(ngModel)]="textInput"
+    ></textarea>
+  </div>
 </div>
