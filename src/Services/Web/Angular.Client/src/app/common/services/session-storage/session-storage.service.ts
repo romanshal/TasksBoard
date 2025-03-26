@@ -6,6 +6,7 @@ import { Injectable } from "@angular/core";
 export class SessionStorageService {
     public accessTokenKey = 'access_token';
     public refreshTokenKey = 'refresh_token';
+    public userIdKey = 'user_id'
 
     getItem(key:string){
         return sessionStorage.getItem(key);

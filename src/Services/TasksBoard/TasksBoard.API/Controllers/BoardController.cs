@@ -65,7 +65,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPaginatedBoardsByUserIdAsync([FromRoute] Guid userId, int pageIndex, int pageSize)
+        public async Task<IActionResult> GetPaginatedBoardsByUserIdAsync([FromRoute] Guid userId, int pageIndex = 1, int pageSize = 10)
         {
             var result = await _mediator.Send(new GetPaginatedBoardsByUserIdQuery
             {

@@ -3,6 +3,7 @@
     public class PaginatedList<T> where T : class
     {
         public IEnumerable<T> Items { get; set; }
+        public int PagesCount { get; set; }
         public int TotalCount { get; private set; }
         public int PageIndex { get; private set; }
         public int PageSize { get; private set; }
@@ -15,12 +16,14 @@
 
             if (items.Any() && totalCount == default)
             {
-                TotalCount = items.Count();
+                TotalCount = items.Count(); 
             }
             else
             {
                 TotalCount = totalCount;
             }
+
+            PagesCount = (int)Math.Ceiling((double)TotalCount / PageSize);
         }
     }
 }

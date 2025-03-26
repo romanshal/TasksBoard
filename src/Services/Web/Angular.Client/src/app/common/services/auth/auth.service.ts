@@ -31,7 +31,7 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials)
     .pipe(
       map((response: any) => {
-        return new TokenResponseModel(response.accessToken, response.refreshToken);
+        return new TokenResponseModel(response.accessToken, response.refreshToken, response.userId);
       }),
       catchError((error) => {
         // Handle the error here

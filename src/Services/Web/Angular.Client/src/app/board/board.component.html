@@ -1,14 +1,30 @@
-<!-- <div class="wooden-board">
-    <div class="wood-bg"></div>
-    <div class="wood-overlay"></div>
-    <div class="wood-cracks"></div>
-</div> -->
 <div class="board-container">
-    <div class="note-board">
-        <div class="note-wrapper" *ngFor="let note of notes; let i = index"
-            [ngStyle]="{'transform': 'rotate(' + noteStyles[i].rotation + 'deg)'}">
-            <div class="note" [ngStyle]="{'background-color': noteStyles[i].backgroundColor}">
-                {{ note }}
+    <div class="board-wrapper">
+        <div class="note-board">
+            <div class="note-wrapper" *ngFor="let note of notesForView; let i = index" [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }">
+                <div class="note" [ngStyle]="{'background-color': note.BackgroundColor }">
+                    {{ note.Definition }}
+                </div>
             </div>
         </div>
+
+        <div class="pagination">
+            <button class="nav-button prev" [class.disabled]="pageIndex === 1" (click)="previousPage()">
+              Назад
+            </button>
+          
+            <ng-container *ngFor="let page of pagesToDisplay">
+              <button class="page-button" [class.active]="page === pageIndex" (click)="goToPage(page)" *ngIf="page !== '...'; else dotsTemplate">
+                {{ page }}
+              </button>
+              <ng-template #dotsTemplate>
+                <span class="dots">...</span>
+              </ng-template>
+            </ng-container>
+          
+            <button class="nav-button next" [class.disabled]="pageIndex === totalPages" (click)="nextPage()">
+              Далее
+            </button>
+          </div>
     </div>
+</div>

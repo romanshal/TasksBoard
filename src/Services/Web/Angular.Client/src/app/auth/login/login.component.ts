@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from '../../common/services/auth/auth.service';
 import { SessionStorageService } from '../../common/services/session-storage/session-storage.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from '../../common/auth/auth.config';
 
@@ -21,7 +21,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private sessionService: SessionStorageService,
     private oauthService: OAuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
       username: [''],
@@ -41,8 +42,11 @@ export class LoginComponent implements OnInit {
         console.log(result);
         this.sessionService.setAccessToken(result.AccessToken);
         this.sessionService.setRefreshToken(result.RefreshToken);
+        this.sessionService.setItem(this.sessionService.userIdKey, result.UserId);
 
-        window.location.href = '/';
+        const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
+
+        window.location.href = returnUrl;
       },
       error: (error) => {
         this.showErrors = true;

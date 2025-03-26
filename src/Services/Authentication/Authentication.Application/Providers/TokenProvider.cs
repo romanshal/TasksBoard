@@ -15,7 +15,7 @@ namespace Authentication.Application.Providers
     {
         private readonly JwtCofiguration _jwtConfig = options.Value;
 
-        public AuthenticationDto Create(CreateTokenModel model)
+        public TokenDto Create(CreateTokenModel model)
         {
             string secretKey = _jwtConfig.Secret;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -40,7 +40,7 @@ namespace Authentication.Application.Providers
             };
         }
 
-        public AuthenticationDto Refresh(RefreshTokenModel request)
+        public TokenDto Refresh(RefreshTokenModel request)
         {
             if (request.RefreshToken != request.StoredRefreshToken)
             {

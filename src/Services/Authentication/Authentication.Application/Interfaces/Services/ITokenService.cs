@@ -7,7 +7,7 @@ namespace Authentication.Application.Interfaces.Services
     public interface ITokenService
     {
         Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string? provider, string? tokenId);
-        Task<AuthenticationDto> GenerateTokenAsync(ApplicationUser user);
-        Task<AuthenticationDto> RefreshTokenAsync(ApplicationUser user);
+        Task<TokenDto> GenerateTokenAsync(ApplicationUser user);
+        Task<TokenDto> RefreshTokenAsync(ApplicationUser user);
     }
 }

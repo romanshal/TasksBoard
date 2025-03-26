@@ -1,180 +1,146 @@
 .board-container {
+  position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 
-  .note-board {
+  .board-wrapper {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: space-around;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 15px;
-    background: url('../../assets/icons/board.jpg') repeat;
-    background-size: contain;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    min-height: 80vh; // обеспечивает полный экранный вид
-    width: 44vw;
 
-    .note-wrapper {
-      display: inline-block;
-      transition: transform 0.3s;
-
-      .note {
-        margin: 20px;
-        padding: 15px;
-        width: 120px;
-        height: 120px;
-        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-        position: relative;
-        transition: transform 0.2s;
-        clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px);
+    .note-board {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 15px;
+      background: url('../../assets/icons/board.jpg') repeat;
+      background-size: auto;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      min-height: 70vh; // обеспечивает полный экранный вид
+      width: 68vw;
+  
+      .note-wrapper {
+        display: inline-block;
+        transition: transform 0.3s;
+  
+        .note {
+          margin: 20px;
+          padding: 15px;
+          width: 120px;
+          height: 120px;
+          box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+          border-radius: 4px;
+          position: relative;
+          transition: transform 0.2s;
+          clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px);
+        }
+  
+        .note::before {
+          content: "";
+          position: absolute;
+          top: 0%;
+          left: 0%;
+          width: 0px;
+          height: 0px;
+          border-bottom: 20px solid #eee;
+          border-left: 20px solid #272822;
+          /*Set to background color, not transparent!*/
+          -webkit-box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
+          -moz-box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
+          box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
+        }
+  
+        .note:hover {
+          transform: scale(1.2);
+          cursor: pointer;
+        }
       }
-
-      .note::before {
-        content: "";
-        position: absolute;
-        top: 0%;
-        left: 0%;
-        width: 0px;
-        height: 0px;
-        border-bottom: 20px solid #eee;
-        border-left: 20px solid #272822;
-        /*Set to background color, not transparent!*/
-        -webkit-box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
-        -moz-box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
-        box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
+    }
+  
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-radius: 8px;
+    
+      button {
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
       }
-
-      .note:hover {
-        transform: scale(1.2);
+    
+      .nav-button {
+        height: 40px;
+        padding: 0 16px;
+        background-color: #FFEB3B;
+        color: #000;
+        border: none;
+        cursor: pointer;
+        min-width: 100px;
+    
+        &.prev {
+          border-top-left-radius: 15px;
+          border-bottom-left-radius: 15px;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+    
+        &.next {
+          border-top-right-radius: 15px;
+          border-bottom-right-radius: 15px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+    
+        &.disabled {
+          background-color: #9e9e9e;
+          cursor: not-allowed;
+        }
+    
+        &:hover:not(.disabled) {
+          background-color: lighten(#FFEB3B, 10%);
+        }
+      }
+    
+      .page-button {
+        width: 40px;
+        height: 40px;
+        background-color: #FFEB3B;
+        color: #000;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+        &:hover {
+          background-color: lighten(#FFEB3B, 10%);
+        }
+    
+        &.active {
+          background-color: #FF9800;
+          color: #fff;
+          cursor: default;
+        }
+      }
+    
+      .dots {
+        color: #000;
+        font-size: 20px;
+        padding: 0 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
   }
 }
-
-
-
-
-
-
-/* 
-$base-wood: #c49a6c;          // основной светлый тон древесины
-$dark-wood: #8B5E3C;          // тёмный тон для межпланковых швов и теней
-$grain-overlay: rgba(255, 255, 255, 0.15); // прожилки древесины
-$scratch-color: rgba(0, 0, 0, 0.05);         // легкие царапины
-$knot-color: rgba(141, 94, 60, 0.7);          // цвет узлов (включений) древесины
-$knot-size: 30px;             // размер узлов
-
-.wooden-board {
-  position: relative;
-  width: 600px;
-  height: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 5px solid $dark-wood;
-  border-radius: 8px;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.35),
-              inset 0 0 10px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  z-index: 0;
-}
-
-.wood-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    repeating-linear-gradient(
-      to bottom,
-      $base-wood,
-      $base-wood 60px,
-      $dark-wood,
-      $dark-wood 65px
-    ),
-    repeating-linear-gradient(
-      to right,
-      $grain-overlay,
-      $grain-overlay 1px,
-      transparent 1px,
-      transparent 30px
-    );
-  background-blend-mode: multiply;
-  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='distort'><feTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='1' result='noise'/><feDisplacementMap in='SourceGraphic' in2='noise' scale='10'/></filter></svg>#distort");
-  z-index: 0;
-}
-
-
-.wood-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    15deg,
-    rgba(0, 0, 0, 0.02),
-    rgba(0, 0, 0, 0.02) 1px,
-    transparent 1px,
-    transparent 10px
-  );
-  opacity: 0.25;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.wood-cracks {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><defs><filter id='crack'><feTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 -5 0 0 0' /></filter></defs><rect width='200' height='200' fill='none' stroke='black' stroke-opacity='0.08' filter='url(%23crack)' /></svg>");
-  background-size: 200px 200px;
-  opacity: 0.25;
-  pointer-events: none;
-  z-index: 2.5;
-}
-
-.content {
-  position: relative;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 20px;
-  border-radius: 5px;
-  text-align: center;
-  z-index: 5;
-}
-
-.content h1 {
-  margin-top: 0;
-  color: #4a2c16;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.content p {
-  margin-bottom: 15px;
-  color: #4a2c16;
-}
-
-.content ul.notes {
-  list-style: none;
-  padding: 0;
-}
-
-.content ul.notes li {
-  background: rgba(255, 255, 255, 0.95);
-  margin: 8px 0;
-  padding: 10px;
-  border-radius: 4px;
-  transition: background 0.3s;
-}
-
-.content ul.notes li:hover {
-  background: rgba(255, 255, 255, 1);
-} */

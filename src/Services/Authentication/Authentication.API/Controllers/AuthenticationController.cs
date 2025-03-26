@@ -49,7 +49,7 @@ namespace Authentication.API.Controllers
 
         //[HttpPost]
         //[Authorize]
-        //[Route("register")]
+        //[Route("logout")]
         //public async Task<IActionResult> LogoutAsync()
         //{
 

@@ -12,7 +12,7 @@ import { BoardComponent } from './board/board.component';
 const routes: Routes = [
   { path: '', component: MainComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'board', component: BoardComponent },
+  { path: 'board/:boardid', component: BoardComponent, canActivate: [AuthGuard] },
 
   { path: 'bad-request', component: BadRequestComponent },
   { path: 'forbidden', component: ForbiddenComponent },

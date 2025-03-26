@@ -1,8 +1,7 @@
 ﻿namespace Authentication.Application.Dtos
 {
-    public class AuthenticationDto
+    public class AuthenticationDto : TokenDto
     {
-        public required string AccessToken { get; set; }
-        public required string RefreshToken { get; set; }
+        public Guid UserId { get; set; }
     }
 }

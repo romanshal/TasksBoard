@@ -27,8 +27,18 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
             }
 
             var token = await _tokenService.RefreshTokenAsync(user);
+            if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))
+            {
+                _logger.LogCritical($"Can't create access or refresh tokens for user {user.Id}.");
+                throw new InvalidOperationException("Can't create access or refresh tokens.");
+            }
 
-            return token;
+            return new AuthenticationDto
+            {
+                AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken,
+                UserId = user.Id
+            };
         }
     }
 }

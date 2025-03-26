@@ -25,7 +25,7 @@ namespace Authentication.Application.Services
         private readonly ILogger<TokenService> _logger = logger;
         private readonly IConfiguration _configuration = configuration;
 
-        public async Task<AuthenticationDto> GenerateTokenAsync(ApplicationUser user)
+        public async Task<TokenDto> GenerateTokenAsync(ApplicationUser user)
         {
             var claims = await _userClaims.GetUserClaimsAsync(user);
 
@@ -41,7 +41,7 @@ namespace Authentication.Application.Services
             return token;
         }
 
-        public async Task<AuthenticationDto> RefreshTokenAsync(ApplicationUser user)
+        public async Task<TokenDto> RefreshTokenAsync(ApplicationUser user)
         {
             var storedResfreshToken = await _userManager.GetAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token");
             if (string.IsNullOrEmpty(storedResfreshToken))

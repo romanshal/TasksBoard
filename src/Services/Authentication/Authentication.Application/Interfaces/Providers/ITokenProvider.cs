@@ -5,7 +5,7 @@ namespace Authentication.Application.Interfaces.Providers
 {
     public interface ITokenProvider
     {
-        AuthenticationDto Create(CreateTokenModel model);
-        AuthenticationDto Refresh(RefreshTokenModel request);
+        TokenDto Create(CreateTokenModel model);
+        TokenDto Refresh(RefreshTokenModel request);
     }
 }

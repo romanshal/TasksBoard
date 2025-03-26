@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { SessionStorageService } from "../services/session-storage/session-storage.service";
 
 @Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export class AuthRequestInterceptor implements HttpInterceptor {
   constructor(
     private sessionService: SessionStorageService
   ) { }
