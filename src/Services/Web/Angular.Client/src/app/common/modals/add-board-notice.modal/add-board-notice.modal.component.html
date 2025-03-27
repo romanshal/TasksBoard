@@ -1,5 +1,5 @@
 <div class="modal-container" (click)="onContainerClick($event)">
-  <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()">
+  <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()" [ngStyle]="{'background-color': backgroundColor }">
     <form [formGroup]="form">
       <textarea class="modal-textarea" formControlName="definition"></textarea>
     </form>

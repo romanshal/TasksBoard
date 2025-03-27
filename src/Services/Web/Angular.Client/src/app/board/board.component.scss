@@ -22,13 +22,12 @@ button {
   i {
     margin-right: 5px;
   }
-
 }
 
 .board-container {
   position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 
   .board-wrapper {
@@ -78,12 +77,14 @@ button {
 
           .note-pin {
             transform: translateY(-40px) scale(1.2);
+            cursor: pointer;
           }
 
           .note-pin-shadow {
             box-shadow: 0px 0px 10px 13px rgba(34, 60, 80, 0.4);
             background-color: rgba(34, 60, 80, 0.41);
             transform: translateY(-20px) scale(0.8);
+            cursor: pointer;
           }
 
           .note {

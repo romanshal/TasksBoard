@@ -39,15 +39,17 @@ export class AddBoardNoticeModalComponent implements OnInit {
   private successStatus = 'success';
 
   private isDisabled = false;
+  backgroundColor?:string;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddBoardNoticeModalComponent>,
     private noticeService: BoardNoticeService,
     private sessionService: SessionStorageService,
-    @Inject(MAT_DIALOG_DATA) private data: { borderId: string, disabled: boolean, content?: string }
+    @Inject(MAT_DIALOG_DATA) private data: { borderId: string, disabled: boolean, content?: string, backgroundColor: string }
   ) {
     this.isDisabled = data.disabled;
+    this.backgroundColor = data.backgroundColor;
    }
 
   ngOnInit(): void {

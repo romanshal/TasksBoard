@@ -40,10 +40,10 @@ export class BoardComponent implements OnInit {
   noteStyles: NoteStyle[] = [];
 
   colors: NoteStyle[] = [
-    { value: '#FFEB3B' },   // Желтый
-    { value: '#FF8A80' },      // Розово-красный
-    { value: '#80D8FF' },   // Голубой
-    { value: '#CCFF90' }       // Светло-зеленый
+    { value: '#fffcab' },   // Желтый
+    { value: '#ffd8d5' },      // Розово-красный
+    { value: '#c8eeff' },   // Голубой
+    { value: '#e4fcc7' }       // Светло-зеленый
   ];
 
   rotations: NoteStyle[] = [
@@ -155,14 +155,15 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  openModal(content?: string): void {
-    let isDisabled = content !== undefined;
+  openModal(note?: BoardNoticeForView): void {
+    let isDisabled = note?.Definition !== undefined;
 
     this.dialog.open(AddBoardNoticeModalComponent, {
       data: {
         borderId: this.boardId,
         disabled: isDisabled,
-        content: content
+        content: note?.Definition,
+        backgroundColor: note?.BackgroundColor
       }
     })
       .afterClosed().subscribe((result) => {
