@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { MatDialogModule } from '@angular/material/dialog';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
@@ -18,6 +18,9 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { BadRequestComponent } from './bad-request/bad-request.component';
 import { BoardComponent } from './board/board.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AddBoardNoticeModalComponent } from './common/modals/add-board-notice.modal/add-board-notice.modal.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NotFoundComponent,
     ForbiddenComponent,
     BadRequestComponent,
-    BoardComponent
+    BoardComponent,
+    AddBoardNoticeModalComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +43,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
     HttpClientModule
   ],
   providers: [

@@ -5,6 +5,8 @@ import { BoardNoticeService } from '../common/services/board-notice/board-notice
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { AddBoardNoticeModalComponent } from '../common/modals/add-board-notice.modal/add-board-notice.modal.component';
 
 interface NoteStyle {
   value: any;
@@ -14,7 +16,7 @@ export class BoardNoticeForView {
   constructor(
     public Definition: string,
     public BackgroundColor: string,
-    public Rotation: string
+    public Rotation: string,
   ) { }
 }
 
@@ -22,27 +24,7 @@ export class BoardNoticeForView {
   selector: 'app-board',
   standalone: false,
   templateUrl: './board.component.html',
-  styleUrl: './board.component.scss',
-  animations: [
-    trigger('modalContainerAnimation', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('200ms ease-out', style({ opacity: 1 }))
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0 }))
-      ])
-    ]),
-    trigger('modalContentAnimation', [
-      transition(':enter', [
-        style({ transform: 'scale(0.8)', opacity: 0 }),
-        animate('200ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ transform: 'scale(0.8)', opacity: 0 }))
-      ])
-    ])
-  ]
+  styleUrl: './board.component.scss'
 })
 export class BoardComponent implements OnInit {
   boardId!: string;
@@ -90,7 +72,8 @@ export class BoardComponent implements OnInit {
     private boardService: BoardService,
     private boardNoticeService: BoardNoticeService,
     private sessionStorageService: SessionStorageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {
     this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
     this.boardId = this.route.snapshot.paramMap.get('boardid')!;
@@ -172,34 +155,20 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  openModal(content?: string): void {
+    let isDisabled = content !== undefined;
 
-
-
-
-
-  isModalOpen = false;
-  textInput: string = '';
-
-  openModal(): void {
-    this.isModalOpen = true;
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-  }
-
-  onContainerClick(event: MouseEvent): void {
-    // Если кликнули по затемнённой области вне модального окна
-    if ((event.target as HTMLElement).classList.contains('modal-container')) {
-      this.closeModal();
-    }
-  }
-
-  // Закрытие модального окна по клавише ESC
-  @HostListener('document:keydown.escape', ['$event'])
-  onEscapePress(event: KeyboardEvent) {
-    if (this.isModalOpen) {
-      this.closeModal();
-    }
+    this.dialog.open(AddBoardNoticeModalComponent, {
+      data: {
+        borderId: this.boardId,
+        disabled: isDisabled,
+        content: content
+      }
+    })
+      .afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.getBoardNotices(this.pageIndex, this.pageSize);
+        }
+      });
   }
 }

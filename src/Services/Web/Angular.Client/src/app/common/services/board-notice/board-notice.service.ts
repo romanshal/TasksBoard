@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
@@ -6,6 +6,7 @@ import { BoardNoticeModel } from '../../models/board-notice/board-notice.model';
 import { HttpOptionService } from '../http-option/http-options.service';
 import { ResultResponse } from '../../models/response/response.model';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +43,10 @@ export class BoardNoticeService {
           return paginatedList;
         })
       );
+  }
+
+  createBoardNotice(boardId: any, notice: FormGroup) {
+    const url = '/api/managenotices/board/' + boardId;
+    return this.http.post<ResultResponse<string>>(this.BASE_URL + url, notice);
   }
 }
