@@ -4,21 +4,9 @@ import { BoardModel } from '../common/models/board/board.model';
 import { BoardNoticeService } from '../common/services/board-notice/board-notice.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { ActivatedRoute } from '@angular/router';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { AddBoardNoticeModalComponent } from '../common/modals/add-board-notice.modal/add-board-notice.modal.component';
-
-interface NoteStyle {
-  value: any;
-}
-
-export class BoardNoticeForView {
-  constructor(
-    public Definition: string,
-    public BackgroundColor: string,
-    public Rotation: string,
-  ) { }
-}
+import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
 
 @Component({
   selector: 'app-board',
@@ -31,42 +19,11 @@ export class BoardComponent implements OnInit {
   board!: BoardModel;
   private userId: any;
 
-  notesForView: BoardNoticeForView[] = [];
+  notesForView: BoardNoticeModel[] = [];
   pageIndex = 1;
   pageSize = 10;
   totalPages = 1;
   totalCount = 0;
-
-  noteStyles: NoteStyle[] = [];
-
-  colors: NoteStyle[] = [
-    { value: '#fffcab' },   // Желтый
-    { value: '#ffd8d5' },      // Розово-красный
-    { value: '#c8eeff' },   // Голубой
-    { value: '#e4fcc7' }       // Светло-зеленый
-  ];
-
-  rotations: NoteStyle[] = [
-    { value: '6deg' },
-    { value: '5.5deg' },
-    { value: '5deg' },
-    { value: '4.5deg' },
-    { value: '4deg' },
-    { value: '3.5deg' },
-    { value: '3deg' },
-    { value: '2.5deg' },
-    { value: '2deg' },
-
-    { value: '-2deg' },
-    { value: '-2.5deg' },
-    { value: '-3deg' },
-    { value: '-3.5deg' },
-    { value: '-4deg' },
-    { value: '-4.5deg' },
-    { value: '-5deg' },
-    { value: '-5.5deg' },
-    { value: '-6deg' },
-  ]
 
   constructor(
     private boardService: BoardService,
@@ -92,7 +49,7 @@ export class BoardComponent implements OnInit {
   private getBoardNotices(pageIndex: number, pageSise: number) {
     this.boardNoticeService.getBoardNoticesByBoardId(this.boardId, pageIndex, pageSise).subscribe(result => {
       if (result) {
-        this.notesForView = result.Items.map(item => { return new BoardNoticeForView(item.Definition, this.getRandomColor(), this.getRandomRotation()) })
+        this.notesForView = result.Items;
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;
         this.totalPages = result.PagesCount;
@@ -101,17 +58,10 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  getRandomColor() {
-    const randomIndex = Math.floor(Math.random() * this.colors.length);
-    return this.colors[randomIndex].value;
-  }
-
-  getRandomRotation() {
-    const randomIndex = Math.floor(Math.random() * this.rotations.length);
-    return this.rotations[randomIndex].value;
-  }
-
   get pagesToDisplay(): (number | string)[] {
+    if (this.totalPages === 0) {
+      return Array.from( {length: 1}, (_, i) => 1);
+    }
     if (this.totalPages <= 10) {
       return Array.from({ length: this.totalPages }, (_, i) => i + 1);
     }
@@ -155,15 +105,11 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  openModal(note?: BoardNoticeForView): void {
-    let isDisabled = note?.Definition !== undefined;
-
+  openModal(note?: BoardNoticeModel): void {
     this.dialog.open(AddBoardNoticeModalComponent, {
       data: {
-        borderId: this.boardId,
-        disabled: isDisabled,
-        content: note?.Definition,
-        backgroundColor: note?.BackgroundColor
+        boardId: this.boardId,
+        note: note
       }
     })
       .afterClosed().subscribe((result) => {

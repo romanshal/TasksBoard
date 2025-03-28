@@ -101,8 +101,8 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
-        //TODO: add permission check
         [HttpGet("{id:guid}")]
+        [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

@@ -1,11 +1,41 @@
 <div class="modal-container" (click)="onContainerClick($event)">
-  <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()" [ngStyle]="{'background-color': backgroundColor }">
-    <form [formGroup]="form">
-      <textarea class="modal-textarea" formControlName="definition"></textarea>
+  <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()"
+    [ngStyle]="{'background-color': backgroundColor }">
+    <div *ngIf="note !== undefined" class="notice-info">
+      <div class="notice-info__author">
+        <label>Author: {{ author?.Username }}</label>
+      </div>
+      <div class="notice-info__time">
+        <label>Created at: {{note?.CreatedAt | date}}</label>
+      </div>
+
+    </div>
+    <form class="notice-form" [formGroup]="form">
+      <textarea class="notice-form__textarea" formControlName="definition"></textarea>
     </form>
-    
-    <div class="modal-actions" (click)="submitForm()">
-      <button>Save</button>
+
+    <div class="notice-options">
+      <div class="notice-options__color">
+        <div class="dropdown">
+          <div class="dropdown-select" (click)="toggleDropdown($event)">
+            <span class="color-circle" [ngStyle]="{'background-color': backgroundColor }"></span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu" *ngIf="isOpen">
+            <div class="dropdown-item" *ngFor="let color of colors" (click)="selectColor(color)">
+              <div class="dropdown-item__wrapper">
+                <span class="color-circle" [style.background]="color.value"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice-actions">
+      <button autofocus="false" *ngIf="!disabledActions" (click)="submitForm()">Save</button>
+      <button autofocus="false" *ngIf="disabledActions" (click)="showActions()">Edit</button>
+      <button autofocus="false" (click)="closeModal()">Close</button>
     </div>
   </div>
 </div>

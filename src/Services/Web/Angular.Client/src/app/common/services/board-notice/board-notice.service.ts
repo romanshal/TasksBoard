@@ -26,13 +26,20 @@ export class BoardNoticeService {
         map((response: any) => {
           const paginatedList = new PaginatedList<BoardNoticeModel>();
           if (response.result?.items) {
-            paginatedList.Items = response.result.items.map((item: { authorId: string; boardId: string; boardName: string; definition: string; noticeStatusName: string; }) => new BoardNoticeModel(
-              item.authorId,
-              item.boardId,
-              item.boardName,
-              item.definition,
-              item.noticeStatusName
-            ));
+            paginatedList.Items = response.result.items.map((item: any) => {
+              let note = new BoardNoticeModel();
+              note.Id = item.id;
+              note.AuthorId = item.authorId;
+              note.BoardId = item.boardId;
+              note.BoardName = item.boardName;
+              note.Definition = item.definition;
+              note.NoticeStatusName = item.noticeStatusName;
+              note.BackgroundColor = item.backgroundColor;
+              note.Rotation = item.rotation;
+              note.CreatedAt = item.createdAt;
+
+              return note;
+            });
           }
 
           paginatedList.TotalCount = response.result.totalCount;
@@ -48,5 +55,10 @@ export class BoardNoticeService {
   createBoardNotice(boardId: any, notice: FormGroup) {
     const url = '/api/managenotices/board/' + boardId;
     return this.http.post<ResultResponse<string>>(this.BASE_URL + url, notice);
+  }
+
+  updateBoardNotice(boardId: any, notice: FormGroup) {
+    const url = '/api/managenotices/board/' + boardId;
+    return this.http.put<ResultResponse<string>>(this.BASE_URL + url, notice);
   }
 }

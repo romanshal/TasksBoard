@@ -10,6 +10,7 @@
             <div class="note-wrapper" *ngFor="let note of notesForView; let i = index"
                 [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }" (click)="openModal(note)">
                 <img class="note-pin" src="pin.png">
+
                 <div class="note-pin-shadow"></div>
                 <div class="note" [ngStyle]="{'background-color': note.BackgroundColor }">
                     <p>
@@ -35,7 +36,7 @@
                 </ng-template>
             </ng-container>
 
-            <button class="nav-button next" [class.disabled]="pageIndex === totalPages" (click)="nextPage()">
+            <button class="nav-button next" [class.disabled]="pageIndex === totalPages || totalPages === 0" (click)="nextPage()">
                 Next<i class="fa-solid fa-chevron-right"></i>
             </button>
         </div>

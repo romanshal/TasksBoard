@@ -32,7 +32,9 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId,
                 AuthorId = request.AuthorId,
                 Definition = request.Definition,
-                NoticeStatusId = request.NoticeStatusId
+                NoticeStatusId = request.NoticeStatusId,
+                BackgroundColor = request.BackgroundColor,
+                Rotation = request.Rotation
             };
 
             var result = await _mediator.Send(command);
@@ -65,7 +67,9 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId,
                 NoticeId = request.NoticeId,
                 Definition = request.Definition,
-                NoticeStatusId = request.NoticeStatusId
+                NoticeStatusId = request.NoticeStatusId,
+                BackgroundColor = request.BackgroundColor,
+                Rotation = request.Rotation
             };
 
             var result = await _mediator.Send(command);
