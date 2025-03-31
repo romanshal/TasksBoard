@@ -1,20 +1,25 @@
 ﻿using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
-namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice
+namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus
 {
-    public class UpdateBoardNoticeCommandHandler(
+    public class UpdateBoardNoticeStatusCommandHandler(
         ILogger<GetBoardByIdQueryHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardNoticeCommand, Guid>
+        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardNoticeStatusCommand, Guid>
     {
         private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Guid> Handle(UpdateBoardNoticeCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(UpdateBoardNoticeStatusCommand request, CancellationToken cancellationToken)
         {
             var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId, cancellationToken);
             if (!boardExist)
@@ -30,8 +35,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
                 throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
             }
 
-            boardNotice.Definition = request.Definition;
-            boardNotice.BackgroundColor = request.BackgroundColor;
+            boardNotice.Completed = request.Complete;
 
             await _unitOfWork.GetRepository<BoardNotice>().Update(boardNotice, true, cancellationToken);
 

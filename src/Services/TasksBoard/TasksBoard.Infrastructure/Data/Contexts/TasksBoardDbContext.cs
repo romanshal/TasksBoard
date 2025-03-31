@@ -12,7 +12,6 @@ namespace TasksBoard.Infrastructure.Data.Contexts
         public DbSet<BoardMember> BoardMembers { get; set; }
         public DbSet<BoardPermission> BoardPermissions { get; set; }
         public DbSet<BoardMemberPermission> BoardMemberPermissions { get; set; }
-        public DbSet<BoardNoticeStatus> BoardNoticeStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

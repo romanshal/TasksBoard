@@ -1,6 +1,11 @@
 <div class="modal-container" (click)="onContainerClick($event)">
   <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()"
-    [ngStyle]="{'background-color': backgroundColor }">
+    [ngStyle]="{'background-color': backgroundColor.value }">
+
+    <div class="note-status" *ngIf="note !== undefined && disabledActions">
+      <i *ngIf="note.Completed" class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
+    </div>
+
     <div *ngIf="note !== undefined" class="notice-info">
       <div class="notice-info__author">
         <label>Author: {{ author?.Username }}</label>
@@ -14,17 +19,20 @@
       <textarea class="notice-form__textarea" formControlName="definition"></textarea>
     </form>
 
-    <div class="notice-options">
-      <div class="notice-options__color">
+    <div class="notice-options" *ngIf="!disabledActions">
+      <div class="notice-options__block">
         <div class="dropdown">
-          <div class="dropdown-select" (click)="toggleDropdown($event)">
-            <span class="color-circle" [ngStyle]="{'background-color': backgroundColor }"></span>
-            <i class="fas fa-chevron-down"></i>
+          <div class="dropdown-select" (click)="toggleDropdownColors($event)">
+            <span class="color-circle" [ngStyle]="{'background-color': backgroundColor.value }"></span>
+            <span>{{ backgroundColor.name }}</span>
+            <i *ngIf="!isOpenColors" class="fas fa-chevron-down"></i>
+            <i *ngIf="isOpenColors" class="fas fa-chevron-up"></i>
           </div>
-          <div class="dropdown-menu" *ngIf="isOpen">
+          <div class="dropdown-menu" *ngIf="isOpenColors">
             <div class="dropdown-item" *ngFor="let color of colors" (click)="selectColor(color)">
               <div class="dropdown-item__wrapper">
                 <span class="color-circle" [style.background]="color.value"></span>
+                <span>{{ color.name }}</span>
               </div>
             </div>
           </div>
@@ -33,9 +41,22 @@
     </div>
 
     <div class="notice-actions">
-      <button autofocus="false" *ngIf="!disabledActions" (click)="submitForm()">Save</button>
-      <button autofocus="false" *ngIf="disabledActions" (click)="showActions()">Edit</button>
-      <button autofocus="false" (click)="closeModal()">Close</button>
+      <div class="notice-actions__left">
+        <button autofocus="false" *ngIf="!disabledActions " (click)="submitForm()">Save</button>
+        <button autofocus="false" *ngIf="disabledActions && !note?.Completed" (click)="showActions()">Edit</button>
+
+        <button *ngIf="note && !note?.Completed" class="complete" (click)="updateStatus(true)" autofocus="false">
+          <i class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
+        </button>
+
+        <button *ngIf="note && note?.Completed" class="complete" (click)="updateStatus(false)" autofocus="false">
+          <i class="fa-solid fa-ban fa-flip-both fa-2xl" style="color: #ff0000;"></i>
+        </button>
+      </div>
+
+      <div class="notice-actions__right">
+        <button autofocus="false" (click)="closeModal()">Close</button>
+      </div>
     </div>
   </div>
 </div>

@@ -12,10 +12,6 @@ namespace TasksBoard.Infrastructure.Data.Configurations
                 .HasKey(k => k.Id);
 
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
-
-            builder.HasOne(o => o.BoardNoticeStatus)
-                .WithMany(m => m.BoardNotices)
-                .HasForeignKey(k => k.NoticeStatusId);
         }
     }
 }

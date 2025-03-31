@@ -30,7 +30,7 @@ export class BoardComponent implements OnInit {
     private boardNoticeService: BoardNoticeService,
     private sessionStorageService: SessionStorageService,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
     this.boardId = this.route.snapshot.paramMap.get('boardid')!;
@@ -60,7 +60,7 @@ export class BoardComponent implements OnInit {
 
   get pagesToDisplay(): (number | string)[] {
     if (this.totalPages === 0) {
-      return Array.from( {length: 1}, (_, i) => 1);
+      return Array.from({ length: 1 }, (_, i) => 1);
     }
     if (this.totalPages <= 10) {
       return Array.from({ length: this.totalPages }, (_, i) => i + 1);

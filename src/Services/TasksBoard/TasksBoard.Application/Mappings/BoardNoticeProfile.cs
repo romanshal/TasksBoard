@@ -12,8 +12,7 @@ namespace TasksBoard.Application.Mappings
             CreateMap<CreateBoardNoticeCommand, BoardNotice>();
 
             CreateMap<BoardNotice, BoardNoticeDto>()
-                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name))
-                .ForMember(dest => dest.NoticeStatusName, opt => opt.MapFrom(src => src.BoardNoticeStatus.Name));
+                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name));
         }
     }
 }

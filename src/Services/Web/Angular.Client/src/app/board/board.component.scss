@@ -136,6 +136,18 @@ button {
           transition: transform 0.2s;
           clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px);
 
+          .note-status {
+            position: absolute;
+            z-index: 100000;
+            bottom: 30px;
+            right: 10px;
+            opacity: 0.5;
+
+            i {
+              font-size: 60px;
+            }
+          }
+
           p {
             font-family: 'Great Vibes', cursive;
             font-weight: 400;

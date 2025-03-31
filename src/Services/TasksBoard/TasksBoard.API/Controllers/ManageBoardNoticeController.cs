@@ -5,6 +5,7 @@ using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus;
 using TasksBoard.Application.Models.Requests.ManageBoardNotices;
 
 namespace TasksBoard.API.Controllers
@@ -59,6 +60,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request)
         {
@@ -67,9 +69,34 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId,
                 NoticeId = request.NoticeId,
                 Definition = request.Definition,
-                NoticeStatusId = request.NoticeStatusId,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
+            };
+
+            var result = await _mediator.Send(command);
+            if (result == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var response = new ResultResponse<Guid>(result);
+
+            return Ok(response);
+        }
+
+        [HttpPut("status/board/{boardId:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateBoardNoticeStatusAsync([FromRoute] Guid boardId, UpdateBoardNoticeStatusRequest request)
+        {
+            var command = new UpdateBoardNoticeStatusCommand
+            {
+                BoardId = boardId,
+                NoticeId = request.NoticeId,
+                Complete = request.Complete
             };
 
             var result = await _mediator.Send(command);

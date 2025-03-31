@@ -12,7 +12,12 @@
                 <img class="note-pin" src="pin.png">
 
                 <div class="note-pin-shadow"></div>
+
                 <div class="note" [ngStyle]="{'background-color': note.BackgroundColor }">
+                    <div *ngIf="note.Completed" class="note-status">
+                        <i class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
+                    </div>
+
                     <p>
                         {{ note.Definition }}
                     </p>
@@ -36,7 +41,8 @@
                 </ng-template>
             </ng-container>
 
-            <button class="nav-button next" [class.disabled]="pageIndex === totalPages || totalPages === 0" (click)="nextPage()">
+            <button class="nav-button next" [class.disabled]="pageIndex === totalPages || totalPages === 0"
+                (click)="nextPage()">
                 Next<i class="fa-solid fa-chevron-right"></i>
             </button>
         </div>

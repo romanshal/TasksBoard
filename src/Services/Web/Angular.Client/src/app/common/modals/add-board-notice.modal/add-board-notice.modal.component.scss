@@ -28,6 +28,17 @@ $btn-hover: darken($btn-background, 10%);
     flex-direction: column;
     position: relative;
 
+    .note-status {
+        position: absolute;
+        top: 370px;
+        right: 60px;
+        opacity: 0.3;
+
+        i {
+            font-size: 240px;
+        }
+    }
+
     .notice-info {
         margin-bottom: 10px;
         display: flex;
@@ -60,6 +71,7 @@ $btn-hover: darken($btn-background, 10%);
             background-size: 100% 45px;
             background-repeat: repeat-y;
             resize: none;
+            max-height: 400px;
 
             &::-webkit-scrollbar {
                 width: 8px;
@@ -83,9 +95,13 @@ $btn-hover: darken($btn-background, 10%);
     }
 
     .notice-options {
-        margin: 10px 0px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin: 9px 0px;
 
-        .notice-options__color {
+        .notice-options__block {
             display: flex;
             align-items: center;
 
@@ -100,6 +116,7 @@ $btn-hover: darken($btn-background, 10%);
                     border: 1px solid #ccc;
                     border-radius: 10px;
                     background-color: white;
+                    min-width: 100px;
                     cursor: pointer;
 
                     .color-circle {
@@ -186,6 +203,18 @@ $btn-hover: darken($btn-background, 10%);
         button:hover {
             box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
             transform: scale(1.2);
+        }
+
+        .notice-actions__left{
+            display: flex;
+
+            button {
+                margin-right: 10px;
+            }
+
+            // .complete {
+            //     background-color: #47f644;
+            // }
         }
     }
 }

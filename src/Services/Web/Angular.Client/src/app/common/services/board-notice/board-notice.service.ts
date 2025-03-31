@@ -33,9 +33,9 @@ export class BoardNoticeService {
               note.BoardId = item.boardId;
               note.BoardName = item.boardName;
               note.Definition = item.definition;
-              note.NoticeStatusName = item.noticeStatusName;
               note.BackgroundColor = item.backgroundColor;
               note.Rotation = item.rotation;
+              note.Completed = item.completed;
               note.CreatedAt = item.createdAt;
 
               return note;
@@ -60,5 +60,11 @@ export class BoardNoticeService {
   updateBoardNotice(boardId: any, notice: FormGroup) {
     const url = '/api/managenotices/board/' + boardId;
     return this.http.put<ResultResponse<string>>(this.BASE_URL + url, notice);
+  }
+
+  updateBoardNoticeStatus(boardId: any, noticeId: string, complete: boolean) {
+    const url = '/api/managenotices/status/board/' + boardId;
+    let body = { noticeId, complete };
+    return this.http.put<ResultResponse<string>>(this.BASE_URL + url, body);
   }
 }

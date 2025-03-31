@@ -16,9 +16,9 @@ namespace TasksBoard.Infrastructure.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Where(notice => notice.BoardId == boardId)
+                .OrderBy(e => e.CreatedAt)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .OrderBy(e => e.Id)
                 .ToListAsync(cancellationToken);
         }
 
@@ -27,9 +27,9 @@ namespace TasksBoard.Infrastructure.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Where(notice => notice.AuthorId == userId)
+                .OrderBy(e => e.CreatedAt)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .OrderBy(e => e.Id)
                 .ToListAsync(cancellationToken);
         }
 
@@ -38,9 +38,9 @@ namespace TasksBoard.Infrastructure.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Where(notice => notice.AuthorId == userId && notice.BoardId == boardId)
+                .OrderBy(e => e.CreatedAt)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .OrderBy(e => e.Id)
                 .ToListAsync(cancellationToken);
         }
 

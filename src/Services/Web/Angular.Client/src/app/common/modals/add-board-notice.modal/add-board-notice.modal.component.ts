@@ -48,7 +48,7 @@ export class AddBoardNoticeModalComponent implements OnInit {
 
   note?: BoardNoticeModel;
   public disabledActions = false;
-  public backgroundColor?: string;
+  public backgroundColor!: NoteStyle;
   private rotation?: string;
 
   constructor(
@@ -62,9 +62,8 @@ export class AddBoardNoticeModalComponent implements OnInit {
     this.note = data.note;
 
     if (data.note !== undefined) {
-      console.log(data.note);
       this.disabledActions = true;
-      this.backgroundColor = this.note?.BackgroundColor;
+      this.backgroundColor = this.colors.find(color => color.value === this.note?.BackgroundColor)!;
       this.rotation = this.data.note?.Rotation;
       this.authorId = this.data.note?.AuthorId!;
 
@@ -87,8 +86,7 @@ export class AddBoardNoticeModalComponent implements OnInit {
       authorId: [this.authorId, [Validators.required]],
       noticeId: [this.note?.Id],
       definition: [{ value: this.note?.Definition, disabled: this.disabledActions }, Validators.required],
-      noticeStatusId: ['a3372135-ea3d-4eb9-8209-5a36634b2bba', Validators.required],
-      backgroundColor: [this.backgroundColor, Validators.required],
+      backgroundColor: [this.backgroundColor.value, Validators.required],
       rotation: [this.rotation, Validators.required]
     });
   }
@@ -105,6 +103,20 @@ export class AddBoardNoticeModalComponent implements OnInit {
     }
   }
 
+  updateStatus(comlete: boolean){
+    if(!this.note){
+      return;
+    }
+
+    this.noticeService.updateBoardNoticeStatus(this.data.boardId, this.note.Id, comlete).subscribe(result => {
+      if (result.IsError || result.Description !== undefined) {
+        return;
+      }
+
+      this.closeModal(this.successStatus);
+    });
+  }
+
   private createNotice() {
     this.noticeService.createBoardNotice(this.data.boardId, this.form.value).subscribe((result) => {
       console.log(result);
@@ -112,7 +124,7 @@ export class AddBoardNoticeModalComponent implements OnInit {
         return;
       }
 
-      this.closeModal(this.successStatus);
+
     });
   }
 
@@ -150,9 +162,9 @@ export class AddBoardNoticeModalComponent implements OnInit {
     this.closeModal(this.closeStatus);
   }
 
-  private getRandomColor() {
+  private getRandomColor(): NoteStyle {
     const randomIndex = Math.floor(Math.random() * this.colors.length);
-    return this.colors[randomIndex].value;
+    return this.colors[randomIndex];
   }
 
   private getRandomRotation() {
@@ -171,16 +183,17 @@ export class AddBoardNoticeModalComponent implements OnInit {
     { value: '#c8eeff', name: 'Blue' }, // Голубой
     { value: '#e4fcc7', name: 'Green' }  // Светло-зеленый
   ];
-  
-  isOpen = false;
-  toggleDropdown(event: Event) {
+
+  isOpenColors = false;
+  toggleDropdownColors(event: Event) {
     event.stopPropagation();
-    this.isOpen = !this.isOpen;
+    this.isOpenColors = !this.isOpenColors;
   }
 
   selectColor(color: NoteStyle) {
-    this.backgroundColor = color.value;
-    this.isOpen = false;
+    this.backgroundColor = color;
+    this.form.controls['backgroundColor'].setValue(this.backgroundColor.value);
+    this.isOpenColors = false;
   }
 
   rotations: NoteStyle[] = [

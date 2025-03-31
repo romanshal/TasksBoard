@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
@@ -18,6 +19,13 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
 
         public async Task<Guid> Handle(CreateBoardNoticeCommand request, CancellationToken cancellationToken)
         {
+            var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId, cancellationToken);
+            if (!boardExist)
+            {
+                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+            }
+
             var notice = _mapper.Map<BoardNotice>(request);
 
             await _unitOfWork.GetRepository<BoardNotice>().Add(notice, true, cancellationToken);
