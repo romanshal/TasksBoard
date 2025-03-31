@@ -4,7 +4,7 @@ import { environment } from '../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { BoardNoticeModel } from '../../models/board-notice/board-notice.model';
 import { HttpOptionService } from '../http-option/http-options.service';
-import { ResultResponse } from '../../models/response/response.model';
+import { ResultResponse, Response } from '../../models/response/response.model';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
 import { FormGroup } from '@angular/forms';
 
@@ -66,5 +66,10 @@ export class BoardNoticeService {
     const url = '/api/managenotices/status/board/' + boardId;
     let body = { noticeId, complete };
     return this.http.put<ResultResponse<string>>(this.BASE_URL + url, body);
+  }
+
+  deleteBoardNotice(boardId: any, noticeId: string) {
+    const url = '/api/managenotices/board/' + boardId + '/notice/' + noticeId;
+    return this.http.delete<Response>(this.BASE_URL + url);
   }
 }

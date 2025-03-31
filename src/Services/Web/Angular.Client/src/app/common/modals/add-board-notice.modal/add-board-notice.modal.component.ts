@@ -103,8 +103,8 @@ export class AddBoardNoticeModalComponent implements OnInit {
     }
   }
 
-  updateStatus(comlete: boolean){
-    if(!this.note){
+  updateStatus(comlete: boolean) {
+    if (!this.note) {
       return;
     }
 
@@ -117,6 +117,20 @@ export class AddBoardNoticeModalComponent implements OnInit {
     });
   }
 
+  delete() {
+    if (!this.note) {
+      return;
+    }
+
+    this.noticeService.deleteBoardNotice(this.data.boardId, this.note.Id).subscribe(result => {
+      if (result.IsError || result.Description !== undefined) {
+        return;
+      }
+
+      this.closeModal(this.successStatus);
+    })
+  }
+
   private createNotice() {
     this.noticeService.createBoardNotice(this.data.boardId, this.form.value).subscribe((result) => {
       console.log(result);
@@ -124,7 +138,7 @@ export class AddBoardNoticeModalComponent implements OnInit {
         return;
       }
 
-
+      this.closeModal(this.successStatus);
     });
   }
 

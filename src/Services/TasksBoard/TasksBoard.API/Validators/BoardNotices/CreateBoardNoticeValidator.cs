@@ -11,9 +11,6 @@ namespace TasksBoard.API.Validators.BoardNotices
             RuleFor(x => x.AuthorId)
                 .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardNoticeMessages.AuthorIdRequired);
 
-            RuleFor(x => x.NoticeStatusId)
-                .NotNull().NotEmpty().NotEqual(Guid.Empty).WithMessage(BoardNoticeMessages.StatusIdRequired);
-
             RuleFor(x => x.Definition)
                 .NotNull().NotEmpty().WithMessage(BoardNoticeMessages.DefinitionRequired);
         }

@@ -33,7 +33,6 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId,
                 AuthorId = request.AuthorId,
                 Definition = request.Definition,
-                NoticeStatusId = request.NoticeStatusId,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
             };

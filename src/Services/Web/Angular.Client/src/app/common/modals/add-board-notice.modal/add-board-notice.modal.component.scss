@@ -192,17 +192,48 @@ $btn-hover: darken($btn-background, 10%);
             color: #3a7e93;
             padding: 10px 20px;
             border-radius: 15px;
-            /* Максимально округлённые края */
             font-family: 'Helvetica', sans-serif;
             font-size: 14px;
             transition: all 0.3s ease;
             cursor: pointer;
             min-width: 80px;
+
+            .tooltip {
+                position: absolute;
+                bottom: -40px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #3a7e93;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 5px;
+                white-space: nowrap;
+                font-size: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border-width: 8px;
+                    border-style: solid;
+                    border-color: transparent transparent #3a7e93 transparent; 
+                  }
+            }
         }
 
         button:hover {
             box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
             transform: scale(1.2);
+
+            .tooltip {
+                opacity: 1;
+            }
         }
 
         .notice-actions__left{
