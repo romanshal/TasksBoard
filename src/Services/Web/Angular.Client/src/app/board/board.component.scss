@@ -1,3 +1,6 @@
+$btn-background: #f48024;
+$btn-background-hover: lighten($btn-background, 10%);
+
 button {
   display: flex;
   flex-direction: row;
@@ -7,16 +10,18 @@ button {
   font-size: 1rem;
   font-weight: bold;
   height: 40px;
-  background-color: #FFEB3B;
-  color: #000;
+  background-color: $btn-background;
+  color: #FFFBF7;
   border: none;
   cursor: pointer;
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s;
 
-  &:not(.disabled):hover {
-    border: 1px solid #FF9800;
+  &:not(.disabled, .active):hover {
     transform: scale(1.1);
     cursor: pointer;
-    background: lighten(#FFEB3B, 10%);
+    background: $btn-background-hover;
+    box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
   }
 
   i {
@@ -214,8 +219,6 @@ button {
       button.page-button {
         width: 40px;
         height: 40px;
-        background-color: #FFEB3B;
-        color: #000;
         border: none;
         border-radius: 50%;
         cursor: pointer;
@@ -224,16 +227,12 @@ button {
         justify-content: center;
 
         &.active {
-          background-color: #FF9800;
-          color: #fff;
+          background-color: #AE4D00;
           cursor: default;
         }
 
         &:not(.active):hover {
-          border: 1px solid #FF9800;
-          transform: scale(1.1);
-          cursor: pointer;
-          background: lighten(#FFEB3B, 10%);
+          background: lighten(#f48024, 10%);
         }
       }
 

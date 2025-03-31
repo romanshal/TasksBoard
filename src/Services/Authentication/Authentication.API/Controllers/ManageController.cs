@@ -1,4 +1,5 @@
-﻿using Authentication.Application.Features.Manage.Queries.GetUserInfo;
+﻿using Authentication.API.Attributes;
+using Authentication.Application.Features.Manage.Queries.GetUserInfo;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
