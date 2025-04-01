@@ -1,5 +1,6 @@
 ﻿using Common.Blocks.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard;
@@ -9,6 +10,7 @@ using TasksBoard.Application.Models.Requests.ManageBoards;
 namespace TasksBoard.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/manageboards")]
     [HasBoardAccess]
     [HasBoardPermission("manage_board")]

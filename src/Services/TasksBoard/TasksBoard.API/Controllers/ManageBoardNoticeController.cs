@@ -1,5 +1,6 @@
 ﻿using Common.Blocks.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
@@ -10,6 +11,7 @@ using TasksBoard.Application.Models.Requests.ManageBoardNotices;
 
 namespace TasksBoard.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [HasBoardAccess]
     [HasBoardPermission("manage_notice")]

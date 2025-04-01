@@ -5,7 +5,7 @@ import { BoardNoticeService } from '../common/services/board-notice/board-notice
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { AddBoardNoticeModalComponent } from '../common/modals/add-board-notice/add-board-notice.modal.component';
+import { BoardNoticeModal } from '../common/modals/board-notice/board-notice.modal';
 import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
 
 @Component({
@@ -58,8 +58,6 @@ export class BoardComponent implements OnInit {
     });
   }
 
-
-
   goToPage(page: number | string): void {
     if (typeof page === 'number') {
       if (page === this.pageIndex) {
@@ -73,7 +71,7 @@ export class BoardComponent implements OnInit {
   }
 
   openModal(note?: BoardNoticeModel): void {
-    this.dialog.open(AddBoardNoticeModalComponent, {
+    this.dialog.open(BoardNoticeModal, {
       data: {
         boardId: this.boardId,
         note: note

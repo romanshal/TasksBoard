@@ -29,7 +29,7 @@ $btn-color: #3a7e93;
         position: absolute;
         top: 15px;
         right: 15px;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         cursor: pointer;
         color: $btn-color;
 
@@ -69,6 +69,7 @@ $btn-color: #3a7e93;
         .notice-form__textarea {
             flex-grow: 1;
             overflow-y: auto;
+            z-index: 100000;
             padding: 5px;
             font-family: 'Great Vibes', cursive;
             font-weight: 400;

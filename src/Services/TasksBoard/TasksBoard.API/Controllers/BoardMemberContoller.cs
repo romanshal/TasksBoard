@@ -1,5 +1,6 @@
 ﻿using Common.Blocks.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
@@ -8,6 +9,7 @@ using TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoardMemb
 namespace TasksBoard.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [HasBoardAccess]
     [Route("api/boardmembers")]
     public class BoardMemberContoller(

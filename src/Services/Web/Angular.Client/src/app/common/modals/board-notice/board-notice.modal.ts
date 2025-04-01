@@ -14,10 +14,10 @@ interface NoteStyle {
 }
 
 @Component({
-  selector: 'app-add-board-notice.modal',
+  selector: 'app-board-notice.modal',
   standalone: false,
-  templateUrl: './add-board-notice.modal.component.html',
-  styleUrl: './add-board-notice.modal.component.scss',
+  templateUrl: './board-notice.modal.html',
+  styleUrl: './board-notice.modal.scss',
   animations: [
     trigger('modalContainerAnimation', [
       transition(':enter', [
@@ -39,7 +39,7 @@ interface NoteStyle {
     ])
   ]
 })
-export class AddBoardNoticeModalComponent implements OnInit {
+export class BoardNoticeModal implements OnInit {
   form!: FormGroup;
   authorId: string;
   author?: UserInfoModel;
@@ -53,7 +53,7 @@ export class AddBoardNoticeModalComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<AddBoardNoticeModalComponent>,
+    private dialogRef: MatDialogRef<BoardNoticeModal>,
     private noticeService: BoardNoticeService,
     private sessionService: SessionStorageService,
     private userService: UserService,

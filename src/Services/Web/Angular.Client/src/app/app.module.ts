@@ -20,9 +20,10 @@ import { BoardComponent } from './board/board.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AddBoardNoticeModalComponent } from './common/modals/add-board-notice/add-board-notice.modal.component';
-import { ProfileMenuModalComponent } from './common/modals/profile-menu/profile-menu.modal.component';
+import { BoardNoticeModal } from './common/modals/board-notice/board-notice.modal';
+import { ProfileMenuModal } from './common/modals/profile-menu/profile-menu.modal';
 import { PaginatorComponent } from './common/paginator/paginator.component';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
@@ -37,9 +38,10 @@ import { PaginatorComponent } from './common/paginator/paginator.component';
     ForbiddenComponent,
     BadRequestComponent,
     BoardComponent,
-    AddBoardNoticeModalComponent,
-    ProfileMenuModalComponent,
-    PaginatorComponent
+    BoardNoticeModal,
+    ProfileMenuModal,
+    PaginatorComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule,

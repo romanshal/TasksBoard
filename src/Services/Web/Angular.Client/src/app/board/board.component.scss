@@ -81,7 +81,7 @@ button {
           transform: scale(1.2);
 
           .note-pin {
-            transform: translateY(-50px) scale(1.2);
+            transform: translateY(-40px) scale(1.2);
             cursor: pointer;
             clip-path: inset(0 0 0px 0);
           }
@@ -100,19 +100,19 @@ button {
 
         .note-pin {
           position: absolute;
-          width: 80px;
+          width: 60px;
           z-index: 10000;
-          top: -58px;
-          right: 23px;
+          top: -41px;
+          right: 33px;
           transition: all 0.2s;
-          clip-path: inset(0 0 10px 0);
+          clip-path: inset(0 0 7px 0);
         }
 
         .note-pin-shadow {
           position: absolute;
           top: 6px;
-          right: 38px;
-          width: 43px;
+          right: 45px;
+          width: 30px;
           height: 10px;
           -webkit-backdrop-filter: blur(1px);
           backdrop-filter: blur(1px);

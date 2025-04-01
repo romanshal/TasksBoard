@@ -5,15 +5,15 @@ import { SessionStorageService } from '../../services/session-storage/session-st
 @Component({
   selector: 'app-profile-menu',
   standalone: false,
-  templateUrl: './profile-menu.modal.component.html',
-  styleUrl: './profile-menu.modal.component.scss'
+  templateUrl: './profile-menu.modal.html',
+  styleUrl: './profile-menu.modal.scss'
 })
-export class ProfileMenuModalComponent {
+export class ProfileMenuModal {
   username!: string;
 
   constructor(
     private sessionService: SessionStorageService,
-    private dialogRef: MatDialogRef<ProfileMenuModalComponent>,
+    private dialogRef: MatDialogRef<ProfileMenuModal>,
     @Inject(MAT_DIALOG_DATA) private data: { username: string }
   ) {
     this.username = this.data.username;

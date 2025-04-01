@@ -1,5 +1,6 @@
 ﻿using Common.Blocks.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
@@ -12,6 +13,7 @@ using TasksBoard.Application.Models;
 
 namespace TasksBoard.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/boardnotices")]
     public class BoardNoticeController(
@@ -48,6 +50,8 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
+            var time = DateTime.Now;
+            var timeUtc = DateTime.UtcNow;
             var result = await _mediator.Send(new GetPaginatedBoardNoticesByBoardIdQuery
             {
                 BoardId = boardId,

@@ -77,10 +77,10 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigin");
 
-app.UseExeptionWrappingMiddleware();
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseExeptionWrappingMiddleware();
 
 app.MapControllers()
     .RequireAuthorization();

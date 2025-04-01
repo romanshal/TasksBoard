@@ -4,7 +4,7 @@ import { SessionStorageService } from '../common/services/session-storage/sessio
 import { Router } from '@angular/router';
 import { UserService } from '../common/services/user/user.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ProfileMenuModalComponent } from '../common/modals/profile-menu/profile-menu.modal.component';
+import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.modal';
 
 @Component({
   selector: 'app-header',
@@ -46,7 +46,7 @@ export class HeaderComponent implements OnInit {
   }
 
   openProfile() {
-    this.dialog.open(ProfileMenuModalComponent, {
+    this.dialog.open(ProfileMenuModal, {
       data: {
         username: this.username
       }

@@ -8,15 +8,16 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AuthGuard } from './auth/guard/auth.guard';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { BoardComponent } from './board/board.component';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'board/:boardid', component: BoardComponent, canActivate: [AuthGuard] },
+  { path: 'board/:boardid', component: BoardComponent },
 
   { path: 'bad-request', component: BadRequestComponent },
   { path: 'forbidden', component: ForbiddenComponent },
-  { path: 'unauthorized', component: BadRequestComponent },
+  { path: 'unauthorized', component: UnauthorizedComponent },
 
   { path: '**', component: NotFoundComponent }
 ];

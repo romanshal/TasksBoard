@@ -19,11 +19,11 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
 
         public async Task<AuthenticationDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByNameAsync(request.Username);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning($"User with name {request.Username} not found.");
-                throw new UnauthorizedException($"User with name {request.Username} not found.");
+                _logger.LogWarning($"User with name {request.UserId} not found.");
+                throw new UnauthorizedException($"User with name {request.UserId} not found.");
             }
 
             var token = await _tokenService.RefreshTokenAsync(user);

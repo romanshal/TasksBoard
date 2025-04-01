@@ -15,7 +15,7 @@
         <label>Author: {{ author?.Username }}</label>
       </div>
       <div class="notice-info__time">
-        <label>Created at: {{note!.CreatedAt | date}}</label>
+        <label>Created: {{note!.CreatedAt | date: "MMM dd, yyyy 'at' HH:mm" }}</label>
       </div>
 
     </div>

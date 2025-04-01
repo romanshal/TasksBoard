@@ -1,5 +1,6 @@
 ﻿using Common.Blocks.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
@@ -12,6 +13,7 @@ using TasksBoard.Application.Models.Requests.ManageBoardMembers;
 namespace TasksBoard.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [HasBoardAccess]
     [HasBoardPermission("manage_member")]
     [Route("api/managemembers")]

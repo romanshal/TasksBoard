@@ -55,9 +55,7 @@ export class PaginatorComponent implements OnInit {
         return;
       }
 
-      this.pageIndex = page;
-
-      this.pageChanged.emit(this.pageIndex);
+      this.pageChanged.emit(page);
     }
   }
 }

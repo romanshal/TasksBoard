@@ -27,13 +27,14 @@ namespace Common.Blocks.Extensions
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ClockSkew = TimeSpan.Zero,
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = jwt.Issuer ?? throw new InvalidOperationException("Configuration setting 'Issuer' not found"),
                         ValidAudience = jwt.Audience ?? throw new InvalidOperationException("Configuration setting 'Audience' not found"),
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret ?? throw new InvalidOperationException("Configuration setting 'Secret' not found"))),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret ?? throw new InvalidOperationException("Configuration setting 'Secret' not found")))
                     };
                 });
 

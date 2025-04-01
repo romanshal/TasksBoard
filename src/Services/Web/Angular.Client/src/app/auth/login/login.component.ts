@@ -19,9 +19,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private sessionService: SessionStorageService,
     private oauthService: OAuthService,
-    private router: Router,
     private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
@@ -39,11 +37,6 @@ export class LoginComponent implements OnInit {
     const credentials = this.loginForm.value;
     this.authService.login(credentials).subscribe({
       next: (result) => {
-        console.log(result);
-        this.sessionService.setAccessToken(result.AccessToken);
-        this.sessionService.setRefreshToken(result.RefreshToken);
-        this.sessionService.setItem(this.sessionService.userIdKey, result.UserId);
-
         const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
 
         window.location.href = returnUrl;

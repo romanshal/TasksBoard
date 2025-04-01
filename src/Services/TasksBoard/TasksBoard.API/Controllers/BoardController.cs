@@ -12,6 +12,7 @@ using TasksBoard.Application.Models;
 namespace TasksBoard.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/boards")]
     public class BoardController(
         ILogger<BoardController> logger,
