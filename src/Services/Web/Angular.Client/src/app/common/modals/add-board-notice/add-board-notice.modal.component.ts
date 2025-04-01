@@ -195,7 +195,9 @@ export class AddBoardNoticeModalComponent implements OnInit {
     { value: '#fffcab', name: 'Yellow' }, // Желтый
     { value: '#ffd8d5', name: 'Pink' }, // Розово-красный
     { value: '#c8eeff', name: 'Blue' }, // Голубой
-    { value: '#e4fcc7', name: 'Green' }  // Светло-зеленый
+    { value: '#e4fcc7', name: 'Green' },  // Светло-зеленый
+    { value: '#e8dff7', name: 'Lavender'}, //  Лавандовый
+    { value: '#fff4d4', name: 'Cream'}, // Кремовый
   ];
 
   isOpenColors = false;
@@ -206,7 +208,6 @@ export class AddBoardNoticeModalComponent implements OnInit {
 
   selectColor(color: NoteStyle) {
     this.backgroundColor = color;
-    this.form.controls['backgroundColor'].setValue(this.backgroundColor.value);
     this.isOpenColors = false;
   }
 

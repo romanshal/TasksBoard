@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../common/services/auth/auth.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { Router } from '@angular/router';
+import { UserService } from '../common/services/user/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileMenuModalComponent } from '../common/modals/profile-menu/profile-menu.modal.component';
 
 @Component({
   selector: 'app-header',
@@ -11,17 +14,27 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   public isAuthenticated = false;
+  private userId?: string;
+  public username!: string;
 
   constructor(
     private authService: AuthService,
     private sessionService: SessionStorageService,
-    private router: Router
+    private router: Router,
+    private userService: UserService,
+    private dialog: MatDialog,
   ) {
-
+    this.isAuthenticated = this.authService.isAuthenticated();
+    if (this.isAuthenticated) {
+      this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+      this.userService.getUserInfo(this.userId).subscribe(result => {
+        this.username = result.Username;
+      });
+    }
   }
 
   ngOnInit() {
-    this.isAuthenticated = this.authService.isAuthenticated();
+
   }
 
   signin() {
@@ -32,9 +45,11 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
-  logout() {
-    this.sessionService.logout();
-
-    window.location.href = '/login';
+  openProfile() {
+    this.dialog.open(ProfileMenuModalComponent, {
+      data: {
+        username: this.username
+      }
+    })
   }
 }

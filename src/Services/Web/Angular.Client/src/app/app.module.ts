@@ -18,9 +18,11 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { BadRequestComponent } from './bad-request/bad-request.component';
 import { BoardComponent } from './board/board.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AddBoardNoticeModalComponent } from './common/modals/add-board-notice.modal/add-board-notice.modal.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { AddBoardNoticeModalComponent } from './common/modals/add-board-notice/add-board-notice.modal.component';
+import { ProfileMenuModalComponent } from './common/modals/profile-menu/profile-menu.modal.component';
+import { PaginatorComponent } from './common/paginator/paginator.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { MatInputModule } from '@angular/material/input';
     ForbiddenComponent,
     BadRequestComponent,
     BoardComponent,
-    AddBoardNoticeModalComponent
+    AddBoardNoticeModalComponent,
+    ProfileMenuModalComponent,
+    PaginatorComponent
   ],
   imports: [
     BrowserModule,

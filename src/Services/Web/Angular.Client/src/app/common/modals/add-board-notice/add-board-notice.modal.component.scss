@@ -1,7 +1,5 @@
-$modal-background: #fffcab; // светло-жёлтый фон, как "стикер"
-$modal-border: #ffeb3b;
-$btn-background: #ff6f61;
-$btn-hover: darken($btn-background, 10%);
+$modal-background: #fffcab;
+$btn-color: #3a7e93;
 
 .modal-container {
     position: fixed;
@@ -18,7 +16,6 @@ $btn-hover: darken($btn-background, 10%);
 
 .modal {
     background-color: $modal-background;
-    // border: 5px solid $modal-border;
     border-radius: 10px;
     width: 500px;
     height: 530px;
@@ -27,6 +24,19 @@ $btn-hover: darken($btn-background, 10%);
     display: flex;
     flex-direction: column;
     position: relative;
+
+    .note-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        color: $btn-color;
+
+        &:hover{
+            transform: scale(1.2);
+        }
+    }
 
     .note-status {
         position: absolute;
@@ -51,6 +61,8 @@ $btn-hover: darken($btn-background, 10%);
 
     form {
         display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
         height: 100%;
         margin: 10px 0px;
 
@@ -92,73 +104,82 @@ $btn-hover: darken($btn-background, 10%);
                 scrollbar-color: #888 transparent;
             }
         }
-    }
 
-    .notice-options {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        margin: 9px 0px;
-
-        .notice-options__block {
+        .notice-options {
             display: flex;
-            align-items: center;
+            flex-direction: row;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin: 9px 0px;
 
-            .dropdown {
-                position: relative;
+            .notice-options__block {
+                display: flex;
+                align-items: center;
 
-                .dropdown-select {
-                    display: flex;
-                    align-items: center;
-                    justify-content: start;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 10px;
-                    background-color: white;
-                    min-width: 100px;
-                    cursor: pointer;
+                .dropdown {
+                    position: relative;
 
-                    .color-circle {
-                        width: 16px;
-                        height: 16px;
-                        border-radius: 50%;
-                        margin-right: 10px;
-                    }
-
-                    i {
-                        margin-left: auto;
-                        font-size: 14px;
-                    }
-                }
-
-                .dropdown-menu {
-                    position: absolute;
-                    top: 100%;
-                    left: 0;
-                    width: 100%;
-                    border: 1px solid #ccc;
-                    background: #fff;
-                    border-radius: 10px;
-                    margin-top: 4px;
-                    z-index: 1000;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-                    .dropdown-item {
+                    .dropdown-select {
                         display: flex;
                         align-items: center;
-                        padding: 8px 10px;
+                        justify-content: start;
+                        padding: 10px;
+                        border: 1px solid #ccc;
                         border-radius: 10px;
+                        background-color: white;
+                        min-width: 110px;
                         cursor: pointer;
 
-                        &:hover {
-                            background: #f0f0f0;
+                        .color-circle {
+                            width: 16px;
+                            height: 16px;
+                            border-radius: 50%;
+                            margin-right: 10px;
                         }
 
-                        .dropdown-item__wrapper {
+                        i {
+                            margin-left: auto;
+                            font-size: 14px;
+                        }
+                    }
+
+                    .dropdown-menu {
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        width: 100%;
+                        max-height: 110px;
+                        overflow: auto;
+                        border: 1px solid #ccc;
+                        background: #fff;
+                        border-radius: 10px;
+                        margin-top: 3px;
+                        z-index: 1000;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+                        .dropdown-item {
                             display: flex;
-                            width: 100%;
+                            align-items: center;
+                            padding: 8px 10px;
                             border-radius: 10px;
+                            cursor: pointer;
+
+                            &:hover {
+                                background: #f0f0f0;
+                            }
+
+                            .dropdown-item__wrapper {
+                                display: flex;
+                                width: 100%;
+                                border-radius: 10px;
+
+                                .color-circle {
+                                    width: 16px;
+                                    height: 16px;
+                                    border-radius: 50%;
+                                    margin-right: 10px;
+                                }
+                            }
 
                             .color-circle {
                                 width: 16px;
@@ -168,11 +189,23 @@ $btn-hover: darken($btn-background, 10%);
                             }
                         }
 
-                        .color-circle {
-                            width: 16px;
-                            height: 16px;
-                            border-radius: 50%;
-                            margin-right: 10px;
+                        &::-webkit-scrollbar {
+                            width: 8px;
+                            background: transparent;
+                        }
+            
+                        &::-webkit-scrollbar-thumb {
+                            background: #888;
+                            border-radius: 4px;
+                        }
+            
+                        &::-webkit-scrollbar-thumb:hover {
+                            background: #555;
+                        }
+            
+                        & {
+                            scrollbar-width: thin;
+                            scrollbar-color: #888 transparent;
                         }
                     }
                 }
@@ -188,8 +221,8 @@ $btn-hover: darken($btn-background, 10%);
 
         button {
             background-color: transparent;
-            border: 2px solid #3a7e93;
-            color: #3a7e93;
+            border: 2px solid $btn-color;
+            color: $btn-color;
             padding: 10px 20px;
             border-radius: 15px;
             font-family: 'Helvetica', sans-serif;
@@ -203,7 +236,7 @@ $btn-hover: darken($btn-background, 10%);
                 bottom: -40px;
                 left: 50%;
                 transform: translateX(-50%);
-                background-color: #3a7e93;
+                background-color: $btn-color;
                 color: white;
                 padding: 8px 12px;
                 border-radius: 5px;
@@ -222,8 +255,8 @@ $btn-hover: darken($btn-background, 10%);
                     transform: translateX(-50%);
                     border-width: 8px;
                     border-style: solid;
-                    border-color: transparent transparent #3a7e93 transparent; 
-                  }
+                    border-color: transparent transparent $btn-color transparent;
+                }
             }
         }
 
@@ -236,7 +269,7 @@ $btn-hover: darken($btn-background, 10%);
             }
         }
 
-        .notice-actions__left{
+        .notice-actions__left {
             display: flex;
 
             button {

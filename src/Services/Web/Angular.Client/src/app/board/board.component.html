@@ -25,7 +25,15 @@
             </div>
         </div>
 
-        <div class="pagination">
+        <app-paginator 
+            [pageIndex]="pageIndex" 
+            [pageSize]="pageSize" 
+            [totalPages]="totalPages"
+            [totalCount]="totalCount"
+            (pageChanged)="goToPage($event)">
+        </app-paginator>
+
+        <!-- <div class="pagination">
             <button class="nav-button prev" [class.disabled]="pageIndex === 1" (click)="previousPage()">
                 <i class="fa-solid fa-chevron-left"></i>
                 Previous
@@ -45,6 +53,6 @@
                 (click)="nextPage()">
                 Next<i class="fa-solid fa-chevron-right"></i>
             </button>
-        </div>
+        </div> -->
     </div>
 </div>

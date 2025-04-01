@@ -28,7 +28,10 @@
     </div>
 
     <div class="header-item" *ngIf="isAuthenticated">
-      <button (click)="logout()">Logout</button>
+      <!-- <button (click)="logout()">Logout</button> -->
+       <div *ngIf="username" class="mini-avatar" (click)="openProfile()">
+        {{ username[0].toUpperCase()}}
+       </div>
     </div>
   </div>
 </header>

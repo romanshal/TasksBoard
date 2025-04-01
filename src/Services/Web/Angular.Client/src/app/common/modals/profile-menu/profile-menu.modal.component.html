@@ -1,0 +1,39 @@
+<div class="modal-container" id="modal" (click)="onContainerClick($event)">
+    <div class="modal-content">
+        <div class="profile-img"></div>
+
+        <div class="profile-avater">
+            <div class="profile-avatar__username">
+                {{username[0].toUpperCase()}}
+            </div>
+        </div>
+
+        <div class="profile-username">
+            <p>
+                {{username}}
+            </p>
+        </div>
+
+        <nav class="profile-options">
+            <hr class="first">
+
+            <div class="profile-options__item">
+                <span>Boards</span>
+                <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
+            </div>
+
+            <div class="profile-options__item">
+                <span>Profile</span>
+                <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
+            </div>
+
+            <hr class="second">
+
+            <div class="profile-options__item item-danger" (click)="signout()">
+                <span>
+                    Sign out
+                </span>
+            </div>
+        </nav>
+    </div>
+</div>

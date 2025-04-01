@@ -1,0 +1,20 @@
+<div class="pagination">
+    <button class="nav-button prev" [class.disabled]="pageIndex === 1" (click)="previousPage()">
+        <i class="fa-solid fa-chevron-left"></i>
+        Previous
+    </button>
+
+    <ng-container *ngFor="let page of pagesToDisplay">
+        <button class="page-button" [class.active]="page === pageIndex" (click)="goToPage(page)"
+            *ngIf="page !== '...'; else dotsTemplate">
+            {{ page }}
+        </button>
+        <ng-template #dotsTemplate>
+            <span class="dots">...</span>
+        </ng-template>
+    </ng-container>
+
+    <button class="nav-button next" [class.disabled]="pageIndex === totalPages || totalPages === 0" (click)="nextPage()">
+        Next<i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>

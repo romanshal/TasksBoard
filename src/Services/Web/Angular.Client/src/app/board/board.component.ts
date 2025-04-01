@@ -1,11 +1,11 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BoardService } from '../common/services/board/board.service';
 import { BoardModel } from '../common/models/board/board.model';
 import { BoardNoticeService } from '../common/services/board-notice/board-notice.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { AddBoardNoticeModalComponent } from '../common/modals/add-board-notice.modal/add-board-notice.modal.component';
+import { AddBoardNoticeModalComponent } from '../common/modals/add-board-notice/add-board-notice.modal.component';
 import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
 
 @Component({
@@ -58,24 +58,7 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  get pagesToDisplay(): (number | string)[] {
-    if (this.totalPages === 0) {
-      return Array.from({ length: 1 }, (_, i) => 1);
-    }
-    if (this.totalPages <= 10) {
-      return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    }
 
-    if (this.pageIndex <= 9) {
-      return [...Array.from({ length: 9 }, (_, i) => i + 1), '...', this.totalPages];
-    }
-
-    if (this.pageIndex > 9 && this.pageIndex < this.totalPages - 1) {
-      return [1, '...', this.pageIndex - 1, this.pageIndex, this.pageIndex + 1, '...', this.totalPages];
-    }
-
-    return [1, '...', ...Array.from({ length: 9 }, (_, i) => this.totalPages - 8 + i)];
-  }
 
   goToPage(page: number | string): void {
     if (typeof page === 'number') {
@@ -84,22 +67,6 @@ export class BoardComponent implements OnInit {
       }
 
       this.pageIndex = page;
-
-      this.getBoardNotices(this.pageIndex, this.pageSize);
-    }
-  }
-
-  previousPage(): void {
-    if (this.pageIndex > 1) {
-      this.pageIndex--;
-
-      this.getBoardNotices(this.pageIndex, this.pageSize);
-    }
-  }
-
-  nextPage(): void {
-    if (this.pageIndex < this.totalPages) {
-      this.pageIndex++;
 
       this.getBoardNotices(this.pageIndex, this.pageSize);
     }

@@ -2,6 +2,10 @@
   <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()"
     [ngStyle]="{'background-color': backgroundColor.value }">
 
+    <div class="note-close" (click)="closeModal()">
+      <i class="fa-solid fa-xmark fa-2xl"></i>
+    </div>
+
     <div class="note-status" *ngIf="note !== undefined && disabledActions">
       <i *ngIf="note.Completed" class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
     </div>
@@ -17,28 +21,29 @@
     </div>
     <form class="notice-form" [formGroup]="form">
       <textarea class="notice-form__textarea" formControlName="definition"></textarea>
-    </form>
 
-    <div class="notice-options" *ngIf="!disabledActions">
-      <div class="notice-options__block">
-        <div class="dropdown">
-          <div class="dropdown-select" (click)="toggleDropdownColors($event)">
-            <span class="color-circle" [ngStyle]="{'background-color': backgroundColor.value }"></span>
-            <span>{{ backgroundColor.name }}</span>
-            <i *ngIf="!isOpenColors" class="fas fa-chevron-down"></i>
-            <i *ngIf="isOpenColors" class="fas fa-chevron-up"></i>
-          </div>
-          <div class="dropdown-menu" *ngIf="isOpenColors">
-            <div class="dropdown-item" *ngFor="let color of colors" (click)="selectColor(color)">
-              <div class="dropdown-item__wrapper">
-                <span class="color-circle" [style.background]="color.value"></span>
-                <span>{{ color.name }}</span>
+      <div class="notice-options" *ngIf="!disabledActions">
+        <div class="notice-options__block">
+          <div class="dropdown">
+            <div class="dropdown-select" (click)="toggleDropdownColors($event)">
+              <span class="color-circle" [ngStyle]="{'background-color': backgroundColor.value }"></span>
+              <span>{{ backgroundColor.name }}</span>
+              <input [(ngModel)]="backgroundColor.value" formControlName="backgroundColor" hidden />
+              <i *ngIf="!isOpenColors" class="fas fa-chevron-down"></i>
+              <i *ngIf="isOpenColors" class="fas fa-chevron-up"></i>
+            </div>
+            <div class="dropdown-menu" *ngIf="isOpenColors">
+              <div class="dropdown-item" *ngFor="let color of colors" (click)="selectColor(color)">
+                <div class="dropdown-item__wrapper">
+                  <span class="color-circle" [style.background]="color.value"></span>
+                  <span>{{ color.name }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
 
     <div class="notice-actions">
       <div class="notice-actions__left">
