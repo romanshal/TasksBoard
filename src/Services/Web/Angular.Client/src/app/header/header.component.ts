@@ -25,11 +25,10 @@ export class HeaderComponent implements OnInit {
     private dialog: MatDialog,
   ) {
     this.isAuthenticated = this.authService.isAuthenticated();
+    
     if (this.isAuthenticated) {
       this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-      this.userService.getUserInfo(this.userId).subscribe(result => {
-        this.username = result.Username;
-      });
+      this.username = this.sessionService.getUserInfo()?.Username!;
     }
   }
 

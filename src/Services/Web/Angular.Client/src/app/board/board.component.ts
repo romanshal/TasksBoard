@@ -7,12 +7,27 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardNoticeModal } from '../common/modals/board-notice/board-notice.modal';
 import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
+import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
+
+const listAnimation = trigger('listAnimation', [
+  transition('* <=> *', [
+    query(':enter',
+      [style({ opacity: 0 }), stagger('200ms', animate('700ms ease', style({ opacity: 1 })))],
+      { optional: true }
+    ),
+    query(':leave',
+      animate('300ms', style({ opacity: 0 })),
+      { optional: true }
+    )
+  ])
+]);
 
 @Component({
   selector: 'app-board',
   standalone: false,
   templateUrl: './board.component.html',
-  styleUrl: './board.component.scss'
+  styleUrl: './board.component.scss',
+  animations: [listAnimation]
 })
 export class BoardComponent implements OnInit {
   boardId!: string;
@@ -40,16 +55,20 @@ export class BoardComponent implements OnInit {
     this.boardService.getBoardById(this.boardId).subscribe(result => {
       if (result) {
         this.board = result;
+
+        this.getBoardNotices(this.pageIndex, this.pageSize);
       }
     });
-
-    this.getBoardNotices(this.pageIndex, this.pageSize);
   }
 
-  private getBoardNotices(pageIndex: number, pageSise: number) {
-    this.boardNoticeService.getBoardNoticesByBoardId(this.boardId, pageIndex, pageSise).subscribe(result => {
+  private getBoardNotices(pageIndex: number, pageSize: number) {
+    this.boardNoticeService.getBoardNoticesByBoardId(this.boardId, pageIndex, pageSize).subscribe(result => {
       if (result) {
-        this.notesForView = result.Items;
+
+        setTimeout(() => {
+          this.notesForView = result.Items;
+        }, 500);
+
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;
         this.totalPages = result.PagesCount;
@@ -65,8 +84,10 @@ export class BoardComponent implements OnInit {
       }
 
       this.pageIndex = page;
+      this.notesForView = [];
 
       this.getBoardNotices(this.pageIndex, this.pageSize);
+
     }
   }
 

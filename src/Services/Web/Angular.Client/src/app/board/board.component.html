@@ -6,7 +6,7 @@
                 Add notice
             </button>
         </div>
-        <div class="note-board">
+        <div class="note-board" [@listAnimation]="notesForView.length">
             <div class="note-wrapper" *ngFor="let note of notesForView; let i = index"
                 [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }" (click)="openModal(note)">
                 <img class="note-pin" src="pin.png">

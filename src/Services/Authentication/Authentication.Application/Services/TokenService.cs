@@ -34,8 +34,13 @@ namespace Authentication.Application.Services
             var saveTokenResult = await _userManager.SetAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token", token.RefreshToken);
             if (!saveTokenResult.Succeeded)
             {
-                _logger.LogCritical($"Can't save refresh token for user: {user.UserName}. Errors: {string.Join("; ", saveTokenResult.Errors)}");
-                throw new Exception($"Can't save refresh token for user: {user.UserName}. Errors: {string.Join("; ", saveTokenResult.Errors)}");
+                var errorsMessage = string.Empty;
+                foreach(var error in saveTokenResult.Errors)
+                {
+                    errorsMessage += $"Code: {error.Code}, Description: {error.Description};";
+                }
+                _logger.LogCritical($"Can't save refresh token for user: {user.UserName}. Errors: {errorsMessage}");
+                throw new Exception($"Can't save refresh token for user: {user.UserName}. Errors: {errorsMessage}");
             }
 
             return token;

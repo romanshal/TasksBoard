@@ -1,1 +1,32 @@
-<p>boards-list works!</p>
+<div class="boards-container">
+    <div class="boards-wrapper">
+        <div class="boards-actions">
+            <button>
+                Create board
+            </button>
+        </div>
+        <div class="boards-list" [@listAnimation]="boards.length">
+            <div class="boards-list__item" *ngFor="let board of boards; let i = index" (click)="openBoard(board.Id)">
+                <div class="boards-list__item-image"></div>
+
+                <div class="boards-list__item-definition">
+                    <span>Name: {{ board.Name }}</span>
+                    <span>Definition: </span>
+                    <p>
+                        {{board.Description }}
+                    </p>
+                </div>
+
+                <div class="boards-list__item-actions">
+      
+                </div>
+            </div>
+
+            <app-paginator style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize" [totalPages]="totalPages"
+                [totalCount]="totalCount" (pageChanged)="goToPage($event)">
+            </app-paginator>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

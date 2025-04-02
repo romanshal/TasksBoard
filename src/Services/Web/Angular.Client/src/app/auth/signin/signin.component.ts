@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from '../../common/auth/auth.config';
 import { Response } from '../../common/models/response/response.model';
+import { UserService } from '../../common/services/user/user.service';
+import { SessionStorageService } from '../../common/services/session-storage/session-storage.service';
 
 @Component({
   selector: 'app-signin',
@@ -23,6 +25,8 @@ export class SigninComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private userService: UserService,
+    private sessionService: SessionStorageService,
     private oauthService: OAuthService,
     private route: ActivatedRoute
   ) {
@@ -48,6 +52,12 @@ export class SigninComponent implements OnInit {
 
     this.authService.signin(credentials).subscribe({
       next: (result) => {
+        this.userService.getUserInfo(result.UserId).subscribe(result => {
+          this.sessionService.setUserInfo(result);
+        }, error => {
+          console.error(error);
+        });
+
         const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
 
         window.location.href = returnUrl;
