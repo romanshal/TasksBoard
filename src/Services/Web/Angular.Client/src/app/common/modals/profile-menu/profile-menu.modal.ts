@@ -22,7 +22,7 @@ export class ProfileMenuModal {
   signout() {
     this.sessionService.logout();
 
-    window.location.href = '/login';
+    window.location.href = '/signin';
   }
 
   closeModal(): void {

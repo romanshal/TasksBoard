@@ -6,16 +6,15 @@ import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
-import { RegistrationComponent } from './auth/registration/registration.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './auth/login/login.component';
+import { SigninComponent } from './auth/signin/signin.component';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './auth/guard/auth.guard';
 import { AuthRequestInterceptor } from './common/interceptors/auth-request.interceptor';
-import { NotFoundComponent } from './not-found/not-found.component';
+import { NotFoundComponent } from './error/not-found/not-found.component';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-import { ForbiddenComponent } from './forbidden/forbidden.component';
-import { BadRequestComponent } from './bad-request/bad-request.component';
+import { ForbiddenComponent } from './error/forbidden/forbidden.component';
+import { BadRequestComponent } from './error/bad-request/bad-request.component';
 import { BoardComponent } from './board/board.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,15 +22,17 @@ import { MatInputModule } from '@angular/material/input';
 import { BoardNoticeModal } from './common/modals/board-notice/board-notice.modal';
 import { ProfileMenuModal } from './common/modals/profile-menu/profile-menu.modal';
 import { PaginatorComponent } from './common/paginator/paginator.component';
-import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { UnauthorizedComponent } from './error/unauthorized/unauthorized.component';
+import { BoardsListComponent } from './boards-list/boards-list.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FooterComponent,
     HeaderComponent,
-    LoginComponent,
-    RegistrationComponent,
+    SigninComponent,
+    SignupComponent,
     NotFoundComponent,
     MainComponent,
     NotFoundComponent,
@@ -41,7 +42,8 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     BoardNoticeModal,
     ProfileMenuModal,
     PaginatorComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    BoardsListComponent,
   ],
   imports: [
     BrowserModule,

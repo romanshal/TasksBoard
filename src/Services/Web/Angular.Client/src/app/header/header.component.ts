@@ -38,11 +38,11 @@ export class HeaderComponent implements OnInit {
   }
 
   signin() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/signin']);
   }
 
   signup() {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/signup']);
   }
 
   openProfile() {

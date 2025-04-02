@@ -1,20 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from '../../common/services/auth/auth.service';
-import { SessionStorageService } from '../../common/services/session-storage/session-storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from '../../common/auth/auth.config';
+import { Response } from '../../common/models/response/response.model';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-signin',
   standalone: false,
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  templateUrl: './signin.component.html',
+  styleUrl: './signin.component.scss'
 })
-export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+export class SigninComponent implements OnInit {
+  signinForm: FormGroup;
+
   showErrors = false;
+  errorMessage?: string;
+
+  formSubmitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -22,7 +26,7 @@ export class LoginComponent implements OnInit {
     private oauthService: OAuthService,
     private route: ActivatedRoute
   ) {
-    this.loginForm = this.fb.group({
+    this.signinForm = this.fb.group({
       username: [''],
       password: ['']
     });
@@ -30,19 +34,27 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.oauthService.configure(authConfig);
-    // this.oauthService.loadDiscoveryDocumentAndTryLogin();
+    // this.oauthService.loadDiscoveryDocumentAndTrysignin();
   }
 
   onSubmit() {
-    const credentials = this.loginForm.value;
-    this.authService.login(credentials).subscribe({
+    this.formSubmitted = true;
+
+    if (this.signinForm.invalid) {
+      return;
+    }
+
+    const credentials = this.signinForm.value;
+
+    this.authService.signin(credentials).subscribe({
       next: (result) => {
         const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
 
         window.location.href = returnUrl;
       },
-      error: (error) => {
+      error: (error: Response) => {
         this.showErrors = true;
+        this.errorMessage = error.Description;
       },
       complete: () => {
       }

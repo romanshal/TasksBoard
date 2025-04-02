@@ -1,0 +1,65 @@
+<div class="auth-container">
+  <div class="auth-section">
+    <header>
+      <h2>Sign up</h2>
+    </header>
+    <form class="auth-form" (ngSubmit)="onSubmit()" [formGroup]="signupForm">
+      <div class="auth-error" *ngIf="showErrors">
+        <span class="error-logo"></span>
+        <span *ngIf="!errorMessage" class="error-description">Incorrect authentication credentials</span>
+        <span *ngIf="errorMessage" class="error-description">{{ errorMessage }}</span>
+      </div>
+
+      <div class="form-group">
+        <input formControlName="username" type="username"
+          [ngClass]="{ 'invalid': formSubmitted && signupForm.controls['username'].errors }" required />
+        <label class="input-label">Username*</label>
+        <div *ngIf="formSubmitted && signupForm.controls['username'].errors" class="invalid-feedback">
+          <div *ngIf="signupForm.controls['username'].errors?.['required']">Username is required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input type="text" class="form-control" formControlName="email"
+          [ngClass]="{ 'invalid': formSubmitted && signupForm.controls['email'].errors }" required />
+        <label class="input-label">Email address*</label>
+        <div *ngIf="formSubmitted && signupForm.controls['email'].errors" class="invalid-feedback">
+          <div *ngIf="signupForm.controls['email'].errors?.['required']">Email is required</div>
+          <div *ngIf="signupForm.controls['email'].errors?.['email']">Email must be a valid email address</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input formControlName="password" type="password"
+          [ngClass]="{ 'invalid': formSubmitted && signupForm.controls['password'].errors }" required />
+        <label class="input-label">Password*</label>
+        <div *ngIf="formSubmitted && signupForm.controls['password'].errors" class="invalid-feedback">
+          <div *ngIf="signupForm.controls['password'].errors?.['required']">Password is required</div>
+        </div>
+      </div>
+      <button type="submit">Continue</button>
+    </form>
+
+    <div class="br">
+      <span>OR</span>
+    </div>
+
+    <div class="auth-externals">
+      <button>
+        <span class="google-logo"></span>
+        <span class="google-description"> Continue with Google</span>
+      </button>
+      <button>
+        <span class="facebook-logo"></span>
+        <span class="facebook-description"> Continue with Facebook</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="alternative-section">
+    <nav class="alternative-card">
+      Already have an account?&nbsp;
+      <a href="/signin">Sign in</a>
+    </nav>
+  </div>
+</div>

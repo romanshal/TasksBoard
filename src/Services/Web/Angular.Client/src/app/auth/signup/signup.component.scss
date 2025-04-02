@@ -5,14 +5,14 @@ $form-background: #ffffff;
 $border-radius: 8px;
 
 // Общие стили
-.login-container {
+.auth-container {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  min-height: 90vh;
+  min-height: 89vh;
 
-  .login-section {
+  .auth-section {
     background-color: $form-background;
     padding: 30px;
     border-radius: $border-radius;
@@ -30,9 +30,9 @@ $border-radius: 8px;
       }
     }
 
-    .login-form {
+    .auth-form {
 
-      .login-error {
+      .auth-error {
         display: flex;
         justify-content: start;
         padding: 15px;
@@ -54,36 +54,64 @@ $border-radius: 8px;
       }
 
       .form-group {
+        position: relative;
         margin-bottom: 15px;
-
-        label {
-          font-size: 14px;
-          color: darken($text-color, 10%);
-          font-weight: 600;
-          display: block;
-          margin-bottom: 5px;
-          text-transform: capitalize;
-          cursor: pointer;
-          transition: color 0.3s ease;
-
-          &:hover {
-            color: $primary-color;
-          }
-        }
 
         input {
           width: 100%;
-          padding: 10px;
+          padding: 15px;
           font-size: 16px;
           border: 1px solid lighten($text-color, 40%);
           border-radius: 4px;
           box-sizing: border-box;
+          outline: none;
 
           &:focus {
             border-color: $primary-color;
             outline: none;
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
           }
+
+          &:focus~.input-label,
+          &:focus:valid~.input-label {
+            top: -10px;
+            left: 10px;
+            font-size: 16px;
+            color: $primary-color;
+          }
+
+          &:not(:focus):valid~.input-label {
+            top: -10px;
+            left: 10px;
+            font-size: 16px;
+            color: $text-color;
+          }
+
+          &.invalid {
+            border: 1px solid #dc3545;
+            box-sizing: border-box;
+            outline: none;
+          }
+        }
+
+        .input-label {
+          position: absolute;
+          top: 15px;
+          left: 20px;
+          transition: all 0.3s ease;
+          background-color: $form-background;
+          padding: 0 5px;
+          font-size: 16px;
+          color: #999;
+          pointer-events: none;
+        }
+
+        .invalid-feedback {
+          width: 100%;
+          padding-left: 15px;
+          margin-top: .25rem;
+          font-size: .875em;
+          color: #dc3545;
         }
       }
 
@@ -106,7 +134,7 @@ $border-radius: 8px;
 
     // Адаптивные стили
     @media screen and (max-width: 768px) {
-      .login-form {
+      .auth-form {
         padding: 20px;
         width: 90%;
       }
@@ -151,7 +179,7 @@ $border-radius: 8px;
       }
     }
 
-    .login-externals {
+    .auth-externals {
       margin-top: 15px;
 
       button {
@@ -202,7 +230,7 @@ $border-radius: 8px;
     }
   }
 
-  .register-section {
+  .alternative-section {
     background-color: $form-background;
     padding: 30px;
     border-radius: $border-radius;
@@ -211,7 +239,7 @@ $border-radius: 8px;
     max-width: 300px;
     border: 1px solid #c9cace;
 
-    .signup-card {
+    .alternative-card {
       display: flex;
       justify-content: center;
       align-items: center;

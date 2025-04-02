@@ -11,6 +11,10 @@
       <div>
         <a href="/privacy">Privacy</a>
       </div>
+
+      <div *ngIf="isAuthenticated">
+        <a href="/boards">My boards</a>
+      </div>
     </nav>
   </div>
 

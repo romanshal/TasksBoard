@@ -5,6 +5,7 @@ $btn-background-hover: lighten($btn-background, 10%);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 45px;
   padding: 16px 24px;
   background-color: #f8f9f9;
   border-bottom: 1px solid #e3e6e8;
