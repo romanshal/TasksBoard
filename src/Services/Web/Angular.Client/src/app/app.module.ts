@@ -25,6 +25,7 @@ import { PaginatorComponent } from './common/paginator/paginator.component';
 import { UnauthorizedComponent } from './error/unauthorized/unauthorized.component';
 import { BoardsListComponent } from './boards-list/boards-list.component';
 import { SignupComponent } from './auth/signup/signup.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { SignupComponent } from './auth/signup/signup.component';
     PaginatorComponent,
     UnauthorizedComponent,
     BoardsListComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,

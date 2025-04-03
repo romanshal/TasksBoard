@@ -1,4 +1,4 @@
-<div class="board-container">
+<div class="board-container" #container>
     <div class="board-wrapper">
         <div class="note-actions">
             <button class="note-add-button" (click)="openModal()">
@@ -25,13 +25,13 @@
             </div>
         </div>
 
-        <app-paginator 
-            [pageIndex]="pageIndex" 
-            [pageSize]="pageSize" 
-            [totalPages]="totalPages"
-            [totalCount]="totalCount"
+        <app-paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [totalPages]="totalPages" [totalCount]="totalCount"
             (pageChanged)="goToPage($event)">
         </app-paginator>
+    </div>
+
+    <div class="chat-button" *ngIf="!isChatOpen" (click)="openChat()">
+        <i class="fa-solid fa-comment-dots fa-2xl" style="color: #ffffff;"></i>
     </div>
 </div>
 

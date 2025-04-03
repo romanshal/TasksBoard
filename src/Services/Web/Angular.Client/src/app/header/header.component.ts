@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
   ) {
     this.isAuthenticated = this.authService.isAuthenticated();
     
+    console.log(this.isAuthenticated);
     if (this.isAuthenticated) {
       this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
       this.username = this.sessionService.getUserInfo()?.Username!;

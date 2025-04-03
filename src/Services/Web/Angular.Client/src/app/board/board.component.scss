@@ -32,8 +32,8 @@ button {
 .board-container {
   position: relative;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: space-evenly;
+  // align-items: center;
   padding: 0px 24px;
 
   .board-wrapper {
@@ -155,12 +155,12 @@ button {
             font-size: large;
             width: 100%;
             line-height: 24px;
+            white-space: break-spaces;
             background-image: linear-gradient(to bottom, transparent 23px, #000 24px);
             background-size: 100% 24px;
             background-repeat: repeat-y;
             background-position-y: -1px;
             resize: none;
-
             margin: 0;
             display: -webkit-box;
             -webkit-line-clamp: 5;
@@ -190,6 +190,27 @@ button {
           cursor: pointer;
         }
       }
+    }
+  }
+
+  .chat-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    height: 60px;
+    width: 60px;
+    background-color: #28b351;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
     }
   }
 }

@@ -47,7 +47,6 @@ export class SessionStorageService {
     }
 
     logout() {
-        sessionStorage.removeItem(this.accessTokenKey);
-        sessionStorage.removeItem(this.refreshTokenKey);
+        sessionStorage.clear();
     }
 }
