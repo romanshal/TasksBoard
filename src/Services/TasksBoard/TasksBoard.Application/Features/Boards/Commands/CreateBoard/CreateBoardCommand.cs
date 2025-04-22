@@ -6,6 +6,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
     {
         public required Guid OwnerId { get; set; }
         public required string Name { get; set; }
+        public required string OwnerNickname { get; set; }
         public string Description { get; set; }
     }
 }

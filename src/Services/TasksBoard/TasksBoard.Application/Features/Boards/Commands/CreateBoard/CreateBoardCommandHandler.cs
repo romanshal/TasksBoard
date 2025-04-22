@@ -20,7 +20,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
         {
             var board = await CreateBoardAsync(request);
 
-            var boardMember = await CreateBoardMemberAsync(board.OwnerId, board.Id);
+            var boardMember = await CreateBoardMemberAsync(board.OwnerId, board.Id, request.OwnerNickname);
 
             await AddPermissionsAsync(boardMember.Id, cancellationToken);
 
@@ -46,12 +46,13 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             return board;
         }
 
-        private async Task<BoardMember> CreateBoardMemberAsync(Guid userId, Guid boardId)
+        private async Task<BoardMember> CreateBoardMemberAsync(Guid userId, Guid boardId, string ownerNickname)
         {
             var boardMember = new BoardMember
             {
                 AccountId = userId,
                 BoardId = boardId,
+                Nickname = ownerNickname
             };
 
             await _unitOfWork.GetRepository<BoardMember>().Add(boardMember);

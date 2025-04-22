@@ -1,0 +1,30 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+    <div class="modal">
+        <div class="modal-close" (click)="closeModal()">
+            <i class="fa-solid fa-xmark fa-2xl"></i>
+        </div>
+
+        <div>
+
+        </div>
+
+        <div class="modal-actions">
+            <div class="modal-actions__left" *ngIf="isOwner">
+                <button autofocus="false" *ngIf="!disabledActions" (click)="submitForm()">
+                    <i class="fa-solid fa-floppy-disk fa-2xl"></i>
+                    <div class="tooltip">Save</div>
+                </button>
+                <button autofocus="false" *ngIf="disabledActions" (click)="showActions()">
+                    <i class="fa-solid fa-pen fa-xl"></i>
+                    <div class="tooltip">Edit</div>
+                </button>
+            </div>
+
+            <div class="modal-actions__right">
+                <button autofocus="false" (click)="closeModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

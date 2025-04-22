@@ -55,6 +55,7 @@ namespace TasksBoard.API.Controllers
             {
                 BoardId = boardId,
                 UserId = request.UserId,
+                Nickname = request.Nickname,
                 Permissions = request.Permissions
             };
 

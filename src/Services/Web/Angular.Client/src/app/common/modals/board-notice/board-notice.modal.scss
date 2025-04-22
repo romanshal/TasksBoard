@@ -12,167 +12,174 @@ $btn-color: #3a7e93;
     justify-content: center;
     align-items: center;
     z-index: 10;
-}
 
-.modal {
-    background-color: $modal-background;
-    border-radius: 10px;
-    width: 500px;
-    height: 530px;
-    padding: 45px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-
-    .note-close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        color: $btn-color;
-
-        &:hover{
-            transform: scale(1.2);
-        }
-    }
-
-    .note-status {
-        position: absolute;
-        top: 370px;
-        right: 60px;
-        opacity: 0.3;
-
-        i {
-            font-size: 240px;
-        }
-    }
-
-    .notice-info {
-        margin-bottom: 10px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-family: 'Great Vibes', cursive;
-        font-weight: 400;
-        font-size: x-large;
-    }
-
-    form {
+    .modal {
+        background-color: $modal-background;
+        border-radius: 10px;
+        width: 500px;
+        height: 530px;
+        padding: 45px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         display: flex;
         flex-direction: column;
-        flex-wrap: nowrap;
-        height: 100%;
-        margin: 10px 0px;
+        position: relative;
 
-        .notice-form__textarea {
-            flex-grow: 1;
-            overflow-y: auto;
-            z-index: 100000;
-            padding: 5px;
-            font-family: 'Great Vibes', cursive;
-            font-weight: 400;
-            font-size: xx-large;
-            border: none;
-            background-color: transparent;
-            resize: none;
-            outline: none;
-            background-attachment: local;
-            line-height: 45px;
-            background-image: linear-gradient(to bottom, transparent 44px, #000 45px);
-            background-size: 100% 45px;
-            background-repeat: repeat-y;
-            resize: none;
-            max-height: 400px;
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            color: $btn-color;
 
-            &::-webkit-scrollbar {
-                width: 8px;
-                background: transparent;
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: #888;
-                border-radius: 4px;
-            }
-
-            &::-webkit-scrollbar-thumb:hover {
-                background: #555;
-            }
-
-            & {
-                scrollbar-width: thin;
-                scrollbar-color: #888 transparent;
+            &:hover {
+                transform: scale(1.2);
             }
         }
 
-        .notice-options {
+        .note-status {
+            position: absolute;
+            top: 370px;
+            right: 60px;
+            opacity: 0.3;
+
+            i {
+                font-size: 240px;
+            }
+        }
+
+        .notice-info {
+            margin-bottom: 10px;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            flex-wrap: wrap;
-            margin: 9px 0px;
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: x-large;
+        }
 
-            .notice-options__block {
+        form {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            height: 100%;
+            margin: 10px 0px;
+
+            .notice-form__textarea {
+                flex-grow: 1;
+                overflow-y: auto;
+                z-index: 100000;
+                padding: 5px;
+                font-family: 'Great Vibes', cursive;
+                font-weight: 400;
+                font-size: xx-large;
+                border: none;
+                background-color: transparent;
+                resize: none;
+                outline: none;
+                background-attachment: local;
+                line-height: 45px;
+                background-image: linear-gradient(to bottom, transparent 44px, #000 45px);
+                background-size: 100% 45px;
+                background-repeat: repeat-y;
+                resize: none;
+                max-height: 400px;
+
+                &::-webkit-scrollbar {
+                    width: 8px;
+                    background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: #888;
+                    border-radius: 4px;
+                }
+
+                &::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                }
+
+                & {
+                    scrollbar-width: thin;
+                    scrollbar-color: #888 transparent;
+                }
+            }
+
+            .notice-options {
                 display: flex;
-                align-items: center;
+                flex-direction: row;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                margin: 9px 0px;
 
-                .dropdown {
-                    position: relative;
+                .notice-options__block {
+                    display: flex;
+                    align-items: center;
 
-                    .dropdown-select {
-                        display: flex;
-                        align-items: center;
-                        justify-content: start;
-                        padding: 10px;
-                        border: 1px solid #ccc;
-                        border-radius: 10px;
-                        background-color: white;
-                        min-width: 110px;
-                        cursor: pointer;
+                    .dropdown {
+                        position: relative;
 
-                        .color-circle {
-                            width: 16px;
-                            height: 16px;
-                            border-radius: 50%;
-                            margin-right: 10px;
-                        }
-
-                        i {
-                            margin-left: auto;
-                            font-size: 14px;
-                        }
-                    }
-
-                    .dropdown-menu {
-                        position: absolute;
-                        top: 100%;
-                        left: 0;
-                        width: 100%;
-                        max-height: 110px;
-                        overflow: auto;
-                        border: 1px solid #ccc;
-                        background: #fff;
-                        border-radius: 10px;
-                        margin-top: 3px;
-                        z-index: 1000;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-                        .dropdown-item {
+                        .dropdown-select {
                             display: flex;
                             align-items: center;
-                            padding: 8px 10px;
+                            justify-content: start;
+                            padding: 10px;
+                            border: 1px solid #ccc;
                             border-radius: 10px;
+                            background-color: white;
+                            min-width: 110px;
                             cursor: pointer;
 
-                            &:hover {
-                                background: #f0f0f0;
+                            .color-circle {
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                margin-right: 10px;
                             }
 
-                            .dropdown-item__wrapper {
+                            i {
+                                margin-left: auto;
+                                font-size: 14px;
+                            }
+                        }
+
+                        .dropdown-menu {
+                            position: absolute;
+                            top: 100%;
+                            left: 0;
+                            width: 100%;
+                            max-height: 110px;
+                            overflow: auto;
+                            border: 1px solid #ccc;
+                            background: #fff;
+                            border-radius: 10px;
+                            margin-top: 3px;
+                            z-index: 1000;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+                            .dropdown-item {
                                 display: flex;
-                                width: 100%;
+                                align-items: center;
+                                padding: 8px 10px;
                                 border-radius: 10px;
+                                cursor: pointer;
+
+                                &:hover {
+                                    background: #f0f0f0;
+                                }
+
+                                .dropdown-item__wrapper {
+                                    display: flex;
+                                    width: 100%;
+                                    border-radius: 10px;
+
+                                    .color-circle {
+                                        width: 16px;
+                                        height: 16px;
+                                        border-radius: 50%;
+                                        margin-right: 10px;
+                                    }
+                                }
 
                                 .color-circle {
                                     width: 16px;
@@ -182,104 +189,91 @@ $btn-color: #3a7e93;
                                 }
                             }
 
-                            .color-circle {
-                                width: 16px;
-                                height: 16px;
-                                border-radius: 50%;
-                                margin-right: 10px;
+                            &::-webkit-scrollbar {
+                                width: 8px;
+                                background: transparent;
                             }
-                        }
 
-                        &::-webkit-scrollbar {
-                            width: 8px;
-                            background: transparent;
-                        }
-            
-                        &::-webkit-scrollbar-thumb {
-                            background: #888;
-                            border-radius: 4px;
-                        }
-            
-                        &::-webkit-scrollbar-thumb:hover {
-                            background: #555;
-                        }
-            
-                        & {
-                            scrollbar-width: thin;
-                            scrollbar-color: #888 transparent;
+                            &::-webkit-scrollbar-thumb {
+                                background: #888;
+                                border-radius: 4px;
+                            }
+
+                            &::-webkit-scrollbar-thumb:hover {
+                                background: #555;
+                            }
+
+                            & {
+                                scrollbar-width: thin;
+                                scrollbar-color: #888 transparent;
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    .notice-actions {
-        padding-top: 10px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-        button {
-            background-color: transparent;
-            border: 2px solid $btn-color;
-            color: $btn-color;
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-family: 'Helvetica', sans-serif;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            min-width: 80px;
-
-            .tooltip {
-                position: absolute;
-                bottom: -40px;
-                left: 50%;
-                transform: translateX(-50%);
-                background-color: $btn-color;
-                color: white;
-                padding: 8px 12px;
-                border-radius: 5px;
-                white-space: nowrap;
-                font-size: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                pointer-events: none;
-
-                &::after {
-                    content: '';
-                    position: absolute;
-                    bottom: 100%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    border-width: 8px;
-                    border-style: solid;
-                    border-color: transparent transparent $btn-color transparent;
-                }
-            }
-        }
-
-        button:hover {
-            box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
-            transform: scale(1.2);
-
-            .tooltip {
-                opacity: 1;
-            }
-        }
-
-        .notice-actions__left {
+        .modal-actions {
+            padding-top: 10px;
             display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: auto;
 
             button {
-                margin-right: 10px;
+                background-color: transparent;
+                border: 2px solid $btn-color;
+                color: $btn-color;
+                padding: 10px 20px;
+                border-radius: 15px;
+                font-family: 'Helvetica', sans-serif;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                min-width: 80px;
+
+                .tooltip {
+                    position: absolute;
+                    bottom: -40px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-color: $btn-color;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 5px;
+                    white-space: nowrap;
+                    font-size: 10px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        bottom: 100%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        border-width: 8px;
+                        border-style: solid;
+                        border-color: transparent transparent $btn-color transparent;
+                    }
+                }
             }
 
-            // .complete {
-            //     background-color: #47f644;
-            // }
+            button:hover {
+                box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
+                transform: scale(1.2);
+
+                .tooltip {
+                    opacity: 1;
+                }
+            }
+
+            .modal-actions__left {
+                display: flex;
+                gap: 10px;
+            }
         }
     }
 }

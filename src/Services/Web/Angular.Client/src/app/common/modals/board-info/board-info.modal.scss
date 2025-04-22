@@ -1,0 +1,108 @@
+$modal-background: white;
+$btn-color: #3a7e93;
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+
+    .modal {
+        background-color: $modal-background;
+        border-radius: 10px;
+        width: 500px;
+        height: 530px;
+        padding: 45px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            color: $btn-color;
+
+            &:hover {
+                transform: scale(1.2);
+            }
+        }
+
+        .modal-actions {
+            padding-top: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: auto;
+
+            button {
+                background-color: transparent;
+                border: 2px solid $btn-color;
+                color: $btn-color;
+                padding: 10px 20px;
+                border-radius: 15px;
+                font-family: 'Helvetica', sans-serif;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                min-width: 80px;
+
+                .tooltip {
+                    position: absolute;
+                    bottom: -40px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-color: $btn-color;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 5px;
+                    white-space: nowrap;
+                    font-size: 10px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        bottom: 100%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        border-width: 8px;
+                        border-style: solid;
+                        border-color: transparent transparent $btn-color transparent;
+                    }
+                }
+            }
+
+            button:hover {
+                box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
+                transform: scale(1.2);
+
+                .tooltip {
+                    opacity: 1;
+                }
+            }
+
+            .modal-actions__left {
+                display: flex;
+                gap: 10px;
+            }
+
+            .modal-actions__right {
+                display: flex;
+                margin-left: auto;
+            }
+        }
+    }
+}

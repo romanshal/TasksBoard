@@ -43,21 +43,26 @@ button {
     align-items: center;
     border-radius: 15px;
     background: url('../../assets/icons/board.jpg') repeat;
-    background-size: auto;
+    background-size: cover;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin: 20px 0px;
 
     .note-actions {
       display: flex;
+      gap: 10px;
       justify-content: start;
       align-items: center;
       width: -webkit-fill-available;
 
-      .note-add-button {
+      .note-button {
         padding: 0 16px;
         border-radius: 15px;
         min-width: 100px;
+      }
+
+      .right-button {
+        margin-left: auto;
       }
     }
 

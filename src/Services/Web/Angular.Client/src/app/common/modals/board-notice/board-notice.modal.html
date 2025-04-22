@@ -2,7 +2,7 @@
   <div class="modal" [@modalContentAnimation] (click)="$event.stopPropagation()"
     [ngStyle]="{'background-color': backgroundColor.value }">
 
-    <div class="note-close" (click)="closeModal()">
+    <div class="modal-close" (click)="closeModal()">
       <i class="fa-solid fa-xmark fa-2xl"></i>
     </div>
 
@@ -45,8 +45,8 @@
       </div>
     </form>
 
-    <div class="notice-actions">
-      <div class="notice-actions__left">
+    <div class="modal-actions">
+      <div class="modal-actions__left">
         <button autofocus="false" *ngIf="!disabledActions " (click)="submitForm()">
           <i class="fa-solid fa-floppy-disk fa-2xl"></i>
           <div class="tooltip">Save</div>
@@ -72,7 +72,7 @@
         </button>
       </div>
 
-      <div class="notice-actions__right">
+      <div class="modal-actions__right">
         <button autofocus="false" (click)="closeModal()">
           Close
         </button>

@@ -11,6 +11,14 @@ namespace TasksBoard.Infrastructure.Repositories
         TasksBoardDbContext context,
         ILoggerFactory loggerFactory) : Repository<BoardMember>(context, loggerFactory), IBoardMemberRepository
     {
+        public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .Where(member => member.BoardId == boardId)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             return await DbSet

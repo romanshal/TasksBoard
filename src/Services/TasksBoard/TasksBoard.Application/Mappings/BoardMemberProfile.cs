@@ -9,7 +9,8 @@ namespace TasksBoard.Application.Mappings
         public BoardMemberProfile()
         {
             CreateMap<BoardMember, BoardMemberDto>()
-                .ForMember(dest => dest.IsOwner, opt => opt.MapFrom(src => src.Board.OwnerId == src.AccountId));
+                .ForMember(dest => dest.IsOwner, opt => opt.MapFrom(src => src.Board.OwnerId == src.AccountId))
+                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.BoardMemberPermissions));
         }
     }
 }

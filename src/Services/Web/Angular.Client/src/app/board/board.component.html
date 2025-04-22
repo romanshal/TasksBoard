@@ -1,14 +1,24 @@
 <div class="board-container" #container>
     <div class="board-wrapper">
         <div class="note-actions">
-            <button class="note-add-button" (click)="openModal()">
+            <button class="note-button" (click)="openNoticeModal()">
                 <i class="fa-solid fa-plus"></i>
                 Add notice
+            </button>
+
+            <button class="note-button" (click)=openMembersModal()>
+                <i class="fa-solid fa-users"></i>
+                Members
+            </button>
+
+            <button class="note-button right-button" *ngIf="isOwner" (click)="openInfoModal()">
+                <i class="fa-solid fa-clipboard-list"></i>
+                Info
             </button>
         </div>
         <div class="note-board" [@listAnimation]="notesForView.length">
             <div class="note-wrapper" *ngFor="let note of notesForView; let i = index"
-                [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }" (click)="openModal(note)">
+                [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }" (click)="openNoticeModal(note)">
                 <img class="note-pin" src="pin.png">
 
                 <div class="note-pin-shadow"></div>

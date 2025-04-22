@@ -9,6 +9,8 @@ import { BoardNoticeModal } from '../common/modals/board-notice/board-notice.mod
 import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 import { ChatComponent } from '../chat/chat.component';
+import { BoardMembersModal } from '../common/modals/board-members/board-members.modal';
+import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -41,11 +43,13 @@ export class BoardComponent implements OnInit {
 
   notesForView: BoardNoticeModel[] = [];
   pageIndex = 1;
-  pageSize = 20;
+  pageSize = 10;
   totalPages = 1;
   totalCount = 0;
 
   isChatOpen = false;
+
+  isOwner = false;
 
   constructor(
     private boardService: BoardService,
@@ -63,7 +67,9 @@ export class BoardComponent implements OnInit {
     this.boardService.getBoardById(this.boardId).subscribe(result => {
       if (result) {
         this.board = result;
-
+        if (this.board.OwnerId == this.userId) {
+          this.isOwner = true;
+        }
         this.getBoardNotices(this.pageIndex, this.pageSize);
       }
     });
@@ -99,7 +105,7 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  openModal(note?: BoardNoticeModel): void {
+  openNoticeModal(note?: BoardNoticeModel): void {
     this.dialog.open(BoardNoticeModal, {
       data: {
         boardId: this.boardId,
@@ -110,6 +116,29 @@ export class BoardComponent implements OnInit {
         if (result === 'success') {
           this.getBoardNotices(this.pageIndex, this.pageSize);
         }
+      });
+  }
+
+  openMembersModal() {
+    this.dialog.open(BoardMembersModal, {
+      data: {
+        boardId: this.boardId
+      }
+    })
+      .afterClosed().subscribe((result) => {
+
+      });
+  }
+
+  openInfoModal() {
+    this.dialog.open(BoardInfoModal, {
+      data: {
+        board: this.board,
+        isOwner: this.isOwner
+      }
+    })
+      .afterClosed().subscribe((result) => {
+
       });
   }
 

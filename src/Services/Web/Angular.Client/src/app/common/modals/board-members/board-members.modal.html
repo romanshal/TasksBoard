@@ -1,0 +1,42 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+    <div class="modal">
+        <div class="modal-close" (click)="closeModal()">
+            <i class="fa-solid fa-xmark fa-2xl"></i>
+        </div>
+
+        <div class="members-list">
+            <div class="members-list__member" *ngFor="let member of membersForView; let i = index">
+                <div class="members-list__member-avatar">
+                    <img src="avatar.png">
+                </div>
+
+                <div class="members-list__member-info">
+                    <span class="member-info__nickname">{{member.Nickname}}</span>
+
+                    <div class="member-info__permissions">
+                        <div class="member-info__permissions-item" *ngFor="let permission of member.Permissions;">
+                            <span>{{permission.BoardPermissionName}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="members-list__member-actions">
+                    <i class="fa-solid fa-ellipsis-vertical fa-xl" (click)="openSettings(member.Id + '-settings')"></i>
+                    <!-- <i class="fa-solid fa-ellipsis-vertical" (click)="openSettings(member.Id + '-settings')"></i> -->
+                </div>
+
+                <div class="members-list__member-settings" id="{{member.Id}}-settings">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <div class="modal-actions__right">
+                <button autofocus="false" (click)="closeModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

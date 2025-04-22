@@ -73,6 +73,13 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("Nickname")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("default");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BoardId", "AccountId")

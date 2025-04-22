@@ -26,6 +26,8 @@ import { UnauthorizedComponent } from './error/unauthorized/unauthorized.compone
 import { BoardsListComponent } from './boards-list/boards-list.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { ChatComponent } from './chat/chat.component';
+import { BoardMembersModal } from './common/modals/board-members/board-members.modal';
+import { BoardInfoModal } from './common/modals/board-info/board-info.modal';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,8 @@ import { ChatComponent } from './chat/chat.component';
     UnauthorizedComponent,
     BoardsListComponent,
     ChatComponent,
+    BoardMembersModal,
+    BoardInfoModal,
   ],
   imports: [
     BrowserModule,

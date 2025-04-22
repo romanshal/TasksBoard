@@ -10,13 +10,13 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoardMembersByBoardId
 {
-    public class GetPaginatedBoardMembersByBoardIdQueryHandler(
+    public class GetBoardMembersByBoardIdQueryHandler(
         IUnitOfWork unitOfWork,
-        ILogger<GetPaginatedBoardMembersByBoardIdQueryHandler> logger,
+        ILogger<GetBoardMembersByBoardIdQueryHandler> logger,
         IMapper mapper) : IRequestHandler<GetPaginatedBoardMembersByBoardIdQuery, PaginatedList<BoardMemberDto>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly ILogger<GetPaginatedBoardMembersByBoardIdQueryHandler> _logger = logger;
+        private readonly ILogger<GetBoardMembersByBoardIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
         public async Task<PaginatedList<BoardMemberDto>> Handle(GetPaginatedBoardMembersByBoardIdQuery request, CancellationToken cancellationToken)
         {

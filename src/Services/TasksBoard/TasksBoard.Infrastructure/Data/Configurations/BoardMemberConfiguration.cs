@@ -13,6 +13,8 @@ namespace TasksBoard.Infrastructure.Data.Configurations
 
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
 
+            builder.Property(p => p.Nickname).IsRequired().HasMaxLength(64).HasDefaultValue("default");
+
             builder.HasIndex(p => new
             {
                 p.BoardId,
