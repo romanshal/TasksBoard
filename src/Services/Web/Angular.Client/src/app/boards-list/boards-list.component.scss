@@ -40,18 +40,18 @@ $btn-background-hover: lighten($btn-background, 10%);
                 cursor: pointer;
                 box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
                 transition: all 0.2s;
-              
+
                 &:not(.disabled, .active):hover {
-                  transform: scale(1.1);
-                  cursor: pointer;
-                  background: $btn-background-hover;
-                  box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
+                    transform: scale(1.1);
+                    cursor: pointer;
+                    background: $btn-background-hover;
+                    box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
                 }
-              
+
                 i {
-                  margin-right: 5px;
+                    margin-right: 5px;
                 }
-              }
+            }
         }
 
         .boards-list {
@@ -70,6 +70,7 @@ $btn-background-hover: lighten($btn-background, 10%);
                 justify-content: space-between;
                 gap: 40px;
                 width: 100%;
+                min-height: 120px;
                 padding: 10px;
                 border-radius: 15px;
                 box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.5);
@@ -78,7 +79,7 @@ $btn-background-hover: lighten($btn-background, 10%);
 
                 .boards-list__item-image {
                     min-width: 100px;
-                    height: auto;
+                    height: 100px;
                     border-radius: 15px;
                     background: url('../../assets/icons/board.jpg') repeat;
                     background-size: cover;
@@ -87,9 +88,12 @@ $btn-background-hover: lighten($btn-background, 10%);
                 .boards-list__item-definition {
                     display: flex;
                     width: 100%;
+                    gap: 5px;
                     flex-direction: column;
+                    overflow: hidden;
 
                     p {
+                        margin: 0px;
                         white-space: break-spaces;
                         resize: none;
                         display: -webkit-box;
@@ -98,17 +102,46 @@ $btn-background-hover: lighten($btn-background, 10%);
                         -webkit-box-orient: vertical;
                         overflow: hidden;
                     }
+
+                    .tags-list {
+                        display: inline;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        box-sizing: border-box;
+                        // flex-direction: row;
+                        // flex-wrap: nowrap;
+                        // gap: 5px;
+
+                        .tags-list__item {
+                            display: inline-block;
+                            border: 1px solid #3a7e93;
+                            border-radius: 15px;
+                            padding: 3px 10px;
+                            color: #3a7e93;
+                            margin-right: 5px;
+                        }
+                    }
                 }
 
                 .boards-list__item-actions {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
-                }
+                    background-color: $btn-background;
+                    color: white;
+                    border-top-right-radius: 15px;
+                    border-bottom-right-radius: 15px;
+                    padding: 10px;
+                    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
+                    transition: all 0.2s ease;
 
-                &:hover {
-                    cursor: pointer;
-                    transform: scale(1.1);
+                    &:hover {
+                        background-color: $btn-background-hover;
+                        cursor: pointer;
+                        transform: scale(1.1);
+                        box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
+                    }
                 }
             }
         }

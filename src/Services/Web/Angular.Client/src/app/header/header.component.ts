@@ -12,7 +12,7 @@ import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.mod
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit, AfterViewInit {
+export class HeaderComponent implements OnInit{
   public isAuthenticated = false;
   private userId?: string;
   public username!: string;
@@ -24,17 +24,23 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private dialog: MatDialog,
   ) {
-  }
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.isAuthenticated = this.authService.isAuthenticated();
-    
+    this.isAuthenticated = this.authService.isAuthenticated();
+      console.log(this.isAuthenticated);
       if (this.isAuthenticated) {
         this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
         this.username = this.sessionService.getUserInfo()?.Username!;
       }
-    }, 0);
   }
+  // ngAfterViewInit(): void {
+  //   setTimeout(() => {
+  //     this.isAuthenticated = this.authService.isAuthenticated();
+  //     console.log(this.isAuthenticated);
+  //     if (this.isAuthenticated) {
+  //       this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+  //       this.username = this.sessionService.getUserInfo()?.Username!;
+  //     }
+  //   });
+  // }
 
   ngOnInit() {
 
