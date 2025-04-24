@@ -4,9 +4,52 @@
             <i class="fa-solid fa-xmark fa-2xl"></i>
         </div>
 
-        <div>
+        <form [formGroup]="form">
+            <div class="info-wrapper">
+                <div class="info-wrapper__description">
+                    <div class="sections">
+                        <div class="name-section">
+                            <input formControlName="name" (input)="updateWidth()" [style.width.px]="inputWidth" />
+                            <span #textMeasure class="text-measure"></span>
+                        </div>
 
-        </div>
+                        <div class="description-section">
+                            <div class="info-wrapper__tooltip">
+                                Description
+                            </div>
+                            
+                            <textarea formControlName="description"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-wrapper__tags">
+                    <div class="info-wrapper__tooltip">
+                        Tags
+                    </div>
+
+                    <div class="info-wrapper__tags-actions" *ngIf="!disabledActions">
+                        <button autofocus="false" (click)="addTag()">
+                            <i class="fa-solid fa-hashtag"></i>
+                        </button>
+
+                        <input [(ngModel)]="newTag" [ngModelOptions]="{standalone: true}" />
+                    </div>
+
+                    <div class="info-wrapper__tags-list" formArrayName="tags">
+                        <div class="tags-list__item" *ngFor="let tag of tags.controls; index as i">
+                            <div class="tags-list__item-container">
+                                <span>{{ tag.value }}</span>
+                            </div>
+
+                            <div class="tags-list__item-delete" (click)="deleteTag(i)" *ngIf="!disabledActions">
+                                <i class="fa-regular fa-circle-xmark" style="color: #3a7e93;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
 
         <div class="modal-actions">
             <div class="modal-actions__left" *ngIf="isOwner">

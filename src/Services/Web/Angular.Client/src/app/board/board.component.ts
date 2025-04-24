@@ -11,6 +11,10 @@ import { animate, query, stagger, style, transition, trigger } from '@angular/an
 import { ChatComponent } from '../chat/chat.component';
 import { BoardMembersModal } from '../common/modals/board-members/board-members.modal';
 import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
+import { BoardMemberService } from '../common/services/board-member/board-member.service';
+import { BoardMemberModel } from '../common/models/board-member/board-member.model';
+import { BoardPermission } from '../common/models/board-permission/board-permission.model';
+import { BoardPermissionService } from '../common/services/board-permission/board-permission.service';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -51,9 +55,15 @@ export class BoardComponent implements OnInit {
 
   isOwner = false;
 
+  boardMembers: BoardMemberModel[] = [];
+
+  boardPermissions: BoardPermission[] = [];
+
   constructor(
     private boardService: BoardService,
     private boardNoticeService: BoardNoticeService,
+    private boardMemberService: BoardMemberService,
+    private boardPermissionService: BoardPermissionService,
     private sessionStorageService: SessionStorageService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -64,6 +74,11 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getBoard();
+    this.getPermissions();
+  }
+
+  private getBoard(){
     this.boardService.getBoardById(this.boardId).subscribe(result => {
       if (result) {
         this.board = result;
@@ -71,6 +86,7 @@ export class BoardComponent implements OnInit {
           this.isOwner = true;
         }
         this.getBoardNotices(this.pageIndex, this.pageSize);
+        this.getBoardMembers();
       }
     });
   }
@@ -87,6 +103,22 @@ export class BoardComponent implements OnInit {
         this.pageSize = result.PageSize;
         this.totalPages = result.PagesCount;
         this.totalCount = result.TotalCount
+      }
+    });
+  }
+
+  private getBoardMembers() {
+    this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
+      if (result) {
+        this.boardMembers = result;
+      }
+    });
+  }
+
+  private getPermissions() {
+    this.boardPermissionService.getPermissions().subscribe(result => {
+      if (result) {
+        this.boardPermissions = result;
       }
     });
   }
@@ -122,7 +154,10 @@ export class BoardComponent implements OnInit {
   openMembersModal() {
     this.dialog.open(BoardMembersModal, {
       data: {
-        boardId: this.boardId
+        boardId: this.boardId,
+        members: this.boardMembers,
+        permissions: this.boardPermissions,
+        userId: this.userId
       }
     })
       .afterClosed().subscribe((result) => {
@@ -134,11 +169,16 @@ export class BoardComponent implements OnInit {
     this.dialog.open(BoardInfoModal, {
       data: {
         board: this.board,
+        members: this.boardMembers,
+        permissions: this.boardPermissions,
+        userId: this.userId,
         isOwner: this.isOwner
       }
     })
       .afterClosed().subscribe((result) => {
-
+        if(result === 'updated'){
+          this.getBoard();
+        }
       });
   }
 

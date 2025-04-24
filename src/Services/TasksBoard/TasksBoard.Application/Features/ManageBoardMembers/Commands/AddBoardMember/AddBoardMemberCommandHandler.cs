@@ -34,7 +34,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 BoardId = request.BoardId,
                 AccountId = request.UserId,
                 Nickname = request.Nickname,
-                BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
+                BoardMemberPermissions = [.. request.Permissions.Select(permission => new Domain.Entities.BoardMemberPermission
                 {
                     BoardPermissionId = permission
                 })]

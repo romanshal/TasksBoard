@@ -27,16 +27,17 @@ export class BoardService {
           if (response.result?.items) {
             paginatedList.Items = response.result.items.map((item: any) => {
               let board = new BoardModel(
-                item.id, 
-                item.ownerId, 
-                item.name, 
-                item.description
+                item.id,
+                item.ownerId,
+                item.name,
+                item.description,
+                item.tags
               );
 
               return board;
             });
           }
-          
+
           paginatedList.TotalCount = response.result.totalCount;
           paginatedList.PageIndex = response.result.pageIndex;
           paginatedList.PageSize = response.result.pageSize;
@@ -57,7 +58,12 @@ export class BoardService {
     return this.http.get<ResultResponse<BoardModel>>(this.BOARD_URL + url)
       .pipe(
         map((response: any) => {
-          return new BoardModel(response.result.id, response.result.ownerId, response.result.name, response.result.description)
+          return new BoardModel(
+            response.result.id,
+            response.result.ownerId,
+            response.result.name,
+            response.result.description,
+            response.result.tags)
         }),
         catchError((error) => {
           // Handle the error here

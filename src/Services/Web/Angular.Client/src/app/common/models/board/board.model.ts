@@ -3,6 +3,7 @@ export class BoardModel {
         public Id: string,
         public OwnerId: string,
         public Name: string,
-        public Description: string
+        public Description: string,
+        public Tags: string[]
     ){}
 }

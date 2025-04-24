@@ -1,6 +1,8 @@
 ﻿using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
+using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -25,6 +27,9 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 
             board.Name = request.Name;
             board.Description = request.Description;
+
+            board.Tags.Clear();
+            board.Tags = [.. request.Tags.Select(tag => new BoardTag { Tag = tag })];
 
             await _unitOfWork.GetRepository<Board>().Update(board, true, cancellationToken);
 

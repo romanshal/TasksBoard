@@ -2,6 +2,8 @@ import { Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BoardMemberModel } from '../../models/board-member/board-member.model';
 import { BoardMemberService } from '../../services/board-member/board-member.service';
+import { BoardPermission } from '../../models/board-permission/board-permission.model';
+import { BoardPermissionService } from '../../services/board-permission/board-permission.service';
 
 @Component({
   selector: 'app-board-members',
@@ -11,37 +13,32 @@ import { BoardMemberService } from '../../services/board-member/board-member.ser
 })
 export class BoardMembersModal {
   boardId!: string;
-
+  userId!: string;
+  permissions: BoardPermission[] = [];
   membersForView: BoardMemberModel[] = [];
 
   private openedSettingsId?: string;
 
   constructor(
     private dialogRef: MatDialogRef<BoardMembersModal>,
-    private boardMemberService: BoardMemberService,
-    @Inject(MAT_DIALOG_DATA) private data: { boardId: string }
+    private boardPermissionService: BoardPermissionService,
+    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, members: BoardMemberModel[], permissions: BoardPermission[], userId: string }
   ) {
     this.boardId = data.boardId;
-
-    this.getBoardMembers();
-  }
-
-  private getBoardMembers() {
-    this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
-      if (result) {
-        this.membersForView = result;
-        console.log(this.membersForView);
-      }
-    })
+    this.userId = data.userId;
+    this.membersForView = data.members;
+    this.permissions = data.permissions;
   }
 
   openSettings(id: string) {
     if (this.openedSettingsId) {
       let openedSettings = document.getElementById(this.openedSettingsId);
+
       if (openedSettings) {
         if (this.openedSettingsId === id) {
           openedSettings.style.display = "none";
           this.openedSettingsId = undefined;
+
           return;
         }
 
@@ -57,6 +54,14 @@ export class BoardMembersModal {
     this.openedSettingsId = id;
 
     settings.style.display = "block";
+  }
+
+  isPermissionsCheck(member: BoardMemberModel, permissionId: string) {
+    if (member.Permissions.findIndex(p => p.BoardPermissionId === permissionId) !== -1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   onContainerClick(event: MouseEvent): void {

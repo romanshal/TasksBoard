@@ -88,6 +88,16 @@ $btn-background-hover: lighten($btn-background, 10%);
                     display: flex;
                     width: 100%;
                     flex-direction: column;
+
+                    p {
+                        white-space: break-spaces;
+                        resize: none;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 1;
+                        line-clamp: 1;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    }
                 }
 
                 .boards-list__item-actions {

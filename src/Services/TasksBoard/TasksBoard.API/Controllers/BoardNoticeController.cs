@@ -50,8 +50,6 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
-            var time = DateTime.Now;
-            var timeUtc = DateTime.UtcNow;
             var result = await _mediator.Send(new GetPaginatedBoardNoticesByBoardIdQuery
             {
                 BoardId = boardId,

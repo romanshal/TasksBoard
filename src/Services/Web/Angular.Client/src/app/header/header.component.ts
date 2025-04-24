@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AuthService } from '../common/services/auth/auth.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.mod
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, AfterViewInit {
   public isAuthenticated = false;
   private userId?: string;
   public username!: string;
@@ -24,13 +24,16 @@ export class HeaderComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
   ) {
-    this.isAuthenticated = this.authService.isAuthenticated();
+  }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.isAuthenticated = this.authService.isAuthenticated();
     
-    console.log(this.isAuthenticated);
-    if (this.isAuthenticated) {
-      this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-      this.username = this.sessionService.getUserInfo()?.Username!;
-    }
+      if (this.isAuthenticated) {
+        this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+        this.username = this.sessionService.getUserInfo()?.Username!;
+      }
+    }, 0);
   }
 
   ngOnInit() {

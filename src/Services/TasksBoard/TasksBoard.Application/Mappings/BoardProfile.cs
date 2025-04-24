@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
+using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Mappings
@@ -9,7 +10,8 @@ namespace TasksBoard.Application.Mappings
     {
         public BoardProfile()
         {
-            CreateMap<Board, BoardDto>();
+            CreateMap<Board, BoardDto>()
+                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)));
 
             CreateMap<CreateBoardCommand, Board>();
         }

@@ -28,6 +28,7 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { ChatComponent } from './chat/chat.component';
 import { BoardMembersModal } from './common/modals/board-members/board-members.modal';
 import { BoardInfoModal } from './common/modals/board-info/board-info.modal';
+import { BoardMemberItemComponent } from './common/components/board-member-item/board-member-item.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { BoardInfoModal } from './common/modals/board-info/board-info.modal';
     ChatComponent,
     BoardMembersModal,
     BoardInfoModal,
+    BoardMemberItemComponent,
   ],
   imports: [
     BrowserModule,

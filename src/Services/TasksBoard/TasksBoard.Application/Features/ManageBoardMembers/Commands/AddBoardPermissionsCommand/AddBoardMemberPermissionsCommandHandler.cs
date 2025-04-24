@@ -29,7 +29,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPe
                 throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 
-            member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
+            member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new Domain.Entities.BoardMemberPermission
             {
                 BoardMemberId = request.MemberId,
                 BoardPermissionId = permission
