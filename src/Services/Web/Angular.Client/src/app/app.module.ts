@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AppRoutingModule } from './app-routing.module';
@@ -28,7 +28,9 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { ChatComponent } from './chat/chat.component';
 import { BoardMembersModal } from './common/modals/board-members/board-members.modal';
 import { BoardInfoModal } from './common/modals/board-info/board-info.modal';
-import { BoardMemberItemComponent } from './common/components/board-member-item/board-member-item.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BoardMemberPermissionsModal } from './common/modals/board-member-permissions/board-member-permissions.modal';
+import { InviteMemberModal } from './common/modals/invite-member/invite-member.modal';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { BoardMemberItemComponent } from './common/components/board-member-item/
     ChatComponent,
     BoardMembersModal,
     BoardInfoModal,
-    BoardMemberItemComponent,
+    BoardMemberPermissionsModal,
+    InviteMemberModal
   ],
   imports: [
     BrowserModule,
@@ -62,8 +65,10 @@ import { BoardMemberItemComponent } from './common/components/board-member-item/
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxSpinnerModule
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     AuthGuard,
     { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true },

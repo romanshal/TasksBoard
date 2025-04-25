@@ -1,0 +1,42 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+    <div class="modal">
+        <div class="modal-close" (click)="closeModal()">
+            <i class="fa-solid fa-xmark fa-2xl"></i>
+        </div>
+
+        <div class="permission-container">
+            <div class="member-info">
+                <div class="member-info__avatar">
+                    <img src="avatar.png">
+                </div>
+
+                <div class="member-info__name">
+                    {{user?.Username}}
+                </div>
+                <div class="member-info__email">
+                    ({{user?.Email}})
+                </div>
+            </div>
+
+            <div class="permissions-list">
+                <form [formGroup]="form">
+                    <div class="permission-item" *ngFor="let permission of permissions;">
+                        <input type="checkbox" [checked]="isPermissionsChecked(permission.Id)"
+                            (change)="checkPermission(permission.Id)" />
+                        <label>{{permission.Name}}</label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="permission-actions">
+                <button (click)="savePermissions()">
+                    <i class="fa-solid fa-floppy-disk fa-xl"></i>
+                </button>
+
+                <button class="danger-btn">
+                    <i class="fa-solid fa-user-minus fa-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

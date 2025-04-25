@@ -1,0 +1,36 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+  <div class="modal">
+    <div class="modal-close" (click)="closeModal()">
+      <i class="fa-solid fa-xmark fa-2xl"></i>
+    </div>
+
+    <div class="invite-container">
+      <div class="invite-search">
+        <div class="invite-search__input">
+          <i class="fa fa-search search-icon"></i>
+  
+          <input type="text" placeholder="Введите текст для поиска" [formControl]="searchControl" />
+  
+          <i class="fa fa-times clear-icon" (click)="clearSearch()"></i>
+        </div>
+  
+        <div class="invite-search__dropdown" *ngIf="showDropdown">
+          <div *ngIf="isLoading" class="loading">Загрузка...</div>
+          <div *ngIf="!isLoading">
+            <ng-container *ngIf="searchResult.length; else noResults">
+              <div class="dropdown-item" *ngFor="let item of searchResult" (click)="selectItem(item)">
+                {{ item.Username }}
+              </div>
+            </ng-container>
+            <!-- Шаблон для случая, если результатов нет -->
+            <ng-template #noResults>
+              <div class="dropdown-item">Ничего не найдено</div>
+            </ng-template>
+          </div>
+        </div>
+  
+        <div *ngIf="isLoading" class="loading">Загрузка...</div>
+      </div>
+    </div>
+  </div>
+</div>

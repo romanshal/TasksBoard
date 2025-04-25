@@ -39,6 +39,7 @@ export class BoardMemberService {
                     permission.BoardMemberId = perm.boardMemberId;
                     permission.BoardPermissionId = perm.boardPermissionId;
                     permission.BoardPermissionName = perm.boardPermissionName;
+                    permission.BoardPermissionDescription = perm.boardPermissionDescription;
 
                     return permission;
                   })

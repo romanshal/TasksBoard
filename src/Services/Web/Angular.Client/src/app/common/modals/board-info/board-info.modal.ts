@@ -15,15 +15,9 @@ import { ManageBoardService } from '../../services/manage-board/manage-board.ser
 export class BoardInfoModal implements OnInit, AfterViewInit {
   board!: BoardModel;
   form!: FormGroup;
-
-  userId!: string;
-
   isOwner = false;
 
   public disabledActions = true;
-
-  public members: BoardMemberModel[] = [];
-  permissions: BoardPermission[] = [];
 
   inputWidth: number = 0;
 
@@ -35,13 +29,10 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<BoardInfoModal>,
     private manageBoardService: ManageBoardService,
-    @Inject(MAT_DIALOG_DATA) private data: { board: BoardModel, members: BoardMemberModel[], permissions: BoardPermission[], userId: string, isOwner: boolean }
+    @Inject(MAT_DIALOG_DATA) private data: { board: BoardModel, isOwner: boolean }
   ) {
     this.board = data.board;
     this.isOwner = data.isOwner;
-    this.members = data.members;
-    this.permissions = data.permissions;
-    this.userId = data.userId;
   }
 
   ngOnInit(): void {

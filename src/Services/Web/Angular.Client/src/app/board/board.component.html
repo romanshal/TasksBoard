@@ -1,7 +1,9 @@
 <div class="board-container" #container>
     <div class="board-wrapper">
+        <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+        
         <div class="note-actions">
-            <button class="note-button" (click)="openNoticeModal()">
+            <button class="note-button" (click)="openNoticeModal()" *ngIf="canAddNotices">
                 <i class="fa-solid fa-plus"></i>
                 Add notice
             </button>
@@ -11,7 +13,7 @@
                 Members
             </button>
 
-            <button class="note-button right-button" *ngIf="isOwner" (click)="openInfoModal()">
+            <button class="note-button right-button" (click)="openInfoModal()">
                 <i class="fa-solid fa-clipboard-list"></i>
                 Info
             </button>

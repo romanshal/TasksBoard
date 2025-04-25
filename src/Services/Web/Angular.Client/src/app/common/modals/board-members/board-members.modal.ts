@@ -1,9 +1,11 @@
 import { Component, HostListener, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BoardMemberModel } from '../../models/board-member/board-member.model';
-import { BoardMemberService } from '../../services/board-member/board-member.service';
 import { BoardPermission } from '../../models/board-permission/board-permission.model';
-import { BoardPermissionService } from '../../services/board-permission/board-permission.service';
+import { BoardMemberAuthService } from '../../services/board-member-auth/board-member-auth.service';
+import { BoardMemberPermissionsModal } from '../board-member-permissions/board-member-permissions.modal';
+import { BoardMemberService } from '../../services/board-member/board-member.service';
+import { InviteMemberModal } from '../invite-member/invite-member.modal';
 
 @Component({
   selector: 'app-board-members',
@@ -17,51 +19,43 @@ export class BoardMembersModal {
   permissions: BoardPermission[] = [];
   membersForView: BoardMemberModel[] = [];
 
-  private openedSettingsId?: string;
+  canManageMember = false;
 
   constructor(
+    private dialog: MatDialog,
     private dialogRef: MatDialogRef<BoardMembersModal>,
-    private boardPermissionService: BoardPermissionService,
+    private boardMemberAuthService: BoardMemberAuthService,
+    private boardMemberService: BoardMemberService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string, members: BoardMemberModel[], permissions: BoardPermission[], userId: string }
   ) {
     this.boardId = data.boardId;
     this.userId = data.userId;
     this.membersForView = data.members;
     this.permissions = data.permissions;
+
+    this.canManageMember = this.boardMemberAuthService.havePermission('manage_member');
   }
 
-  openSettings(id: string) {
-    if (this.openedSettingsId) {
-      let openedSettings = document.getElementById(this.openedSettingsId);
-
-      if (openedSettings) {
-        if (this.openedSettingsId === id) {
-          openedSettings.style.display = "none";
-          this.openedSettingsId = undefined;
-
-          return;
-        }
-
-        openedSettings.style.display = "none";
+  openMemberPermission(member: BoardMemberModel) {
+    this.dialog.open(BoardMemberPermissionsModal, {
+      data: {
+        boardId: this.boardId,
+        member: member,
+        permissions: this.permissions
       }
-    }
-
-    let settings = document.getElementById(id);
-    if (!settings) {
-      return;
-    }
-
-    this.openedSettingsId = id;
-
-    settings.style.display = "block";
+    }).afterClosed().subscribe((result) => {
+      if (result === 'updated') {
+        this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
+          if (result) {
+            this.membersForView = result;
+          }
+        });
+      }
+    });
   }
 
-  isPermissionsCheck(member: BoardMemberModel, permissionId: string) {
-    if (member.Permissions.findIndex(p => p.BoardPermissionId === permissionId) !== -1) {
-      return true;
-    } else {
-      return false;
-    }
+  openInvite(){
+    this.dialog.open(InviteMemberModal);
   }
 
   onContainerClick(event: MouseEvent): void {
@@ -77,7 +71,7 @@ export class BoardMembersModal {
     this.closeModal();
   }
 
-  closeModal(result?: string): void {
-    this.dialogRef.close(result);
+  closeModal(): void {
+    this.dialogRef.close(this.membersForView);
   }
 }

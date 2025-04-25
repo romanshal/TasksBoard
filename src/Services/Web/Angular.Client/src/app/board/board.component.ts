@@ -15,6 +15,8 @@ import { BoardMemberService } from '../common/services/board-member/board-member
 import { BoardMemberModel } from '../common/models/board-member/board-member.model';
 import { BoardPermission } from '../common/models/board-permission/board-permission.model';
 import { BoardPermissionService } from '../common/services/board-permission/board-permission.service';
+import { BoardMemberAuthService } from '../common/services/board-member-auth/board-member-auth.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -53,11 +55,11 @@ export class BoardComponent implements OnInit {
 
   isChatOpen = false;
 
-  isOwner = false;
-
   boardMembers: BoardMemberModel[] = [];
 
   boardPermissions: BoardPermission[] = [];
+
+  canAddNotices = false;
 
   constructor(
     private boardService: BoardService,
@@ -65,26 +67,28 @@ export class BoardComponent implements OnInit {
     private boardMemberService: BoardMemberService,
     private boardPermissionService: BoardPermissionService,
     private sessionStorageService: SessionStorageService,
+    private boardMemberAuthService: BoardMemberAuthService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private componentFactoryResolver: ComponentFactoryResolver
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private spinner: NgxSpinnerService
   ) {
+    this.spinner.show();
+
     this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
     this.boardId = this.route.snapshot.paramMap.get('boardid')!;
+
+    this.getBoard();
   }
 
   ngOnInit(): void {
-    this.getBoard();
     this.getPermissions();
   }
 
-  private getBoard(){
+  private getBoard() {
     this.boardService.getBoardById(this.boardId).subscribe(result => {
       if (result) {
         this.board = result;
-        if (this.board.OwnerId == this.userId) {
-          this.isOwner = true;
-        }
         this.getBoardNotices(this.pageIndex, this.pageSize);
         this.getBoardMembers();
       }
@@ -111,6 +115,9 @@ export class BoardComponent implements OnInit {
     this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
       if (result) {
         this.boardMembers = result;
+
+        this.boardMemberAuthService.initialize(this.board, this.boardMembers.find(member => member.AccountId === this.userId)!);
+        this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
       }
     });
   }
@@ -119,6 +126,8 @@ export class BoardComponent implements OnInit {
     this.boardPermissionService.getPermissions().subscribe(result => {
       if (result) {
         this.boardPermissions = result;
+
+        this.spinner.hide();
       }
     });
   }
@@ -141,7 +150,7 @@ export class BoardComponent implements OnInit {
     this.dialog.open(BoardNoticeModal, {
       data: {
         boardId: this.boardId,
-        note: note
+        note: note,
       }
     })
       .afterClosed().subscribe((result) => {
@@ -157,11 +166,11 @@ export class BoardComponent implements OnInit {
         boardId: this.boardId,
         members: this.boardMembers,
         permissions: this.boardPermissions,
-        userId: this.userId
+        userId: this.userId,
       }
     })
       .afterClosed().subscribe((result) => {
-
+        this.boardMembers = result;
       });
   }
 
@@ -169,14 +178,11 @@ export class BoardComponent implements OnInit {
     this.dialog.open(BoardInfoModal, {
       data: {
         board: this.board,
-        members: this.boardMembers,
-        permissions: this.boardPermissions,
-        userId: this.userId,
-        isOwner: this.isOwner
+        isOwner: this.board.OwnerId === this.userId,
       }
     })
       .afterClosed().subscribe((result) => {
-        if(result === 'updated'){
+        if (result === 'updated') {
           this.getBoard();
         }
       });

@@ -46,7 +46,7 @@
     </form>
 
     <div class="modal-actions">
-      <div class="modal-actions__left">
+      <div class="modal-actions__left" *ngIf="havePermission('manage_notice')">
         <button autofocus="false" *ngIf="!disabledActions " (click)="submitForm()">
           <i class="fa-solid fa-floppy-disk fa-2xl"></i>
           <div class="tooltip">Save</div>

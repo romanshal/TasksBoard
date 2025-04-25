@@ -274,6 +274,10 @@ $btn-color: #3a7e93;
                 display: flex;
                 gap: 10px;
             }
+
+            .modal-actions__right {
+                margin-left: auto;
+            }
         }
     }
 }

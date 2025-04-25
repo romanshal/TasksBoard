@@ -7,6 +7,8 @@ import { SessionStorageService } from '../../services/session-storage/session-st
 import { BoardNoticeModel } from '../../models/board-notice/board-notice.model';
 import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
+import { BoardMemberModel } from '../../models/board-member/board-member.model';
+import { BoardMemberAuthService } from '../../services/board-member-auth/board-member-auth.service';
 
 interface NoteStyle {
   value: any;
@@ -51,15 +53,19 @@ export class BoardNoticeModal implements OnInit {
   public backgroundColor!: NoteStyle;
   private rotation?: string;
 
+  currentMember!: BoardMemberModel;
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<BoardNoticeModal>,
     private noticeService: BoardNoticeService,
     private sessionService: SessionStorageService,
     private userService: UserService,
-    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel }
+    private boardMemberAuthService: BoardMemberAuthService,
+    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel, currentMember: BoardMemberModel }
   ) {
     this.note = data.note;
+    this.currentMember = data.currentMember;
 
     if (data.note !== undefined) {
       this.disabledActions = true;
@@ -89,6 +95,10 @@ export class BoardNoticeModal implements OnInit {
       backgroundColor: [this.backgroundColor.value, Validators.required],
       rotation: [this.rotation, Validators.required]
     });
+  }
+
+  havePermission(permission: string){
+    return this.boardMemberAuthService.havePermission(permission);
   }
 
   submitForm() {
