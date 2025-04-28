@@ -6,5 +6,6 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
     public class GetPaginatedBoardsByUserIdQuery : GetPaginatedListQuery<BoardDto>
     {
         public required Guid UserId { get; set; }
+        public string? Query { get; set; }
     }
 }

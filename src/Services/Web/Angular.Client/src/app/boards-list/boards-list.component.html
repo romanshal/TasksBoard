@@ -1,39 +1,39 @@
 <div class="boards-container">
     <div class="boards-wrapper">
         <div class="boards-actions">
-            <button>
+            <button (click)="openCreateModal()">
                 Create board
             </button>
+
+            <input [(ngModel)]="searchString" (input)="onSearchChange()" placeholder="Search title..."/>
         </div>
         <div class="boards-list" [@listAnimation]="boards.length">
+        <!-- <div class="boards-list"> -->
             <div class="boards-list__item" *ngFor="let board of boards; let i = index">
-                <div class="boards-list__item-image"></div>
+                <img src="board.jpg" />
 
                 <div class="boards-list__item-definition">
-                    <span>Name: {{ board.Name }}</span>
+                    <h3>{{ board.Name }}</h3>
 
-                    <span>Definition: </span>
+                    <p>{{ board.Description }}</p>
+                </div>
 
-                    <p>
-                        {{board.Description }}
-                    </p>
-
-                    <div class="tags-list">
-                        <div class="tags-list__item" *ngFor="let tag of board.Tags">
-                            {{tag}}
-                        </div>
+                <div class="tags-list">
+                    <div class="tags-list__item" *ngFor="let tag of board.Tags">
+                        {{tag}}
                     </div>
                 </div>
 
+                
                 <div class="boards-list__item-actions" (click)="openBoard(board.Id)">
-                    <i class="fa-solid fa-arrow-right-to-bracket fa-2xl"></i>
+                    <i class="fa-solid fa-arrow-right-to-bracket fa-xl"></i>
                 </div>
             </div>
-
-            <app-paginator style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize"
-                [totalPages]="totalPages" [totalCount]="totalCount" (pageChanged)="goToPage($event)">
-            </app-paginator>
         </div>
+
+        <app-paginator style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize"
+        [totalPages]="totalPages" [totalCount]="totalCount" (pageChanged)="goToPage($event)">
+    </app-paginator>
     </div>
 </div>
 

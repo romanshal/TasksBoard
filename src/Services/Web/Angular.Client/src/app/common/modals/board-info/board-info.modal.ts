@@ -2,9 +2,11 @@ import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, Vie
 import { BoardModel } from '../../models/board/board.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BoardMemberModel } from '../../models/board-member/board-member.model';
-import { BoardPermission } from '../../models/board-permission/board-permission.model';
 import { ManageBoardService } from '../../services/manage-board/manage-board.service';
+import { SessionStorageService } from '../../services/session-storage/session-storage.service';
+import { UserInfoModel } from '../../models/user/user-info.model';
+import { BoardService } from '../../services/board/board.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-board-info',
@@ -13,9 +15,12 @@ import { ManageBoardService } from '../../services/manage-board/manage-board.ser
   styleUrl: './board-info.modal.scss'
 })
 export class BoardInfoModal implements OnInit, AfterViewInit {
-  board!: BoardModel;
+  board?: BoardModel;
   form!: FormGroup;
   isOwner = false;
+
+  private currentUserId?: string;
+  private currentUser?: UserInfoModel;
 
   public disabledActions = true;
 
@@ -25,13 +30,29 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
 
   newTag: string = '';
 
+  newBoard = false;
+  formSubmitted = false;
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<BoardInfoModal>,
+    private boardService: BoardService,
     private manageBoardService: ManageBoardService,
+    private sessionService: SessionStorageService,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA) private data: { board: BoardModel, isOwner: boolean }
   ) {
-    this.board = data.board;
+    if (data.board === undefined) {
+      this.newBoard = true;
+      this.disabledActions = false;
+
+      this.currentUserId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+      this.currentUser = this.sessionService.getUserInfo();
+    }
+    else {
+      this.board = data.board;
+    }
+
     this.isOwner = data.isOwner;
   }
 
@@ -47,9 +68,11 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
 
   initForm() {
     this.form = this.fb.group({
-      name: [{ value: this.board.Name, disabled: this.disabledActions }, Validators.required],
-      description: [{ value: this.board.Description, disabled: this.disabledActions }, Validators.required],
-      tags: this.fb.array(this.board.Tags.map(t => this.fb.control(t)))
+      ownerId: [this.currentUserId],
+      ownerNickname: [this.currentUser?.Username],
+      name: [{ value: this.board?.Name ?? '', disabled: this.disabledActions }, Validators.required],
+      description: [{ value: this.board?.Description ?? '', disabled: this.disabledActions }, Validators.required],
+      tags: this.fb.array(this.board?.Tags?.map(t => this.fb.control(t)) ?? [])
     });
   }
 
@@ -96,13 +119,32 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
   }
 
   submitForm() {
+    this.formSubmitted = true;
+
     if (this.form.valid) {
-      this.manageBoardService.updateBoard(this.board.Id, this.form.value).subscribe(result => {
-        this.closeModal('updated')
-      });
-    } else {
+      if (this.newBoard) {
+        this.createBoard();
+      } else {
+        this.updateBoard();
+      }
+    }
+    else {
       console.error('Форма недействительна!');
     }
+  }
+
+  createBoard() {
+    this.boardService.createBoard(this.form.value).subscribe(result => {
+      if (result) {
+        this.closeModal(result);
+      }
+    });
+  }
+
+  updateBoard() {
+    this.manageBoardService.updateBoard(this.board!.Id, this.form.value).subscribe(result => {
+      this.closeModal('updated')
+    });
   }
 
   closeModal(result?: string): void {

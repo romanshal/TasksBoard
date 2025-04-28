@@ -9,16 +9,25 @@
                 <div class="info-wrapper__description">
                     <div class="sections">
                         <div class="name-section">
-                            <input formControlName="name" (input)="updateWidth()" [style.width.px]="inputWidth" />
+                            <input formControlName="name" (input)="updateWidth()" [style.width.px]="inputWidth"
+                                [ngClass]="{ 'invalid': formSubmitted && form.controls['name'].errors }" required />
                             <span #textMeasure class="text-measure"></span>
+
+                            <div *ngIf="formSubmitted && form.controls['name'].errors" class="invalid-feedback">
+                                <div *ngIf="form.controls['name'].errors?.['required']">Board name is required</div>
+                            </div>
                         </div>
 
                         <div class="description-section">
                             <div class="info-wrapper__tooltip">
                                 Description
                             </div>
-                            
+
                             <textarea formControlName="description"></textarea>
+
+                            <div *ngIf="formSubmitted && form.controls['description'].errors" class="invalid-feedback">
+                                <div *ngIf="form.controls['description'].errors?.['required']">Description is required</div>
+                            </div>
                         </div>
                     </div>
                 </div>

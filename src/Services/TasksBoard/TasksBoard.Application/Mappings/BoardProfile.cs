@@ -13,7 +13,11 @@ namespace TasksBoard.Application.Mappings
             CreateMap<Board, BoardDto>()
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)));
 
-            CreateMap<CreateBoardCommand, Board>();
+            CreateMap<CreateBoardCommand, Board>()
+                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>
+                src.Tags != null
+                    ? src.Tags.Select(tag => new BoardTag { Tag = tag }).ToList()
+                    : new List<BoardTag>()));
         }
     }
 }

@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { BoardModel } from '../common/models/board/board.model';
 import { BoardService } from '../common/services/board/board.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
-import { Response } from '../common/models/response/response.model';
 import { Router } from '@angular/router';
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
+import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap } from 'rxjs';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -32,29 +34,51 @@ export class BoardsListComponent implements OnInit {
   private userId: any;
 
   pageIndex = 1;
-  pageSize = 5;
+  pageSize = 6;
   totalPages = 1;
   totalCount = 0;
+
+  searchString = '';
+  private searchSubject: Subject<string> = new Subject();
 
   constructor(
     private boardService: BoardService,
     private sessionService: SessionStorageService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
   ) {
     this.userId = this.sessionService.getItem(this.sessionService.userIdKey);
   }
 
   ngOnInit(): void {
-    this.getBoards(this.pageIndex, this.pageSize);
+    this.getBoards(this.searchString, this.pageIndex, this.pageSize);
+    this.subscribeToSearchChanges();
   }
 
-  getBoards(pageIndex: number, pageSize: number) {
-    this.boardService.getBoardsByUserId(this.userId!, pageIndex, pageSize).subscribe({
+  onSearchChange() {
+    this.searchSubject.next(this.searchString);
+  }
+
+  subscribeToSearchChanges(): void {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term => {
+        this.pageIndex = 1;
+        return of(this.getBoards(term, this.pageIndex, this.pageSize));
+      })
+    ).subscribe(data => {
+
+    });
+  }
+
+  getBoards(query: string, pageIndex: number, pageSize: number) {
+    this.boardService.getBoardsByUserId(query, this.userId!, pageIndex, pageSize).subscribe({
       next: (result) => {
         setTimeout(() => {
           this.boards = result.Items;
         }, 300)
-
+        // this.boards = result.Items;
 
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;
@@ -78,11 +102,24 @@ export class BoardsListComponent implements OnInit {
       this.pageIndex = page;
       this.boards = [];
 
-      this.getBoards(this.pageIndex, this.pageSize);
+      this.getBoards(this.searchString, this.pageIndex, this.pageSize);
     }
   }
 
   openBoard(boardId: string) {
     this.router.navigate(['/board/' + boardId]);
+  }
+
+  openCreateModal() {
+    this.dialog.open(BoardInfoModal, {
+      data: {
+        isOwner: true
+      }
+    })
+      .afterClosed().subscribe((result) => {
+        if (result) {
+          this.router.navigate(['/board/' + result]);
+        }
+      });
   }
 }

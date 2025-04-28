@@ -144,6 +144,12 @@ button {
                                 &:disabled {
                                     border-bottom: 2px solid white; // При disabled нижняя черта скрывается
                                 }
+
+                                &.invalid {
+                                    border-bottom: 2px solid #dc3545;
+                                    box-sizing: border-box;
+                                    outline: none;
+                                }
                             }
 
                             .text-measure {
@@ -155,6 +161,14 @@ button {
                                 font-family: $main-font;
                                 font-weight: 400;
                                 font-size: xx-large;
+                            }
+
+                            .invalid-feedback {
+                                width: 100%;
+                                padding-left: 15px;
+                                margin-top: .25rem;
+                                font-size: .875em;
+                                color: #dc3545;
                             }
                         }
 
@@ -181,7 +195,6 @@ button {
                                     background-color: transparent;
                                 }
 
-
                                 &:focus {
                                     border: none;
                                 }
@@ -204,6 +217,16 @@ button {
                                     scrollbar-width: thin;
                                     scrollbar-color: #888 transparent;
                                 }
+                            }
+
+                            .invalid-feedback {
+                                display: flex;
+                                justify-content: center;
+                                width: 100%;
+                                padding-left: 15px;
+                                margin-top: .25rem;
+                                font-size: .875em;
+                                color: #dc3545;
                             }
                         }
                     }

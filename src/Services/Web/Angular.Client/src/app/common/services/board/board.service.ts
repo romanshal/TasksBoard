@@ -18,9 +18,9 @@ export class BoardService {
     private httpOption: HttpOptionService
   ) { }
 
-  getBoardsByUserId(userId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<BoardModel>> {
+  getBoardsByUserId(query: string, userId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<BoardModel>> {
     const url = '/api/boards/user/' + userId;
-    return this.http.get<ResultResponse<BoardModel[]>>(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize) })
+    return this.http.get<ResultResponse<BoardModel[]>>(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize).append('query', query) })
       .pipe(
         map((response: any) => {
           const paginatedList = new PaginatedList<BoardModel>();
@@ -71,5 +71,15 @@ export class BoardService {
           return throwError(() => new Error("Get board by id, please try again later."));
         })
       );
+  }
+
+  createBoard(form: any) : Observable<string> {
+    const url = '/api/boards/';
+    return this.http.post<ResultResponse<string>>(this.BOARD_URL + url, form)
+    .pipe(
+      map((response: any) => {
+        return response.result;
+      })
+    );
   }
 }

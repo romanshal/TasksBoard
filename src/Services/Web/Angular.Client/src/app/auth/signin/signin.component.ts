@@ -54,13 +54,13 @@ export class SigninComponent implements OnInit {
       next: (result) => {
         this.userService.getUserInfo(result.UserId).subscribe(result => {
           this.sessionService.setUserInfo(result);
+          
+          const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
+
+          window.location.href = returnUrl;
         }, error => {
           console.error(error);
         });
-
-        const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
-
-        window.location.href = returnUrl;
       },
       error: (error: Response) => {
         this.showErrors = true;
