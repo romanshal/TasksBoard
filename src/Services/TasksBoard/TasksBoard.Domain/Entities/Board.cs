@@ -9,6 +9,7 @@ namespace TasksBoard.Domain.Entities
         public string? Description { get; set; }
         public bool Public { get; set; }
 
+        public virtual BoardImage? BoardImage { get; set; }
         public virtual ICollection<BoardMember> BoardMembers { get; set; }
         public virtual ICollection<BoardNotice> Notices { get; set; }
         public virtual ICollection<BoardTag> Tags { get; set; }

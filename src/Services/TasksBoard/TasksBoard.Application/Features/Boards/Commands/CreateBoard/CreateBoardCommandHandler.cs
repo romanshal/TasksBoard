@@ -8,11 +8,11 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 {
     public class CreateBoardCommandHandler(
-        ILogger<GetBoardByIdQueryHandler> logger,
+        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
         IUnitOfWork unitOfWork,
         IMapper mapper) : IRequestHandler<CreateBoardCommand, Guid>
     {
-        private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
+        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
 

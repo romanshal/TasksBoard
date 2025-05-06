@@ -10,10 +10,10 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
     public class UpdateBoardCommandHandler(
-        ILogger<GetBoardByIdQueryHandler> logger,
+        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
         IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Guid>
     {
-        private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
+        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Guid> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
@@ -27,6 +27,31 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 
             board.Name = request.Name;
             board.Description = request.Description;
+            board.Public = request.Public;
+
+            if (request.Image is not null)
+            {
+                if (board.BoardImage is null)
+                {
+                    board.BoardImage = new BoardImage
+                    {
+                        Image = request.Image,
+                        Extension = request.ImageExtension!
+                    };
+                }
+                else
+                {
+                    board.BoardImage.Extension = request.ImageExtension!;
+                    board.BoardImage.Image = request.Image;
+                }
+            }
+            else
+            {
+                if (board.BoardImage is not null)
+                {
+                    board.BoardImage = null;
+                }
+            }
 
             board.Tags.Clear();
             board.Tags = [.. request.Tags.Select(tag => new BoardTag { Tag = tag })];

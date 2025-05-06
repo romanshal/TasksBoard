@@ -55,6 +55,37 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.ToTable("boards", (string)null);
                 });
 
+            modelBuilder.Entity("TasksBoard.Domain.Entities.BoardImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BoardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoardId")
+                        .IsUnique();
+
+                    b.ToTable("boardimages", (string)null);
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.BoardMember", b =>
                 {
                     b.Property<Guid>("Id")
@@ -210,6 +241,17 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.ToTable("boardtags", (string)null);
                 });
 
+            modelBuilder.Entity("TasksBoard.Domain.Entities.BoardImage", b =>
+                {
+                    b.HasOne("TasksBoard.Domain.Entities.Board", "Board")
+                        .WithOne("BoardImage")
+                        .HasForeignKey("TasksBoard.Domain.Entities.BoardImage", "BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.BoardMember", b =>
                 {
                     b.HasOne("TasksBoard.Domain.Entities.Board", "Board")
@@ -264,6 +306,9 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("TasksBoard.Domain.Entities.Board", b =>
                 {
+                    b.Navigation("BoardImage")
+                        .IsRequired();
+
                     b.Navigation("BoardMembers");
 
                     b.Navigation("Notices");

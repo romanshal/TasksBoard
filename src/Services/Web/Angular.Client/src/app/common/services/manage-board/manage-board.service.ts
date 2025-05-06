@@ -16,4 +16,9 @@ export class ManageBoardService {
     const url = '/api/manageboards/' + boardId;
     return this.http.put(this.BOARD_URL + url, board);
   }
+
+  deleteBoard(boardId: string){
+    const url = '/api/manageboards/' + boardId;
+    return this.http.delete(this.BOARD_URL + url);
+  }
 }

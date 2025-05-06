@@ -160,22 +160,22 @@ $border-radius: 8px;
         font-size: 12px;
         font-weight: 500;
         display: contents;
-      }
 
-      span::before {
-        content: "";
-        border-bottom: 1px solid #c9cace;
-        flex: 1 0 auto;
-        height: .5em;
-        margin-right: 6px;
-      }
-
-      span::after {
-        content: "";
-        border-bottom: 1px solid #c9cace;
-        flex: 1 0 auto;
-        height: .5em;
-        margin-left: 6px;
+        &::before {
+          content: "";
+          border-bottom: 1px solid #c9cace;
+          flex: 1 0 auto;
+          height: .5em;
+          margin-right: 6px;
+        }
+  
+        &::after {
+          content: "";
+          border-bottom: 1px solid #c9cace;
+          flex: 1 0 auto;
+          height: .5em;
+          margin-left: 6px;
+        }
       }
     }
 

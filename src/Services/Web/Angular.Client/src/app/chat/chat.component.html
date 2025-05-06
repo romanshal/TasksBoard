@@ -1,50 +1,43 @@
-<div class="chat-wrapper">
+<div class="chat-button" *ngIf="!isChatOpen" (click)="changeChatVisability()">
+    <div class="chat-button__unread" *ngIf="unreadCount > 0">
+        {{unread}}
+    </div>
+
+    <i class="fa-solid fa-comment-dots fa-2xl" style="color: #ffffff;"></i>
+</div>
+
+<div class="chat-wrapper" *ngIf="isChatOpen">
     <div class="chat-actions">
-        <i class="fa-solid fa-xmark fa-lg" (click)="close()"></i>
+        <i class="fa-solid fa-xmark fa-lg" (click)="changeChatVisability()"></i>
     </div>
     <div class="chat">
-        <div class="messages-container" #messagesContainer>
+        <div class="messages-container" id="messagesContainer" #messagesContainer>
             <div class="no-messages-info" *ngIf="messages.length === 0">There are no messages.</div>
+
+            <div class="show-more" *ngIf="messages.length === pageIndex * pageSize" (click)="showMoreMessages()">
+                <span>More messages</span>
+            </div>
+
             <ul class="messages-list">
-                <li class="messages-list__item" *ngFor="let message of messages"
-                    [class.ismine]="message.UserId === userId">
+                <li class="messages-list__item" *ngFor="let message of messages" [class.ismine]="message.AccountId === userId" id="{{message.Id}}">
                     <div class="message-content">
                         <div class="message-info">
-                            <span class="author">{{message.Username}}</span>
-                            <span class="timestamp">{{message.MessageDate | date}}</span>
+                            <span class="author">{{message.MemberNickname}}</span>
+                            <span class="timestamp">{{message.CreatedAt | date}}</span>
                         </div>
                         <div class="content">{{message.Message}}</div>
                     </div>
-                    <!-- <div class="actions d-none">
-                        <div class="dropdown dropstart">
-                            <a class="text-secondary" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-more-vertical">
-                                    <circle cx="12" cy="12" r="1"></circle>
-                                    <circle cx="12" cy="5" r="1"></circle>
-                                    <circle cx="12" cy="19" r="1"></circle>
-                                </svg>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                        data-bs-target="#remove-message-modal"
-                                        data-messageId="Message ID">Delete</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div> -->
                 </li>
             </ul>
         </div>
 
         <div class="message-input-container">
-            <textarea class="message-input" rows="2"></textarea>
+            <textarea class="message-input" appAutoResizeTextarea rows="1" [(ngModel)]="message"
+                [autoResizeValue]="message" placeholder="Message..."></textarea>
             <div class="message-actions">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-send">
+                <svg (click)="sendMessage()" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-send">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                 </svg>

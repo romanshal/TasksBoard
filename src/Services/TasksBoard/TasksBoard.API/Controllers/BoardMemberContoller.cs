@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByBoardIdAndAccountId;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMembersByBoardId;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoardMembersByBoardId;
 
@@ -33,6 +34,24 @@ namespace TasksBoard.API.Controllers
             });
 
             var response = new ResultResponse<IEnumerable<BoardMemberDto>>(result);
+
+            return Ok(response);
+        }
+
+        [HttpGet("board/{boardId:guid}/account/{accountId:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBoardMemberByBoardIdAndAccountIdAsync(Guid boardId, Guid accountId)
+        {
+            var result = await _mediator.Send(new GetBoardMemberByBoardIdAndAccountIdQuery
+            {
+                BoardId = boardId,
+                AccountId = accountId
+            });
+
+            var response = new ResultResponse<BoardMemberDto>(result);
 
             return Ok(response);
         }

@@ -8,10 +8,10 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice
 {
     public class UpdateBoardNoticeCommandHandler(
-        ILogger<GetBoardByIdQueryHandler> logger,
+        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
         IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardNoticeCommand, Guid>
     {
-        private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
+        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Guid> Handle(UpdateBoardNoticeCommand request, CancellationToken cancellationToken)

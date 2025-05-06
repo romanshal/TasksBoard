@@ -5,35 +5,42 @@
                 Create board
             </button>
 
-            <input [(ngModel)]="searchString" (input)="onSearchChange()" placeholder="Search title..."/>
+            <input [(ngModel)]="searchString" (input)="onSearchChange()" placeholder="Search title..." />
         </div>
         <div class="boards-list" [@listAnimation]="boards.length">
-        <!-- <div class="boards-list"> -->
+            <!-- <div class="boards-list"> -->
             <div class="boards-list__item" *ngFor="let board of boards; let i = index">
-                <img src="board.jpg" />
+                <img *ngIf="!board.Image" src="default-board.png" />
+                <img *ngIf="board.Image" [src]="getImageUrl(board)" />
 
                 <div class="boards-list__item-definition">
-                    <h3>{{ board.Name }}</h3>
-
-                    <p>{{ board.Description }}</p>
-                </div>
-
-                <div class="tags-list">
-                    <div class="tags-list__item" *ngFor="let tag of board.Tags">
-                        {{tag}}
+                    <div class="boards-list__item-description">
+                        <h3>{{ board.Name }}</h3>
+    
+                        <p>{{ board.Description }}</p>
+                    </div>
+    
+                    <div class="boards-list__item-members">
+                        <i class="fa-solid fa-users"></i>
+                        <h4>{{board.MemberCount}}</h4>
+                    </div>
+    
+                    <div class="tags-list">
+                        <div class="tags-list__item" *ngFor="let tag of board.Tags">
+                            {{tag}}
+                        </div>
                     </div>
                 </div>
 
-                
-                <div class="boards-list__item-actions" (click)="openBoard(board.Id)">
+                <div class="boards-list__item-actions" (click)="openBoard(board)">
                     <i class="fa-solid fa-arrow-right-to-bracket fa-xl"></i>
                 </div>
             </div>
         </div>
 
-        <app-paginator style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize"
-        [totalPages]="totalPages" [totalCount]="totalCount" (pageChanged)="goToPage($event)">
-    </app-paginator>
+        <app-paginator style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize" [totalPages]="totalPages"
+            [totalCount]="totalCount" (pageChanged)="goToPage($event)">
+        </app-paginator>
     </div>
 </div>
 

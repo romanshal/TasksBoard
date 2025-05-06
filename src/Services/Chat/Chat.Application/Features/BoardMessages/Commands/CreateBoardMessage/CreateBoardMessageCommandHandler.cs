@@ -1,0 +1,46 @@
+﻿using AutoMapper;
+using Chat.Application.DTOs;
+using Chat.Domain.Entities;
+using Chat.Domain.Interfaces.UnitOfWorks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage
+{
+    public class CreateBoardMessageCommandHandler(
+        IUnitOfWork unitOfWork,
+        ILogger<CreateBoardMessageCommandHandler> logger,
+        IMapper mapper) : IRequestHandler<CreateBoardMessageCommand, BoardMessageDto>
+    {
+
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<CreateBoardMessageCommandHandler> _logger = logger;
+        private readonly IMapper _mapper = mapper;
+
+        public async Task<BoardMessageDto> Handle(CreateBoardMessageCommand request, CancellationToken cancellationToken)
+        {
+            //TODO: check board exist
+
+            var boardMessage = _mapper.Map<BoardMessage>(request);
+
+            await _unitOfWork.GetBoardMessagesRepository().Add(boardMessage, true, cancellationToken);
+
+            if (boardMessage.Id == Guid.Empty)
+            {
+                _logger.LogError($"Can't create new board message to board with id '{request.BoardId}'.");
+                throw new ArgumentException(nameof(boardMessage));
+            }
+
+            var createdBoardMessageDto = _mapper.Map<BoardMessageDto>(boardMessage);
+
+            _logger.LogInformation($"Board message with id '{boardMessage.Id}' added to board with id '{request.BoardId}'.");
+
+            return createdBoardMessageDto;
+        }
+    }
+}

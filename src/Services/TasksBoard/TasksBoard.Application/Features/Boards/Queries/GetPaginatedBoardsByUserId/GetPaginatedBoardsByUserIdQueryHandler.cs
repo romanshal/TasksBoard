@@ -46,7 +46,14 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAndQueryAsync(request.UserId, request.Query, request.PageIndex, request.PageSize, cancellationToken);
             }
 
-            var boardsDto = _mapper.Map<IEnumerable<BoardDto>>(boards);
+            var boardsDto = _mapper.Map<IEnumerable<Board>, IEnumerable<BoardDto>>(boards,
+                opt => opt.AfterMap((src, dest) =>
+                {
+                    foreach (var item in dest)
+                    {
+                        item.IsMember = src.First(board => board.Id == item.Id).BoardMembers.Any(member => member.AccountId == request.UserId);
+                    }
+                }));
 
             return boardsDto.ToPaginatedList(request.PageIndex, request.PageSize, count);
         }

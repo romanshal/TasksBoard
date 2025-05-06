@@ -48,6 +48,8 @@ button {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin: 20px 0px;
+    width: 100%;
+    min-width: 50%;
 
     .note-actions {
       display: flex;
@@ -196,27 +198,6 @@ button {
           cursor: pointer;
         }
       }
-    }
-  }
-
-  .chat-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    height: 60px;
-    width: 60px;
-    background-color: #28b351;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: scale(1.1);
-      box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
     }
   }
 }

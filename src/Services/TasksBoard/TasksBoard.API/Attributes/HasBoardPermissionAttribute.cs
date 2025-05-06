@@ -40,7 +40,7 @@ namespace TasksBoard.API.Attributes
                 return;
             }
 
-            var boardMember = await unitOfWork.GetBoardMemberRepository().GetByBoardIdAndUserIdAsync((Guid)entityIdObj!, Guid.Parse(userId));
+            var boardMember = await unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync((Guid)entityIdObj!, Guid.Parse(userId));
             if (boardMember is null)
             {
                 context.Result = new ForbidResult();

@@ -31,7 +31,12 @@ export class BoardService {
                 item.ownerId,
                 item.name,
                 item.description,
-                item.tags
+                item.tags,
+                item.memberCount,
+                item.isMember,
+                item.public,
+                item.image,
+                item.imageExtension
               );
 
               return board;
@@ -63,7 +68,12 @@ export class BoardService {
             response.result.ownerId,
             response.result.name,
             response.result.description,
-            response.result.tags)
+            response.result.tags,
+            response.result.memberCount,
+            response.result.isMember,
+            response.result.public,
+            response.result.image,
+            response.result.imageExtension)
         }),
         catchError((error) => {
           // Handle the error here
@@ -73,13 +83,53 @@ export class BoardService {
       );
   }
 
-  createBoard(form: any) : Observable<string> {
-    const url = '/api/boards/';
-    return this.http.post<ResultResponse<string>>(this.BOARD_URL + url, form)
+  getPublicBoards(pageIndex: number, pageSize: number) : Observable<PaginatedList<BoardModel>> {
+    const url = '/api/boards/public';
+    return this.http.get(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize)})
     .pipe(
       map((response: any) => {
-        return response.result;
+        const paginatedList = new PaginatedList<BoardModel>();
+        if (response.result?.items) {
+          paginatedList.Items = response.result.items.map((item: any) => {
+            let board = new BoardModel(
+              item.id,
+              item.ownerId,
+              item.name,
+              item.description,
+              item.tags,
+              item.memberCount,
+              item.isMember,
+              item.public,
+              item.image,
+              item.imageExtension
+            );
+
+            return board;
+          });
+        }
+
+        paginatedList.TotalCount = response.result.totalCount;
+        paginatedList.PageIndex = response.result.pageIndex;
+        paginatedList.PageSize = response.result.pageSize;
+        paginatedList.PagesCount = response.result.pagesCount
+
+        return paginatedList;
+      }),
+      catchError((error) => {
+        // Handle the error here
+        console.error("Get board by user id failed", error);
+        return throwError(() => new Error("Get board by user id, please try again later."));
       })
     );
+  }
+
+  createBoard(form: any): Observable<string> {
+    const url = '/api/boards/';
+    return this.http.post<ResultResponse<string>>(this.BOARD_URL + url, form)
+      .pipe(
+        map((response: any) => {
+          return response.result;
+        })
+      );
   }
 }

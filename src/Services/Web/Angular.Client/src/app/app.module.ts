@@ -31,6 +31,9 @@ import { BoardInfoModal } from './common/modals/board-info/board-info.modal';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BoardMemberPermissionsModal } from './common/modals/board-member-permissions/board-member-permissions.modal';
 import { InviteMemberModal } from './common/modals/invite-member/invite-member.modal';
+import { AutoResizeTextareaDirective } from './common/directives/auto-resize-textarea.directive';
+import { DeleteConfirmationModal } from './common/modals/delete-confirmation/delete-confirmation.modal';
+import { BoardMemberRequestModal } from './common/modals/board-member-request/board-member-request.modal';
 
 @NgModule({
   declarations: [
@@ -54,7 +57,10 @@ import { InviteMemberModal } from './common/modals/invite-member/invite-member.m
     BoardMembersModal,
     BoardInfoModal,
     BoardMemberPermissionsModal,
-    InviteMemberModal
+    InviteMemberModal,
+    AutoResizeTextareaDirective,
+    DeleteConfirmationModal,
+    BoardMemberRequestModal
   ],
   imports: [
     BrowserModule,

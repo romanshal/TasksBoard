@@ -28,14 +28,28 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardAsync([FromRoute] Guid boardId, UpdateBoardRequest request)
+        public async Task<IActionResult> UpdateBoardAsync([FromRoute] Guid boardId, [FromForm] UpdateBoardRequest request)
         {
+            byte[]? imageData = null;
+            string? imageExtension = string.Empty;
+            if (request.Image != null && request.Image.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await request.Image.CopyToAsync(ms);
+                imageData = ms.ToArray();
+
+                imageExtension = Path.GetExtension(request.Image.FileName);
+            }
+
             var command = new UpdateBoardCommand
             {
                 BoardId = boardId,
                 Name = request.Name,
                 Description = request.Description,
-                Tags = request.Tags
+                Tags = request.Tags,
+                Public = request.Public,
+                Image = imageData,
+                ImageExtension = imageExtension
             };
 
             var result = await _mediator.Send(command);
@@ -50,6 +64,7 @@ namespace TasksBoard.API.Controllers
         }
 
         [HttpDelete("{boardId:guid}")]
+        [BoardOwner]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

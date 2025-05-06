@@ -96,56 +96,75 @@ $btn-background-hover: lighten($btn-background, 10%);
 
                 img {
                     min-width: 100px;
+                    min-height: 100px;
                     height: 100px;
                     background-size: cover;
                     border-top-left-radius: 15px;
                     border-top-right-radius: 15px;
+                    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
                 }
 
                 .boards-list__item-definition {
-                    padding: 10px;
+                    padding: 15px 15px 0px;
                     display: flex;
-                    width: 100%;
-                    gap: 5px;
                     flex-direction: column;
-                    overflow: hidden;
-                    box-sizing: border-box;
+                    gap: 15px;
+                    height: -webkit-fill-available;
 
-                    h3 {
-                        margin: 0;
-                    }
-
-                    p {
-                        margin: 0px;
-                        white-space: break-spaces;
-                        resize: none;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 6;
-                        line-clamp: 6;
-                        -webkit-box-orient: vertical;
+                    .boards-list__item-description {
+                        width: 100%;
+                        flex-direction: column;
                         overflow: hidden;
+                        box-sizing: border-box;
+
+                        h3 {
+                            margin: 0;
+                        }
+
+                        p {
+                            margin: 0px;
+                            white-space: break-spaces;
+                            resize: none;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 4;
+                            line-clamp: 4;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                        }
                     }
-                }
 
-                .tags-list {
-                    display: inline;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    box-sizing: border-box;
-                    margin-top: auto;
-                    padding: 10px;
-                    // flex-direction: row;
-                    // flex-wrap: nowrap;
-                    // gap: 5px;
+                    .boards-list__item-members {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 5px;
+                        margin-top: auto;
+                        align-items: center;
 
-                    .tags-list__item {
-                        display: inline-block;
-                        border: 1px solid #3a7e93;
-                        border-radius: 15px;
-                        padding: 3px 10px;
-                        color: #3a7e93;
-                        margin-right: 5px;
+                        h4 {
+                            margin: 0;
+                        }
+                    }
+
+                    .tags-list {
+                        display: inline;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        box-sizing: border-box;
+                        min-height: 40px;
+                        // flex-direction: row;
+                        // flex-wrap: nowrap;
+                        // gap: 5px;
+
+                        .tags-list__item {
+                            display: inline-block;
+                            border: 1px solid #3a7e93;
+                            border-radius: 15px;
+                            padding: 1px 5px;
+                            color: #3a7e93;
+                            margin-right: 3px;
+                            font-size: 13px;
+                        }
                     }
                 }
 
@@ -173,6 +192,7 @@ $btn-background-hover: lighten($btn-background, 10%);
 
                 &:hover {
                     transform: translateY(-10px);
+
                     .boards-list__item-actions {
                         transform: translateY(0);
                     }

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
-using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Mappings
@@ -11,13 +10,17 @@ namespace TasksBoard.Application.Mappings
         public BoardProfile()
         {
             CreateMap<Board, BoardDto>()
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)));
+                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
+                .ForMember(dest => dest.MemberCount, opt => opt.MapFrom(src => src.BoardMembers.Count))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))
+                .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension));
 
             CreateMap<CreateBoardCommand, Board>()
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>
                 src.Tags != null
                     ? src.Tags.Select(tag => new BoardTag { Tag = tag }).ToList()
-                    : new List<BoardTag>()));
+                    : new List<BoardTag>()))
+                .ForMember(dest => dest.BoardImage, opt => opt.MapFrom(src => src.Image != null ? new BoardImage { Extension = src.ImageExtension!, Image = src.Image} : null));
         }
     }
 }

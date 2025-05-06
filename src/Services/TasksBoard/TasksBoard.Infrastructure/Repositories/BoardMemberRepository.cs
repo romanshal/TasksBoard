@@ -31,10 +31,10 @@ namespace TasksBoard.Infrastructure.Repositories
 
         }
 
-        public async Task<BoardMember?> GetByBoardIdAndUserIdAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+        public async Task<BoardMember?> GetByBoardIdAndAccountIdAsync(Guid boardId, Guid accountId, CancellationToken cancellationToken = default)
         {
             return await DbSet
-                .FirstOrDefaultAsync(member => member.BoardId == boardId && member.AccountId == userId, cancellationToken);
+                .FirstOrDefaultAsync(member => member.BoardId == boardId && member.AccountId == accountId, cancellationToken);
         }
 
         public async Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken)

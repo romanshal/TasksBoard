@@ -1,0 +1,33 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+    <div class="modal">
+        <div class="modal-close" (click)="closeModal()">
+            <i class="fa-solid fa-xmark fa-2xl"></i>
+        </div>
+
+        <div class="modal-question">
+            <h2>Are you really want to delete this {{element}}?</h2>
+        </div>
+
+        <div class="modal-element-confirmation">
+            <div class="modal-element-confirmation__warning">
+                <i class="fa-solid fa-circle-exclamation" style="color: red;"></i>
+                <span>This action deletes <b>{{elementName}}</b> and everything this {{element}} contains. <b>There is no going back.</b></span>
+            </div>
+            
+            <div class="modal-element-confirmation__input">
+                <span>Please type the following to confirm:</span>
+
+                <span class="element-name">{{elementName}}</span>
+    
+                <input [(ngModel)]="confirmationString" [ngClass]="{ 'danger': confirmationError }" (input)="inputChange($event)"/>
+
+                <span class="confirmation-error" *ngIf="confirmationError">{{this.element}} names do not match!</span>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-danger" (click)="confirme()">Yes, delete {{element}}</button>
+            <button (click)="closeModal()">No, keep {{element}}</button>
+        </div>
+    </div>
+</div>

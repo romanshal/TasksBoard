@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { BoardModel } from '../common/models/board/board.model';
 import { BoardService } from '../common/services/board/board.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
 import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap } from 'rxjs';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { BoardMemberRequestModal } from '../common/modals/board-member-request/board-member-request.modal';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -33,6 +35,8 @@ export class BoardsListComponent implements OnInit {
 
   private userId: any;
 
+  private publicBoards = false;
+
   pageIndex = 1;
   pageSize = 6;
   totalPages = 1;
@@ -48,6 +52,7 @@ export class BoardsListComponent implements OnInit {
     private dialog: MatDialog,
   ) {
     this.userId = this.sessionService.getItem(this.sessionService.userIdKey);
+    this.publicBoards = this.router.url.includes('public');
   }
 
   ngOnInit(): void {
@@ -73,24 +78,65 @@ export class BoardsListComponent implements OnInit {
   }
 
   getBoards(query: string, pageIndex: number, pageSize: number) {
-    this.boardService.getBoardsByUserId(query, this.userId!, pageIndex, pageSize).subscribe({
-      next: (result) => {
-        setTimeout(() => {
-          this.boards = result.Items;
-        }, 300)
-        // this.boards = result.Items;
+    if (this.publicBoards) {
+      this.boardService.getPublicBoards(pageIndex, pageSize).subscribe({
+        next: (result) => {
+          setTimeout(() => {
+            this.boards = result.Items;
+          }, 300)
 
-        this.pageIndex = result.PageIndex;
-        this.pageSize = result.PageSize;
-        this.totalPages = result.PagesCount;
-        this.totalCount = result.TotalCount
-      },
-      error: Response => {
+          this.pageIndex = result.PageIndex;
+          this.pageSize = result.PageSize;
+          this.totalPages = result.PagesCount;
+          this.totalCount = result.TotalCount
+        },
+        error: Response => {
 
-      },
-      complete: () => {
-      }
-    });
+        },
+        complete: () => {
+        }
+      })
+    } else {
+      this.boardService.getBoardsByUserId(query, this.userId!, pageIndex, pageSize).subscribe({
+        next: (result) => {
+          setTimeout(() => {
+            this.boards = result.Items;
+          }, 300)
+
+          this.pageIndex = result.PageIndex;
+          this.pageSize = result.PageSize;
+          this.totalPages = result.PagesCount;
+          this.totalCount = result.TotalCount
+        },
+        error: Response => {
+
+        },
+        complete: () => {
+        }
+      });
+    }
+  }
+
+  getImageUrl(board: BoardModel): string | null {
+    if (!board.Image) {
+      return null;
+    }
+
+    const mimeTypeMap: Record<string, string> = {
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.gif': 'image/gif'
+    };
+
+    const mimeType = mimeTypeMap[board.ImageExtension] || 'application/octet-stream';
+    let base64Image = board.Image;
+
+    if (!base64Image.startsWith('data:')) {
+      base64Image = `data:${mimeType};base64,${base64Image}`;
+    }
+
+    return base64Image;
   }
 
   goToPage(page: number | string): void {
@@ -106,8 +152,18 @@ export class BoardsListComponent implements OnInit {
     }
   }
 
-  openBoard(boardId: string) {
-    this.router.navigate(['/board/' + boardId]);
+  openBoard(board: BoardModel) {
+    if (board.IsMember) {
+      this.router.navigate(['/board/' + board.Id]);
+
+      return;
+    }
+
+    this.dialog.open(BoardMemberRequestModal, {
+      data: {
+        boardId: board.Id
+      }
+    });
   }
 
   openCreateModal() {

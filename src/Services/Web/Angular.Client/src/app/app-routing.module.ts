@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'board/:boardid', component: BoardComponent, canActivate: [AuthGuard] },
   { path: 'boards', component: BoardsListComponent, canActivate: [AuthGuard] },
+  { path: 'boards/public', component: BoardsListComponent, canActivate: [AuthGuard] },
 
   { path: 'bad-request', component: BadRequestComponent },
   { path: 'forbidden', component: ForbiddenComponent },
