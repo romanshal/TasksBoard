@@ -10,6 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class DeleteConfirmationModal {
   element: string = '';
   elementName?: string;
+  secondConfirme = false;
 
   confirmed = 'confirmed';
 
@@ -18,10 +19,11 @@ export class DeleteConfirmationModal {
 
   constructor(
     private dialogRef: MatDialogRef<DeleteConfirmationModal>,
-    @Inject(MAT_DIALOG_DATA) private data: { element: string, elementName?: string }
+    @Inject(MAT_DIALOG_DATA) private data: { element: string, secondConfirme: boolean, elementName?: string }
   ) {
     this.element = data.element;
     this.elementName = data.elementName;
+    this.secondConfirme = data.secondConfirme;
   }
 
   inputChange(event: any){
@@ -29,11 +31,13 @@ export class DeleteConfirmationModal {
   }
 
   confirme(){
-    if(this.confirmationString !== this.elementName){
-      this.confirmationString = '';
-      this.confirmationError = true;
-
-      return;
+    if(this.secondConfirme){
+      if(this.confirmationString !== this.elementName){
+        this.confirmationString = '';
+        this.confirmationError = true;
+  
+        return;
+      }
     }
 
     this.closeModal(this.confirmed);

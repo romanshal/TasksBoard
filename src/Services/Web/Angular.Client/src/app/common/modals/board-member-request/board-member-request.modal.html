@@ -9,14 +9,24 @@
 
         </div>
 
-        <div class="modal-description">
-            <span>To start using the board, request access</span>
+        <div class="modal-description" *ngIf="!success">
+            <div class="modal-description__main" *ngIf="!errorMessage">
+                <span>To start using the board, request access</span>
 
-            <div class="modal-description__actions">
-                <button>
-                    Request access
-                </button>
+                <div class="modal-description__main-actions" *ngIf="!errorMessage">
+                    <button (click)="requestAccess()">
+                        Request access
+                    </button>
+                </div>
             </div>
+
+            <div class="modal-description__error" *ngIf="errorMessage">
+                <span>{{errorMessage}}</span>
+            </div>
+        </div>
+
+        <div class="modal-success" *ngIf="success">
+            <span>{{successMessage}}</span>
         </div>
     </div>
 </div>

@@ -14,7 +14,7 @@
                 <span>This action deletes <b>{{elementName}}</b> and everything this {{element}} contains. <b>There is no going back.</b></span>
             </div>
             
-            <div class="modal-element-confirmation__input">
+            <div class="modal-element-confirmation__input" *ngIf="secondConfirme">
                 <span>Please type the following to confirm:</span>
 
                 <span class="element-name">{{elementName}}</span>

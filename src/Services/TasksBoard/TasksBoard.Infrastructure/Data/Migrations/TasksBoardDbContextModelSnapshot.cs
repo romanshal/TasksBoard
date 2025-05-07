@@ -55,6 +55,42 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.ToTable("boards", (string)null);
                 });
 
+            modelBuilder.Entity("TasksBoard.Domain.Entities.BoardAccessRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("BoardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoardId");
+
+                    b.ToTable("boardaccessrequests", (string)null);
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.BoardImage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -241,6 +277,17 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.ToTable("boardtags", (string)null);
                 });
 
+            modelBuilder.Entity("TasksBoard.Domain.Entities.BoardAccessRequest", b =>
+                {
+                    b.HasOne("TasksBoard.Domain.Entities.Board", "Board")
+                        .WithMany("AccessRequests")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.BoardImage", b =>
                 {
                     b.HasOne("TasksBoard.Domain.Entities.Board", "Board")
@@ -306,8 +353,9 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("TasksBoard.Domain.Entities.Board", b =>
                 {
-                    b.Navigation("BoardImage")
-                        .IsRequired();
+                    b.Navigation("AccessRequests");
+
+                    b.Navigation("BoardImage");
 
                     b.Navigation("BoardMembers");
 

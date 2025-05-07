@@ -95,7 +95,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
       '.gif': 'image/gif'
     };
 
-    const mimeType = mimeTypeMap[this.board!.ImageExtension] || 'application/octet-stream';
+    const mimeType = mimeTypeMap[this.board!.ImageExtension!] || 'application/octet-stream';
     let base64Image = this.board!.Image;
 
     if (!base64Image.startsWith('data:')) {
@@ -305,7 +305,8 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
     this.dialog.open(DeleteConfirmationModal, {
       data: {
         element: 'board',
-        elementName: this.board?.Name
+        elementName: this.board?.Name,
+        secondConfirme: true
       }
     }).afterClosed().subscribe(result => {
       if (result === 'confirmed') {

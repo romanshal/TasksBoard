@@ -69,6 +69,8 @@ button {
     .modal {
         background-color: $modal-background;
         border-radius: 10px;
+        max-width: 365px;
+        height: 135px;
         // width: 370px;
         // height: -webkit-fill-available;
         padding: 45px;
@@ -76,6 +78,7 @@ button {
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         display: flex;
         flex-direction: column;
+        justify-content: start;
         position: relative;
         gap: 20px;
 
@@ -103,17 +106,34 @@ button {
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
             background-color: #fcf1ef;
             padding: 10px;
             border-radius: 15px;
-            
-            .modal-description__actions {
+
+            .modal-description__main {
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: center;
+                align-items: center;
+                gap: 10px;
+                .modal-description__actions {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                }
+            }
+        }
+
+        .modal-success {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #a6d96a;
+            padding: 10px;
+            border-radius: 15px;
+
+            span{
+                text-align: center;
             }
         }
     }

@@ -43,28 +43,27 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("board/{boardId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddBoardMemberAsync([FromRoute] Guid boardId, AddBoardMemberRequest request)
-        {
-            var command = new AddBoardMemberCommand
-            {
-                BoardId = boardId,
-                UserId = request.UserId,
-                Nickname = request.Nickname,
-                Permissions = request.Permissions
-            };
+        //[HttpPost("board/{boardId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> AddBoardMemberAsync([FromRoute] Guid boardId, AddBoardMemberRequest request)
+        //{
+        //    var command = new AddBoardMemberCommand
+        //    {
+        //        BoardId = boardId,
+        //        AccountId = request.AccountId,
+        //        Nickname = request.Nickname
+        //    };
 
-            var result = await _mediator.Send(command);
+        //    var result = await _mediator.Send(command);
 
-            var response = new ResultResponse<Guid>(result);
+        //    var response = new ResultResponse<Guid>(result);
 
-            return Ok(response);
-        }
+        //    return Ok(response);
+        //}
 
         [HttpPost("permissions/board/{boardId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -88,18 +87,18 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("board/{boardId:guid}")]
+        [HttpDelete("board/{boardId:guid}/member/{memberId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, DeleteBoardMemberRequest request)
+        public async Task<ActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
         {
             var command = new DeleteBoardMemberCommand
             {
                 BoardId = boardId,
-                MemberId = request.MemberId
+                MemberId = memberId
             };
 
             await _mediator.Send(command);

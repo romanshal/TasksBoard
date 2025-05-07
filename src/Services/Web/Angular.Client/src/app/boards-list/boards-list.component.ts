@@ -9,6 +9,7 @@ import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
 import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap } from 'rxjs';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BoardMemberRequestModal } from '../common/modals/board-member-request/board-member-request.modal';
+import { BoardForViewModel } from '../common/models/board/board-for-view.model';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -31,7 +32,7 @@ const listAnimation = trigger('listAnimation', [
   animations: [listAnimation],
 })
 export class BoardsListComponent implements OnInit {
-  boards: BoardModel[] = [];
+  boards: BoardForViewModel[] = [];
 
   private userId: any;
 
@@ -117,7 +118,7 @@ export class BoardsListComponent implements OnInit {
     }
   }
 
-  getImageUrl(board: BoardModel): string | null {
+  getImageUrl(board: BoardForViewModel): string | null {
     if (!board.Image) {
       return null;
     }
@@ -152,7 +153,7 @@ export class BoardsListComponent implements OnInit {
     }
   }
 
-  openBoard(board: BoardModel) {
+  openBoard(board: BoardForViewModel) {
     if (board.IsMember) {
       this.router.navigate(['/board/' + board.Id]);
 

@@ -6,6 +6,8 @@ import { BoardMemberAuthService } from '../../services/board-member-auth/board-m
 import { BoardMemberPermissionsModal } from '../board-member-permissions/board-member-permissions.modal';
 import { BoardMemberService } from '../../services/board-member/board-member.service';
 import { InviteMemberModal } from '../invite-member/invite-member.modal';
+import { BoardAccessRequestModel } from '../../models/board-access-request/board-access-request.model';
+import { BoardMemberRequestAcceptModal } from '../board-member-request-accept/board-member-request-accept.modal';
 
 @Component({
   selector: 'app-board-members',
@@ -18,6 +20,7 @@ export class BoardMembersModal {
   userId!: string;
   permissions: BoardPermission[] = [];
   membersForView: BoardMemberModel[] = [];
+  accessRequests: BoardAccessRequestModel[] = [];
 
   canManageMember = false;
 
@@ -26,14 +29,23 @@ export class BoardMembersModal {
     private dialogRef: MatDialogRef<BoardMembersModal>,
     private boardMemberAuthService: BoardMemberAuthService,
     private boardMemberService: BoardMemberService,
-    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, members: BoardMemberModel[], permissions: BoardPermission[], userId: string }
+    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, members: BoardMemberModel[], permissions: BoardPermission[], userId: string, accessRequests: BoardAccessRequestModel[] }
   ) {
     this.boardId = data.boardId;
     this.userId = data.userId;
     this.membersForView = data.members;
     this.permissions = data.permissions;
+    this.accessRequests = data.accessRequests
 
     this.canManageMember = this.boardMemberAuthService.havePermission('manage_member');
+  }
+
+  getBoardMembers() {
+    this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
+      if (result) {
+        this.membersForView = result;
+      }
+    });
   }
 
   openMemberPermission(member: BoardMemberModel) {
@@ -45,17 +57,26 @@ export class BoardMembersModal {
       }
     }).afterClosed().subscribe((result) => {
       if (result === 'updated') {
-        this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
-          if (result) {
-            this.membersForView = result;
-          }
-        });
+        this.getBoardMembers();
       }
     });
   }
 
-  openInvite(){
+  openInvite() {
     this.dialog.open(InviteMemberModal);
+  }
+
+  openAccessRequests() {
+    this.dialog.open(BoardMemberRequestAcceptModal, {
+      data: {
+        boardId: this.boardId,
+        accessRequests: this.accessRequests
+      }
+    }).afterClosed().subscribe(result => {
+      this.accessRequests = result;
+
+      this.getBoardMembers();
+    });
   }
 
   onContainerClick(event: MouseEvent): void {
@@ -72,6 +93,10 @@ export class BoardMembersModal {
   }
 
   closeModal(): void {
-    this.dialogRef.close(this.membersForView);
+    let result = {
+      members: this.membersForView,
+      accessRequests: this.accessRequests
+    }
+    this.dialogRef.close(result);
   }
 }

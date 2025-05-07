@@ -12,24 +12,24 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoard
     public class GetPaginatedPublicBoardsQueryHandler(
         ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
         IUnitOfWork unitOfWork,
-        IMapper mapper) : IRequestHandler<GetPaginatedPublicBoardsQuery, PaginatedList<BoardDto>>
+        IMapper mapper) : IRequestHandler<GetPaginatedPublicBoardsQuery, PaginatedList<BoardForViewDto>>
     {
         private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<PaginatedList<BoardDto>> Handle(GetPaginatedPublicBoardsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<BoardForViewDto>> Handle(GetPaginatedPublicBoardsQuery request, CancellationToken cancellationToken)
         {
             var count = await _unitOfWork.GetBoardRepository().CountPublicAsync(cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No boards entities in database.");
-                return new PaginatedList<BoardDto>([], request.PageIndex, request.PageSize);
+                return new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize);
             }
 
             var boards = await _unitOfWork.GetBoardRepository().GetPaginatedPublicAsync(request.PageIndex, request.PageSize, cancellationToken);
 
-            var boardsDto = _mapper.Map<IEnumerable<Board>, IEnumerable<BoardDto>>(boards,
+            var boardsDto = _mapper.Map<IEnumerable<Board>, IEnumerable<BoardForViewDto>>(boards,
                 opt => opt.AfterMap((src, dest) =>
                 {
                     foreach (var item in dest)

@@ -2,8 +2,7 @@
 {
     public class AddBoardMemberRequest
     {
-        public required Guid UserId { get; set; }
+        public required Guid AccountId { get; set; }
         public required string Nickname { get; set; }
-        public Guid[] Permissions { get; set; } = [];
     }
 }

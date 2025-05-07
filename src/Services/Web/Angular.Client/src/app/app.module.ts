@@ -34,6 +34,8 @@ import { InviteMemberModal } from './common/modals/invite-member/invite-member.m
 import { AutoResizeTextareaDirective } from './common/directives/auto-resize-textarea.directive';
 import { DeleteConfirmationModal } from './common/modals/delete-confirmation/delete-confirmation.modal';
 import { BoardMemberRequestModal } from './common/modals/board-member-request/board-member-request.modal';
+import { InternalServerErrorComponent } from './error/internal-server-error/internal-server-error.component';
+import { BoardMemberRequestAcceptModal } from './common/modals/board-member-request-accept/board-member-request-accept.modal';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,9 @@ import { BoardMemberRequestModal } from './common/modals/board-member-request/bo
     InviteMemberModal,
     AutoResizeTextareaDirective,
     DeleteConfirmationModal,
-    BoardMemberRequestModal
+    BoardMemberRequestModal,
+    InternalServerErrorComponent,
+    BoardMemberRequestAcceptModal
   ],
   imports: [
     BrowserModule,

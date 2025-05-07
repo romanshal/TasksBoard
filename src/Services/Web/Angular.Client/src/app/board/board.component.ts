@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ComponentRef, Injector, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BoardService } from '../common/services/board/board.service';
 import { BoardModel } from '../common/models/board/board.model';
 import { BoardNoticeService } from '../common/services/board-notice/board-notice.service';
@@ -8,10 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { BoardNoticeModal } from '../common/modals/board-notice/board-notice.modal';
 import { BoardNoticeModel } from '../common/models/board-notice/board-notice.model';
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
-import { ChatComponent } from '../chat/chat.component';
 import { BoardMembersModal } from '../common/modals/board-members/board-members.modal';
 import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
-import { BoardMemberService } from '../common/services/board-member/board-member.service';
 import { BoardMemberModel } from '../common/models/board-member/board-member.model';
 import { BoardPermission } from '../common/models/board-permission/board-permission.model';
 import { BoardPermissionService } from '../common/services/board-permission/board-permission.service';
@@ -58,10 +56,11 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   currentMember!: BoardMemberModel;
 
+  isLoading = false;
+
   constructor(
     private boardService: BoardService,
     private boardNoticeService: BoardNoticeService,
-    private boardMemberService: BoardMemberService,
     private boardPermissionService: BoardPermissionService,
     private sessionStorageService: SessionStorageService,
     private boardMemberAuthService: BoardMemberAuthService,
@@ -92,8 +91,15 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.boardService.getBoardById(this.boardId).subscribe(result => {
       if (result) {
         this.board = result;
+        console.log(this.board.AccessRequests)
+        this.boardMembers = result.Members;
+
+        this.currentMember = this.boardMembers.find(member => member.AccountId === this.userId)!
+
+        this.boardMemberAuthService.initialize(this.board, this.currentMember);
+        this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
+
         this.getBoardNotices(this.pageIndex, this.pageSize);
-        this.getBoardMembers();
       }
     });
   }
@@ -103,6 +109,9 @@ export class BoardComponent implements OnInit, OnDestroy {
       if (result) {
 
         setTimeout(() => {
+          this.spinner.hide();
+          this.isLoading = true;
+
           this.notesForView = result.Items;
         }, 500);
 
@@ -114,25 +123,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getBoardMembers() {
-    this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
-      if (result) {
-        this.boardMembers = result;
-
-        this.currentMember = this.boardMembers.find(member => member.AccountId === this.userId)!
-
-        this.boardMemberAuthService.initialize(this.board, this.currentMember);
-        this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
-      }
-    });
-  }
-
   private getPermissions() {
     this.boardPermissionService.getPermissions().subscribe(result => {
       if (result) {
         this.boardPermissions = result;
-
-        this.spinner.hide();
       }
     });
   }
@@ -172,10 +166,12 @@ export class BoardComponent implements OnInit, OnDestroy {
         members: this.boardMembers,
         permissions: this.boardPermissions,
         userId: this.userId,
+        accessRequests: this.board.AccessRequests
       }
     })
       .afterClosed().subscribe((result) => {
-        this.boardMembers = result;
+        this.boardMembers = result.members;
+        this.board.AccessRequests = result.accessRequests;
       });
   }
 

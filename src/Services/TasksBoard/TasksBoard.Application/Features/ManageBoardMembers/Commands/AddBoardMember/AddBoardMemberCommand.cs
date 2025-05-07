@@ -4,9 +4,8 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
 {
     public class AddBoardMemberCommand : IRequest<Guid>
     {
-        public Guid BoardId { get; set; } = Guid.Empty;
-        public Guid UserId { get; set; }
+        public required Guid BoardId { get; set; }
+        public required Guid AccountId { get; set; }
         public required string Nickname { get; set; }
-        public Guid[] Permissions { get; set; }
     }
 }

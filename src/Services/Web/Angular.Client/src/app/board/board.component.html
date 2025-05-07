@@ -1,8 +1,8 @@
 <div class="board-container" #container>
     <div class="board-wrapper">
-        <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+        <ngx-spinner type="ball-scale-multiple" *ngIf="!isLoading"></ngx-spinner>
         
-        <div class="note-actions">
+        <div class="note-actions" *ngIf="isLoading">
             <button class="note-button" (click)="openNoticeModal()" *ngIf="canAddNotices">
                 <i class="fa-solid fa-plus"></i>
                 Add notice
@@ -11,6 +11,9 @@
             <button class="note-button" (click)=openMembersModal()>
                 <i class="fa-solid fa-users"></i>
                 Members
+                <div class="assess-request-alert" *ngIf="board.AccessRequests?.length !== 0">
+                    <i class="fa-solid fa-circle-exclamation fa-lg"></i>
+                </div>
             </button>
 
             <button class="note-button right-button" (click)="openInfoModal()">
@@ -18,7 +21,8 @@
                 Info
             </button>
         </div>
-        <div class="note-board" [@listAnimation]="notesForView.length">
+
+        <div class="note-board" [@listAnimation]="notesForView.length" *ngIf="isLoading">
             <div class="note-wrapper" *ngFor="let note of notesForView; let i = index"
                 [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }" (click)="openNoticeModal(note)">
                 <img class="note-pin" src="pin.png">
@@ -37,7 +41,7 @@
             </div>
         </div>
 
-        <app-paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [totalPages]="totalPages" [totalCount]="totalCount"
+        <app-paginator *ngIf="isLoading" [pageIndex]="pageIndex" [pageSize]="pageSize" [totalPages]="totalPages" [totalCount]="totalCount"
             (pageChanged)="goToPage($event)">
         </app-paginator>
     </div>
@@ -46,7 +50,7 @@
         <i class="fa-solid fa-comment-dots fa-2xl" style="color: #ffffff;"></i>
     </div> -->
 
-    <app-chat [boardId]="boardId" [currentMember]="currentMember"></app-chat>
+    <app-chat *ngIf="isLoading" [boardId]="boardId" [currentMember]="currentMember"></app-chat>
 </div>
 
 <app-footer></app-footer>

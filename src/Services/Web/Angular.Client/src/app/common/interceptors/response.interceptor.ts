@@ -35,9 +35,10 @@ export class ResponseInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error: any) => {
         if (error instanceof HttpErrorResponse) {
-          if (error.status === 400) {
-            this.router.navigate(['/bad-request']);
-          } else if (error.status === 401) {
+          // if (error.status === 400) {
+          //   this.router.navigate(['/bad-request']);
+          // } else 
+          if (error.status === 401) {
             return this.handle401Error(req, next);
           } else if (error.status === 403) {
             this.router.navigate(['/forbidden']);

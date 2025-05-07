@@ -3,9 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { map, Observable } from 'rxjs';
 import { BoardMemberModel } from '../../models/board-member/board-member.model';
-import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
 import { ResultResponse } from '../../models/response/response.model';
-import { HttpOptionService } from '../http-option/http-options.service';
 import { BoardMemberPermission } from '../../models/board-member-permission/board-member-permission.model';
 
 @Injectable({
@@ -15,8 +13,7 @@ export class BoardMemberService {
   private BOARD_MEMBER_URL: string = environment.apiUrl;
 
   constructor(
-    private http: HttpClient,
-    private httpOption: HttpOptionService
+    private http: HttpClient
   ) { }
 
   getBoardMembersByBoardId(boardId: any): Observable<BoardMemberModel[]> {

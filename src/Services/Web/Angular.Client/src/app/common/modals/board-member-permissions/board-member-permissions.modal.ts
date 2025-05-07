@@ -1,11 +1,12 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BoardMemberModel } from '../../models/board-member/board-member.model';
 import { BoardPermission } from '../../models/board-permission/board-permission.model';
 import { ManageBoardMemberService } from '../../services/manage-board-member/manage-board-member.service';
 import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
+import { DeleteConfirmationModal } from '../delete-confirmation/delete-confirmation.modal';
 
 @Component({
   selector: 'app-board-member-permissions',
@@ -27,6 +28,7 @@ export class BoardMemberPermissionsModal implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private dialog: MatDialog,
     private dialogRef: MatDialogRef<BoardMemberPermissionsModal>,
     private manageBoardMemberService: ManageBoardMemberService,
     private userService: UserService,
@@ -85,6 +87,24 @@ export class BoardMemberPermissionsModal implements OnInit {
         }
       });
     }
+  }
+
+  openDeleteMember(){
+    this.dialog.open(DeleteConfirmationModal, {
+      data: {
+        element: 'member',
+        elementName: this.member.Nickname,
+        secondConfirme: false
+      }
+    }).afterClosed().subscribe(result => {
+      if(result === 'confirmed'){
+        this.manageBoardMemberService.deleteMember(this.boardId, this.member.Id).subscribe(result => {
+          if(result){
+            this.closeModal(this.updatedStatus)
+          }
+        })
+      }
+    });
   }
 
   onContainerClick(event: MouseEvent): void {

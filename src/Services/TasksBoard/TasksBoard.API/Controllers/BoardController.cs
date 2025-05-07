@@ -40,7 +40,7 @@ namespace TasksBoard.API.Controllers
                 PageSize = pageSize 
             });
 
-            var response = new ResultResponse<PaginatedList<BoardDto>>(result);
+            var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
 
             return Ok(response);
         }
@@ -89,7 +89,7 @@ namespace TasksBoard.API.Controllers
                 return NotFound();
             }
 
-            var response = new ResultResponse<PaginatedList<BoardDto>>(result);
+            var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
 
             return Ok(response);
         }
@@ -117,7 +117,7 @@ namespace TasksBoard.API.Controllers
                 return NotFound();
             }
 
-            var response = new ResultResponse<PaginatedList<BoardDto>>(result);
+            var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
 
             return Ok(response);
         }

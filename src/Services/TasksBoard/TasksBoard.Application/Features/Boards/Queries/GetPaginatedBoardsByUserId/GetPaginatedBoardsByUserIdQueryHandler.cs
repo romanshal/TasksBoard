@@ -12,13 +12,13 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
     public class GetPaginatedBoardsByUserIdQueryHandler(
         IUnitOfWork unitOfWork,
         ILogger<GetPaginatedBoardsByUserIdQueryHandler> logger,
-        IMapper mapper) : IRequestHandler<GetPaginatedBoardsByUserIdQuery, PaginatedList<BoardDto>>
+        IMapper mapper) : IRequestHandler<GetPaginatedBoardsByUserIdQuery, PaginatedList<BoardForViewDto>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetPaginatedBoardsByUserIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<PaginatedList<BoardDto>> Handle(GetPaginatedBoardsByUserIdQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<BoardForViewDto>> Handle(GetPaginatedBoardsByUserIdQuery request, CancellationToken cancellationToken)
         {
             IEnumerable<Board> boards;
             int count;
@@ -29,7 +29,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 if (count == 0)
                 {
                     _logger.LogInformation("No boards entities in database.");
-                    return new PaginatedList<BoardDto>([], request.PageIndex, request.PageSize);
+                    return new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize);
                 }
 
                 boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAsync(request.UserId, request.PageIndex, request.PageSize, cancellationToken);
@@ -40,13 +40,13 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 if (count == 0)
                 {
                     _logger.LogInformation("No boards entities in database.");
-                    return new PaginatedList<BoardDto>([], request.PageIndex, request.PageSize);
+                    return new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize);
                 }
 
                 boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAndQueryAsync(request.UserId, request.Query, request.PageIndex, request.PageSize, cancellationToken);
             }
 
-            var boardsDto = _mapper.Map<IEnumerable<Board>, IEnumerable<BoardDto>>(boards,
+            var boardsDto = _mapper.Map<IEnumerable<Board>, IEnumerable<BoardForViewDto>>(boards,
                 opt => opt.AfterMap((src, dest) =>
                 {
                     foreach (var item in dest)

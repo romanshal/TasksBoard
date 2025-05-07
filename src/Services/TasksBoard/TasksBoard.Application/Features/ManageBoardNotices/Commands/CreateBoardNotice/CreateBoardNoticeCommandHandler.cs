@@ -10,8 +10,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
     public class CreateBoardNoticeCommandHandler(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        ILogger<CreateBoardNoticeCommandHandler> logger
-        ) : IRequestHandler<CreateBoardNoticeCommand, Guid>
+        ILogger<CreateBoardNoticeCommandHandler> logger) : IRequestHandler<CreateBoardNoticeCommand, Guid>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;

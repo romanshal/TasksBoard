@@ -13,6 +13,7 @@ namespace TasksBoard.Infrastructure.Data.Contexts
         public DbSet<BoardPermission> BoardPermissions { get; set; }
         public DbSet<BoardMemberPermission> BoardMemberPermissions { get; set; }
         public DbSet<BoardTag> BoardTags { get; set; }
+        public DbSet<BoardAccessRequest> BoardAccessRequests { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

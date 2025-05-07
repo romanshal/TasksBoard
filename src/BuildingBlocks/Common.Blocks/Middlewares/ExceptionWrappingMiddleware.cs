@@ -39,11 +39,12 @@ namespace Common.Blocks.Middlewares
         {
             return ex switch
             {
-                ArgumentNullException or ValidationException => HttpStatusCode.BadRequest,
+                ArgumentNullException or ValidationException or AlreadyExistException => HttpStatusCode.BadRequest,
                 NotFoundException => HttpStatusCode.NotFound,
                 NotImplementedException => HttpStatusCode.NotImplemented,
                 LockedException => HttpStatusCode.Locked,
                 SigninFaultedException or UnauthorizedException or SecurityTokenException => HttpStatusCode.Unauthorized,
+                ForbiddenException => HttpStatusCode.Forbidden,
                 _ => HttpStatusCode.InternalServerError,
             };
         }

@@ -82,6 +82,22 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
             return (IBoardMemberRepository)value;
         }
 
+        public IBoardAccessRequestRepository GetBoardAccessRequestRepository()
+        {
+            var type = typeof(BoardAccessRequest);
+
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardAccessRequest>))
+            {
+                var repositoryInstance = new BoardAccessRequestRepsitory(_context, _loggerFactory);
+
+                value = repositoryInstance;
+
+                _repositories[type] = repositoryInstance;
+            }
+
+            return (IBoardAccessRequestRepository)value;
+        }
+
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken);

@@ -13,7 +13,7 @@
                 <div class="members-list__member-avatar">
                     <img src="avatar.png">
                 </div>
-            
+
                 <div class="members-list__member-info">
                     <div class="member-info__nickname">
                         <span>{{member.Nickname}}</span>
@@ -21,9 +21,9 @@
                             <i class="fa-solid fa-crown fa-lg"></i>
                             <div class="tooltip">Owner</div>
                         </div>
-            
+
                     </div>
-            
+
                     <div class="member-info__permissions">
                         <div class="member-info__permissions-item" *ngFor="let permission of member.Permissions;">
                             <span>{{permission.BoardPermissionName}}</span>
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <div class="members-list__member-actions" *ngIf="member.AccountId !== userId && canManageMember">
                     <i class="fa-solid fa-ellipsis-vertical fa-xl" (click)="openMemberPermission(member)"></i>
                 </div>
@@ -43,6 +43,14 @@
                 <button autofocus="false" *ngIf="canManageMember" (click)="openInvite()">
                     <i class="fa-solid fa-user-plus fa-xl"></i>
                     <div class="tooltip">Invite member</div>
+                </button>
+
+                <button autofocus="false" [ngClass]="{'button-with-alert': accessRequests.length !== 0 }" (click)="openAccessRequests()">
+                    <i class="fa-solid fa-people-arrows fa-xl"></i>
+                    <div class="tooltip">Member requests</div>
+                    <div class="access-request-alert" *ngIf="accessRequests.length !== 0">
+                        <i class="fa-solid fa-circle-exclamation fa-lg"></i>
+                    </div>
                 </button>
             </div>
             <div class="modal-actions__right">

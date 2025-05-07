@@ -6,6 +6,10 @@ import { BoardModel } from '../../models/board/board.model';
 import { HttpOptionService } from '../http-option/http-options.service';
 import { ResultResponse } from '../../models/response/response.model';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
+import { BoardForViewModel } from '../../models/board/board-for-view.model';
+import { BoardMemberModel } from '../../models/board-member/board-member.model';
+import { BoardMemberPermission } from '../../models/board-member-permission/board-member-permission.model';
+import { BoardAccessRequestModel } from '../../models/board-access-request/board-access-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,17 +22,16 @@ export class BoardService {
     private httpOption: HttpOptionService
   ) { }
 
-  getBoardsByUserId(query: string, userId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<BoardModel>> {
+  getBoardsByUserId(query: string, userId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<BoardForViewModel>> {
     const url = '/api/boards/user/' + userId;
-    return this.http.get<ResultResponse<BoardModel[]>>(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize).append('query', query) })
+    return this.http.get(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize).append('query', query) })
       .pipe(
         map((response: any) => {
-          const paginatedList = new PaginatedList<BoardModel>();
+          const paginatedList = new PaginatedList<BoardForViewModel>();
           if (response.result?.items) {
             paginatedList.Items = response.result.items.map((item: any) => {
-              let board = new BoardModel(
+              let board = new BoardForViewModel(
                 item.id,
-                item.ownerId,
                 item.name,
                 item.description,
                 item.tags,
@@ -63,17 +66,51 @@ export class BoardService {
     return this.http.get<ResultResponse<BoardModel>>(this.BOARD_URL + url)
       .pipe(
         map((response: any) => {
-          return new BoardModel(
-            response.result.id,
-            response.result.ownerId,
-            response.result.name,
-            response.result.description,
-            response.result.tags,
-            response.result.memberCount,
-            response.result.isMember,
-            response.result.public,
-            response.result.image,
-            response.result.imageExtension)
+          let board = new BoardModel();
+          board.Id = response.result.id,
+          board.OwnerId = response.result.ownerId,
+          board.Name = response.result.name,
+          board.Description = response.result.description,
+          board.Tags = response.result.tags,
+          board.Public = response.result.public,
+          board.Image = response.result.image,
+          board.ImageExtension = response.result.imageExtension,
+          board.Members = response.result.members.map((item: any) => { 
+            let member = new BoardMemberModel();
+              member.Id = item.id;
+              member.AccountId = item.accountId;
+              member.BoardId = item.boardId;
+              member.IsOwner = item.isOwner;
+              member.Nickname = item.nickname;
+              member.CreatedAt = item.createdAt;
+              member.Permissions = item.permissions.map((perm: any) => {
+                let permission = new BoardMemberPermission();
+                permission.BoardMemberId = perm.boardMemberId;
+                permission.BoardPermissionId = perm.boardPermissionId;
+                permission.BoardPermissionName = perm.boardPermissionName;
+                permission.BoardPermissionDescription = perm.boardPermissionDescription;
+
+                return permission;
+              })
+
+            return member;
+          }),
+
+          board.AccessRequests = response.result.accessRequests.map((item: any) => {
+            let request = new BoardAccessRequestModel(
+              item.id,
+              item.boardId,
+              item.boardName,
+              item.accountId,
+              item.accountName,
+              item.accountEmail,
+              item.createdAt
+            );
+
+            return request
+          })
+
+          return board;
         }),
         catchError((error) => {
           // Handle the error here
@@ -83,17 +120,16 @@ export class BoardService {
       );
   }
 
-  getPublicBoards(pageIndex: number, pageSize: number) : Observable<PaginatedList<BoardModel>> {
+  getPublicBoards(pageIndex: number, pageSize: number) : Observable<PaginatedList<BoardForViewModel>> {
     const url = '/api/boards/public';
     return this.http.get(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize)})
     .pipe(
       map((response: any) => {
-        const paginatedList = new PaginatedList<BoardModel>();
+        const paginatedList = new PaginatedList<BoardForViewModel>();
         if (response.result?.items) {
           paginatedList.Items = response.result.items.map((item: any) => {
-            let board = new BoardModel(
+            let board = new BoardForViewModel(
               item.id,
-              item.ownerId,
               item.name,
               item.description,
               item.tags,

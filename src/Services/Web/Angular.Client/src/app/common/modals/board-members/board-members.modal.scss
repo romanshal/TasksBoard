@@ -62,7 +62,7 @@ $btn-color: #3a7e93;
                 gap: 10px;
                 align-items: center;
                 cursor: default;
-            
+
                 .tooltip {
                     position: absolute;
                     top: 30px;
@@ -79,7 +79,7 @@ $btn-color: #3a7e93;
                     opacity: 0;
                     transition: opacity 0.3s ease;
                     pointer-events: none;
-            
+
                     &::after {
                         content: '';
                         position: absolute;
@@ -91,7 +91,7 @@ $btn-color: #3a7e93;
                         border-color: transparent transparent $btn-color transparent;
                     }
                 }
-            
+
                 .members-list__member-avatar {
                     img {
                         width: 80px;
@@ -99,22 +99,22 @@ $btn-color: #3a7e93;
                         border-radius: 15px;
                     }
                 }
-            
+
                 .members-list__member-info {
                     display: flex;
                     flex-direction: column;
                     gap: 10px;
                     width: 100%;
-            
+
                     .member-info__nickname {
                         display: flex;
                         gap: 10px;
                         align-items: baseline;
-            
+
                         .owner-section {
                             position: relative;
                             transition: all 0.3s ease;
-            
+
                             &:hover {
                                 .tooltip {
                                     opacity: 1;
@@ -122,20 +122,20 @@ $btn-color: #3a7e93;
                             }
                         }
                     }
-            
+
                     .member-info__permissions {
                         display: flex;
                         flex-direction: row;
                         flex-wrap: wrap;
                         gap: 5px;
-            
+
                         .member-info__permissions-item {
                             position: relative;
                             color: #3a7e93;
                             padding: 3px 10px;
                             border-radius: 20px;
                             border: 1px solid #3a7e93;
-            
+
                             &:hover {
                                 .tooltip {
                                     opacity: 1;
@@ -144,10 +144,10 @@ $btn-color: #3a7e93;
                         }
                     }
                 }
-            
+
                 .members-list__member-actions {
                     margin-bottom: auto;
-            
+
                     i:hover {
                         cursor: pointer;
                         transform: scale(1.3);
@@ -174,6 +174,7 @@ $btn-color: #3a7e93;
                 transition: all 0.3s ease;
                 cursor: pointer;
                 min-width: 80px;
+                position: relative;
 
                 .tooltip {
                     position: absolute;
@@ -201,6 +202,40 @@ $btn-color: #3a7e93;
                         border-style: solid;
                         border-color: transparent transparent $btn-color transparent;
                     }
+                }
+
+                .access-request-alert {
+                    position: absolute;
+                    top: -12px;
+                    right: -12px;
+                    background-color: white;
+                    color: red;
+                    border-radius: 50%;
+                    width: 25px;
+                    height: 25px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    i {
+                        margin: 0;
+                    }
+                }
+            }
+
+            button.button-with-alert {
+                &::before {
+                    content: "";
+                    position: absolute;
+                    border: 2px solid #3a7e93;
+                    top: -2px;
+                    right: 0px;
+                    width: 14px;
+                    height: 15px;
+                    background-color: #fff;
+                    border-top: none;
+                    border-right: none;
+                    border-bottom-left-radius: 15px;
                 }
             }
 
