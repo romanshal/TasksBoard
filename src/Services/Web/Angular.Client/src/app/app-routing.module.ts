@@ -11,18 +11,30 @@ import { BoardComponent } from './board/board.component';
 import { UnauthorizedComponent } from './error/unauthorized/unauthorized.component';
 import { BoardsListComponent } from './boards-list/boards-list.component';
 import { SignupComponent } from './auth/signup/signup.component';
+import { ProfileComponent } from './profile/profile.component';
+import { InternalServerErrorComponent } from './error/internal-server-error/internal-server-error.component';
+import { NotificationComponent } from './notification/notification.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
+
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
+
   { path: 'board/:boardid', component: BoardComponent, canActivate: [AuthGuard] },
   { path: 'boards', component: BoardsListComponent, canActivate: [AuthGuard] },
   { path: 'boards/public', component: BoardsListComponent, canActivate: [AuthGuard] },
 
+  { path: 'profile/:userid', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+
+  { path: 'notification', component: NotificationComponent, canActivate: [AuthGuard] },
+
   { path: 'bad-request', component: BadRequestComponent },
   { path: 'forbidden', component: ForbiddenComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
+  { path: 'not-found', component: NotFoundComponent },
+  { path: 'internal-server-error', component: InternalServerErrorComponent },
 
   { path: '**', component: NotFoundComponent }
 ];

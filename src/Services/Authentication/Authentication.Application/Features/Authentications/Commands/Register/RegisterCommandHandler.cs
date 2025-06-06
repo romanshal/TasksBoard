@@ -39,7 +39,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
             if (!createResult.Succeeded)
             {
                 _logger.LogCritical($"Can't create new user with username: {request.Username}. Errors: {string.Join("; ", createResult.Errors)}.");
-                throw new Exception($"Can't reate new user with username: {request.Username}. Errors: {string.Join("; ", createResult.Errors)}.");
+                throw new Exception($"Can't create new user with username: {request.Username}. Errors: {string.Join("; ", createResult.Errors)}.");
             }
 
             var addRoleResult = await _userManager.AddToRoleAsync(user, "user");

@@ -24,7 +24,15 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
+                .OrderByDescending(request => request.CreatedAt)
                 .FirstOrDefaultAsync(request => request.BoardId == boardId && request.AccountId == accountId, cancellationToken);
+        }
+
+        public async Task<IEnumerable<BoardAccessRequest>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .Where(request => request.AccountId == accountId && request.Status == (int)BoardAccessRequestStatuses.Pending)
+                .ToListAsync(cancellationToken);
         }
     }
 }

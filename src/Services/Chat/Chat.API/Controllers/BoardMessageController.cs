@@ -1,6 +1,7 @@
 ﻿using Chat.API.Hubs;
 using Chat.Application.DTOs;
 using Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage;
+using Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage;
 using Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoardId;
 using Chat.Application.Models.Requests;
@@ -85,9 +86,29 @@ namespace Chat.API.Controllers
                 Message = request.Message
             });
 
+            await hubContext.Clients.Group(boardId.ToString()).SendAsync("EditMessage", result);
 
+            var response = new ResultResponse<Guid>(result.Id);
 
-            var response = new ResultResponse<Guid>(result);
+            return Ok(response);
+        }
+
+        [HttpDelete("{boardId:guid}/{messageId:guid}")]
+        //[HasBoardAccess] TODO: add grpc connect
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteBoardMessageAsync([FromRoute] Guid boardId, [FromRoute] Guid messageId)
+        {
+            await _mediator.Send(new DeleteBoardMessageCommand
+            {
+                BoardId = boardId,
+                BoardMessageId = messageId,
+            });
+
+            var response = new Response();
 
             return Ok(response);
         }

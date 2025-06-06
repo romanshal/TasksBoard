@@ -1,0 +1,254 @@
+<div class="profile-container">
+    <div class="first-wrapper">
+        <div class="image-section">
+            <div class="empty-avatar" *ngIf="!userAvatarSrc"></div>
+            <img [src]="userAvatarSrc" *ngIf="userAvatarSrc">
+
+            <div class="add-image" *ngIf="isCurrentUser">
+                <div class="add-image-btn" (click)="openProfileAvater()">
+                    <i class="fa-solid fa-camera fa-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="name-section">
+            <h2>{{user.Username}}</h2>
+            <span>{{user.Email}}</span>
+        </div>
+
+        <div class="actions-section">
+            <!-- <span>Member since: <b>19 September 2025</b></span> -->
+
+            <button (click)="signout()" *ngIf="isCurrentUser">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Sign out
+            </button>
+        </div>
+    </div>
+
+    <div class="second-wrapper">
+        <div class="second-wrapper__header">
+            <h1>Profile</h1>
+        </div>
+        
+        <div class="profile-info-block general-block">
+            <div class="br">
+                <span>General</span>
+            </div>
+
+            <div class="profile-info-block__section">
+                <form [formGroup]="generalSettingsForm">
+                    <div class="profile-info-block__section-inputs">
+                        <div class="input-block">
+                            <label>Username</label>
+
+                            <div class="input-block__input">
+                                <i class="fa-solid fa-user left"></i>
+                                <input type="text" formControlName="username" placeholder="Enter your username..." />
+                            </div>
+
+                            <div *ngIf="generalSettingsFormSubmitted && generalSettingsForm.controls['username'].errors"
+                                class="invalid-feedback">
+                                <div *ngIf="generalSettingsForm.controls['username'].errors?.['required']">Username is
+                                    required</div>
+                                <div *ngIf="generalSettingsForm.controls['username'].errors?.['minlength']">Username is
+                                    must be at least 3 characters long</div>
+                                <div *ngIf="generalSettingsForm.controls['username'].errors?.['maxlength']">Username
+                                    cannot exceed 20 characters</div>
+                            </div>
+                        </div>
+
+                        <div class="input-block">
+                            <label>Email</label>
+
+                            <div class="input-block__input">
+                                <i class="fa-solid fa-envelope left"></i>
+                                <input type="text" formControlName="email" placeholder="Enter your email..." />
+                            </div>
+
+                            <div *ngIf="generalSettingsFormSubmitted && generalSettingsForm.controls['email'].errors"
+                                class="invalid-feedback">
+                                <div *ngIf="generalSettingsForm.controls['email'].errors?.['required']">Email is
+                                    required</div>
+                                <div *ngIf="generalSettingsForm.controls['email'].errors?.['email']">Email must be a
+                                    valid email
+                                    address</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-block__section-inputs">
+                        <div class="input-block">
+                            <label>First name</label>
+                            <div class="input-block__input">
+                                <i class="fa-solid fa-user left"></i>
+                                <input type="text" formControlName="firstName"
+                                    placeholder="{{isCurrentUser ? 'Enter your first name...' : ''}}" />
+                            </div>
+                        </div>
+
+                        <div class="input-block">
+                            <label>Surname</label>
+                            <div class="input-block__input">
+                                <i class="fa-solid fa-user left"></i>
+                                <input type="text" formControlName="surname"
+                                    placeholder="{{isCurrentUser ? 'Enter your surname...' : ''}}" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="profile-info-block__section-actions" *ngIf="isCurrentUser">
+                    <button (click)="updateUserInfo()">
+                        Edit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-info-block change-password-block" *ngIf="isCurrentUser">
+            <div class="br">
+                <span>Change password</span>
+            </div>
+
+            <div class="profile-info-block__section">
+                <form [formGroup]="passwordSettingsForm">
+                    <div class="profile-info-block__section-inputs">
+                        <div class="input-block">
+                            <label>Password</label>
+
+                            <div class="input-block__input">
+                                <i class="fa-solid fa-key left"></i>
+                                <input formControlName="currentPassword"
+                                    type="{{ showCurrentPassword ? 'text' : 'password' }}"
+                                    placeholder="Enter your password..." />
+                                <i class="fa-solid fa-eye right" *ngIf="!showCurrentPassword"
+                                    (click)="showCurrentPassword = !showCurrentPassword"></i>
+                                <i class="fa-solid fa-eye-slash right" *ngIf="showCurrentPassword"
+                                    (click)="showCurrentPassword = !showCurrentPassword"></i>
+                            </div>
+
+                            <div *ngIf="passwordSettingsFormSubmitted && passwordSettingsForm.controls['currentPassword'].errors"
+                                class="invalid-feedback">
+                                <div *ngIf="passwordSettingsForm.controls['currentPassword'].errors?.['required']">
+                                    Password is required
+                                </div>
+                                <div *ngIf="passwordSettingsForm.controls['currentPassword'].errors?.['minlength']">
+                                    Password is must be
+                                    at least 8 characters long</div>
+                            </div>
+                        </div>
+
+                        <div class="input-block">
+                            <label>New password</label>
+
+                            <div class="input-block__input">
+                                <i class="fa-solid fa-key left"></i>
+                                <input formControlName="newPassword" type="{{ showNewPassword ? 'text' : 'password' }}"
+                                    placeholder="Enter your password..." />
+                                <i class="fa-solid fa-eye right" *ngIf="!showNewPassword"
+                                    (click)="showNewPassword = !showNewPassword"></i>
+                                <i class="fa-solid fa-eye-slash right" *ngIf="showNewPassword"
+                                    (click)="showNewPassword = !showNewPassword"></i>
+                            </div>
+
+                            <div *ngIf="passwordSettingsFormSubmitted && passwordSettingsForm.controls['newPassword'].errors"
+                                class="invalid-feedback">
+                                <div *ngIf="passwordSettingsForm.controls['newPassword'].errors?.['required']">
+                                    Password is required
+                                </div>
+                                <div *ngIf="passwordSettingsForm.controls['newPassword'].errors?.['minlength']">
+                                    Password is must be
+                                    at least 8 characters long</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="profile-info-block__section-actions">
+                    <button (click)="changeUserPassword()">
+                        Change password
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-info-block board-invites-block" *ngIf="isCurrentUser" id="board-invites">
+            <div class="br">
+                <span>Board invites</span>
+            </div>
+
+            <div class="profile-info-block__requests-section">
+                <div class="empty-requests" *ngIf="boardInviteRequests.length === 0">
+                    <div class="empty-requests__image">
+                        <i class="fa-solid fa-desktop fa-2xl"></i>
+                    </div>
+
+                    <div class="empty-requests__description">
+                        <span>No new invite requests</span>
+                    </div>
+                </div>
+
+                <div *ngIf="boardInviteRequests.length !== 0">
+                    <div class="request-list">
+                        <div class="request-list__item" *ngFor="let request of boardInviteRequests">
+                            <div class="request-list__item-avatar">
+                                <img [src]="getAccountAvatar(request.FromAccountId) | async">
+                            </div>
+                            <div class="request-list__item-description">
+                                <b>{{request.FromAccountName }}</b> invite you to the board
+                                <b>'{{request.BoardName}}'</b>
+                            </div>
+
+                            <div class="request-list__item-actions">
+                                <button class="button-accept" (click)="resolveInviteRequest(request, true)">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+
+                                <button class="button-reject" (click)="resolveInviteRequest(request, false)">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-info-block board-requests-block" *ngIf="isCurrentUser" id="board-requests">
+            <div class="br">
+                <span>Board requests</span>
+            </div>
+
+            <div class="profile-info-block__requests-section">
+                <div class="empty-requests" *ngIf="boardAccessRequests.length === 0">
+                    <div class="empty-requests__image">
+                        <i class="fa-solid fa-desktop fa-2xl"></i>
+                    </div>
+
+                    <div class="empty-requests__description">
+                        <span>No access requests</span>
+                    </div>
+                </div>
+
+                <div *ngIf="boardAccessRequests.length !== 0">
+                    <div class="request-list">
+                        <div class="request-list__item" *ngFor="let request of boardAccessRequests">
+                            <div class="request-list__item-description">
+                                Access request to the board '<b>{{request.BoardName}}</b>'
+                            </div>
+
+                            <div class="request-list__item-actions">
+                                <button class="button-reject" (click)="cancelAccessRequest(request)">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

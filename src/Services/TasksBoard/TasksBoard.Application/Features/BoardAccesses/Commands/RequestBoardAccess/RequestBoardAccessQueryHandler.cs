@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Common.Blocks.Constants;
 using Common.Blocks.Exceptions;
+using Common.Blocks.Interfaces.Services;
+using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
@@ -12,10 +13,12 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
     public class RequestBoardAccessQueryHandler(
         IUnitOfWork unitOfWork,
         IMapper mapper,
+        IOutboxService outboxService,
         ILogger<RequestBoardAccessQueryHandler> logger) : IRequestHandler<RequestBoardAccessQuery, Guid>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
+        private readonly IOutboxService _outboxService = outboxService;
         private readonly ILogger<RequestBoardAccessQueryHandler> _logger = logger;
 
         public async Task<Guid> Handle(RequestBoardAccessQuery request, CancellationToken cancellationToken)
@@ -33,11 +36,25 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
                 throw new ForbiddenException($"Board '{board.Name} is private.'");
             }
 
+            var isMemberExist = board.BoardMembers.Any(member => member.AccountId == request.AccountId);
+            if (isMemberExist)
+            {
+                _logger.LogInformation($"Board member with account id '{request.AccountId} is already exist in board '{request.BoardId}'.");
+                throw new AlreadyExistException($"Board member is already exist for board '{board.Name}'.");
+            }
+
             var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(request.BoardId, request.AccountId, cancellationToken);
             if (accessRequest is not null && accessRequest.Status == (int)BoardAccessRequestStatuses.Pending)
             {
                 _logger.LogInformation($"Board access request with account id '{request.AccountId} is already exist in board '{request.BoardId}'.");
                 throw new AlreadyExistException($"Access request is already exist for board '{board.Name}'.");
+            }
+
+            var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(request.BoardId, request.AccountId, cancellationToken);
+            if(inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
+            {
+                _logger.LogInformation($"Board invite request to account id '{request.AccountId} is already exist in board '{request.BoardId}'.");
+                throw new AlreadyExistException($"Invite request is already exist for board '{board.Name}'.");
             }
 
             accessRequest = _mapper.Map<BoardAccessRequest>(request);
@@ -49,6 +66,15 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
                 _logger.LogError($"Can't create new board access request to board with id '{request.BoardId}'.");
                 throw new ArgumentException(nameof(accessRequest));
             }
+
+            await _outboxService.CreateNewOutboxEvent(new NewBoardAccessRequestEvent
+            {
+                BoardId = board.Id,
+                BoardName = board.Name,
+                AccountId = accessRequest.AccountId,
+                AccountName = accessRequest.AccountName,
+                BoardMembersIds = [.. board.BoardMembers.Select(member => member.AccountId)]
+            }, cancellationToken);
 
             _logger.LogInformation($"Board access request with id '{accessRequest.Id}' added to board with id '{request.BoardId}'.");
 

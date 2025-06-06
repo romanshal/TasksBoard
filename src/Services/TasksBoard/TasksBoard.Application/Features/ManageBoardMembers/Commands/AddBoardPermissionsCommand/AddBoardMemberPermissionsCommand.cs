@@ -4,8 +4,9 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPe
 {
     public class AddBoardMemberPermissionsCommand : IRequest<Unit>
     {
-        public Guid BoardId { get; set; }
-        public Guid MemberId { get; set; }
-        public Guid[] Permissions { get; set; }
+        public required Guid BoardId { get; set; }
+        public required Guid MemberId { get; set; }
+        public required Guid AccountId { get; set; }
+        public required Guid[] Permissions { get; set; }
     }
 }

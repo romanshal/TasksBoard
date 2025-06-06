@@ -1,11 +1,9 @@
-﻿using Common.Blocks.Exceptions;
+﻿
+using Common.Blocks.Exceptions;
+using Common.Blocks.Interfaces.Services;
+using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -14,15 +12,17 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 {
     public class UpdateBoardNoticeStatusCommandHandler(
         ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardNoticeStatusCommand, Guid>
+        IUnitOfWork unitOfWork,
+        IOutboxService outboxService) : IRequestHandler<UpdateBoardNoticeStatusCommand, Guid>
     {
         private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IOutboxService _outboxService = outboxService;
 
         public async Task<Guid> Handle(UpdateBoardNoticeStatusCommand request, CancellationToken cancellationToken)
         {
-            var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId, cancellationToken);
-            if (!boardExist)
+            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
+            if (board is null)
             {
                 _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
@@ -44,6 +44,17 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
                 _logger.LogError("Can't update board notice.");
                 throw new ArgumentException(nameof(boardNotice));
             }
+
+            await _outboxService.CreateNewOutboxEvent(new UpdateNoticeStatusEvent
+            {
+                BoardId = board.Id,
+                BoardName = board.Name,
+                NoticeId = boardNotice.Id,
+                AccountId = request.AccountId,
+                AccountName = request.AccountName,
+                Completed = request.Complete,
+                BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AccountId).Select(member => member.AccountId)]
+            }, cancellationToken);
 
             _logger.LogInformation($"Board notice with id '{boardNotice.Id}' updated in board with id '{request.BoardId}'.");
 

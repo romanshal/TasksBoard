@@ -16,6 +16,7 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMembersBy
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardMembersByBoardIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
+
         public async Task<IEnumerable<BoardMemberDto>> Handle(GetBoardMembersByBoardIdQuery request, CancellationToken cancellationToken)
         {
             var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId, cancellationToken);

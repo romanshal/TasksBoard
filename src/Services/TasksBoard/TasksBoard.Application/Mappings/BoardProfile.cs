@@ -12,8 +12,9 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<Board, BoardDto>()
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
-                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers))
+                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers.OrderByDescending(member => member.Board.OwnerId == member.AccountId).ThenBy(member => member.Nickname)))
                 .ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
+                .ForMember(dest => dest.InviteRequests, opt => opt.MapFrom(src => src.InviteRequests.Where(request => request.Status == (int)BoardInviteRequestStatuses.Pending)))
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))
                 .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension));
 

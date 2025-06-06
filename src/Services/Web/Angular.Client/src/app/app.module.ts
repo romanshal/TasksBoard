@@ -35,7 +35,15 @@ import { AutoResizeTextareaDirective } from './common/directives/auto-resize-tex
 import { DeleteConfirmationModal } from './common/modals/delete-confirmation/delete-confirmation.modal';
 import { BoardMemberRequestModal } from './common/modals/board-member-request/board-member-request.modal';
 import { InternalServerErrorComponent } from './error/internal-server-error/internal-server-error.component';
-import { BoardMemberRequestAcceptModal } from './common/modals/board-member-request-accept/board-member-request-accept.modal';
+import { QRCodeComponent } from 'angularx-qrcode';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { ProfileComponent } from './profile/profile.component';
+import { OperationResultMessageModal } from './common/modals/operation-result-message/operation-result-message.modal';
+import { ProfileAvatarModal } from './common/modals/profile-avatar/profile-avatar.modal';
+import { NotificationMenuModal } from './common/modals/notification-menu/notification-menu.modal';
+import { NotificationComponent } from './notification/notification.component';
+import { PaginatorNewComponent } from './common/paginator-new/paginator-new.component';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 
 @NgModule({
   declarations: [
@@ -64,7 +72,12 @@ import { BoardMemberRequestAcceptModal } from './common/modals/board-member-requ
     DeleteConfirmationModal,
     BoardMemberRequestModal,
     InternalServerErrorComponent,
-    BoardMemberRequestAcceptModal
+    ProfileComponent,
+    OperationResultMessageModal,
+    ProfileAvatarModal,
+    NotificationMenuModal,
+    NotificationComponent,
+    PaginatorNewComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +89,10 @@ import { BoardMemberRequestAcceptModal } from './common/modals/board-member-requ
     MatFormFieldModule,
     MatInputModule,
     HttpClientModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    QRCodeComponent,
+    ClipboardModule,
+    PickerComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

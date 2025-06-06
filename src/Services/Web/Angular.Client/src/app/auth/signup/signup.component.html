@@ -16,6 +16,8 @@
         <label class="input-label">Username*</label>
         <div *ngIf="formSubmitted && signupForm.controls['username'].errors" class="invalid-feedback">
           <div *ngIf="signupForm.controls['username'].errors?.['required']">Username is required</div>
+          <div *ngIf="signupForm.controls['username'].errors?.['minlength']">Username is must be at least 3 characters long</div>
+          <div *ngIf="signupForm.controls['username'].errors?.['maxlength']">Username cannot exceed 20 characters</div>
         </div>
       </div>
 
@@ -35,9 +37,14 @@
         <label class="input-label">Password*</label>
         <div *ngIf="formSubmitted && signupForm.controls['password'].errors" class="invalid-feedback">
           <div *ngIf="signupForm.controls['password'].errors?.['required']">Password is required</div>
+          <div *ngIf="signupForm.controls['password'].errors?.['minlength']">Password is must be at least 8 characters long</div>
         </div>
       </div>
-      <button type="submit">Continue</button>
+      <button *ngIf="!isLoading" type="submit">Continue</button>
+      <button class="loading-button" *ngIf="isLoading" disabled>
+        <i class="fa-solid fa-spinner"></i>
+        Loading
+      </button>
     </form>
 
     <div class="br">

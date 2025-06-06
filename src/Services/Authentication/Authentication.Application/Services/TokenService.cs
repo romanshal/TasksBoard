@@ -35,7 +35,7 @@ namespace Authentication.Application.Services
             if (!saveTokenResult.Succeeded)
             {
                 var errorsMessage = string.Empty;
-                foreach(var error in saveTokenResult.Errors)
+                foreach (var error in saveTokenResult.Errors)
                 {
                     errorsMessage += $"Code: {error.Code}, Description: {error.Description};";
                 }
@@ -56,6 +56,11 @@ namespace Authentication.Application.Services
             }
 
             return await GenerateTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> DeleteRefreshToken(ApplicationUser user)
+        {
+            return await _userManager.RemoveAuthenticationTokenAsync(user, JwtConstants.TokenType, "refresh_token");
         }
 
         public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string? provider, string? tokenId)

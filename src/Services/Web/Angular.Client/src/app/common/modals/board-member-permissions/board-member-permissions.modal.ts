@@ -7,6 +7,7 @@ import { ManageBoardMemberService } from '../../services/manage-board-member/man
 import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
 import { DeleteConfirmationModal } from '../delete-confirmation/delete-confirmation.modal';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-board-member-permissions',
@@ -21,6 +22,7 @@ export class BoardMemberPermissionsModal implements OnInit {
 
   member!: BoardMemberModel;
   user?: UserInfoModel;
+  userAvatar!: Observable<string>;
 
   permissions!: BoardPermission[];
 
@@ -32,10 +34,11 @@ export class BoardMemberPermissionsModal implements OnInit {
     private dialogRef: MatDialogRef<BoardMemberPermissionsModal>,
     private manageBoardMemberService: ManageBoardMemberService,
     private userService: UserService,
-    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, member: BoardMemberModel, permissions: BoardPermission[] }
+    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, member: BoardMemberModel, permissions: BoardPermission[], userAvatar: Observable<string> }
   ) { 
     this.boardId = data.boardId;
     this.member = data.member;
+    this.userAvatar = data.userAvatar;
     this.permissions = data.permissions;
 
     this.userService.getUserInfo(this.member.AccountId).subscribe(result => {
@@ -67,8 +70,6 @@ export class BoardMemberPermissionsModal implements OnInit {
     } else {
       this.getPermissions.push(this.fb.control(permissionId));
     }
-
-    console.log(this.getPermissions.controls);
   }
 
   isPermissionsChecked(permissionId: string) {

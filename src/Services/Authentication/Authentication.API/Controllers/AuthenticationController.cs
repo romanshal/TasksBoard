@@ -1,10 +1,12 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
 using Authentication.Application.Features.Authentications.Commands.Login;
+using Authentication.Application.Features.Authentications.Commands.Logout;
 using Authentication.Application.Features.Authentications.Commands.RefreshToken;
 using Authentication.Application.Features.Authentications.Commands.Register;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Authentication.API.Controllers
 {
@@ -47,12 +49,22 @@ namespace Authentication.API.Controllers
             return Ok(result);
         }
 
-        //[HttpPost]
-        //[Authorize]
-        //[Route("logout")]
-        //public async Task<IActionResult> LogoutAsync()
-        //{
+        [HttpDelete]
+        [Authorize]
+        [Route("logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            if (!Guid.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            {
+                return Unauthorized();
+            }
 
-        //}
+            var result = await _mediator.Send(new LogoutCommand
+            {
+                UserId = userId
+            });
+
+            return NoContent();
+        }
     }
 }

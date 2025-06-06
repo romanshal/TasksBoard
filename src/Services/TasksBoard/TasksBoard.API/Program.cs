@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGetWithAuth("TasksBoards API");
 var connectionString = builder.Configuration.GetConnectionString("TasksBoardDbConnection") ?? throw new InvalidOperationException("Connection string 'TasksBoardDbConnection' not found");
 builder.Services
     .AddInfrastructureServices(connectionString)
-    .AddApplicationServices();
+    .AddApplicationServices(builder.Configuration);
 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

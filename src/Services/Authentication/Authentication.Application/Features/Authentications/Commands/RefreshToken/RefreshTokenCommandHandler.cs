@@ -30,7 +30,7 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
             if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))
             {
                 _logger.LogCritical($"Can't create access or refresh tokens for user {user.Id}.");
-                throw new InvalidOperationException("Can't create access or refresh tokens.");
+                throw new UnauthorizedException("Can't create access or refresh tokens.");
             }
 
             return new AuthenticationDto

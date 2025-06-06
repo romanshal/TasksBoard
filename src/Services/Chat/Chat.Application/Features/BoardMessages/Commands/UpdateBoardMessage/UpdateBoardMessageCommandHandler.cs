@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Chat.Application.DTOs;
 using Chat.Domain.Interfaces.UnitOfWorks;
 using Common.Blocks.Exceptions;
 using MediatR;
@@ -9,12 +10,12 @@ namespace Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage
     public class UpdateBoardMessageCommandHandler(
         IUnitOfWork unitOfWork,
         ILogger<UpdateBoardMessageCommandHandler> logger,
-        IMapper mapper) : IRequestHandler<UpdateBoardMessageCommand, Guid>
+        IMapper mapper) : IRequestHandler<UpdateBoardMessageCommand, BoardMessageDto>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<UpdateBoardMessageCommandHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        public async Task<Guid> Handle(UpdateBoardMessageCommand request, CancellationToken cancellationToken)
+        public async Task<BoardMessageDto> Handle(UpdateBoardMessageCommand request, CancellationToken cancellationToken)
         {
             //TODO: check board exist
 
@@ -37,7 +38,9 @@ namespace Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage
 
             _logger.LogInformation($"Board message with id '{boardMessage.Id}' updated in board with id '{request.BoardId}'.");
 
-            return boardMessage.Id;
+            var boardMessageDto = _mapper.Map<BoardMessageDto>(boardMessage);
+
+            return boardMessageDto;
         }
     }
 }

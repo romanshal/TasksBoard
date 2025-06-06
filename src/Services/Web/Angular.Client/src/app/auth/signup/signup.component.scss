@@ -129,7 +129,14 @@ $border-radius: 8px;
         &:hover {
           background-color: darken($primary-color, 10%);
         }
+
+        &.loading-button {
+          background-color: #f0f0f0;
+          color: black;
+          cursor: default;
+        }
       }
+      
     }
 
     // Адаптивные стили

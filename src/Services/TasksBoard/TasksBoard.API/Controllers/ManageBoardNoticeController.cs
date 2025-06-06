@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
@@ -34,6 +35,7 @@ namespace TasksBoard.API.Controllers
             {
                 BoardId = boardId,
                 AuthorId = request.AuthorId,
+                AuthorName = request.AuthorName,
                 Definition = request.Definition,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
@@ -65,10 +67,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request)
         {
+            var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
+
             var command = new UpdateBoardNoticeCommand
             {
                 BoardId = boardId,
                 NoticeId = request.NoticeId,
+                AccountId = Guid.Parse(userId),
                 Definition = request.Definition,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
@@ -96,6 +101,8 @@ namespace TasksBoard.API.Controllers
             var command = new UpdateBoardNoticeStatusCommand
             {
                 BoardId = boardId,
+                AccountId = request.AccountId,
+                AccountName = request.AccountName,
                 NoticeId = request.NoticeId,
                 Complete = request.Complete
             };

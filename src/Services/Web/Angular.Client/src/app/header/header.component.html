@@ -19,22 +19,17 @@
   </div>
 
   <div class="header-secondary">
-    <div class="header-item search-bar">
-      <!-- <input type="text" placeholder="Search..."> -->
-    </div> 
+    <button *ngIf="!isAuthenticated" class="signin-btn" (click)="signin()">Sign in</button>
 
-    <div class="header-item" *ngIf="!isAuthenticated">
-      <button (click)="signin()">Sign in</button>
+    <button *ngIf="!isAuthenticated" class="signup-btn" (click)="signup()">Sign up</button>
+
+    <div class="header-item" *ngIf="isAuthenticated" (click)="openNotification()">
+      <i class="fa-regular fa-bell fa-xl"></i>
+      <div class="notification-alert" *ngIf="notifications.length !== 0"></div>
     </div>
 
-    <div class="header-item" *ngIf="!isAuthenticated">
-      <button (click)="signup()">Sign up</button>
-    </div>
-
-    <div class="header-item" *ngIf="isAuthenticated">
-       <div *ngIf="username" class="mini-avatar" (click)="openProfile()">
-        {{ username[0].toUpperCase()}}
-       </div>
+    <div *ngIf="username && isAuthenticated" class="mini-avatar" (click)="openProfile()">
+      {{ username[0].toUpperCase()}}
     </div>
   </div>
 </header>

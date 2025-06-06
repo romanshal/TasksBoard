@@ -9,7 +9,8 @@ namespace Chat.Application.Mappings
     {
         public BoardMessageProfile()
         {
-            CreateMap<BoardMessage, BoardMessageDto>();
+            CreateMap<BoardMessage, BoardMessageDto>()
+                .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => src.LastModifiedAt));
 
             CreateMap<CreateBoardMessageCommand, BoardMessage>();
         }

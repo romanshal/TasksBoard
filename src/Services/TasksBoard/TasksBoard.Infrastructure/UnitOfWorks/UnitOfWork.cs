@@ -1,6 +1,5 @@
-﻿using Common.Blocks.Entities;
-using Common.Blocks.Interfaces.Repositories;
-using Common.Blocks.Repositories;
+﻿using Common.Blocks.Repositories;
+using Common.Blocks.UnitOfWorks;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
@@ -12,27 +11,10 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
         TasksBoardDbContext context,
-        ILoggerFactory loggerFactory) : IUnitOfWork
+        ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
     {
         private readonly TasksBoardDbContext _context = context;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
-        private readonly Dictionary<Type, object> _repositories = [];
-
-        public IRepository<T> GetRepository<T>() where T : BaseEntity
-        {
-            var type = typeof(T);
-
-            if (!_repositories.TryGetValue(type, out object? value))
-            {
-                var repositoryInstance = new Repository<T>(_context, _loggerFactory);
-
-                value = repositoryInstance;
-
-                _repositories[type] = value;
-            }
-
-            return (IRepository<T>)value;
-        }
 
         public IBoardNoticeRepository GetBoardNoticeRepository()
         {
@@ -98,30 +80,20 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
             return (IBoardAccessRequestRepository)value;
         }
 
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public IBoardInviteRequestRepository GetBoardInviteRequestRepository()
         {
-            return await _context.SaveChangesAsync(cancellationToken);
+            var type = typeof(BoardInviteRequest);
+
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardInviteRequest>))
+            {
+                var repositoryInstance = new BoardInviteRequestRepository(_context, _loggerFactory);
+
+                value = repositoryInstance;
+
+                _repositories[type] = repositoryInstance;
+            }
+
+            return (IBoardInviteRequestRepository)value;
         }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
-
-        //private R GetRepository<R, E>() where R : Repository<E>, new() where E : BaseEntity
-        //{
-        //    var type = typeof(E);
-
-        //    if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<E>))
-        //    {
-        //        var repositoryInstance = Repository<E>.CreateInstanse<E>(_context, _loggerFactory);
-
-        //        value = repositoryInstance;
-
-        //        _repositories[type] = repositoryInstance;
-        //    }
-
-        //    return (R)value;
-        //}
     }
 }

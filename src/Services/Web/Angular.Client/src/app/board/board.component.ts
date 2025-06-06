@@ -16,6 +16,7 @@ import { BoardPermissionService } from '../common/services/board-permission/boar
 import { BoardMemberAuthService } from '../common/services/board-member-auth/board-member-auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChatService } from '../common/services/chat/chat.service';
+import { ChatComponent } from '../chat/chat.component';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -73,12 +74,12 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
     this.boardId = this.route.snapshot.paramMap.get('boardid')!;
-
     this.getBoard();
   }
 
   ngOnInit(): void {
     this.getPermissions();
+
     this.chatService.joinBoard(this.boardId, this.userId);
   }
 
@@ -91,7 +92,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.boardService.getBoardById(this.boardId).subscribe(result => {
       if (result) {
         this.board = result;
-        console.log(this.board.AccessRequests)
+
         this.boardMembers = result.Members;
 
         this.currentMember = this.boardMembers.find(member => member.AccountId === this.userId)!
@@ -100,6 +101,15 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
 
         this.getBoardNotices(this.pageIndex, this.pageSize);
+
+        if (this.route.snapshot.queryParamMap.get('boardnotice')) {
+          let noticeId = this.route.snapshot.queryParamMap.get('boardnotice')!;
+          this.openBoardNoticeModalById(noticeId);
+        }
+
+        if (this.route.snapshot.queryParamMap.get('boardmembers')) {
+          this.openMembersModal();
+        }
       }
     });
   }
@@ -118,9 +128,17 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;
         this.totalPages = result.PagesCount;
-        this.totalCount = result.TotalCount
+        this.totalCount = result.TotalCount;
       }
     });
+  }
+
+  private openBoardNoticeModalById(boardNoticeId: string) {
+    this.boardNoticeService.getBoardNoticeById(this.boardId, boardNoticeId).subscribe(result => {
+      if (result) {
+        this.openNoticeModal(result);
+      }
+    })
   }
 
   private getPermissions() {
@@ -141,7 +159,6 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.notesForView = [];
 
       this.getBoardNotices(this.pageIndex, this.pageSize);
-
     }
   }
 
@@ -166,12 +183,14 @@ export class BoardComponent implements OnInit, OnDestroy {
         members: this.boardMembers,
         permissions: this.boardPermissions,
         userId: this.userId,
-        accessRequests: this.board.AccessRequests
+        accessRequests: this.board.AccessRequests,
+        inviteRequests: this.board.InviteRequests
       }
     })
       .afterClosed().subscribe((result) => {
         this.boardMembers = result.members;
         this.board.AccessRequests = result.accessRequests;
+        this.board.InviteRequests = result.inviteRequests;
       });
   }
 

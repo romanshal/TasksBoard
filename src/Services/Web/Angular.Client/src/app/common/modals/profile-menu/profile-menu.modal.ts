@@ -2,6 +2,7 @@ import { Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SessionStorageService } from '../../services/session-storage/session-storage.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-profile-menu',
@@ -14,6 +15,7 @@ export class ProfileMenuModal {
 
   constructor(
     private sessionService: SessionStorageService,
+    private authService: AuthService,
     private dialogRef: MatDialogRef<ProfileMenuModal>,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) private data: { username: string }
@@ -22,9 +24,18 @@ export class ProfileMenuModal {
   }
 
   signout() {
-    this.sessionService.logout();
+    this.authService.signout().subscribe(result => {
+      this.sessionService.logout();
 
-    window.location.href = '/signin';
+      window.location.href = '/signin';
+
+      this.closeModal();
+    })
+  }
+
+  openProfile() {
+    this.router.navigate(['/profile']);
+    this.closeModal();
   }
 
   openMyBoards() {

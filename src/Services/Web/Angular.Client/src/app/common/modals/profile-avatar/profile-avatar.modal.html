@@ -1,0 +1,48 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+    <div class="modal">
+        <div class="modal-close" (click)="closeModal()">
+            <i class="fa-solid fa-xmark fa-2xl"></i>
+        </div>
+
+        <div class="modal-header">
+            Profile avatar
+        </div>
+
+        <div class="modal-wrapper">
+            <div class="avatar-section">
+                <img [src]="selectedAvatarSrc" *ngIf="selectedAvatarSrc" />
+                <div class="empty-avatar" *ngIf="!selectedAvatarSrc"></div>
+
+                <div class="remove-avatar">
+                    <div class="remove-avatar-btn">
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
+                </div>
+
+                <div class="upload-avatar">
+                    <div class="upload-avatar-btn" (click)="triggerFileInput()">
+                        <i class="fa-solid fa-camera fa-2xl"></i>
+                    </div>
+                    <input type="file" #fileInput (change)="onFileSelected($event)" style="display:none;">
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <button (click)="updateUserAvatar()">
+                    Save
+                </button>
+            </div>
+
+            <div class="br">
+                <span>OR</span>
+            </div>
+
+            <div class="default-avatars-section">
+                <div class="grid-container">
+                    <img [class.selected]="selectedAvatar === avatar" *ngFor="let avatar of avatars" [src]="avatar"
+                        [alt]="'Default avatar'" (click)="selectDefaultAvatar(avatar)">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

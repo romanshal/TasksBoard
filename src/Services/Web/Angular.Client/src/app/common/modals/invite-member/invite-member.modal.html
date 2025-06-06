@@ -3,33 +3,103 @@
     <div class="modal-close" (click)="closeModal()">
       <i class="fa-solid fa-xmark fa-2xl"></i>
     </div>
+    
+    <div class="invite-header">
+      Invite member
+    </div>
 
     <div class="invite-container">
       <div class="invite-search">
         <div class="invite-search__input">
           <i class="fa fa-search search-icon"></i>
-  
+
           <input type="text" placeholder="Enter text for search..." [formControl]="searchControl" />
-  
+
           <i class="fa fa-times clear-icon" (click)="clearSearch()"></i>
         </div>
-  
+
         <div class="invite-search__dropdown" *ngIf="showDropdown">
-          <div *ngIf="isLoading" class="loading">Загрузка...</div>
-          <div *ngIf="!isLoading">
+          <div *ngIf="isLoading" class="loading">Loading...</div>
+          <div class="invite-search__dropdown-list" *ngIf="!isLoading">
             <ng-container *ngIf="searchResult.length; else noResults">
-              <div class="dropdown-item" *ngFor="let item of searchResult" (click)="selectItem(item)">
-                {{ item.Username }}
+              <div class="dropdown-item item-result" *ngFor="let item of searchResult" (click)="selectItem(item)">
+                <div class="dropdown-item__image">
+                  <img [src]="getBoardMemberAvatar(item.Id) | async">
+                </div>
+
+                <div class="dropdown-item__name">
+                  <span>{{ item.Username }}</span>
+                </div>
+
               </div>
             </ng-container>
             <!-- Шаблон для случая, если результатов нет -->
             <ng-template #noResults>
-              <div class="dropdown-item">Ничего не найдено</div>
+              <div class="dropdown-item">Nothing found</div>
             </ng-template>
           </div>
         </div>
-  
-        <div *ngIf="isLoading" class="loading">Загрузка...</div>
+      </div>
+
+      <div class="invite-user" *ngIf="selectedUser">
+        <div class="invite-user__wrapper">
+          <div class="invite-user__wrapper-image">
+            <img [src]="getBoardMemberAvatar(selectedUser.Id) | async">
+          </div>
+
+          <div class="invite-user__wrapper-description">
+            <span>{{selectedUser.Username}}</span>
+            <span>({{selectedUser.Email}})</span>
+          </div>
+
+          <div class="invite-user__wrapper-actions">
+            <i class="fa fa-times clear-icon" (click)="clearSelectedUser()"></i>
+          </div>
+        </div>
+
+        <button (click)="inviteMember()">
+          Invite
+        </button>
+      </div>
+    </div>
+
+    <div class="br">
+      <span>OR</span>
+    </div>
+
+    <div class="alternative-invite-container">
+      <div class="invite-link">
+        <span>
+          Share this link to invite. This link is valid for 24 hours for one user.
+        </span>
+
+        <div class="invite-link-container">
+          <div class="invite-link-input">
+            <input [(ngModel)]="inviteLink" disabled />
+          </div>
+
+          <button (click)="copyLink()">
+            <i class="fa-regular fa-clone" *ngIf="!coppied"></i>
+            {{coppied ? 'Coppied' : 'Copy'}}
+          </button>
+        </div>
+      </div>
+
+      <div class="br">
+        <span>Scan to open in the browser</span>
+      </div>
+
+      <div class="invite-qr-code">
+        <div class="qrcode-container">
+          <qrcode [qrdata]="inviteLink" [width]="150" [errorCorrectionLevel]="'M'"></qrcode>
+
+          <div class="corner-bracket top-left"></div>
+          <div class="corner-bracket top-right"></div>
+          <div class="corner-bracket bottom-left"></div>
+          <div class="corner-bracket bottom-right"></div>
+        </div>
+
+        <span>Scan this code with your phone to open task board in the browser.</span>
       </div>
     </div>
   </div>

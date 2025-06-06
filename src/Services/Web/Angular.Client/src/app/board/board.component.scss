@@ -10,18 +10,16 @@ button {
   font-size: 1rem;
   font-weight: bold;
   height: 40px;
-  background-color: $btn-background;
-  color: #FFFBF7;
-  border: none;
+  background-color: #f0f0f0;
+  color: #3a7e93;
+  border: 2px solid #3a7e93;
   cursor: pointer;
-  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.5);
   transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &:not(.disabled, .active):hover {
+    box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
     transform: scale(1.1);
-    cursor: pointer;
-    background: $btn-background-hover;
-    box-shadow: 7px 10px 5px rgba(0, 0, 0, 0.5);
   }
 
   i {
@@ -51,6 +49,7 @@ button {
     margin: 20px 0px;
     width: 100%;
     min-width: 50%;
+    min-height: 75vh;
 
     .note-actions {
       display: flex;

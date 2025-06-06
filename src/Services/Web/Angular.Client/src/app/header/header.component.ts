@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { UserService } from '../common/services/user/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.modal';
+import { NotificationMenuModal } from '../common/modals/notification-menu/notification-menu.modal';
+import { NotificationService } from '../common/services/notification/notification.service';
+import { NotificationModel } from '../common/models/notification/notification.model';
 
 @Component({
   selector: 'app-header',
@@ -12,38 +15,36 @@ import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.mod
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit{
+export class HeaderComponent implements OnInit {
   public isAuthenticated = false;
   private userId?: string;
   public username!: string;
+
+  notifications: NotificationModel[] = [];
 
   constructor(
     private authService: AuthService,
     private sessionService: SessionStorageService,
     private router: Router,
-    private userService: UserService,
     private dialog: MatDialog,
+    private notificationService: NotificationService,
   ) {
     this.isAuthenticated = this.authService.isAuthenticated();
-      console.log(this.isAuthenticated);
-      if (this.isAuthenticated) {
-        this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-        this.username = this.sessionService.getUserInfo()?.Username!;
-      }
+
+    if (this.isAuthenticated) {
+      this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+      this.username = this.sessionService.getUserInfo()?.Username!;
+    }
   }
-  // ngAfterViewInit(): void {
-  //   setTimeout(() => {
-  //     this.isAuthenticated = this.authService.isAuthenticated();
-  //     console.log(this.isAuthenticated);
-  //     if (this.isAuthenticated) {
-  //       this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-  //       this.username = this.sessionService.getUserInfo()?.Username!;
-  //     }
-  //   });
-  // }
 
   ngOnInit() {
+    if (!this.userId) {
+      return;
+    }
 
+    this.notificationService.notification$.subscribe((notifications: NotificationModel[]) => {
+      this.notifications = notifications;
+    })
   }
 
   signin() {
@@ -52,6 +53,12 @@ export class HeaderComponent implements OnInit{
 
   signup() {
     this.router.navigate(['/signup']);
+  }
+
+  openNotification() {
+    this.dialog.open(NotificationMenuModal).afterClosed().subscribe(result => {
+      this.notifications = result;
+    });
   }
 
   openProfile() {

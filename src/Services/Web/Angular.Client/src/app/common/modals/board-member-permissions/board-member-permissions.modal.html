@@ -7,7 +7,7 @@
         <div class="permission-container">
             <div class="member-info">
                 <div class="member-info__avatar">
-                    <img src="avatar.png">
+                    <img [src]="userAvatar | async">
                 </div>
 
                 <div class="member-info__name">
@@ -18,15 +18,27 @@
                 </div>
             </div>
 
-            <div class="permissions-list">
-                <form [formGroup]="form">
-                    <div class="permission-item" *ngFor="let permission of permissions;">
-                        <input type="checkbox" [checked]="isPermissionsChecked(permission.Id)"
+            <form [formGroup]="form">
+                <div class="permissions-list">
+                    <div class="permissions-list__item" *ngFor="let permission of permissions;">
+                        <!-- <input type="checkbox" [checked]="isPermissionsChecked(permission.Id)"
                             (change)="checkPermission(permission.Id)" />
-                        <label>{{permission.Name}}</label>
+                        <label>{{permission.Name}}</label> -->
+
+                        <div class="permissions-list__item-checkbox">
+                            <input type="checkbox" id="permission-{{permission.Id}}"
+                                [checked]="isPermissionsChecked(permission.Id)"
+                                (change)="checkPermission(permission.Id)" />
+                                
+                            <label for="permission-{{permission.Id}}"></label>
+                        </div>
+
+                        <div class="permissions-list__item-label">
+                            <label>{{permission.Name}}</label>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
 
             <div class="permission-actions">
                 <button (click)="savePermissions()">

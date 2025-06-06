@@ -1,4 +1,7 @@
 ﻿using Common.Blocks.Exceptions;
+using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Services;
+using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
@@ -8,10 +11,12 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPe
 {
     public class AddBoardMemberPermissionsCommandHandler(
         ILogger<AddBoardMemberPermissionsCommandHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<AddBoardMemberPermissionsCommand, Unit>
+        IUnitOfWork unitOfWork,
+        IOutboxService outboxService) : IRequestHandler<AddBoardMemberPermissionsCommand, Unit>
     {
         private readonly ILogger<AddBoardMemberPermissionsCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IOutboxService _outboxService = outboxService;
 
         public async Task<Unit> Handle(AddBoardMemberPermissionsCommand request, CancellationToken cancellationToken)
         {
@@ -31,13 +36,24 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPe
 
             member.BoardMemberPermissions.Clear();
 
-            member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new Domain.Entities.BoardMemberPermission
+            member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
             {
                 BoardMemberId = request.MemberId,
                 BoardPermissionId = permission
             })];
 
             await _unitOfWork.GetBoardMemberRepository().Update(member, true, cancellationToken);
+
+            await _outboxService.CreateNewOutboxEvent(new NewBoardMemberPermissionsEvent
+            {
+                BoardId = board.Id,
+                BoardName = board.Name,
+                AccountId = member.AccountId,
+                AccountName = member.Nickname,
+                SourceAccountId = request.AccountId,
+                SourceAccountName = board.BoardMembers.First(m => m.AccountId == request.AccountId).Nickname,
+                BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
+            }, cancellationToken);
 
             _logger.LogInformation($"Add new permissions for board member with account id '{member.AccountId}' on board '{request.BoardId}'.");
 

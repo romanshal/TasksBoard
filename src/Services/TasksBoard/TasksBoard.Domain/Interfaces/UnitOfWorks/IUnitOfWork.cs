@@ -9,5 +9,6 @@ namespace TasksBoard.Domain.Interfaces.UnitOfWorks
         IBoardRepository GetBoardRepository();
         IBoardMemberRepository GetBoardMemberRepository();
         IBoardAccessRequestRepository GetBoardAccessRequestRepository();
+        IBoardInviteRequestRepository GetBoardInviteRequestRepository();
     }
 }

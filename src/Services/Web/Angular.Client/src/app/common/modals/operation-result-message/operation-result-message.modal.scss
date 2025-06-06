@@ -1,0 +1,93 @@
+$modal-background: white;
+$btn-color: #3a7e93;
+$main-font: 'Great Vibes', cursive;
+$additional-font: 'Helvetica', sans-serif;
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+
+    .modal {
+        background-color: $modal-background;
+        border-radius: 10px;
+        min-width: 300px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            color: $btn-color;
+
+            &:hover {
+                transform: scale(1.2);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            justify-content: center;
+            align-items: center;
+            background-color: #a6d96a;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-family: $main-font;
+            font-weight: 400;
+            font-size: xx-large;
+        }
+
+        .modal-description {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px 45px;
+
+            .modal-description__message {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: $additional-font;
+            }
+
+            .modal-description__actions {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                button {
+                    background-color: transparent;
+                    border: 2px solid $btn-color;
+                    color: $btn-color;
+                    padding: 10px 20px;
+                    border-radius: 15px;
+                    font-family: $additional-font;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    min-width: 80px;
+
+                    &:hover {
+                        box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
+                        transform: scale(1.2);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,7 +10,6 @@ using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoards;
-using TasksBoard.Application.Models;
 using TasksBoard.Application.Models.Requests.Boards;
 
 namespace TasksBoard.API.Controllers

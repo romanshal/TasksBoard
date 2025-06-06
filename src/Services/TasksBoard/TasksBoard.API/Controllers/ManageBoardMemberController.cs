@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
@@ -73,10 +74,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddBoardPermissionsToBoardMemberAsync([FromRoute] Guid boardId, AddBoardMemberPermissionsRequest request)
         {
+            var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
+
             var command = new AddBoardMemberPermissionsCommand
             {
                 BoardId = boardId,
                 MemberId = request.MemberId,
+                AccountId = Guid.Parse(userId),
                 Permissions = request.Permissions
             };
 
@@ -95,10 +99,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
         {
+            var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+
             var command = new DeleteBoardMemberCommand
             {
                 BoardId = boardId,
-                MemberId = memberId
+                MemberId = memberId,
+                RemoveByUserId = Guid.Parse(userId!)
             };
 
             await _mediator.Send(command);

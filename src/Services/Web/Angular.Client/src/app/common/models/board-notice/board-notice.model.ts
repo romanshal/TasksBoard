@@ -1,6 +1,7 @@
 export class BoardNoticeModel {
     public Id!: string;
     public AuthorId!: string;
+    public AuthorName!: string;
     public BoardId!: string;
     public BoardName!: string
     public Definition!: string;

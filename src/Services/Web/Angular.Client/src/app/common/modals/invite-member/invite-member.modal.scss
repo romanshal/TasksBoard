@@ -1,5 +1,31 @@
 $modal-background: white;
 $btn-color: #3a7e93;
+$additional-font: 'Helvetica', sans-serif;
+
+button {
+    background-color: transparent;
+    border: 2px solid $btn-color;
+    color: $btn-color;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: $additional-font;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 80px;
+
+    &:hover {
+        box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
+        transform: scale(1.1);
+    }
+}
+
+span {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
+}
 
 .modal-container {
     position: fixed;
@@ -16,8 +42,7 @@ $btn-color: #3a7e93;
     .modal {
         background-color: $modal-background;
         border-radius: 10px;
-        width: 250px;
-        height: 400px;
+        width: 300px;
         padding: 45px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         display: flex;
@@ -37,19 +62,29 @@ $btn-color: #3a7e93;
             }
         }
 
+        .invite-header {
+            font-family: "Great Vibes", cursive;
+            font-weight: 400;
+            font-size: xx-large;
+            display: flex;
+            justify-content: center;
+        }
+
         .invite-container {
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;
             position: relative;
+            gap: 10px;
 
             .invite-search {
                 .invite-search__input {
+                    position: relative;
+
                     input {
                         width: -webkit-fill-available;
-                        border-radius: 15px;
+                        border-radius: 10px;
                         padding: 10px 40px 10px 40px;
-                        color: #3a7e93;
                         border: 1px solid #3a7e93;
                         outline: none;
 
@@ -62,8 +97,8 @@ $btn-color: #3a7e93;
                     .search-icon {
                         position: absolute;
                         left: 12px;
-                        top: 50%;
-                        transform: translateY(-50%);
+                        top: 30%;
+                        // transform: translateY(-50%);
                         font-size: 16px;
                         color: #888;
                         pointer-events: none; // Иконка поиска не должна реагировать на клики
@@ -72,18 +107,23 @@ $btn-color: #3a7e93;
                     .clear-icon {
                         position: absolute;
                         right: 12px;
-                        top: 50%;
-                        transform: translateY(-50%);
+                        top: 30%;
+                        // transform: translateY(-50%);
                         font-size: 16px;
                         color: #888;
-                        cursor: pointer;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            cursor: pointer;
+                            transform: scale(1.3);
+                        }
                     }
                 }
             }
 
             .invite-search__dropdown {
                 position: absolute;
-                top: 50px;
+                top: 45px;
                 left: 0;
                 width: 100%;
                 background-color: #fff;
@@ -91,7 +131,7 @@ $btn-color: #3a7e93;
                 border-top: none;
                 max-height: 200px;
                 overflow-y: auto;
-                border-radius: 15px;
+                border-radius: 10px;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                 z-index: 1000;
 
@@ -99,13 +139,253 @@ $btn-color: #3a7e93;
                     padding: 10px;
                 }
 
-                .dropdown-item {
-                    padding: 10px;
-                    cursor: pointer;
-                    transition: background-color 0.2s;
+                .invite-search__dropdown-list {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    gap: 5px;
+                    padding: 5px;
+                    flex-direction: column;
 
-                    &:hover {
-                        background-color: #f2f2f2;
+                    .dropdown-item {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: nowrap;
+                        padding: 5px;
+                        gap: 10px;
+                        transition: background-color 0.2s;
+
+                        &.item-result {
+                            border-radius: 10px;
+                            background-color: #f2f2f2;
+                        }
+
+                        .dropdown-item__image {
+                            img {
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 10px;
+                                background-color: white;
+                            }
+                        }
+
+                        .dropdown-item__name {
+                            display: flex;
+                            flex-direction: column;
+                            flex-wrap: nowrap;
+                            justify-content: center;
+                        }
+
+                        &.item-result:hover {
+                            cursor: pointer;
+                            background-color: darken(#f2f2f2, 10%)
+                        }
+                    }
+                }
+            }
+
+            .invite-user {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                gap: 10px;
+
+                .invite-user__wrapper {
+                    display: flex;
+                    flex-direction: row;
+                    background-color: #f2f2f2;
+                    border-radius: 10px;
+                    padding: 5px 10px;
+                    gap: 10px;
+                    align-items: center;
+
+                    .invite-user__wrapper-image {
+                        img {
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 10px;
+                            background-color: white;
+                        }
+                    }
+
+                    .invite-user__wrapper-description {
+                        display: flex;
+                        flex-wrap: nowrap;
+                        flex-direction: column;
+                        justify-content: center;
+                        gap: 5px;
+
+                        span {
+                            text-align: start;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 1;
+                            line-clamp: 1;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                            word-break: break-word;
+                        }
+                    }
+
+                    .invite-user__wrapper-actions {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        margin-left: auto;
+
+                        i {
+                            font-size: 16px;
+                            color: #888;
+                            transition: all 0.3s ease;
+
+                            &:hover {
+                                cursor: pointer;
+                                transform: scale(1.3);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .br {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            text-transform: uppercase;
+            border: none;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 0;
+            padding: 20px 0px;
+
+            span {
+                display: contents;
+
+                &::before {
+                    content: "";
+                    border-bottom: 1px solid #c9cace;
+                    flex: 1 0 auto;
+                    height: .5em;
+                    margin-right: 6px;
+                }
+
+                &::after {
+                    content: "";
+                    border-bottom: 1px solid #c9cace;
+                    flex: 1 0 auto;
+                    height: .5em;
+                    margin-left: 6px;
+                }
+            }
+        }
+
+        .alternative-invite-container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            position: relative;
+
+            .invite-link {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                gap: 10px;
+
+                .invite-link-container {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                    flex-wrap: nowrap;
+
+                    .invite-link-input {
+                        display: flex;
+                        width: -webkit-fill-available;
+
+                        input {
+                            width: -webkit-fill-available;
+                            border-radius: 10px;
+                            padding: 10px;
+                            border: 1px solid #3a7e93;
+                            outline: none;
+                            cursor: text;
+
+                            &:focus {
+                                outline: none;
+                                box-shadow: 0 0 10px rgba(58, 126, 147, 0.7)
+                            }
+                        }
+                    }
+
+                    button {
+                        padding: 5px 10px;
+                    }
+                }
+            }
+
+            .invite-qr-code {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+
+                .qrcode-container {
+                    position: relative;
+                    display: inline-block;
+
+                    .scanner-line {
+                        position: absolute;
+                        left: 0;
+                        width: 100%;
+                        height: 2px;
+                        background-color: #3a7e93;
+                        animation: scan 2s infinite;
+                        /* Начальная позиция линии будет вверху контейнера, а затем она опустится вниз */
+                    }
+
+                    /* Угловые рамки (скобки) */
+                    .corner-bracket {
+                        position: absolute;
+                        width: 25px;
+                        height: 25px;
+                        border: 2px solid #3a7e93;
+                        background-color: transparent;
+                    }
+
+                    /* Левый верхний угол: скобка рисуется только по верхней и левой сторонам */
+                    .corner-bracket.top-left {
+                        top: 0;
+                        left: 0;
+                        border-right: none;
+                        border-bottom: none;
+                        border-top-left-radius: 10px;
+                    }
+
+                    /* Правый верхний угол */
+                    .corner-bracket.top-right {
+                        top: 0;
+                        right: 0;
+                        border-left: none;
+                        border-bottom: none;
+                        border-top-right-radius: 10px;
+                    }
+
+                    /* Левый нижний угол */
+                    .corner-bracket.bottom-left {
+                        bottom: 0;
+                        left: 0;
+                        border-right: none;
+                        border-top: none;
+                        border-bottom-left-radius: 10px;
+                    }
+
+                    /* Правый нижний угол */
+                    .corner-bracket.bottom-right {
+                        bottom: 0;
+                        right: 0;
+                        border-left: none;
+                        border-top: none;
+                        border-bottom-right-radius: 10px;
                     }
                 }
             }

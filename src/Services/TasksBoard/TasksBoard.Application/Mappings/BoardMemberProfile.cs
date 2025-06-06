@@ -10,7 +10,7 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<BoardMember, BoardMemberDto>()
                 .ForMember(dest => dest.IsOwner, opt => opt.MapFrom(src => src.Board.OwnerId == src.AccountId))
-                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.BoardMemberPermissions));
+                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.BoardMemberPermissions.OrderBy(e => e.BoardPermission.AccessLevel)));
         }
     }
 }

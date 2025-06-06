@@ -2,11 +2,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess;
 using TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess;
-using TasksBoard.Application.Features.BoardAccesses.Commands.ResolveAccessRequest;
-using TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestsByBoardId;
+using TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestByAccountId;
 using TasksBoard.Application.Models.Requests.BoardAccessRequests;
 
 namespace TasksBoard.API.Controllers
@@ -20,6 +19,25 @@ namespace TasksBoard.API.Controllers
     {
         private readonly ILogger<BoardAccessController> _logger = logger;
         private readonly IMediator _mediator = mediator;
+
+        [HttpGet("account/{accountId:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBoardAccessRequestByAccountIdAsync([FromRoute] Guid accountId)
+        {
+            var result = await _mediator.Send(new GetBoardAccessRequestByAccountIdQuery
+            {
+                AccountId = accountId
+            });
+
+            var response = new ResultResponse<IEnumerable<BoardAccessRequestDto>>(result);
+
+            return Ok(response);
+        }
 
         [HttpPost("board/{boardId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -48,45 +66,18 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("resolve/board/{boardId:guid}")]
-        [HasBoardAccess]
-        [HasBoardPermission("manage_member")]
+        [HttpPost("cancel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ResolveAccessRequestAsync([FromRoute] Guid boardId, [FromBody] ResolveAccessRequestRequest request)
+        public async Task<IActionResult> CancelAccessRequestAsync([FromBody] CancelBoardAccessCommand command)
         {
-            var result = await _mediator.Send(new ResolveAccessRequestCommand
-            {
-                BoardId = boardId,
-                RequestId = request.RequestId,
-                Decision = request.Decision
-            });
+            var result = await _mediator.Send(command);
 
             var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
-        }
-
-        [HttpGet("board/{boardId:guid}")]
-        [HasBoardAccess]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardAccessRequestsByBoarIdAsync([FromRoute] Guid boardId)
-        {
-            var result = await _mediator.Send(new GetBoardAccessRequestsByBoardIdQuery
-            {
-                BoardId = boardId
-            });
-
-            var response = new ResultResponse<IEnumerable<BoardAccessRequestDto>>(result);
 
             return Ok(response);
         }

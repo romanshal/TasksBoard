@@ -1,0 +1,362 @@
+<div class="notification-container">
+    <div class="notification-wrapper">
+        <div class="notification-wrapper__header">
+            <h1>Notifications</h1>
+
+            <div class="header-actions" *ngIf="hasUnreadNotifications()" (click)="setAllRead()">
+                <i class="fa-solid fa-check-double"></i>
+                <span>Mark all as read</span>
+            </div>
+        </div>
+
+        <div class="notification-wrapper__block">
+            <ngx-spinner type="ball-scale-multiple" [fullScreen]="false" *ngIf="!isLoading"></ngx-spinner>
+
+            <div class="notification-filters">
+                <button *ngFor="let filter of filters" (click)="changeFilter(filter)"
+                    [class.activ]="currentFilter === filter">
+                    {{ filter }}
+                </button>
+            </div>
+
+            <hr />
+
+            <div class="notification-list" *ngIf="notifications.length > 0 && isLoading">
+
+                <div class="notification-list__item" *ngFor="let notification of notifications"
+                    [class.not-read]="!notification.Read">
+                    @switch (notification.Type) {
+                    @case ("NewNotice") {
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('AccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('AccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('AccountId')!)">{{notification.Payload.get('AccountName')
+                                        }}</b> created new <b
+                                        (click)="openBoardNotice(notification.Payload.get('BoardId')!, notification.Payload.get('NoticeId')!)">notice</b>
+                                    on board '<b (click)="openBoard(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>'
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="second-block">
+                            <span>
+                                {{ notification.Payload.get('NoticeDefinition') }}
+                            </span>
+                        </div>
+                    </div>
+                    }
+                    @case ("UpdateNotice") {
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('AccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('AccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('AccountId')!)">{{notification.Payload.get('AccountName')
+                                        }}</b> updated <b
+                                        (click)="openBoardNotice(notification.Payload.get('BoardId')!, notification.Payload.get('NoticeId')!)">notice</b>
+                                    definition on board '<b (click)="openBoard(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>'
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("UpdateNoticeComplete") {
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('AccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('AccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('AccountId')!)">{{notification.Payload.get('AccountName')
+                                        }}</b> updated <b
+                                        (click)="openBoardNotice(notification.Payload.get('BoardId')!, notification.Payload.get('NoticeId')!)">notice</b>
+                                    status to
+                                    '{{ notification.Payload.get('Status') === 'True' ? 'Completed' : 'In
+                                    progress'}}' on board '<b
+                                        (click)="openBoard(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>'
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("NewBoardMember"){
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('AccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('AccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('AccountId')!)">{{notification.Payload.get('AccountName')
+                                        }}</b> has joined the board <b
+                                        (click)="openBoardMembers(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("RemoveBoardMember") {
+                    <div class="notification-list__item-avatar">
+                        <img *ngIf="userId !== notification.Payload.get('AccountId')!"
+                            [src]="getAccountAvatar(notification.Payload.get('AccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('AccountId')!)">
+
+                        <img *ngIf="userId === notification.Payload.get('AccountId')!"
+                            [src]="getAccountAvatar(notification.Payload.get('SourceAccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('SourceAccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description" *ngIf="userId !== notification.Payload.get('AccountId')!">
+                                    <b (click)="openProfile(notification.Payload.get('AccountId')!)">{{notification.Payload.get('AccountName')
+                                        }}</b> was removed by <b
+                                        (click)="openProfile(notification.Payload.get('SourceAccountId')!)">{{
+                                        notification.Payload.get('SourceAccountName') }}</b> from the board <b
+                                        (click)="openBoardMembers(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>
+                                </span>
+
+                                <span class="description" *ngIf="userId === notification.Payload.get('AccountId')!">
+                                    <b (click)="openProfile(notification.Payload.get('SourceAccountId')!)">{{notification.Payload.get('SourceAccountName')
+                                        }}</b> was removed you from the board <b
+                                        (click)="openBoard(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("ResolveAccessRequest") {
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('SourceAccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('SourceAccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('SourceAccountId')!)">{{notification.Payload.get('SourceAccountName')
+                                        }}</b>
+                                    {{ notification.Payload.get('Status') === 'True' ? 'has accepted your access
+                                    request' : 'has rejected your access request'}} on board '<b
+                                        (click)="openBoard(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>'
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("NewBoardInvite") {
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('SourceAccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('SourceAccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('SourceAccountId')!)">{{notification.Payload.get('SourceAccountName')
+                                        }}</b> invite you to the board <b
+                                        (click)="openProfile(notification.Payload.get('AccountId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("NewBoardAccessRequest") {
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('AccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('AccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('AccountId')!)">{{notification.Payload.get('AccountName')
+                                        }}</b> request access to the board '<b
+                                        (click)="openBoardMembers(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>'
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div *ngIf="!notification.Read" class="read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @case ("NewMemberPermissions"){
+                    <div class="notification-list__item-avatar">
+                        <img [src]="getAccountAvatar(notification.Payload.get('SourceAccountId')!) | async"
+                            (click)="openProfile(notification.Payload.get('SourceAccountId')!)">
+                    </div>
+
+                    <div class="notification-list__item-description">
+                        <div class="first-block">
+                            <div class="first-block__description">
+                                <span class="description">
+                                    <b (click)="openProfile(notification.Payload.get('SourceAccountId')!)">{{notification.Payload.get('SourceAccountName')
+                                        }}</b> add new permissions to <b
+                                        (click)="openProfile(notification.Payload.get('AccountId')!)">{{
+                                        notification.Payload.get('AccountName') }}</b> on the board '<b
+                                        (click)="openBoardMembers(notification.Payload.get('BoardId')!)">{{
+                                        notification.Payload.get('BoardName') }}</b>'
+                                </span>
+
+                                <span class="created-date">
+                                    {{notification.CreatedAt | date: "MMM dd HH:mm"}}
+                                </span>
+                            </div>
+
+                            <div class="first-block__date">
+                                <div class="read" *ngIf="!notification.Read"></div>
+
+                                <span class="date-difference">
+                                    {{ getCreatedAtDifference(notification.CreatedAt) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+
+            <hr *ngIf="notifications.length !== 0 && isLoading" style="margin-top: auto;" />
+
+            <app-paginator-new *ngIf="notifications.length !== 0 && isLoading" [pageIndex]="pageIndex"
+                [pageSize]="pageSize" [totalPages]="totalPages" [totalCount]="totalCount"
+                (pageChanged)="goToPage($event)">
+            </app-paginator-new>
+
+            <div class="notification-empty" *ngIf="notifications.length === 0 && isLoading">
+                <div class="notification-empty__image">
+                    <i class="fa-solid fa-bell fa-2xl"></i>
+                </div>
+
+                <div class="notification-empty__description">
+                    <span>No notifications</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

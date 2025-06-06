@@ -42,6 +42,25 @@ namespace TasksBoard.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("board/{boardId:Guid}/notice/{noticeId}")]
+        [HasBoardAccess]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBoardNoticeByBoardIdAndIdAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
+        {
+            var result = await _mediator.Send(new GetBoardNoticeByIdQuery { Id = noticeId });
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            var response = new ResultResponse<BoardNoticeDto>(result);
+
+            return Ok(response);
+        }
+
         [HttpGet("board/{boardId:Guid}")]
         [HasBoardAccess]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -1,4 +1,9 @@
-﻿using Authentication.Infrastructure.Data.Contexts;
+﻿using Authentication.Domain.Interfaces.UnitOfWorks;
+using Authentication.Infrastructure.Data.Contexts;
+using Authentication.Infrastructure.UnitOfWorks;
+using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.Interfaces.UnitOfWorks;
+using Common.Blocks.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +17,10 @@ namespace Authentication.Infrastructure
                 options.UseNpgsql(connectionString));
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWorkBase>(sp => sp.GetRequiredService<IUnitOfWork>());
 
             return services;
         }

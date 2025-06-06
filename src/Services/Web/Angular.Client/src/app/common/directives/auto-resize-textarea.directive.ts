@@ -4,7 +4,7 @@ import { Directive, ElementRef, HostListener, Input, OnChanges, OnInit, Renderer
   selector: '[appAutoResizeTextarea]',
   standalone: false
 })
-export class AutoResizeTextareaDirective implements OnInit, OnChanges  {
+export class AutoResizeTextareaDirective implements OnInit, OnChanges {
   // Максимальное количество строк, до которого будет расширяться textarea
   maxRows: number = 5;
   // Высота одной строки (в пикселях)
@@ -45,6 +45,10 @@ export class AutoResizeTextareaDirective implements OnInit, OnChanges  {
 
   private adjustHeight(): void {
     const textarea: HTMLTextAreaElement = this.elementRef.nativeElement;
+
+    if (!textarea.value && this.autoResizeValue.trim()) {
+      textarea.value = this.autoResizeValue;
+    }
 
     // Если поле очищено, сбрасываем высоту до исходной и скрываем скролл
     if (!textarea.value.trim() || !this.autoResizeValue.trim()) {

@@ -10,6 +10,7 @@ import { BoardForViewModel } from '../../models/board/board-for-view.model';
 import { BoardMemberModel } from '../../models/board-member/board-member.model';
 import { BoardMemberPermission } from '../../models/board-member-permission/board-member-permission.model';
 import { BoardAccessRequestModel } from '../../models/board-access-request/board-access-request.model';
+import { BoardInviteRequestModel } from '../../models/board-invite-request/board-invite-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -104,6 +105,22 @@ export class BoardService {
               item.accountId,
               item.accountName,
               item.accountEmail,
+              item.createdAt
+            );
+
+            return request
+          })
+
+          board.InviteRequests = response.result.inviteRequests.map((item: any) => {
+            let request = new BoardInviteRequestModel(
+              item.id,
+              item.boardId,
+              item.boardName,
+              item.fromAccountId,
+              item.fromAccountName,
+              item.toAccountId,
+              item.toAccountName,
+              item.toAccountEmail,
               item.createdAt
             );
 

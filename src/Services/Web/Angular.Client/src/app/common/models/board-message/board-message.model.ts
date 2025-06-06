@@ -6,6 +6,7 @@ export class BoardMessageModel {
         public MemberNickname: string,
         public Message: string,
         public CreatedAt: Date,
-        public ModifiedAt: Date
+        public ModifiedAt: Date,
+        public IsDeleted: boolean
     ) {}
 }

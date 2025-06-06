@@ -17,7 +17,7 @@ $btn-color: #3a7e93;
         background-color: $modal-background;
         border-radius: 10px;
         width: 250px;
-        height: 400px;
+        // height: 400px;
         padding: 45px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         display: flex;
@@ -49,12 +49,16 @@ $btn-color: #3a7e93;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                border-radius: 10px;
+                background-color: #f0f0f0;
+                padding: 10px;
 
                 .member-info__avatar {
                     img {
                         width: 80px;
-                        height: auto;
-                        border-radius: 15px;
+                        height: 80px;
+                        border-radius: 50%;
+                        background-color: white;
                     }
                 }
             }
@@ -63,6 +67,66 @@ $btn-color: #3a7e93;
                 display: flex;
                 flex-direction: column;
                 height: -webkit-fill-available;
+                background-color: #f0f0f0;
+                padding: 10px;
+                border-radius: 10px;
+                gap: 10px;
+
+                .permissions-list__item {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                    align-items: center;
+                    position: relative;
+
+                    .permissions-list__item-checkbox {
+                        display: flex;
+
+                        input[type=checkbox] {
+                            height: 0;
+                            width: 0;
+                            visibility: hidden;
+                        }
+
+                        label {
+                            --size: 40px;
+
+                            cursor: pointer;
+                            width: var(--size);
+                            height: calc(var(--size) / 2);
+                            background: grey;
+                            display: block;
+                            border-radius: 100px;
+                            position: relative;
+
+                            &:after {
+                                content: '';
+                                position: absolute;
+                                top: 6%;
+                                left: 2.5%;
+                                width: calc(50% - 5%);
+                                height: calc(100% - 11%);
+                                background: #fff;
+                                border-radius: 90px;
+                                transition: 0.1s ease;
+                            }
+                        }
+
+                        input:checked+label {
+                            background: #3a7e93;
+                            ;
+                        }
+
+                        input:checked+label:after {
+                            left: calc(100% - 2.5%);
+                            transform: translateX(-100%);
+                        }
+
+                        label:active:after {
+                            width: 55%;
+                        }
+                    }
+                }
             }
 
             .permission-actions {
@@ -82,7 +146,7 @@ $btn-color: #3a7e93;
                     transition: all 0.3s ease;
                     cursor: pointer;
                     min-width: 80px;
-    
+
                     .tooltip {
                         position: absolute;
                         bottom: -40px;
@@ -98,7 +162,7 @@ $btn-color: #3a7e93;
                         opacity: 0;
                         transition: opacity 0.3s ease;
                         pointer-events: none;
-    
+
                         &::after {
                             content: '';
                             position: absolute;
@@ -111,11 +175,11 @@ $btn-color: #3a7e93;
                         }
                     }
                 }
-    
+
                 button:hover {
                     box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
                     transform: scale(1.2);
-    
+
                     .tooltip {
                         opacity: 1;
                     }

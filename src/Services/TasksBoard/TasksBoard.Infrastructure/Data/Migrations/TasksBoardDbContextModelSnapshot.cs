@@ -25,6 +25,35 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Common.Blocks.Entities.OutboxEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("outboxevents", (string)null);
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.Board", b =>
                 {
                     b.Property<Guid>("Id")
@@ -122,6 +151,49 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.ToTable("boardimages", (string)null);
                 });
 
+            modelBuilder.Entity("TasksBoard.Domain.Entities.BoardInviteRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BoardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("FromAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FromAccountName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ToAccountEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ToAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ToAccountName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoardId");
+
+                    b.ToTable("boardinviterequests", (string)null);
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.BoardMember", b =>
                 {
                     b.Property<Guid>("Id")
@@ -190,6 +262,10 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("BackgroundColor")
                         .IsRequired()
@@ -299,6 +375,17 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.Navigation("Board");
                 });
 
+            modelBuilder.Entity("TasksBoard.Domain.Entities.BoardInviteRequest", b =>
+                {
+                    b.HasOne("TasksBoard.Domain.Entities.Board", "Board")
+                        .WithMany("InviteRequests")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
+                });
+
             modelBuilder.Entity("TasksBoard.Domain.Entities.BoardMember", b =>
                 {
                     b.HasOne("TasksBoard.Domain.Entities.Board", "Board")
@@ -358,6 +445,8 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.Navigation("BoardImage");
 
                     b.Navigation("BoardMembers");
+
+                    b.Navigation("InviteRequests");
 
                     b.Navigation("Notices");
 

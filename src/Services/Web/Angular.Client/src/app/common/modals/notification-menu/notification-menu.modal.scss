@@ -1,0 +1,259 @@
+$overlay-bg: transparent;
+$content-bg: #f9f9f9;
+$btn-color: #3a7e93;
+
+// Общий стиль для модального окна
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $overlay-bg;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    z-index: 1000;
+
+    .modal-content {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        -webkit-box-align: center;
+        -webkit-box-pack: center;
+        border-radius: 4px 4px 0px 0px;
+        top: 60px;
+        right: 60px;
+        width: 450px;
+        height: 500px;
+        padding: 10px;
+        background-color: $content-bg;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        gap: 10px;
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+
+            h3 {
+                margin: 0;
+            }
+
+            .header-actions {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                color: #3542b9;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
+
+        .notification-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            // justify-content: center;
+            height: -webkit-fill-available;
+            overflow: hidden;
+
+            .notification-wrapper {
+                display: flex;
+                width: -webkit-fill-available;
+                height: -webkit-fill-available;
+                overflow: hidden;
+
+                .notification-list {
+                    display: flex;
+                    flex-direction: column;
+                    width: -webkit-fill-available;
+                    gap: 5px;
+                    overflow: auto;
+
+                    &::-webkit-scrollbar {
+                        width: 8px;
+                        background: transparent;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background: #888;
+                        border-radius: 4px;
+                    }
+
+                    &::-webkit-scrollbar-thumb:hover {
+                        background: #555;
+                    }
+
+                    & {
+                        scrollbar-width: thin;
+                        scrollbar-color: #888 transparent;
+                    }
+
+                    .notification-list__item {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: start;
+                        background-color: #f0f0f0;
+                        padding: 10px;
+                        border-radius: 7px;
+                        gap: 10px;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: darken(#f0f0f0, 10%);
+
+                            .notification-list__item-description .second-block {
+                                background-color: darken(#f0f0f0, 20%)
+                            }
+                        }
+
+                        .notification-list__item-avatar {
+                            img {
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                background-color: white;
+                                cursor: pointer;
+                            }
+                        }
+
+                        .notification-list__item-description {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                            width: -webkit-fill-available;
+
+                            .first-block {
+                                display: flex;
+                                flex-direction: row;
+
+                                .first-block__description {
+                                    display: flex;
+                                    flex-direction: column;
+
+                                    .description {
+                                        b:hover {
+                                            text-decoration: underline;
+                                            cursor: pointer;
+                                            color: #464ce9;
+                                        }
+                                    }
+
+                                    .created-date {
+                                        color: #99999b;
+                                        font-size: 14px;
+                                    }
+                                }
+
+                                .first-block__date {
+                                    display: flex;
+                                    flex-direction: column;
+                                    flex-wrap: nowrap;
+                                    align-items: end;
+                                    margin-left: auto;
+
+                                    .read {
+                                        background-color: #464ce9;
+                                        width: 10px;
+                                        height: 10px;
+                                        border-radius: 50%;
+                                        margin-top: 5px;
+                                    }
+
+                                    .date-difference {
+                                        margin-top: auto;
+                                        white-space: nowrap;
+                                        color: #99999b;
+                                        font-size: 14px;
+                                    }
+                                }
+                            }
+
+                            .second-block {
+                                padding: 8px;
+                                border-radius: 10px;
+                                background-color: darken(#f0f0f0, 10%);
+                                width: fit-content;
+
+                                span {
+                                    text-align: start;
+                                    display: -webkit-box;
+                                    -webkit-line-clamp: 3;
+                                    line-clamp: 3;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    word-break: break-word;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .notification-empty {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 10px;
+                    margin: auto;
+
+                    .notification-empty__image {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        background-color: #f0f0f0;
+                        color: darken(#f0f0f0, 20%);
+                        height: 50px;
+                        width: 50px;
+                    }
+                }
+            }
+
+            hr {
+                width: -webkit-fill-available;
+                margin-top: auto;
+                color: #c9cace;
+            }
+
+            .actions-wrapper {
+                display: flex;
+                justify-content: end;
+
+                button {
+                    background-color: transparent;
+                    border: 2px solid $btn-color;
+                    color: $btn-color;
+                    padding: 5px 10px;
+                    border-radius: 10px;
+                    font-family: 'Helvetica', sans-serif;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    min-width: 80px;
+
+                    &:hover {
+                        box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
+                        transform: scale(1.01);
+                    }
+                }
+            }
+        }
+    }
+}
+
+::ng-deep .cdk-overlay-dark-backdrop {
+    background: none !important;
+}

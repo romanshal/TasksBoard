@@ -9,6 +9,7 @@ namespace Chat.Domain.Entities
         public Guid AccountId { get; set; }
         public required string MemberNickname { get; set; }
         public required string Message { get; set; }
+        public required bool IsDeleted { get; set; } = false;
 
     }
 }

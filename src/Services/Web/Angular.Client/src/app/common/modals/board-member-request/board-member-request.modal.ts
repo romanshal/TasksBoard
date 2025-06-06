@@ -1,7 +1,7 @@
 import { Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BoardAccessRequestService } from '../../services/board-access-request/board-access-request.service';
 import { SessionStorageService } from '../../services/session-storage/session-storage.service';
+import { BoardAccessRequestService } from '../../services/board-access-request/board-access-request.service';
 
 @Component({
   selector: 'app-board-member-request',

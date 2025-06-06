@@ -21,6 +21,8 @@ export class SignupComponent {
 
   formSubmitted = false;
 
+  isLoading = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -30,9 +32,9 @@ export class SignupComponent {
     private route: ActivatedRoute
   ) {
     this.signupForm = this.fb.group({
-      username: ['', [Validators.required]],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
@@ -42,6 +44,7 @@ export class SignupComponent {
 
   onSubmit() {
     this.formSubmitted = true;
+    this.isLoading = true;
 
     if (this.signupForm.invalid) {
       return;
@@ -53,21 +56,26 @@ export class SignupComponent {
       next: (result) => {
         this.userService.getUserInfo(result.UserId).subscribe(result => {
           this.sessionService.setUserInfo(result);
+
+          const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
+
+          window.location.href = returnUrl;
+
+          this.isLoading = false;
         }, error => {
+          this.isLoading = false;
           console.error(error);
         });
-
-        const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
-
-        window.location.href = returnUrl;
       },
       error: (error: Response) => {
         this.showErrors = true;
+
+        this.isLoading = false;
+
         this.errorMessage = error.Description;
       },
       complete: () => {
       }
     });
   }
-
 }

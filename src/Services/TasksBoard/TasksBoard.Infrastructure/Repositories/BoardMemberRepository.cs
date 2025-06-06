@@ -16,6 +16,8 @@ namespace TasksBoard.Infrastructure.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Where(member => member.BoardId == boardId)
+                .OrderByDescending(member => member.Board.OwnerId == member.AccountId)
+                .ThenBy(member => member.Nickname)
                 .ToListAsync(cancellationToken);
         }
 
@@ -24,9 +26,10 @@ namespace TasksBoard.Infrastructure.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Where(member => member.BoardId == boardId)
+                .OrderByDescending(member => member.Board.OwnerId == member.AccountId)
+                .ThenBy(member => member.Nickname)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .OrderBy(e => e.Id)
                 .ToListAsync(cancellationToken);
 
         }
@@ -35,6 +38,13 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .FirstOrDefaultAsync(member => member.BoardId == boardId && member.AccountId == accountId, cancellationToken);
+        }
+
+        public async Task<IEnumerable<BoardMember>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .Where(member => member.AccountId == accountId)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken)

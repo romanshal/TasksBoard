@@ -26,8 +26,11 @@ export class SearchMemberService {
           if (response.result) {
             list = response.result.map((item: any) => {
               let user = new UserInfoModel(
+                item.id,
                 item.username,
-                item.email
+                item.email,
+                item.firstname,
+                item.surname
               );
 
               return user;

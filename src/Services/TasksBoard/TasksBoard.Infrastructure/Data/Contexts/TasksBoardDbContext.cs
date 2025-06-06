@@ -14,6 +14,8 @@ namespace TasksBoard.Infrastructure.Data.Contexts
         public DbSet<BoardMemberPermission> BoardMemberPermissions { get; set; }
         public DbSet<BoardTag> BoardTags { get; set; }
         public DbSet<BoardAccessRequest> BoardAccessRequests { get; set; }
+        public DbSet<BoardInviteRequest> BoardInviteRequests { get; set; }
+        public DbSet<OutboxEvent> OutboxEvents { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -25,6 +27,7 @@ namespace TasksBoard.Infrastructure.Data.Contexts
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(OutboxEvent))!);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -34,10 +37,10 @@ namespace TasksBoard.Infrastructure.Data.Contexts
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.UtcNow;
+                        entry.Entity.CreatedAt = DateTime.Now;
                         break;
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                        entry.Entity.LastModifiedAt = DateTime.Now;
                         break;
                 }
             }

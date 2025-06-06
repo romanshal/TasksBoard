@@ -1,0 +1,23 @@
+<div class="modal-container" (click)="onContainerClick($event)">
+    <div class="modal">
+        <!-- <div class="modal-close" (click)="closeModal()">
+            <i class="fa-solid fa-xmark fa-2xl"></i>
+        </div> -->
+
+        <div class="modal-header">
+            {{isSuccess ? 'Success!' : 'Failt!'}}
+        </div>
+
+        <div class="modal-description">
+            <div class="modal-description__message">
+                {{message}}
+            </div>
+
+            <div class="modal-description__actions">
+                <button (click)="closeModal()">
+                    Ok
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

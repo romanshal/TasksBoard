@@ -1,4 +1,6 @@
 ﻿using Common.Blocks.Exceptions;
+using Common.Blocks.Interfaces.Services;
+using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
@@ -8,10 +10,12 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
 {
     public class DeleteBoardMemberCommandHandler(
         ILogger<DeleteBoardMemberCommandHandler> logger,
+        IOutboxService outboxService,
         IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardMemberCommand, Unit>
     {
         private readonly ILogger<DeleteBoardMemberCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IOutboxService _outboxService = outboxService;
 
         public async Task<Unit> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
         {
@@ -30,6 +34,21 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
             }
 
             await _unitOfWork.GetBoardMemberRepository().Delete(member, true, cancellationToken);
+
+            var removeEvent = new RemoveBoardMemberEvent
+            {
+                BoardId = board.Id,
+                BoardName = board.Name,
+                RemovedAccountId = member.AccountId,
+                RemovedAccountName = member.Nickname,
+                RemoveByAccountId = request.RemoveByUserId,
+                RemoveByAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.RemoveByUserId)!.Nickname,
+                BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.RemoveByUserId).Select(member => member.AccountId)]
+            };
+
+            removeEvent.BoardMembersIds.Add(member.AccountId);
+
+            await _outboxService.CreateNewOutboxEvent(removeEvent, cancellationToken);
 
             _logger.LogInformation($"Board member with account id '{member.AccountId}' deleted from boar with id '{request.BoardId}'.");
 

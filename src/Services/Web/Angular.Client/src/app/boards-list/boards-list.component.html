@@ -1,5 +1,7 @@
 <div class="boards-container">
-    <div class="boards-wrapper">
+    <ngx-spinner type="ball-scale-multiple" *ngIf="!isLoading"></ngx-spinner>
+
+    <div class="boards-wrapper" *ngIf="isLoading">
         <div class="boards-actions">
             <button (click)="openCreateModal()">
                 Create board
@@ -16,15 +18,15 @@
                 <div class="boards-list__item-definition">
                     <div class="boards-list__item-description">
                         <h3>{{ board.Name }}</h3>
-    
+
                         <p>{{ board.Description }}</p>
                     </div>
-    
+
                     <div class="boards-list__item-members">
                         <i class="fa-solid fa-users"></i>
                         <h4>{{board.MemberCount}}</h4>
                     </div>
-    
+
                     <div class="tags-list">
                         <div class="tags-list__item" *ngFor="let tag of board.Tags">
                             {{tag}}
@@ -38,9 +40,9 @@
             </div>
         </div>
 
-        <app-paginator style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize" [totalPages]="totalPages"
-            [totalCount]="totalCount" (pageChanged)="goToPage($event)">
-        </app-paginator>
+        <app-paginator-new style="margin-top: auto;" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [totalPages]="totalPages" [totalCount]="totalCount" (pageChanged)="goToPage($event)">
+        </app-paginator-new>
     </div>
 </div>
 

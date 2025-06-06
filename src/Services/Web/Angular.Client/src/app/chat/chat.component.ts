@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BoardMessageModel } from '../common/models/board-message/board-message.model';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { BoardMessageService } from '../common/services/board-message/board-message.service';
@@ -14,6 +14,8 @@ import { BoardMemberModel } from '../common/models/board-member/board-member.mod
 export class ChatComponent implements OnInit {
   public userId: any;
 
+  isEmojiOpen = false;
+
   @Input({ required: true }) public boardId!: string;
   @Input({ required: true }) public currentMember!: BoardMemberModel;
 
@@ -22,12 +24,16 @@ export class ChatComponent implements OnInit {
 
   messages: BoardMessageModel[] = [];
 
+  messageForUpdate?: BoardMessageModel;
+
   isChatOpen = false;
 
   message: string = '';
 
   unreadCount = 0;
   unread: string = '';
+
+  openedContentActionsMenuId = '';
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
@@ -42,13 +48,14 @@ export class ChatComponent implements OnInit {
   ngOnInit(): void {
     this.boardMessageService.getMessages(this.boardId, this.pageIndex, this.pageSize).subscribe(result => {
       if (result) {
+        console.log(result);
         this.messages = result.reverse();
       }
     });
 
     this.chatService.messages$.subscribe(msg => {
       if (msg) {
-        this.messages.push(msg);
+        this.messages.push(...msg);
         this.scrollToBottom();
 
         if (!this.isChatOpen) {
@@ -70,6 +77,7 @@ export class ChatComponent implements OnInit {
       this.unread = '';
     }
 
+    this.isEmojiOpen = false;
     this.isChatOpen = !this.isChatOpen;
     this.scrollToBottom();
   }
@@ -87,9 +95,31 @@ export class ChatComponent implements OnInit {
   }
 
   sendMessage() {
-    if (this.message) {
-      this.message = this.message.trim();
+    if (!this.message) {
+      return;
+    }
 
+    this.message = this.message.trim();
+
+    if (this.messageForUpdate) {
+      // edit message
+      let editMessage = {
+        boardMessageId: this.messageForUpdate.Id,
+        message: this.message
+      };
+
+      this.boardMessageService.editMessage(this.boardId, editMessage).subscribe(result => {
+        if (result) {
+          let mes = this.messages.find(message => message.Id === this.messageForUpdate?.Id)!;
+          mes.Message = this.message;
+          mes.ModifiedAt = new Date();
+
+          this.isEmojiOpen = false;
+          this.removeMessageForUpdate();
+        }
+      })
+    } else {
+      // new message
       let message = {
         memberId: this.currentMember.Id,
         accountId: this.currentMember.AccountId,
@@ -100,36 +130,68 @@ export class ChatComponent implements OnInit {
       this.boardMessageService.sendMessage(this.boardId, message).subscribe(result => {
         if (result) {
           this.message = '';
+          this.isEmojiOpen = false;
         }
       })
     }
   }
 
   showMoreMessages() {
-    this.pageIndex++;
-    
-    const container = this.messagesContainer.nativeElement;
-
     // Если сообщений еще нет, ничего менять не нужно
     if (this.messages.length === 0) {
       return;
     }
 
-    // Берем id первого сообщения из массива
-    const firstMessageId = this.messages[0].Id;
+    this.pageIndex++;
+
+    const container = this.messagesContainer.nativeElement;
+    const previousScrollHeight = container.scrollHeight;
 
     this.boardMessageService.getMessages(this.boardId, this.pageIndex, this.pageSize).subscribe(result => {
       if (result) {
         this.messages.unshift(...result.reverse());
 
         setTimeout(() => {
-          const firstMessageElement: HTMLElement | null = document.getElementById(`${firstMessageId}`);
-
-          container.scroll({
-            top: firstMessageElement!.scrollHeight - 50,
-            behavior: 'auto'
-          });
+          const newScrollHeight = container.scrollHeight;
+          container.scrollTop = previousScrollHeight - newScrollHeight;
         });
+      }
+    });
+  }
+
+  showContentActionsMenu(messageId: string) {
+    if (this.openedContentActionsMenuId === messageId) {
+      this.openedContentActionsMenuId = '';
+    } else {
+      this.openedContentActionsMenuId = messageId;
+    }
+  }
+
+  showEmoji() {
+    this.isEmojiOpen = !this.isEmojiOpen;
+    this.scrollToBottom();
+  }
+
+  addEmoji(event: any) {
+    this.message += event.emoji.native;
+  }
+
+  editMessage(message: BoardMessageModel) {
+    this.messageForUpdate = message;
+    this.message = message.Message;
+    this.openedContentActionsMenuId = '';
+  }
+
+  removeMessageForUpdate() {
+    this.messageForUpdate = undefined;
+    this.message = '';
+  }
+
+  deleteMessage(message: BoardMessageModel) {
+    this.boardMessageService.deleteMessage(this.boardId, message.Id).subscribe(result => {
+      if (result) {
+        this.openedContentActionsMenuId = '';
+        message.IsDeleted = true;
       }
     });
   }

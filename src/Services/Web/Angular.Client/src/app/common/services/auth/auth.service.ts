@@ -97,4 +97,9 @@ export class AuthService {
         })
       );
   }
+
+  signout() {
+    const url = '/api/authentication/logout';
+    return this.http.delete(this.baseUrl + url);
+  }
 }

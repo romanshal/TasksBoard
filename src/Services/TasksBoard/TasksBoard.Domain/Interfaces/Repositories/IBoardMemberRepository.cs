@@ -8,6 +8,7 @@ namespace TasksBoard.Domain.Interfaces.Repositories
         Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default);
         Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);
         Task<BoardMember?> GetByBoardIdAndAccountIdAsync(Guid boardId, Guid accountId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<BoardMember>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default);
         Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken);
     }
 }

@@ -19,6 +19,28 @@ export class BoardNoticeService {
     private httpOption: HttpOptionService
   ) { }
 
+  getBoardNoticeById(boardId: string, boardNoticeId: string): Observable<BoardNoticeModel> {
+    const url = '/api/boardnotices/board/' + boardId + '/notice/' + boardNoticeId;
+    return this.http.get(this.BASE_URL + url)
+      .pipe(
+        map((response: any) => {
+          let note = new BoardNoticeModel();
+          note.Id = response.result.id;
+          note.AuthorId = response.result.authorId;
+          note.AuthorName = response.result.authorName;
+          note.BoardId = response.result.boardId;
+          note.BoardName = response.result.boardName;
+          note.Definition = response.result.definition;
+          note.BackgroundColor = response.result.backgroundColor;
+          note.Rotation = response.result.rotation;
+          note.Completed = response.result.completed;
+          note.CreatedAt = response.result.createdAt;
+
+          return note;
+        })
+      );
+  }
+
   getBoardNoticesByBoardId(boardId: any, pageIndex: number, pageSize: number): Observable<PaginatedList<BoardNoticeModel>> {
     const url = '/api/boardnotices/board/' + boardId;
     return this.http.get<ResultResponse<PaginatedList<BoardNoticeModel>>>(this.BASE_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize) })
@@ -30,6 +52,7 @@ export class BoardNoticeService {
               let note = new BoardNoticeModel();
               note.Id = item.id;
               note.AuthorId = item.authorId;
+              note.AuthorName = item.authorName;
               note.BoardId = item.boardId;
               note.BoardName = item.boardName;
               note.Definition = item.definition;
@@ -62,10 +85,9 @@ export class BoardNoticeService {
     return this.http.put<ResultResponse<string>>(this.BASE_URL + url, notice);
   }
 
-  updateBoardNoticeStatus(boardId: any, noticeId: string, complete: boolean) {
+  updateBoardNoticeStatus(boardId: any, form: any) {
     const url = '/api/managenotices/status/board/' + boardId;
-    let body = { noticeId, complete };
-    return this.http.put<ResultResponse<string>>(this.BASE_URL + url, body);
+    return this.http.put<ResultResponse<string>>(this.BASE_URL + url, form);
   }
 
   deleteBoardNotice(boardId: any, noticeId: string) {

@@ -39,7 +39,7 @@ namespace Common.Blocks.Middlewares
         {
             return ex switch
             {
-                ArgumentNullException or ValidationException or AlreadyExistException => HttpStatusCode.BadRequest,
+                ArgumentNullException or ValidationException or AlreadyExistException or InvalidPasswordException => HttpStatusCode.BadRequest,
                 NotFoundException => HttpStatusCode.NotFound,
                 NotImplementedException => HttpStatusCode.NotImplemented,
                 LockedException => HttpStatusCode.Locked,

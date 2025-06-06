@@ -20,13 +20,8 @@ export class BoardAccessRequestService {
     return this.http.post<ResultResponse<string>>(this.BOARD_ACCESS_URL + url, form);
   }
 
-  resolveBoardAccessRequest(boardId: string, resolve: any){
-    const url ='/api/boardaccessrequests/resolve/board/' + boardId;
-    return this.http.post(this.BOARD_ACCESS_URL + url, resolve);
-  }
-
-  getBoardAccessRequestByBoardId(boardId: string): Observable<BoardAccessRequestModel[]> {
-    const url = '/api/boardaccessrequests/board/' + boardId;
+  getByAccountId(accountId: string): Observable<BoardAccessRequestModel[]> {
+    const url = '/api/boardaccessrequests/account/' + accountId;
     return this.http.get(this.BOARD_ACCESS_URL + url)
       .pipe(
         map((response: any) => {
@@ -50,5 +45,10 @@ export class BoardAccessRequestService {
           return list;
         })
       );
+  }
+
+  cancelAccessRequest(body: any) {
+    const url = '/api/boardaccessrequests/cancel';
+    return this.http.post(this.BOARD_ACCESS_URL + url, body);
   }
 }

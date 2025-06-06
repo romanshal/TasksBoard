@@ -28,10 +28,10 @@ namespace Chat.Infrastructure.Data.Contexts
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.UtcNow;
+                        entry.Entity.CreatedAt = DateTime.Now;
                         break;
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                        entry.Entity.LastModifiedAt = DateTime.Now;
                         break;
                 }
             }

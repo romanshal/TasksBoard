@@ -1,15 +1,23 @@
 ﻿using Authentication.Domain.Entities;
+using Common.Blocks.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Authentication.Infrastructure.Data.Contexts
 {
-    public class AuthenticationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
+    public class AuthenticationDbContext(DbContextOptions<AuthenticationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
     {
+        public DbSet<OutboxEvent> OutboxEvents { get; set; }
+        public DbSet<ApplicationUserImage> ApplicationUserImages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(OutboxEvent))!);
 
             builder.Entity<ApplicationUser>(entity => entity.ToTable(name: "users"));
             builder.Entity<ApplicationRole>(entity => entity.ToTable(name: "roles"));
@@ -34,6 +42,24 @@ namespace Authentication.Infrastructure.Data.Contexts
             };
 
             builder.Entity<ApplicationRole>().HasData(userRole, adminRole);
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedAt = DateTime.Now;
+                        break;
+                    case EntityState.Modified:
+                        entry.Entity.LastModifiedAt = DateTime.Now;
+                        break;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -22,6 +22,8 @@ export class SigninComponent implements OnInit {
 
   formSubmitted = false;
 
+  isLoading = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -43,6 +45,7 @@ export class SigninComponent implements OnInit {
 
   onSubmit() {
     this.formSubmitted = true;
+    this.isLoading = true;
 
     if (this.signinForm.invalid) {
       return;
@@ -54,19 +57,27 @@ export class SigninComponent implements OnInit {
       next: (result) => {
         this.userService.getUserInfo(result.UserId).subscribe(result => {
           this.sessionService.setUserInfo(result);
-          
+
           const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
 
           window.location.href = returnUrl;
+
+          this.isLoading = false;
         }, error => {
+          this.isLoading = false;
+
           console.error(error);
         });
       },
       error: (error: Response) => {
         this.showErrors = true;
+
+        this.isLoading = false;
+
         this.errorMessage = error.Description;
       },
       complete: () => {
+
       }
     });
   }

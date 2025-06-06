@@ -1,0 +1,241 @@
+$modal-background: white;
+$btn-color: #3a7e93;
+$main-font: 'Great Vibes', cursive;
+$additional-font: 'Helvetica', sans-serif;
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+
+    .modal {
+        background-color: $modal-background;
+        border-radius: 10px;
+        // width: 500px;
+        // height: 530px;
+        // height: -webkit-fill-available;
+        margin: 10px;
+        padding: 45px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            color: $btn-color;
+
+            &:hover {
+                transform: scale(1.2);
+            }
+        }
+
+        .modal-header {
+            font-family: $main-font;
+            font-weight: 400;
+            font-size: xx-large;
+            display: flex;
+            justify-content: center;
+        }
+
+        .modal-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 20px;
+            margin-top: 10px;
+
+            .avatar-section {
+                position: relative;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                border-bottom-left-radius: 125px;
+                border-bottom-right-radius: 125px;
+                overflow: hidden;
+
+                img,
+                .empty-avatar {
+                    border-radius: 50%;
+                    width: 250px;
+                    height: 250px;
+                    background-color: #f0f0f0;
+                }
+
+                .remove-avatar {
+                    position: absolute;
+                    top: 0;
+                    right: 15px;
+                    border-radius: 50%;
+                    padding: 5px;
+                    background-color: white;
+                    transition: all 0.3s ease;
+
+                    .remove-avatar-btn {
+                        border-radius: 50%;
+                        color: white;
+                        background-color: red;
+                        padding: 5px;
+                        width: 20px;
+                        height: 20px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+                    }
+
+                    &:hover {
+                        transform: scale(1.2);
+                    }
+                }
+
+                .upload-avatar {
+                    display: flex;
+                    width: -webkit-fill-available;
+                    position: absolute;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 45px;
+                    color: white;
+                    background-color: rgba(49, 48, 44, 0.7);
+                    transform: translateY(100%);
+                    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                    cursor: pointer;
+                }
+
+                &:hover {
+                    .upload-avatar {
+                        transform: translateY(0);
+                    }
+                }
+            }
+
+            .actions-section {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: space-evenly;
+
+                button {
+                    background-color: transparent;
+                    border: 2px solid $btn-color;
+                    color: $btn-color;
+                    padding: 10px 20px;
+                    border-radius: 15px;
+                    font-family: $additional-font;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    min-width: 80px;
+
+                    &:hover {
+                        box-shadow: 0 0 10px rgba(58, 126, 147, 0.7);
+                        transform: scale(1.2);
+                    }
+                }
+            }
+
+            .br {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                text-transform: uppercase;
+                border: none;
+                font-size: 12px;
+                font-weight: 500;
+                margin: 0;
+
+                span {
+                    display: contents;
+
+                    &::before {
+                        content: "";
+                        border-bottom: 1px solid #c9cace;
+                        flex: 1 0 auto;
+                        height: .5em;
+                        margin-right: 6px;
+                    }
+
+                    &::after {
+                        content: "";
+                        border-bottom: 1px solid #c9cace;
+                        flex: 1 0 auto;
+                        height: .5em;
+                        margin-left: 6px;
+                    }
+                }
+            }
+
+            .default-avatars-section {
+                overflow-y: auto;
+                height: 135px;
+                width: -webkit-fill-available;
+                overflow-x: hidden;
+                padding: 10px;
+
+                &::-webkit-scrollbar {
+                    width: 8px;
+                    background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: #888;
+                    border-radius: 4px;
+                }
+
+                &::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                }
+
+                & {
+                    scrollbar-width: thin;
+                    scrollbar-color: #888 transparent;
+                }
+
+                .grid-container {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 10px;
+
+                    img {
+                        width: 60px;
+                        height: 60px;
+                        object-fit: cover;
+                        display: block;
+                        border-radius: 50%;
+                        background-color: #f0f0f0;
+                        transition: hover 0.3s ease;
+                        cursor: pointer;
+                        border: 2px solid transparent;
+
+                        &:hover {
+                            transform: scale(1.2);
+                        }
+
+                        &.selected {
+                            border: 2px solid #3a7e93;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

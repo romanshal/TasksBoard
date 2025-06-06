@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { BoardModel } from '../common/models/board/board.model';
 import { BoardService } from '../common/services/board/board.service';
 import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardInfoModal } from '../common/modals/board-info/board-info.modal';
-import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap } from 'rxjs';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs';
 import { BoardMemberRequestModal } from '../common/modals/board-member-request/board-member-request.modal';
 import { BoardForViewModel } from '../common/models/board/board-for-view.model';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -46,18 +45,23 @@ export class BoardsListComponent implements OnInit {
   searchString = '';
   private searchSubject: Subject<string> = new Subject();
 
+  isLoading = false;
+
   constructor(
     private boardService: BoardService,
     private sessionService: SessionStorageService,
     private router: Router,
     private dialog: MatDialog,
+    private spinner: NgxSpinnerService
   ) {
+    this.spinner.show();
+
     this.userId = this.sessionService.getItem(this.sessionService.userIdKey);
     this.publicBoards = this.router.url.includes('public');
   }
 
   ngOnInit(): void {
-    this.getBoards(this.searchString, this.pageIndex, this.pageSize);
+    this.getBoards(this.searchString, false, this.pageIndex, this.pageSize);
     this.subscribeToSearchChanges();
   }
 
@@ -71,20 +75,24 @@ export class BoardsListComponent implements OnInit {
       distinctUntilChanged(),
       switchMap(term => {
         this.pageIndex = 1;
-        return of(this.getBoards(term, this.pageIndex, this.pageSize));
+        return of(this.getBoards(term, true, this.pageIndex, this.pageSize));
       })
     ).subscribe(data => {
 
     });
   }
 
-  getBoards(query: string, pageIndex: number, pageSize: number) {
+  getBoards(query: string, delay: boolean, pageIndex: number, pageSize: number) {
     if (this.publicBoards) {
       this.boardService.getPublicBoards(pageIndex, pageSize).subscribe({
         next: (result) => {
-          setTimeout(() => {
+          if (delay) {
+            setTimeout(() => {
+              this.boards = result.Items;
+            }, 300)
+          } else {
             this.boards = result.Items;
-          }, 300)
+          }
 
           this.pageIndex = result.PageIndex;
           this.pageSize = result.PageSize;
@@ -95,14 +103,20 @@ export class BoardsListComponent implements OnInit {
 
         },
         complete: () => {
+          this.spinner.hide();
+          this.isLoading = true;
         }
       })
     } else {
       this.boardService.getBoardsByUserId(query, this.userId!, pageIndex, pageSize).subscribe({
         next: (result) => {
-          setTimeout(() => {
+          if (delay) {
+            setTimeout(() => {
+              this.boards = result.Items;
+            }, 300)
+          } else {
             this.boards = result.Items;
-          }, 300)
+          }
 
           this.pageIndex = result.PageIndex;
           this.pageSize = result.PageSize;
@@ -113,6 +127,8 @@ export class BoardsListComponent implements OnInit {
 
         },
         complete: () => {
+          this.spinner.hide();
+          this.isLoading = true;
         }
       });
     }
@@ -149,7 +165,7 @@ export class BoardsListComponent implements OnInit {
       this.pageIndex = page;
       this.boards = [];
 
-      this.getBoards(this.searchString, this.pageIndex, this.pageSize);
+      this.getBoards(this.searchString, true, this.pageIndex, this.pageSize);
     }
   }
 

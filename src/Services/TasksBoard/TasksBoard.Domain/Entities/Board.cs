@@ -14,5 +14,6 @@ namespace TasksBoard.Domain.Entities
         public virtual ICollection<BoardNotice> Notices { get; set; }
         public virtual ICollection<BoardTag> Tags { get; set; }
         public virtual ICollection<BoardAccessRequest> AccessRequests { get; set; }
+        public virtual ICollection<BoardInviteRequest> InviteRequests { get; set; }
     }
 }

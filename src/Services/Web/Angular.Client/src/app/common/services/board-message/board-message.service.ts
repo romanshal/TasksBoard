@@ -23,7 +23,7 @@ export class BoardMessageService {
       .pipe(
         map((response: any) => {
           let list: BoardMessageModel[] = [];
-          if (response.result) { 
+          if (response.result) {
             list = response.result.map((item: any) => {
               let message = new BoardMessageModel(
                 item.id,
@@ -33,6 +33,7 @@ export class BoardMessageService {
                 item.message,
                 item.createdAt,
                 item.modifiedAt,
+                item.isDeleted
               );
 
               return message;
@@ -47,5 +48,15 @@ export class BoardMessageService {
   sendMessage(boardId: string, form: any) {
     const url = '/api/boardmessages/' + boardId;
     return this.http.post(this.BOARD_MESSAGE_URL + url, form);
+  }
+
+  editMessage(boardId: string, form: any) {
+    const url = '/api/boardmessages/' + boardId;
+    return this.http.put(this.BOARD_MESSAGE_URL + url, form);
+  }
+
+  deleteMessage(boardId: string, messageId: string) {
+    const url = '/api/boardmessages/' + boardId + '/' + messageId;
+    return this.http.delete(this.BOARD_MESSAGE_URL + url);
   }
 }

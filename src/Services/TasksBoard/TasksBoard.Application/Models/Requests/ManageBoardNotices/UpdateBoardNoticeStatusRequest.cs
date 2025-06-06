@@ -2,7 +2,9 @@
 {
     public class UpdateBoardNoticeStatusRequest
     {
-        public Guid NoticeId { get; set; }
+        public required Guid AccountId { get; set; }
+        public required string AccountName { get; set; }
+        public required Guid NoticeId { get; set; }
         public bool Complete { get; set; }
     }
 }

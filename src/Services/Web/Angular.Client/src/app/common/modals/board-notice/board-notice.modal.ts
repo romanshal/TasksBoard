@@ -44,6 +44,7 @@ interface NoteStyle {
 export class BoardNoticeModal implements OnInit {
   form!: FormGroup;
   authorId: string;
+  authorName: string;
   author?: UserInfoModel;
   private closeStatus = 'close';
   private successStatus = 'success';
@@ -53,7 +54,7 @@ export class BoardNoticeModal implements OnInit {
   public backgroundColor!: NoteStyle;
   private rotation?: string;
 
-  currentMember!: BoardMemberModel;
+  currentUser!: UserInfoModel;
 
   constructor(
     private fb: FormBuilder,
@@ -62,16 +63,17 @@ export class BoardNoticeModal implements OnInit {
     private sessionService: SessionStorageService,
     private userService: UserService,
     private boardMemberAuthService: BoardMemberAuthService,
-    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel, currentMember: BoardMemberModel }
+    @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel }
   ) {
     this.note = data.note;
-    this.currentMember = data.currentMember;
+    this.currentUser = this.sessionService.getUserInfo()!;
 
     if (data.note !== undefined) {
       this.disabledActions = true;
       this.backgroundColor = this.colors.find(color => color.value === this.note?.BackgroundColor)!;
       this.rotation = this.data.note?.Rotation;
       this.authorId = this.data.note?.AuthorId!;
+      this.authorName = this.data.note?.AuthorName!;
 
       this.userService.getUserInfo(this.authorId).subscribe((result) => {
         this.author = result;
@@ -80,6 +82,7 @@ export class BoardNoticeModal implements OnInit {
       this.backgroundColor = this.getRandomColor();
       this.rotation = this.getRandomRotation();
       this.authorId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+      this.authorName = this.sessionService.getUserInfo()!.Username;
     }
   }
 
@@ -90,6 +93,7 @@ export class BoardNoticeModal implements OnInit {
   initForm() {
     this.form = this.fb.group({
       authorId: [this.authorId, [Validators.required]],
+      authorName: [this.authorName, [Validators.required]],
       noticeId: [this.note?.Id],
       definition: [{ value: this.note?.Definition, disabled: this.disabledActions }, Validators.required],
       backgroundColor: [this.backgroundColor.value, Validators.required],
@@ -118,7 +122,14 @@ export class BoardNoticeModal implements OnInit {
       return;
     }
 
-    this.noticeService.updateBoardNoticeStatus(this.data.boardId, this.note.Id, comlete).subscribe(result => {
+    let body = {
+      accountId: this.currentUser.Id,
+      accountName: this.currentUser.Username,
+      noticeId: this.note.Id,
+      complete: comlete
+    }
+
+    this.noticeService.updateBoardNoticeStatus(this.data.boardId, body).subscribe(result => {
       if (result.IsError || result.Description !== undefined) {
         return;
       }

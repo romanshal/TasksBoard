@@ -6,5 +6,6 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
     {
         public Guid BoardId { get; set; }
         public Guid MemberId { get; set; }
+        public Guid RemoveByUserId { get; set; }
     }
 }

@@ -26,7 +26,11 @@
           <div *ngIf="signinForm.controls['password'].errors?.['required']">Password is required</div>
         </div>
       </div>
-      <button type="submit">Continue</button>
+      <button *ngIf="!isLoading" type="submit">Continue</button>
+      <button class="loading-button" *ngIf="isLoading" disabled>
+        <i class="fa-solid fa-spinner"></i>
+        Loading
+      </button>
     </form>
 
     <div class="br">

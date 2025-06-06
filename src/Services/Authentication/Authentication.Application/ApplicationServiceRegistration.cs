@@ -3,6 +3,8 @@ using Authentication.Application.Interfaces.Services;
 using Authentication.Application.Providers;
 using Authentication.Application.Services;
 using Common.Blocks.Configurations;
+using Common.Blocks.Services;
+using EventBus.Messages.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -25,6 +27,10 @@ namespace Authentication.Application
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
+
+            services.AddHostedService<OutboxPublisherService>();
 
             return services;
         }

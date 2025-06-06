@@ -19,31 +19,74 @@
             </div>
 
             <ul class="messages-list">
-                <li class="messages-list__item" *ngFor="let message of messages" [class.ismine]="message.AccountId === userId" id="{{message.Id}}">
-                    <div class="message-content">
-                        <div class="message-info">
-                            <span class="author">{{message.MemberNickname}}</span>
-                            <span class="timestamp">{{message.CreatedAt | date}}</span>
+                <li class="messages-list__item" *ngFor="let message of messages" [class.ismine]="message.AccountId === userId">
+
+                    <div class="message-wrapper">
+                        <div class="edited-message" *ngIf="message.ModifiedAt && !message.IsDeleted">
+                            Edited
                         </div>
-                        <div class="content">{{message.Message}}</div>
+
+                        <div class="main-content">
+                            <div class="message-content" *ngIf="!message.IsDeleted; else deleted">
+                                <div class="message-info">
+                                    <span class="author">{{message.MemberNickname}}</span>
+                                    <span class="timestamp">{{message.CreatedAt | date}}</span>
+                                </div>
+                                <div class="content">{{message.Message}}</div>
+                            </div>
+
+                            <ng-template #deleted>
+                                <div class="message-deleted">
+                                    <i class="fa-solid fa-trash fa-sm"></i>
+                                    Message deleted
+                                </div>
+                            </ng-template>
+
+                            <div class="message-content-actions"
+                                *ngIf="message.AccountId === userId && !message.IsDeleted">
+                                <i class="fa-solid fa-ellipsis-vertical"
+                                    (click)="showContentActionsMenu(message.Id)"></i>
+                            </div>
+
+                            <div id="{{message.Id}}" class="message-content-actions__menu"
+                                *ngIf="message.AccountId === userId && openedContentActionsMenuId === message.Id">
+                                <span (click)="editMessage(message)">Edit message</span>
+                                <span (click)="deleteMessage(message)">Delete message</span>
+                            </div>
+                        </div>
                     </div>
                 </li>
             </ul>
         </div>
 
-        <div class="message-input-container">
-            <textarea class="message-input" appAutoResizeTextarea rows="1" [(ngModel)]="message"
-                [autoResizeValue]="message" placeholder="Message..."></textarea>
-            <div class="message-actions">
-                <svg (click)="sendMessage()" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-send">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
+        <div class="message-input-container" [style.background-color]="messageForUpdate ? '#aaa' : 'white'">
+            <div class="edit-message" *ngIf="messageForUpdate">
+                <span>Edit message</span>
+                <i class="fa-solid fa-xmark" (click)="removeMessageForUpdate()"></i>
+            </div>
+
+            <div class="message-input-wrapper">
+                <div class="message-emoji">
+                    <i class="fa-regular fa-face-smile fa-lg" (click)="showEmoji()"></i>
+                </div>
+                <textarea class="message-input" appAutoResizeTextarea rows="1" [(ngModel)]="message"
+                    [autoResizeValue]="message" placeholder="Message..."></textarea>
+                <!-- <textarea class="message-input" appAutoResizeTextareaNew rows="1" [(ngModel)]="message"
+                placeholder="Message..."></textarea> -->
+                <div class="message-input-actions">
+                    <svg (click)="sendMessage()" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-send">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </div>
             </div>
         </div>
 
-        <div></div>
+        <div *ngIf="isEmojiOpen" class="message-emoji-container">
+            <emoji-mart set="google" [perLine]="8" [showPreview]="false" [enableSearch]="false" emoji="point_up"
+                (emojiClick)="addEmoji($event)"></emoji-mart>
+        </div>
     </div>
 </div>
