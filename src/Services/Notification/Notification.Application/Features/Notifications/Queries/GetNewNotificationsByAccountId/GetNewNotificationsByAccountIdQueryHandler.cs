@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Common.Blocks.Extensions;
-using Common.Blocks.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Notification.Application.Dtos;

@@ -1,10 +1,10 @@
-using Common.Blocks.Extensions;
+using Chat.API.Hubs;
 using Chat.Application;
 using Chat.Infrastructure;
-using Common.Blocks.Configurations;
 using Chat.Infrastructure.Data.Contexts;
+using Common.Blocks.Configurations;
+using Common.Blocks.Extensions;
 using Common.Blocks.Middlewares;
-using Chat.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 

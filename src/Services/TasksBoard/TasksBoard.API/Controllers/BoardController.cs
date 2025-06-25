@@ -33,10 +33,10 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardsAsync(int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetPaginatedBoardsQuery 
-            { 
-                PageIndex = pageIndex, 
-                PageSize = pageSize 
+            var result = await _mediator.Send(new GetPaginatedBoardsQuery
+            {
+                PageIndex = pageIndex,
+                PageSize = pageSize
             });
 
             var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
@@ -139,8 +139,8 @@ namespace TasksBoard.API.Controllers
                 imageExtension = Path.GetExtension(request.Image.FileName);
             }
 
-            var result = await _mediator.Send(new CreateBoardCommand 
-            { 
+            var result = await _mediator.Send(new CreateBoardCommand
+            {
                 OwnerId = request.OwnerId,
                 OwnerNickname = request.OwnerNickname,
                 Name = request.Name,

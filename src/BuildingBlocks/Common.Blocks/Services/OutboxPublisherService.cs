@@ -100,7 +100,7 @@ namespace Common.Blocks.Services
                     break;
                 case nameof(NewBoardMemberPermissionsEvent):
                     await publishEndpoint.Publish<NewBoardMemberPermissionsEvent>(applicationEvent, cancellationToken);
-                    break;                
+                    break;
                 case nameof(UpdateNoticeEvent):
                     await publishEndpoint.Publish<UpdateNoticeEvent>(applicationEvent, cancellationToken);
                     break;

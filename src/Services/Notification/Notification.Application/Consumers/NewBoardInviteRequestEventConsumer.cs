@@ -1,5 +1,4 @@
-﻿using AutoMapper.Execution;
-using EventBus.Messages.Events;
+﻿using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Notification.Domain.Entities;

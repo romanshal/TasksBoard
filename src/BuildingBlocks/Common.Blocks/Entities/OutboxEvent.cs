@@ -5,5 +5,5 @@
         public required string EventType { get; set; }
         public required string Payload { get; set; }
         public required string Status { get; set; }
-     }
+    }
 }

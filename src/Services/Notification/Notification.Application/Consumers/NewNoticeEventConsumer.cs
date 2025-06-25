@@ -1,8 +1,8 @@
 ﻿using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using Notification.Domain.Interfaces.UnitOfWorks;
 using Notification.Domain.Entities;
+using Notification.Domain.Interfaces.UnitOfWorks;
 using System.Text.Json;
 
 namespace Notification.Application.Consumers

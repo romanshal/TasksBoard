@@ -51,7 +51,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
             }
 
             var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(request.BoardId, request.AccountId, cancellationToken);
-            if(inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
+            if (inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
             {
                 _logger.LogInformation($"Board invite request to account id '{request.AccountId} is already exist in board '{request.BoardId}'.");
                 throw new AlreadyExistException($"Invite request is already exist for board '{board.Name}'.");

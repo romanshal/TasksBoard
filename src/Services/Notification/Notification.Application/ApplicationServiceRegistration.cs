@@ -1,5 +1,4 @@
-﻿using Common.Blocks.Services;
-using EventBus.Messages.Extensions;
+﻿using EventBus.Messages.Extensions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

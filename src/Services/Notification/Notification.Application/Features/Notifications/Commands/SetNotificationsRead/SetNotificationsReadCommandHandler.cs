@@ -19,7 +19,7 @@ namespace Notification.Application.Features.Notifications.Commands.SetNotificati
                 return Unit.Value;
             }
 
-            foreach(var notification in notifications)
+            foreach (var notification in notifications)
             {
                 notification.Read = true;
 

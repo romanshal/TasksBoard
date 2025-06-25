@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using EventBus.Messages.Events;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Notification.Application.Constants;
-using Notification.Application.Consumers;
 using Notification.Application.Dtos;
 using Notification.Domain.Entities;
 using System.Text.Json;
@@ -100,7 +98,7 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountId, payload.FromAccountId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountName, payload.FromAccountName);
-            }            
+            }
             else if (eventType == nameof(NewBoardAccessRequestEvent))
             {
                 var payload = JsonSerializer.Deserialize<NewBoardAccessRequestEvent>(eventPayload)!;
@@ -109,7 +107,7 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
-            }            
+            }
             else if (eventType == nameof(NewBoardMemberPermissionsEvent))
             {
                 var payload = JsonSerializer.Deserialize<NewBoardMemberPermissionsEvent>(eventPayload)!;
@@ -120,7 +118,7 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountId, payload.SourceAccountId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountName, payload.SourceAccountName);
-            }            
+            }
             else if (eventType == nameof(UpdateNoticeEvent))
             {
                 var payload = JsonSerializer.Deserialize<UpdateNoticeEvent>(eventPayload)!;

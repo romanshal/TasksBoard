@@ -1,8 +1,6 @@
 ﻿using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Collections.ObjectModel;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;

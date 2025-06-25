@@ -6,7 +6,7 @@ namespace TasksBoard.Domain.Entities
     {
         public Guid BoardId { get; set; }
         public required string Tag { get; set; }
-        
+
         public virtual Board Board { get; set; }
     }
 }

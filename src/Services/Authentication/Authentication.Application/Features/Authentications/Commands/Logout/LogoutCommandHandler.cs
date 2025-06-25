@@ -28,7 +28,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Logout
             }
 
             var result = await _tokenService.DeleteRefreshToken(user);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 _logger.LogError($"Signout faulted for user: {request.UserId}.");
                 throw new SignoutFaultedException();

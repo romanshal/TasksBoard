@@ -44,7 +44,7 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
                 throw new Exception($"Can't update user info with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
             }
 
-            var updateEvent = new UpdateAccountInfoEvent 
+            var updateEvent = new UpdateAccountInfoEvent
             {
                 AccountId = user.Id,
                 AccountName = user.UserName,

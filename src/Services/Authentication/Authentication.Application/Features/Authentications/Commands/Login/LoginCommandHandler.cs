@@ -56,8 +56,8 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
 
             _logger.LogInformation($"Success signin for user: {request.Username}.");
 
-            return new AuthenticationDto 
-            { 
+            return new AuthenticationDto
+            {
                 AccessToken = token.AccessToken,
                 RefreshToken = token.RefreshToken,
                 UserId = user.Id

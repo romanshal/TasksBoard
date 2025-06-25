@@ -1,10 +1,8 @@
-﻿using Authentication.Application.Features.Manage.Queries.GetUserInfo;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
 using AutoMapper;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Manage.Commands.ChangeUserPassword
@@ -28,7 +26,7 @@ namespace Authentication.Application.Features.Manage.Commands.ChangeUserPassword
             }
 
             var validPassword = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
-            if(!validPassword)
+            if (!validPassword)
             {
                 _logger.LogWarning($"Invalid password for user: {request.UserId}.");
                 throw new InvalidPasswordException($"Invalid password for user");

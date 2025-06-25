@@ -26,7 +26,7 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SearchAsync([FromQuery] string search)
         {
-            var result = await _mediator.Send(new SearchUsersQuery { Query = search});
+            var result = await _mediator.Send(new SearchUsersQuery { Query = search });
 
             var response = new ResultResponse<IEnumerable<UserInfoDto>>(result);
 

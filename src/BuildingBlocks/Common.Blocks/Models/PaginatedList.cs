@@ -16,7 +16,7 @@
 
             if (items.Any() && totalCount == default)
             {
-                TotalCount = items.Count(); 
+                TotalCount = items.Count();
             }
             else
             {

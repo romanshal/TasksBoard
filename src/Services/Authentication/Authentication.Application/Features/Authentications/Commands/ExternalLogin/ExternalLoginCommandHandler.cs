@@ -88,7 +88,7 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                 throw new InvalidOperationException("Can't create access or refresh tokens.");
             }
 
-            return new AuthenticationDto 
+            return new AuthenticationDto
             {
                 AccessToken = token.AccessToken,
                 RefreshToken = token.RefreshToken,

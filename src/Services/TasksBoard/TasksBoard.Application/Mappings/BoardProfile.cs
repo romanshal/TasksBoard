@@ -29,7 +29,7 @@ namespace TasksBoard.Application.Mappings
                 src.Tags != null
                     ? src.Tags.Select(tag => new BoardTag { Tag = tag }).ToList()
                     : new List<BoardTag>()))
-                .ForMember(dest => dest.BoardImage, opt => opt.MapFrom(src => src.Image != null ? new BoardImage { Extension = src.ImageExtension!, Image = src.Image} : null));
+                .ForMember(dest => dest.BoardImage, opt => opt.MapFrom(src => src.Image != null ? new BoardImage { Extension = src.ImageExtension!, Image = src.Image } : null));
         }
     }
 }

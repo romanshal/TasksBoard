@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Services;
+using EventBus.Messages.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using EventBus.Messages.Extensions;
-using Common.Blocks.Services;
-using Common.Blocks.Interfaces.Services;
 
 namespace TasksBoard.Application
 {

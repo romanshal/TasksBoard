@@ -3,8 +3,6 @@ using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Infrastructure.Data.Contexts;
 using Authentication.Infrastructure.Repositories;
-using Common.Blocks.Entities;
-using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
 using Microsoft.Extensions.Logging;

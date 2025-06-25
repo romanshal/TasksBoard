@@ -1,0 +1,59 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:7255"
+  },
+  "Routes": [
+    //Authentication
+    {
+      "UpstreamPathTemplate": "/register",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/authentication/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/authentication/login",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/refresh",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/authentication/token",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/logout",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "DownstreamPathTemplate": "/api/authentication/logout",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7148
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}

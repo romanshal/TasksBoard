@@ -1,6 +1,5 @@
 ﻿using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
-using Common.Blocks.Services;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;

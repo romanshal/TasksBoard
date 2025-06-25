@@ -33,7 +33,8 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetBoardMessagesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetBoardMessagesByBoardIdQuery {
+            var result = await _mediator.Send(new GetBoardMessagesByBoardIdQuery
+            {
                 BoardId = boardId,
                 PageIndex = pageIndex,
                 PageSize = pageSize
@@ -53,8 +54,8 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateBoardMessageAsync([FromRoute] Guid boardId, [FromBody] CreateBoardMessageRequest request)
         {
-            var result = await _mediator.Send(new CreateBoardMessageCommand 
-            { 
+            var result = await _mediator.Send(new CreateBoardMessageCommand
+            {
                 BoardId = boardId,
                 MemberId = request.MemberId,
                 AccountId = request.AccountId,

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using TasksBoard.Application.DTOs;
 
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {

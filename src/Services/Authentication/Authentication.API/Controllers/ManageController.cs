@@ -1,5 +1,4 @@
-﻿using Authentication.API.Attributes;
-using Authentication.Application.Features.Manage.Commands.ChangeUserPassword;
+﻿using Authentication.Application.Features.Manage.Commands.ChangeUserPassword;
 using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
 using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
 using Authentication.Application.Features.Manage.Queries.GetUserImage;

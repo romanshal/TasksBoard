@@ -1,5 +1,4 @@
-﻿using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using AutoMapper;
 using Common.Blocks.Exceptions;

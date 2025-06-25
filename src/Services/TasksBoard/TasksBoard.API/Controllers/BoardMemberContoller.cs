@@ -6,7 +6,6 @@ using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByBoardIdAndAccountId;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMembersByBoardId;
-using TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoardMembersByBoardId;
 
 namespace TasksBoard.API.Controllers
 {

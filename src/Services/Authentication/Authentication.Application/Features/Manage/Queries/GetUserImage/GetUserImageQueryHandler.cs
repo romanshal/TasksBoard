@@ -1,11 +1,7 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Features.Manage.Queries.GetUserInfo;
-using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using AutoMapper;
-using Common.Blocks.Exceptions;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Manage.Queries.GetUserImage

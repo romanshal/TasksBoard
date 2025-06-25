@@ -26,7 +26,7 @@ namespace TasksBoard.Application.Consumers
                 return;
             }
 
-            foreach(var member in members)
+            foreach (var member in members)
             {
                 member.Nickname = context.Message.AccountName;
 

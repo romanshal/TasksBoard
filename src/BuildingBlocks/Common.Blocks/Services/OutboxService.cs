@@ -15,7 +15,7 @@ namespace Common.Blocks.Services
         private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
         private readonly ILogger<OutboxService> _logger = logger;
 
-        public async Task<Guid> CreateNewOutboxEvent<T>(T newEvent, CancellationToken cancellationToken = default) where T: BaseEvent
+        public async Task<Guid> CreateNewOutboxEvent<T>(T newEvent, CancellationToken cancellationToken = default) where T : BaseEvent
         {
             var outboxEvent = new OutboxEvent
             {
@@ -26,7 +26,7 @@ namespace Common.Blocks.Services
 
             await _unitOfWork.GetRepository<OutboxEvent>().Add(outboxEvent, true, cancellationToken);
 
-            if(outboxEvent.Id == Guid.Empty)
+            if (outboxEvent.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new outbox event.");
                 throw new ArgumentException(nameof(outboxEvent));

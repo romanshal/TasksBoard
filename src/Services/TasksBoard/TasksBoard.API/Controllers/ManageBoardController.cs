@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard;
 using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
 using TasksBoard.Application.Models.Requests.ManageBoards;

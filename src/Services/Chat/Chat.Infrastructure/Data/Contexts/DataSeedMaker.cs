@@ -1,5 +1,4 @@
-﻿using Chat.Infrastructure.Data.Contexts;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Chat.Infrastructure.Data.Contexts
 {

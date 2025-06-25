@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember;
 using TasksBoard.Application.Features.ManageBoardMembers.Queries;

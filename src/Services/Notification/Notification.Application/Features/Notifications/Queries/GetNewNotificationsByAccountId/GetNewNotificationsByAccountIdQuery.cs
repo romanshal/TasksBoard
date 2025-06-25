@@ -1,5 +1,4 @@
-﻿using Common.Blocks.Models;
-using MediatR;
+﻿using MediatR;
 using Notification.Application.Dtos;
 
 namespace Notification.Application.Features.Notifications.Queries.GetNewNotificationsByAccountId

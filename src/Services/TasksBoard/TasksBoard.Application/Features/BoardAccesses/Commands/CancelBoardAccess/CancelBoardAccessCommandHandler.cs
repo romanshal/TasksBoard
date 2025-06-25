@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using Common.Blocks.Constants;
+﻿using Common.Blocks.Constants;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess
