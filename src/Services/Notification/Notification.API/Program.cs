@@ -1,8 +1,10 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Middlewares;
+using Notification.API.Hubs;
+using Notification.API.HubServices;
 using Notification.Application;
-using Notification.Application.Hubs;
+using Notification.Application.Interfaces.HubServices;
 using Notification.Infrastructure;
 using Notification.Infrastructure.Data.Contexts;
 
@@ -23,6 +25,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSignalR();
+
+builder.Services.AddTransient<IHubNotificationService, HubNotificationService>();
 
 builder.Services.AddSwaggerGetWithAuth("Notification API");
 

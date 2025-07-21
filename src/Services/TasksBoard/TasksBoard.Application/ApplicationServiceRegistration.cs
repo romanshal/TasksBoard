@@ -1,10 +1,10 @@
-﻿using Common.Blocks.Interfaces.Services;
+﻿using Common.Blocks.Behaviours;
+using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using TasksBoard.Application.Behaviours;
 
 namespace TasksBoard.Application
 {

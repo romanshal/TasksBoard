@@ -48,7 +48,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RequestBoardAccessAsync([FromRoute] Guid boardId, [FromBody] RequestBoardAccessRequest request)
         {
-            var result = await _mediator.Send(new RequestBoardAccessQuery
+            var result = await _mediator.Send(new RequestBoardAccessCommand
             {
                 BoardId = boardId,
                 AccountId = request.AccountId,

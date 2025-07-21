@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using MassTransit;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Notification.Application.Dtos;
-using Notification.Application.Hubs;
+using Notification.Application.Interfaces.HubServices;
 using Notification.Domain.Interfaces.UnitOfWorks;
 
 namespace Notification.Application.BackgroundServices
@@ -20,7 +18,7 @@ namespace Notification.Application.BackgroundServices
 
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-            var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
+            var hubNotificationService = scope.ServiceProvider.GetRequiredService<IHubNotificationService>();
 
             var lastDate = DateTime.Now;
 
@@ -37,7 +35,7 @@ namespace Notification.Application.BackgroundServices
                     foreach (var applicationEvent in applicationEvents)
                     {
                         var notification = mapper.Map<NotificationDto>(applicationEvent);
-                        await hubContext.Clients.User(applicationEvent.AccountId.ToString()).SendAsync("ReceiveNotification", notification, stoppingToken);
+                        await hubNotificationService.NotifyUserAsync(applicationEvent.AccountId.ToString(), notification, stoppingToken);
                     }
 
                     lastDate = applicationEvents.Last().CreatedAt;

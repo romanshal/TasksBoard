@@ -10,18 +10,18 @@ using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess
 {
-    public class RequestBoardAccessQueryHandler(
+    public class RequestBoardAccessCommandHandler(
         IUnitOfWork unitOfWork,
         IMapper mapper,
         IOutboxService outboxService,
-        ILogger<RequestBoardAccessQueryHandler> logger) : IRequestHandler<RequestBoardAccessQuery, Guid>
+        ILogger<RequestBoardAccessCommandHandler> logger) : IRequestHandler<RequestBoardAccessCommand, Guid>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IOutboxService _outboxService = outboxService;
-        private readonly ILogger<RequestBoardAccessQueryHandler> _logger = logger;
+        private readonly ILogger<RequestBoardAccessCommandHandler> _logger = logger;
 
-        public async Task<Guid> Handle(RequestBoardAccessQuery request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(RequestBoardAccessCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)

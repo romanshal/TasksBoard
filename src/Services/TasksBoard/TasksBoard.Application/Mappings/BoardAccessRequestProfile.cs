@@ -10,7 +10,7 @@ namespace TasksBoard.Application.Mappings
     {
         public BoardAccessRequestProfile()
         {
-            CreateMap<RequestBoardAccessQuery, BoardAccessRequest>().
+            CreateMap<RequestBoardAccessCommand, BoardAccessRequest>().
                 ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)BoardAccessRequestStatuses.Pending));
 
             CreateMap<BoardAccessRequest, BoardAccessRequestDto>()

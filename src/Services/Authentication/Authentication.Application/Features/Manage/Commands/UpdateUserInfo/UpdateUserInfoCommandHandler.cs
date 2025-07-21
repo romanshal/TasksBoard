@@ -15,12 +15,10 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
     public class UpdateUserInfoCommandHandler(
         UserManager<ApplicationUser> userManager,
         IUnitOfWork unitOfWork,
-        IMapper mapper,
         ILogger<UpdateUserInfoCommandHandler> logger) : IRequestHandler<UpdateUserInfoCommand, Guid>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IMapper _mapper = mapper;
         private readonly ILogger<UpdateUserInfoCommandHandler> _logger = logger;
 
         public async Task<Guid> Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)
