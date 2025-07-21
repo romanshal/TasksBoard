@@ -5,20 +5,20 @@ using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using System.Text.Json;
 
-namespace Notification.Application.Consumers
+namespace Notification.Infrastructure.Consumers
 {
-    public class NewNoticeEventConsumer(
+    public class UpdateNoticeEventConsumer(
         IUnitOfWork unitOfWork,
-        ILogger<NewNoticeEventConsumer> logger) : IConsumer<NewNoticeEvent>
+        ILogger<UpdateNoticeEventConsumer> logger) : IConsumer<UpdateNoticeEvent>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly ILogger<NewNoticeEventConsumer> _logger = logger;
+        private readonly ILogger<UpdateNoticeEventConsumer> _logger = logger;
 
-        public async Task Consume(ConsumeContext<NewNoticeEvent> context)
+        public async Task Consume(ConsumeContext<UpdateNoticeEvent> context)
         {
             if (!context.Message.BoardMembersIds.Any())
             {
-                _logger.LogWarning($"No members ids for save in '{nameof(NewNoticeEvent)}' event.");
+                _logger.LogWarning($"No members ids for save in '{nameof(UpdateNoticeEvent)}' event.");
                 return;
             }
 
@@ -28,7 +28,7 @@ namespace Notification.Application.Consumers
                 {
                     EventId = (Guid)context.MessageId!,
                     AccountId = memberId,
-                    EventType = nameof(NewNoticeEvent),
+                    EventType = nameof(UpdateNoticeEvent),
                     Payload = JsonSerializer.Serialize(context.Message)
                 };
 

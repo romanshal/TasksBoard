@@ -1,10 +1,10 @@
 ﻿using Chat.API.Hubs;
+using Chat.API.Models.Requests;
 using Chat.Application.DTOs;
 using Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage;
 using Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoardId;
-using Chat.Application.Models.Requests;
 using Common.Blocks.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

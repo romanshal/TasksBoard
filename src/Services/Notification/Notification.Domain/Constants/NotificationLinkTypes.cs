@@ -1,4 +1,4 @@
-﻿namespace Notification.Application.Constants
+﻿namespace Notification.Domain.Constants
 {
     public enum NotificationLinkTypes
     {

@@ -26,11 +26,9 @@ builder.Services.AddSignalR();
 
 builder.Services.AddSwaggerGetWithAuth("Notification API");
 
-var conntectionString = builder.Configuration.GetConnectionString("NotificationDbConnection") ?? throw new InvalidOperationException("Connection string 'NotificationDbConnection' not found");
-
 builder.Services
-    .AddInfrastructureServices(conntectionString)
-    .AddApplicationServices(builder.Configuration);
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApplicationServices();
 
 var jwt = builder.Configuration.GetRequiredSection("Authentication:Jwt").Get<JwtCofiguration>() ?? throw new InvalidOperationException("Configuration section 'Jwt' not found.");
 

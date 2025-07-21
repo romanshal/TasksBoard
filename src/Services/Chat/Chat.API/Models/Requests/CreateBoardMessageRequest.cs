@@ -1,6 +1,6 @@
-﻿namespace Chat.Application.Models.Requests
+﻿namespace Chat.API.Models.Requests
 {
-    public class CreateBoardMessageRequest
+    public record CreateBoardMessageRequest
     {
         public Guid MemberId { get; set; }
         public Guid AccountId { get; set; }

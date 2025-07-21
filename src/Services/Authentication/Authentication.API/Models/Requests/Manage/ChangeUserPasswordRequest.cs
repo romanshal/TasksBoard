@@ -1,6 +1,6 @@
-﻿namespace Authentication.Application.Models.Requests.Manage
+﻿namespace Authentication.API.Models.Requests.Manage
 {
-    public class ChangeUserPasswordRequest
+    public record ChangeUserPasswordRequest
     {
         public required string CurrentPassword { get; set; }
         public required string NewPassword { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace Authentication.Application.Models.Requests.Manage
+﻿namespace Authentication.API.Models.Requests.Manage
 {
-    public class UpdateUserInfoRequest
+    public record UpdateUserInfoRequest
     {
         public required string Username { get; set; }
         public required string Email { get; set; }

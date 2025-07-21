@@ -1,6 +1,6 @@
-﻿namespace Chat.Application.Models.Requests
+﻿namespace Chat.API.Models.Requests
 {
-    public class UpdateBoardMessageRequest
+    public record UpdateBoardMessageRequest
     {
         public Guid BoardMessageId { get; set; }
         public required string Message { get; set; }

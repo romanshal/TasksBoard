@@ -5,7 +5,7 @@ using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using System.Text.Json;
 
-namespace Notification.Application.Consumers
+namespace Notification.Infrastructure.Consumers
 {
     public class ResolveAccessRequestEventConsumer(
         IUnitOfWork unitOfWork,

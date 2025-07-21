@@ -1,9 +1,9 @@
-﻿using Authentication.Application.Features.Manage.Commands.ChangeUserPassword;
+﻿using Authentication.API.Models.Requests.Manage;
+using Authentication.Application.Features.Manage.Commands.ChangeUserPassword;
 using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
 using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
 using Authentication.Application.Features.Manage.Queries.GetUserImage;
 using Authentication.Application.Features.Manage.Queries.GetUserInfo;
-using Authentication.Application.Models.Requests.Manage;
 using Common.Blocks.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

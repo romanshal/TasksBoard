@@ -1,5 +1,4 @@
-﻿
-using Notification.Application.Constants;
+﻿using Notification.Domain.Constants;
 
 namespace Notification.Application.Dtos
 {
