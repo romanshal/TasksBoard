@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TasksBoard.API.Attributes;
+using TasksBoard.API.Models.Requests.Boards;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoards;
-using TasksBoard.Application.Models.Requests.Boards;
 
 namespace TasksBoard.API.Controllers
 {

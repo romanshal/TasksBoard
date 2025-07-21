@@ -3,8 +3,8 @@ using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByBoardIdAndAccountId
 {

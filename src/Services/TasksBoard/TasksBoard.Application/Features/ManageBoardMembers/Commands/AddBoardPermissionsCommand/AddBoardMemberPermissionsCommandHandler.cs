@@ -3,8 +3,8 @@ using Common.Blocks.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand
 {

@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TasksBoard.API.Attributes;
+using TasksBoard.API.Models.Requests.ManageBoardNotices;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus;
-using TasksBoard.Application.Models.Requests.ManageBoardNotices;
 
 namespace TasksBoard.API.Controllers
 {

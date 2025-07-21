@@ -2,7 +2,7 @@
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Application.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess
 {

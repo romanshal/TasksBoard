@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Application.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestByAccountId
 {

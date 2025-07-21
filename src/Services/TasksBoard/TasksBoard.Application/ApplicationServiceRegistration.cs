@@ -1,15 +1,16 @@
 ﻿using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Services;
-using EventBus.Messages.Extensions;
-using Microsoft.Extensions.Configuration;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using TasksBoard.Application.Behaviours;
 
 namespace TasksBoard.Application
 {
     public static class ApplicationServiceRegistration
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddMediatR(conf =>
             {
@@ -18,11 +19,13 @@ namespace TasksBoard.Application
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
-
             services.AddTransient<IOutboxService, OutboxService>();
 
             services.AddHostedService<OutboxPublisherService>();
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             return services;
         }

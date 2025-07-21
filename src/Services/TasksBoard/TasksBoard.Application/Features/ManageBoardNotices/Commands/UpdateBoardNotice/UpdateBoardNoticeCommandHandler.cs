@@ -4,8 +4,8 @@ using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
+using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice
 {

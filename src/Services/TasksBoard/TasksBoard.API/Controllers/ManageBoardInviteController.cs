@@ -3,10 +3,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
+using TasksBoard.API.Models.Requests.ManageBoardInviteRequests;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoardInviteRequest;
 using TasksBoard.Application.Features.ManageBoardInvites.Queries.GetBoardInviteRequestsByBoardId;
-using TasksBoard.Application.Models.Requests.ManageBoardInviteRequests;
 
 namespace TasksBoard.API.Controllers
 {

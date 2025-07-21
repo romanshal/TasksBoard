@@ -1,9 +1,9 @@
 ﻿using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
 using Microsoft.Extensions.Logging;
+using TasksBoard.Application.Interfaces.Repositories;
+using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Repositories;
-using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.Repositories;
 

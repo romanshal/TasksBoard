@@ -1,11 +1,7 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Middlewares;
-using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Reflection;
-using TasksBoard.API.Behaviours;
 using TasksBoard.Application;
 using TasksBoard.Infrastructure;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -31,13 +27,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGetWithAuth("TasksBoards API");
 
-var connectionString = builder.Configuration.GetConnectionString("TasksBoardDbConnection") ?? throw new InvalidOperationException("Connection string 'TasksBoardDbConnection' not found");
 builder.Services
-    .AddInfrastructureServices(connectionString)
-    .AddApplicationServices(builder.Configuration);
-
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApplicationServices();
 
 var jwt = builder.Configuration.GetRequiredSection("Authentication:Jwt").Get<JwtCofiguration>() ?? throw new InvalidOperationException("Configuration section 'Jwt' not found.");
 
