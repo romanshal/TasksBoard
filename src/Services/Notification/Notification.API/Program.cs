@@ -11,6 +11,7 @@ using Notification.Infrastructure.Data.Contexts;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Notification.API");
 
 builder.Services.AddControllers();
 

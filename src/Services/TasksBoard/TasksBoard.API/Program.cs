@@ -8,10 +8,7 @@ using TasksBoard.Infrastructure.Data.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddLogging(config =>
-{
-    config.AddConsole();
-});
+builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards API");
 
 builder.Services.AddCors(options =>
 {
@@ -25,7 +22,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddSwaggerGetWithAuth("TasksBoards API");
+builder.Services.AddSwaggerGetWithAuth("TasksBoards.API");
 
 builder.Services
     .AddInfrastructureServices(builder.Configuration)

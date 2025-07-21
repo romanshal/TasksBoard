@@ -9,10 +9,7 @@ using Common.Blocks.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddLogging(config =>
-{
-    config.AddConsole();
-});
+builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Chat.API");
 
 builder.Services.AddCors(options =>
 {
