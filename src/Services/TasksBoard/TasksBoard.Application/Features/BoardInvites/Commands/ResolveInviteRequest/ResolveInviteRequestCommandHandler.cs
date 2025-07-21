@@ -26,14 +26,14 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, cancellationToken);
             if (inviteRequest is null)
             {
-                _logger.LogWarning($"Board access request with id '{request.RequestId}' not found.");
+                _logger.LogWarning("Board access request with id '{requestId}' not found.", request.RequestId);
                 throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
             }
 

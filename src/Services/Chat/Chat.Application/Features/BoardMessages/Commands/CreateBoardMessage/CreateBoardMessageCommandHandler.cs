@@ -27,13 +27,13 @@ namespace Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage
 
             if (boardMessage.Id == Guid.Empty)
             {
-                _logger.LogError($"Can't create new board message to board with id '{request.BoardId}'.");
+                _logger.LogError("Can't create new board message to board with id '{boardId}'.", request.BoardId);
                 throw new ArgumentException(nameof(boardMessage));
             }
 
             var createdBoardMessageDto = _mapper.Map<BoardMessageDto>(boardMessage);
 
-            _logger.LogInformation($"Board message with id '{boardMessage.Id}' added to board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board message with id '{id}' added to board with id '{boardId}'.", boardMessage.Id, request.BoardId);
 
             return createdBoardMessageDto;
         }

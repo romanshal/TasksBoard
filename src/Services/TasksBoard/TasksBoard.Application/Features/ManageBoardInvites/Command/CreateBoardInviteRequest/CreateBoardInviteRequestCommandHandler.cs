@@ -26,28 +26,28 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var isMemberExist = board.BoardMembers.Any(member => member.AccountId == request.ToAccountId);
             if (isMemberExist)
             {
-                _logger.LogInformation($"Board member with account id '{request.ToAccountId} is already exist in board '{request.BoardId}'.");
+                _logger.LogInformation("Board member with account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
                 throw new AlreadyExistException($"Board member is already exist for board '{board.Name}'.");
             }
 
             var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(request.BoardId, request.ToAccountId, cancellationToken);
             if (inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
             {
-                _logger.LogInformation($"Board invite request to account id '{request.ToAccountId} is already exist in board '{request.BoardId}'.");
+                _logger.LogInformation("Board invite request to account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
                 throw new AlreadyExistException($"Invite request is already exist for board '{board.Name}'.");
             }
 
             var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(request.BoardId, request.ToAccountId, cancellationToken);
             if (accessRequest is not null && accessRequest.Status == (int)BoardAccessRequestStatuses.Pending)
             {
-                _logger.LogInformation($"Board access request to account from '{request.ToAccountId} is already exist in board '{request.BoardId}'.");
+                _logger.LogInformation("Board access request to account from '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
                 throw new AlreadyExistException($"Access request is already exist for board '{board.Name}'.");
             }
 
@@ -57,7 +57,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
 
             if (inviteRequest.Id == Guid.Empty)
             {
-                _logger.LogError($"Can't create new board invite request to board with id '{request.BoardId}'.");
+                _logger.LogError("Can't create new board invite request to board with id '{boardId}'.", request.BoardId);
                 throw new ArgumentException(nameof(inviteRequest));
             }
 
@@ -70,7 +70,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
                 FromAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == inviteRequest.FromAccountId)!.Nickname
             }, cancellationToken);
 
-            _logger.LogInformation($"Board invite request with id '{inviteRequest.Id}' added to board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board invite request with id '{id}' added to board with id '{boardId}'.", inviteRequest.Id, request.BoardId);
 
             return inviteRequest.Id;
         }

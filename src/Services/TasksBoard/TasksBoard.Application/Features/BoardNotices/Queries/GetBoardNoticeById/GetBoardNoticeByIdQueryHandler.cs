@@ -22,7 +22,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
             var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.Id, cancellationToken);
             if (boardNotice is null)
             {
-                _logger.LogWarning($"Board notice with id '{request.Id}' was not found.");
+                _logger.LogWarning("Board notice with id '{id}' was not found.", request.Id);
                 throw new NotFoundException($"Board notice with id '{request.Id}' was not found.");
             }
             var boardNoticeDto = _mapper.Map<BoardNoticeDto>(boardNotice);

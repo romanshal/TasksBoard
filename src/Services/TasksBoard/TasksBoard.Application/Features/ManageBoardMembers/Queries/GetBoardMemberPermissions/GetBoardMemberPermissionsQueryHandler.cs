@@ -6,7 +6,7 @@ using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
 
-namespace TasksBoard.Application.Features.ManageBoardMembers.Queries
+namespace TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMemberPermissions
 {
     public class GetBoardMemberPermissionsQueryHandler(
         IUnitOfWork unitOfWork,
@@ -22,14 +22,14 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Queries
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var member = board.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
             if (member is null)
             {
-                _logger.LogWarning($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
+                _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
                 throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 

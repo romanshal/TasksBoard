@@ -19,7 +19,7 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
@@ -58,11 +58,11 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 
             if (board.Id == Guid.Empty)
             {
-                _logger.LogError($"Can't update board with id '{board.Id}'.");
+                _logger.LogError("Can't update board with id '{id}'.", board.Id);
                 throw new ArgumentException(nameof(board));
             }
 
-            _logger.LogInformation($"Board with id '{board.Id}' updated'.");
+            _logger.LogInformation("Board with id '{id}' updated'.", board.Id);
 
             return board.Id;
         }

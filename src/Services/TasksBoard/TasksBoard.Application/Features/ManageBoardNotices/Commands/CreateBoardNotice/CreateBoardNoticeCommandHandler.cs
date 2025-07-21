@@ -25,7 +25,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
@@ -35,7 +35,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
 
             if (notice.Id == Guid.Empty)
             {
-                _logger.LogError($"Can't create new board notice to board with id '{request.BoardId}'.");
+                _logger.LogError("Can't create new board notice to board with id '{boardId}'.", request.BoardId);
                 throw new ArgumentException(nameof(notice));
             }
 
@@ -50,7 +50,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
                 BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AuthorId).Select(member => member.AccountId)]
             }, cancellationToken);
 
-            _logger.LogInformation($"Board notice with id '{notice.Id}' added to board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board notice with id '{id}' added to board with id '{boardId}'.", notice.Id, request.BoardId);
 
             return notice.Id;
         }

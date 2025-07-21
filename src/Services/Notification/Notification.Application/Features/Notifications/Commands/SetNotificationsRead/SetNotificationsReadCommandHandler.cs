@@ -23,7 +23,7 @@ namespace Notification.Application.Features.Notifications.Commands.SetNotificati
             {
                 notification.Read = true;
 
-                _unitOfWork.GetApplicationEventRepository().Update(notification, false, cancellationToken);
+                await _unitOfWork.GetApplicationEventRepository().Update(notification, false, cancellationToken);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

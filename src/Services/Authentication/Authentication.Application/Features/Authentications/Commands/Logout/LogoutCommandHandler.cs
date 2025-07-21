@@ -23,14 +23,14 @@ namespace Authentication.Application.Features.Authentications.Commands.Logout
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning($"User with id '{request.UserId}' not found.");
+                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
                 throw new UnauthorizedException($"User with id '{request.UserId}' not found.");
             }
 
             var result = await _tokenService.DeleteRefreshToken(user);
             if (!result.Succeeded)
             {
-                _logger.LogError($"Signout faulted for user: {request.UserId}.");
+                _logger.LogError("Signout faulted for user: {userId}.", request.UserId);
                 throw new SignoutFaultedException();
             }
 

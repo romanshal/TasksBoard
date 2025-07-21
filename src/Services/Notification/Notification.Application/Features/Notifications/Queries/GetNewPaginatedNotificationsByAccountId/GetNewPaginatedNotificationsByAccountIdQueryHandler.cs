@@ -22,7 +22,7 @@ namespace Notification.Application.Features.Notifications.Queries.GetNewPaginate
             var count = await _unitOfWork.GetApplicationEventRepository().CountNewByAccountIdAsync(request.AccountId, cancellationToken);
             if (count == 0)
             {
-                _logger.LogInformation($"No new notfication entities in database for user '{request.AccountId}'.");
+                _logger.LogInformation("No new notfication entities in database for user '{accountId}'.", request.AccountId);
                 return new PaginatedList<NotificationDto>([], request.PageIndex, request.PageSize);
             }
 

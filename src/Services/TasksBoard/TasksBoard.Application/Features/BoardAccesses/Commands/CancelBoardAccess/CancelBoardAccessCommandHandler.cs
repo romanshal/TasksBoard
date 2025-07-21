@@ -18,7 +18,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
             var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetAsync(request.RequestId, cancellationToken);
             if (accessRequest is null)
             {
-                _logger.LogWarning($"Board access request with id '{request.RequestId}' not found.");
+                _logger.LogWarning("Board access request with id '{requestId}' not found.", request.RequestId);
                 throw new NotFoundException($"Board access request not found.");
             }
 
@@ -28,11 +28,11 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
 
             if (accessRequest.Id == Guid.Empty)
             {
-                _logger.LogError($"Can't cancel board access request with id '{accessRequest.Id}'.");
+                _logger.LogError("Can't cancel board access request with id '{id}'.", accessRequest.Id);
                 throw new ArgumentException(nameof(accessRequest));
             }
 
-            _logger.LogInformation($"Board access request with id '{accessRequest.Id}' canceled.");
+            _logger.LogInformation("Board access request with id '{id}' canceled.", accessRequest.Id);
 
             return accessRequest.Id;
         }

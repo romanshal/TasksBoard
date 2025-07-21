@@ -26,7 +26,7 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning($"User with id {request.UserId} not found.");
+                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
                 throw new NotFoundException($"User with id {request.UserId} not found.");
             }
 
@@ -38,7 +38,7 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                _logger.LogCritical($"Can't update user info with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
+                _logger.LogCritical("Can't update user info with id: {id}. Errors: {errors}.", user.Id, string.Join("; ", result.Errors));
                 throw new Exception($"Can't update user info with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
             }
 
@@ -58,7 +58,7 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
                 Status = OutboxEventStatuses.Created
             }, true, cancellationToken);
 
-            _logger.LogInformation($"User with id {user.Id} was successfully updated.");
+            _logger.LogInformation("User with id '{id}' was successfully updated.", user.Id);
 
             return user.Id;
         }

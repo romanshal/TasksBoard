@@ -22,7 +22,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage
             var boardMessage = await _unitOfWork.GetBoardMessagesRepository().GetAsync(request.BoardMessageId);
             if (boardMessage is null)
             {
-                _logger.LogWarning($"Board message with id '{request.BoardMessageId}' not found.");
+                _logger.LogWarning("Board message with id '{boardMessageId}' not found.", request.BoardMessageId);
                 throw new NotFoundException($"Board message with id '{request.BoardMessageId}' not found.");
             }
 
@@ -36,7 +36,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage
                 throw new ArgumentException(nameof(boardMessage));
             }
 
-            _logger.LogInformation($"Board message with id '{boardMessage.Id}' updated in board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board message with id '{id}' updated in board with id '{boardId}'.", boardMessage.Id, request.BoardId);
 
             var boardMessageDto = _mapper.Map<BoardMessageDto>(boardMessage);
 

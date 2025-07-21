@@ -22,7 +22,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.Id, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.Id}' was not found.");
+                _logger.LogWarning("Board with id '{id}' was not found.", request.Id);
                 throw new NotFoundException($"Board with id '{request.Id}' was not found.");
             }
 

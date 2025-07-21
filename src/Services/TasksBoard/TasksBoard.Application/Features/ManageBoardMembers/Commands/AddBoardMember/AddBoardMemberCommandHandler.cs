@@ -18,22 +18,22 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var member = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.AccountId);
             if (member is not null)
             {
-                _logger.LogInformation($"User with id '{request.AccountId} is already exist in board '{request.BoardId}'.");
+                _logger.LogInformation("User with id '{accountId} is already exist in board '{boardId}'.", request.AccountId, request.BoardId);
                 throw new AlreadyExistException($"Member is already exist in board '{board.Name}'.");
             }
 
             var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission>().GetAllAsync(cancellationToken);
             if (!permissions.Any())
             {
-                _logger.LogError($"No permissions available.");
-                throw new NotFoundException($"No permissions available.");
+                _logger.LogError("No permissions available.");
+                throw new NotFoundException("No permissions available.");
             }
 
             var minLevelPermission = permissions.OrderBy(permission => permission.AccessLevel).FirstOrDefault()!;
@@ -60,7 +60,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 throw new ArgumentException(nameof(member));
             }
 
-            _logger.LogInformation($"Board member with account id '{member.AccountId}' added to board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board member with account id '{accountId}' added to board with id '{boardId}'.", member.AccountId, request.BoardId);
 
             return member.Id;
         }

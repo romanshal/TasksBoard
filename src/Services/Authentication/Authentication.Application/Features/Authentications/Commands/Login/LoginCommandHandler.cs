@@ -24,24 +24,24 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
             var user = await _userManager.FindByNameAsync(request.Username);
             if (user is null)
             {
-                _logger.LogWarning($"User with name {request.Username} not found.");
+                _logger.LogWarning("User with name {username} not found.", request.Username);
                 throw new UnauthorizedException($"User with name {request.Username} not found.");
             }
 
             var signInResult = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
             if (!signInResult.Succeeded)
             {
-                _logger.LogWarning($"Signin faulted for user: {request.Username}.");
+                _logger.LogWarning("Signin faulted for user: {username}.", request.Username);
                 throw new SigninFaultedException();
             }
             else if (signInResult.IsLockedOut)
             {
-                _logger.LogWarning($"Signin is locked for user: {request.Username}.");
+                _logger.LogWarning("Signin is locked for user: {username}.", request.Username);
                 throw new LockedException();
             }
             else if (signInResult.IsNotAllowed)
             {
-                _logger.LogWarning($"Signin is not allowed for user {request.Username}.");
+                _logger.LogWarning("Signin is not allowed for user {username}.", request.Username);
                 throw new Exception($"Signin is not allowed for user {request.Username}."); //TODO: change this later
             }
 
@@ -50,11 +50,11 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
             var token = await _tokenService.GenerateTokenAsync(user);
             if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))
             {
-                _logger.LogCritical($"Can't create access or refresh tokens for user {user.Id}.");
+                _logger.LogCritical("Can't create access or refresh tokens for user with id '{id}'.", user.Id);
                 throw new InvalidOperationException("Can't create access or refresh tokens.");
             }
 
-            _logger.LogInformation($"Success signin for user: {request.Username}.");
+            _logger.LogInformation("Success signin for user: {username}.", request.Username);
 
             return new AuthenticationDto
             {

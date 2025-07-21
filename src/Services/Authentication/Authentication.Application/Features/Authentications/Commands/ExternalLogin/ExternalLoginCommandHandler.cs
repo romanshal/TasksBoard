@@ -44,21 +44,21 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                     var createResult = await _userManager.CreateAsync(user);
                     if (!createResult.Succeeded)
                     {
-                        _logger.LogCritical($"Can't create new user with username: {user.UserName}. Errors: {string.Join("; ", createResult.Errors)}.");
-                        throw new Exception($"Can't reate new user with username: {user.UserName}. Errors: {string.Join("; ", createResult.Errors)}.");
+                        _logger.LogCritical("Can't create new user with username: {username}. Errors: {errors}.", user.UserName, string.Join("; ", createResult.Errors));
+                        throw new Exception($"Can't create new user with username: {user.UserName}. Errors: {string.Join("; ", createResult.Errors)}.");
                     }
 
                     var addRoleResult = await _userManager.AddToRoleAsync(user, "user");
                     if (!addRoleResult.Succeeded)
                     {
-                        _logger.LogCritical($"Can't add role to user: {user.UserName}. Errors: {string.Join("; ", addRoleResult.Errors)}.");
+                        _logger.LogCritical("Can't add role to user: {username}. Errors: {errors}.", user.UserName, string.Join("; ", addRoleResult.Errors));
                         throw new Exception($"Can't add role to user: {user.UserName}. Errors: {string.Join("; ", addRoleResult.Errors)}.");
                     }
 
                     var addLoginResult = await _userManager.AddLoginAsync(user, info);
                     if (!addLoginResult.Succeeded)
                     {
-                        _logger.LogCritical($"Can't add login to user: {user.UserName}. Errors: {string.Join("; ", addLoginResult.Errors)}.");
+                        _logger.LogCritical("Can't add login to user: {username}. Errors: {errors}.", user.UserName, string.Join("; ", addLoginResult.Errors));
                         throw new Exception($"Can't add login to user: {user.UserName}. Errors: {string.Join("; ", addLoginResult.Errors)}.");
                     }
                 }
@@ -67,7 +67,7 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                     var addLoginResult = await _userManager.AddLoginAsync(user, info);
                     if (!addLoginResult.Succeeded)
                     {
-                        _logger.LogCritical($"Can't add login to user: {user.UserName}. Errors: {string.Join("; ", addLoginResult.Errors)}.");
+                        _logger.LogCritical("Can't add login to user: {username}. Errors: {errors}.", user.UserName, string.Join("; ", addLoginResult.Errors));
                         throw new Exception($"Can't add login to user: {user.UserName}. Errors: {string.Join("; ", addLoginResult.Errors)}.");
                     }
                 }
@@ -84,7 +84,7 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
             var token = await _tokenService.GenerateTokenAsync(user);
             if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))
             {
-                _logger.LogCritical($"Can't create access or refresh tokens for user {user.Id}.");
+                _logger.LogCritical("Can't create access or refresh tokens for user {id}.", user.Id);
                 throw new InvalidOperationException("Can't create access or refresh tokens.");
             }
 

@@ -23,14 +23,14 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.NoticeId, cancellationToken);
             if (boardNotice is null)
             {
-                _logger.LogWarning($"Board notice with id '{request.NoticeId}' not found.");
+                _logger.LogWarning("Board notice with id '{noticeId}' not found.", request.NoticeId);
                 throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
             }
 
@@ -56,7 +56,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
                 BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
             }, cancellationToken);
 
-            _logger.LogInformation($"Board notice with id '{boardNotice.Id}' updated in board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board notice with id '{id}' updated in board with id '{boardId}'.", boardNotice.Id, request.BoardId);
 
             return boardNotice.Id;
         }

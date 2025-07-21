@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using TasksBoard.Application.DTOs;
 
-namespace TasksBoard.Application.Features.ManageBoardMembers.Queries
+namespace TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMemberPermissions
 {
     public class GetBoardMemberPermissionsQuery : IRequest<IEnumerable<BoardMemberPermissionDto>>
     {

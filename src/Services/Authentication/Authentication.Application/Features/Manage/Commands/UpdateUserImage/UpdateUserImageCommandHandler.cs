@@ -24,8 +24,8 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning($"User with id {request.UserId} not found.");
-                throw new NotFoundException($"User with id {request.UserId} not found.");
+                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
+                throw new NotFoundException($"User with id '{request.UserId}' not found.");
             }
 
             var image = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.UserId, cancellationToken);
@@ -50,11 +50,11 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
 
             if (image.Id == Guid.Empty)
             {
-                _logger.LogError($"Can't update user image with id '{user.Id}'.");
+                _logger.LogError("Can't update user image with id '{id}'.", user.Id);
                 throw new ArgumentException(nameof(image));
             }
 
-            _logger.LogInformation($"User image with user id {user.Id} was successfully updated.");
+            _logger.LogInformation("User image with user id '{id}' was successfully updated.", user.Id);
 
             return user.Image.Id;
         }

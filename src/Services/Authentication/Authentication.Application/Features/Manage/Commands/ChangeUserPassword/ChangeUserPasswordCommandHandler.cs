@@ -21,21 +21,21 @@ namespace Authentication.Application.Features.Manage.Commands.ChangeUserPassword
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning($"User with id {request.UserId} not found.");
-                throw new NotFoundException($"User with id {request.UserId} not found.");
+                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
+                throw new NotFoundException($"User with id '{request.UserId}' not found.");
             }
 
             var validPassword = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
             if (!validPassword)
             {
-                _logger.LogWarning($"Invalid password for user: {request.UserId}.");
+                _logger.LogWarning("Invalid password for user: {userId}.", request.UserId);
                 throw new InvalidPasswordException($"Invalid password for user");
             }
 
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
             {
-                _logger.LogCritical($"Can't update user password with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
+                _logger.LogCritical("Can't update user password with id: {id}. Errors: {errors}.", user.Id, string.Join("; ", result.Errors));
                 throw new Exception($"Can't update user password with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
             }
 

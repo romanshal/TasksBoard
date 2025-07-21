@@ -22,14 +22,14 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
             var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId, cancellationToken);
             if (!boardExist)
             {
-                _logger.LogWarning($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var boardMember = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(request.BoardId, request.AccountId, cancellationToken);
             if (boardMember is null)
             {
-                _logger.LogWarning($"Board member with account id '{request.AccountId} in board with id '{request.BoardId} not found.");
+                _logger.LogWarning("Board member with account id '{accountId} in board with id '{boardId} not found.", request.AccountId, request.BoardId);
                 throw new NotFoundException($"Board member with account id '{request.AccountId} in board with id '{request.BoardId} not found.");
             }
 

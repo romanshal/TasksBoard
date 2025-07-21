@@ -22,7 +22,7 @@ namespace Authentication.Application.Features.Manage.Queries.GetUserInfo
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning($"User with id {request.UserId} not found.");
+                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
                 throw new NotFoundException($"User with id {request.UserId} not found.");
             }
 

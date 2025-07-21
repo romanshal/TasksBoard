@@ -19,7 +19,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage
             var boardMessage = await _unitOfWork.GetBoardMessagesRepository().GetAsync(request.BoardMessageId, cancellationToken);
             if (boardMessage is null)
             {
-                _logger.LogWarning($"Board message with id '{request.BoardMessageId}' not found.");
+                _logger.LogWarning("Board message with id '{boardMessageId}' not found.", request.BoardMessageId);
                 throw new NotFoundException($"Board message with id '{request.BoardMessageId}' not found.");
             }
 
@@ -27,7 +27,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage
 
             await _unitOfWork.GetBoardMessagesRepository().Update(boardMessage, true, cancellationToken);
 
-            _logger.LogInformation($"Board message with id '{boardMessage.Id}' logical deleted in board with id '{request.BoardId}'.");
+            _logger.LogInformation("Board message with id '{id}' logical deleted in board with id '{boardId}'.", boardMessage.Id, request.BoardId);
 
             return Unit.Value;
         }
