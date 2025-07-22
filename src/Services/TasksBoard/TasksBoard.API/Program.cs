@@ -8,7 +8,7 @@ using TasksBoard.Infrastructure.Data.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards API");
+builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards.API");
 
 builder.Services.AddCors(options =>
 {

@@ -8,7 +8,7 @@ using TasksBoard.API.Models.Requests.ManageBoardMembers;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember;
-using TasksBoard.Application.Features.ManageBoardMembers.Queries;
+using TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMemberPermissions;
 
 namespace TasksBoard.API.Controllers
 {
