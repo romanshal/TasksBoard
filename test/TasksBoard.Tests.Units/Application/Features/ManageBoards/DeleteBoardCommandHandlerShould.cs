@@ -20,6 +20,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
         public DeleteBoardCommandHandlerShould()
         {
             boardRepository = new Mock<IBoardRepository>();
+
             logger = new Mock<ILogger<DeleteBoardCommandHandler>>();
 
             unitOfWork = new Mock<IUnitOfWork>();

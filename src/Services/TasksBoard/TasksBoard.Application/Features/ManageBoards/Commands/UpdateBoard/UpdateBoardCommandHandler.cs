@@ -1,17 +1,16 @@
 ﻿using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
     public class UpdateBoardCommandHandler(
-        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
+        ILogger<UpdateBoardCommandHandler> logger,
         IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Guid>
     {
-        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
+        private readonly ILogger<UpdateBoardCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Guid> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)

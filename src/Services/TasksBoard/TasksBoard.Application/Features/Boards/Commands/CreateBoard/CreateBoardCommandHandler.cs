@@ -1,18 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 {
     public class CreateBoardCommandHandler(
-        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
+        ILogger<CreateBoardCommandHandler> logger,
         IUnitOfWork unitOfWork,
         IMapper mapper) : IRequestHandler<CreateBoardCommand, Guid>
     {
-        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
+        private readonly ILogger<CreateBoardCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
 
@@ -26,7 +25,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (affectedRows == 0)
+            if (affectedRows == 0 || board.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new board. No rows were affected.");
                 throw new InvalidOperationException("Can't create new board. No rows were affected.");

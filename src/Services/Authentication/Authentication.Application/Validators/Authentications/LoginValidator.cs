@@ -1,11 +1,6 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Domain.Constants.Messages;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Authentication.Application.Validators.Authentications
 {

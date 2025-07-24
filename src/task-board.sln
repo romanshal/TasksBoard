@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcelotApiGateway", "ApiGate
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.Tests.Units", "..\test\TasksBoard.Tests.Units\TasksBoard.Tests.Units.csproj", "{36855633-E059-4FB4-A351-F4830A7E15BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Tests.Units", "..\test\Authentication.Tests.Units\Authentication.Tests.Units.csproj", "{1E91A03F-D82B-4247-AD1A-6DBB3ADEF619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,10 @@ Global
 		{36855633-E059-4FB4-A351-F4830A7E15BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36855633-E059-4FB4-A351-F4830A7E15BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36855633-E059-4FB4-A351-F4830A7E15BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E91A03F-D82B-4247-AD1A-6DBB3ADEF619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E91A03F-D82B-4247-AD1A-6DBB3ADEF619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E91A03F-D82B-4247-AD1A-6DBB3ADEF619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E91A03F-D82B-4247-AD1A-6DBB3ADEF619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -190,6 +196,7 @@ Global
 		{818C1416-4421-4987-BEB5-24C55CCC8228} = {5BB62E6F-55E9-4313-8640-C69AE3DAF3EC}
 		{28EB3159-C17E-4690-9E44-27875967C62F} = {415322B5-4DDF-4209-B99C-A1AE2B620E18}
 		{36855633-E059-4FB4-A351-F4830A7E15BC} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
+		{1E91A03F-D82B-4247-AD1A-6DBB3ADEF619} = {446DD790-D01F-4BFB-86A5-2BB726DDBED3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {035AB995-90D6-4002-8BCD-783C17C3C72D}
