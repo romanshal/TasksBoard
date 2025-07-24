@@ -2,7 +2,7 @@
 
 namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess
 {
-    public class RequestBoardAccessCommand : IRequest<Guid>
+    public record RequestBoardAccessCommand : IRequest<Guid>
     {
         public required Guid BoardId { get; set; }
         public required Guid AccountId { get; set; }

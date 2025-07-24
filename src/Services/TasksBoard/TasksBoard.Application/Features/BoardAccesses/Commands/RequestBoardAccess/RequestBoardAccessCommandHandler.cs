@@ -23,7 +23,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
 
         public async Task<Guid> Handle(RequestBoardAccessCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
+            var board = await _unitOfWork.GetBoardRepository().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
@@ -59,7 +59,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
 
             accessRequest = _mapper.Map<BoardAccessRequest>(request);
 
-            await _unitOfWork.GetRepository<BoardAccessRequest>().Add(accessRequest, true, cancellationToken);
+            await _unitOfWork.GetBoardAccessRequestRepository().Add(accessRequest, true, cancellationToken);
 
             if (accessRequest.Id == Guid.Empty)
             {

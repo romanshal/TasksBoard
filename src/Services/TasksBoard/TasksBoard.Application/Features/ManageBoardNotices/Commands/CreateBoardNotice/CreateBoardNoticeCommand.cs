@@ -2,7 +2,7 @@
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice
 {
-    public class CreateBoardNoticeCommand : IRequest<Guid>
+    public record CreateBoardNoticeCommand : IRequest<Guid>
     {
         public required Guid AuthorId { get; set; }
         public required string AuthorName { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Common.Blocks.Middlewares
 {
@@ -51,7 +52,19 @@ namespace Common.Blocks.Middlewares
 
         private static Response GetResponseDate(Exception ex)
         {
-            return new Response(ex.Message, true);
+            return ex switch
+            {
+                ValidationException 
+                or AlreadyExistException 
+                or InvalidPasswordException
+                or NotFoundException
+                or LockedException
+                or SigninFaultedException 
+                or UnauthorizedException 
+                or SecurityTokenException => new Response(ex.Message, true),
+
+                _ => new Response("Something went wrong...", true),
+            };
         }
     }
 

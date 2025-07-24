@@ -14,10 +14,31 @@ namespace TasksBoard.Application.Validators.ManageBoardNotices
                 .NotEqual(Guid.Empty)
                 .WithMessage(BoardNoticeMessages.AuthorIdRequired);
 
+            RuleFor(x => x.AuthorName)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(BoardNoticeMessages.AuthorNameRequired);
+
+            RuleFor(x => x.BoardId)
+                .NotNull()
+                .NotEmpty()
+                .NotEqual(Guid.Empty)
+                .WithMessage(BoardNoticeMessages.BoardIdRequired);
+
             RuleFor(x => x.Definition)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(BoardNoticeMessages.DefinitionRequired);
+                .WithMessage(BoardNoticeMessages.DefinitionRequired);            
+            
+            RuleFor(x => x.BackgroundColor)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(BoardNoticeMessages.BackgroundColorRequired);            
+            
+            RuleFor(x => x.Rotation)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(BoardNoticeMessages.RotationRequired);
         }
     }
 }

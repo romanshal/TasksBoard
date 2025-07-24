@@ -18,6 +18,11 @@ namespace TasksBoard.Application.Validators.Boards
                 .NotEmpty()
                 .NotEqual(Guid.Empty)
                 .WithMessage(BoardMessages.BoardOwnerRequired);
+
+            RuleFor(x => x.OwnerNickname)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(BoardMessages.BoardOwnerNicknameRequired);
         }
     }
 }

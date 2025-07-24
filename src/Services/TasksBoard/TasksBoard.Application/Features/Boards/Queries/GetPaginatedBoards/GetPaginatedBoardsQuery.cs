@@ -3,7 +3,7 @@ using TasksBoard.Application.Models;
 
 namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards
 {
-    public class GetPaginatedBoardsQuery : GetPaginatedListQuery<BoardForViewDto>
+    public record GetPaginatedBoardsQuery : GetPaginatedListQuery<BoardForViewDto>
     {
     }
 }

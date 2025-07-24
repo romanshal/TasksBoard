@@ -3,6 +3,7 @@ using Authentication.Domain.Entities;
 using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Extensions;
+using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 using Microsoft.AspNetCore.Identity;
 

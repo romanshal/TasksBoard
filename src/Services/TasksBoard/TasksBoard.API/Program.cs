@@ -1,5 +1,6 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
+using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TasksBoard.Application;
@@ -8,7 +9,9 @@ using TasksBoard.Infrastructure.Data.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards.API");
+builder.Services
+    .AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards.API")
+    .AddApiMetrics();
 
 builder.Services.AddCors(options =>
 {
@@ -62,7 +65,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigin");
 
@@ -73,5 +76,6 @@ app.UseExeptionWrappingMiddleware();
 
 app.MapControllers()
     .RequireAuthorization();
+app.MapPrometheusScrapingEndpoint();
 
 app.Run();

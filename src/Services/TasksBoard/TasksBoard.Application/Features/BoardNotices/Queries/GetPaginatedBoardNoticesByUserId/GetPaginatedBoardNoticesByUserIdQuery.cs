@@ -3,7 +3,7 @@ using TasksBoard.Application.Models;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId
 {
-    public class GetPaginatedBoardNoticesByUserIdQuery : GetPaginatedListQuery<BoardNoticeDto>
+    public record GetPaginatedBoardNoticesByUserIdQuery : GetPaginatedListQuery<BoardNoticeDto>
     {
         public Guid UserId { get; set; }
     }

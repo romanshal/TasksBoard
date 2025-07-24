@@ -4,6 +4,7 @@ using Chat.Infrastructure;
 using Chat.Infrastructure.Data.Contexts;
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
+using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -7,11 +7,11 @@ using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand
 {
-    public class DeleteBoardCommandHandler(
-        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
+    public class DeleteBoardNoticeCommandHandler(
+        ILogger<DeleteBoardNoticeCommandHandler> logger,
         IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardNoticeCommand, Unit>
     {
-        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
+        private readonly ILogger<DeleteBoardNoticeCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Unit> Handle(DeleteBoardNoticeCommand request, CancellationToken cancellationToken)

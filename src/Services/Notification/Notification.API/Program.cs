@@ -1,5 +1,6 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
+using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 using Notification.API.Hubs;
 using Notification.API.HubServices;

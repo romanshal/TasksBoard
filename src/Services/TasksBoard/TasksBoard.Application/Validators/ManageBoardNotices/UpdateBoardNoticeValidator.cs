@@ -8,16 +8,38 @@ namespace TasksBoard.Application.Validators.ManageBoardNotices
     {
         public UpdateBoardNoticeValidator()
         {
+            RuleFor(x => x.BoardId)
+                .NotNull()
+                .NotEmpty()
+                .NotEqual(Guid.Empty)
+                .WithMessage(BoardNoticeMessages.BoardIdRequired);
+
             RuleFor(x => x.NoticeId)
                 .NotNull()
                 .NotEmpty()
                 .NotEqual(Guid.Empty)
-                .WithMessage(BoardNoticeMessages.BoardNoticeIdRequired);
+                .WithMessage(BoardNoticeMessages.BoardNoticeIdRequired);            
+            
+            RuleFor(x => x.AccountId)
+                .NotNull()
+                .NotEmpty()
+                .NotEqual(Guid.Empty)
+                .WithMessage(BoardNoticeMessages.AccountIdRequired);
 
             RuleFor(x => x.Definition)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage(BoardNoticeMessages.DefinitionRequired);
+
+            RuleFor(x => x.BackgroundColor)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(BoardNoticeMessages.BackgroundColorRequired);
+
+            RuleFor(x => x.Rotation)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage(BoardNoticeMessages.RotationRequired);
         }
     }
 }
