@@ -18,9 +18,9 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 
         public async Task<Guid> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
         {
-            var board = await CreateBoardAsync(request, cancellationToken);
+            var board = CreateBoard(request);
 
-            var boardMember = await CreateBoardMemberAsync(board.OwnerId, board.Id, request.OwnerNickname, cancellationToken);
+            var boardMember = CreateBoardMember(board.OwnerId, board.Id, request.OwnerNickname);
 
             await AddPermissionsAsync(boardMember.Id, cancellationToken);
 
@@ -37,16 +37,16 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             return board.Id;
         }
 
-        private async Task<Board> CreateBoardAsync(CreateBoardCommand request, CancellationToken cancellationToken)
+        private Board CreateBoard(CreateBoardCommand request)
         {
             var board = _mapper.Map<Board>(request);
 
-            await _unitOfWork.GetRepository<Board>().Add(board, false, cancellationToken);
+            _unitOfWork.GetRepository<Board>().Add(board);
 
             return board;
         }
 
-        private async Task<BoardMember> CreateBoardMemberAsync(Guid userId, Guid boardId, string ownerNickname, CancellationToken cancellationToken)
+        private BoardMember CreateBoardMember(Guid userId, Guid boardId, string ownerNickname)
         {
             var boardMember = new BoardMember
             {
@@ -55,7 +55,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
                 Nickname = ownerNickname
             };
 
-            await _unitOfWork.GetRepository<BoardMember>().Add(boardMember, false, cancellationToken);
+            _unitOfWork.GetRepository<BoardMember>().Add(boardMember);
 
             return boardMember;
         }
@@ -71,7 +71,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
                     BoardPermissionId = permission.Id
                 };
 
-                await _unitOfWork.GetRepository<BoardMemberPermission>().Add(boardMemberPermission, false, cancellationToken);
+                _unitOfWork.GetRepository<BoardMemberPermission>().Add(boardMemberPermission);
             }
         }
     }

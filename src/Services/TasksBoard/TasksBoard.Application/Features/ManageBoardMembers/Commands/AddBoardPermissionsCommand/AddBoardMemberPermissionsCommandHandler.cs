@@ -41,7 +41,14 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPe
                 BoardPermissionId = permission
             })];
 
-            await _unitOfWork.GetBoardMemberRepository().Update(member, true, cancellationToken);
+            _unitOfWork.GetBoardMemberRepository().Update(member);
+
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0)
+            {
+                _logger.LogError("Can't save new board member permissions with id '{memberId}' to board with id '{boardId}'.", request.MemberId, request.BoardId);
+                throw new ArgumentException($"Can't save new board member permissions with id '{request.MemberId}' to board with id '{request.BoardId}'.");
+            }
 
             await _outboxService.CreateNewOutboxEvent(new NewBoardMemberPermissionsEvent
             {

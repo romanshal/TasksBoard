@@ -54,9 +54,10 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
             board.Tags.Clear();
             board.Tags = [.. request.Tags.Select(tag => new BoardTag { Tag = tag })];
 
-            await _unitOfWork.GetRepository<Board>().Update(board, true, cancellationToken);
+            _unitOfWork.GetRepository<Board>().Update(board);
 
-            if (board.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || board.Id == Guid.Empty)
             {
                 _logger.LogError("Can't update board with id '{id}'.", board.Id);
                 throw new ArgumentException(nameof(board));

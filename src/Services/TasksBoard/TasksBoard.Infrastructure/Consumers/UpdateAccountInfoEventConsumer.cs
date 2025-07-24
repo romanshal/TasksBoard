@@ -27,7 +27,7 @@ namespace TasksBoard.Infrastructure.Consumers
             {
                 member.Nickname = context.Message.AccountName;
 
-                await _unitOfWork.GetBoardMemberRepository().Update(member);
+                _unitOfWork.GetBoardMemberRepository().Update(member);
             }
 
             foreach (var request in accessRequests)
@@ -35,7 +35,7 @@ namespace TasksBoard.Infrastructure.Consumers
                 request.AccountName = context.Message.AccountName;
                 request.AccountEmail = context.Message.AccountEmail;
 
-                await _unitOfWork.GetBoardAccessRequestRepository().Update(request);
+                _unitOfWork.GetBoardAccessRequestRepository().Update(request);
             }
 
             foreach (var request in toInviteRequests)
@@ -43,19 +43,19 @@ namespace TasksBoard.Infrastructure.Consumers
                 request.ToAccountName = context.Message.AccountName;
                 request.ToAccountEmail = context.Message.AccountEmail;
 
-                await _unitOfWork.GetBoardInviteRequestRepository().Update(request);
+                _unitOfWork.GetBoardInviteRequestRepository().Update(request);
             }
 
             foreach (var request in fromInviteRequests)
             {
                 request.FromAccountName = context.Message.AccountName;
 
-                await _unitOfWork.GetBoardInviteRequestRepository().Update(request);
+                _unitOfWork.GetBoardInviteRequestRepository().Update(request);
             }
 
-            var result = await _unitOfWork.SaveChangesAsync();
+            var affectedRows = await _unitOfWork.SaveChangesAsync();
 
-            if (result == 0)
+            if (affectedRows == 0)
             {
                 _logger.LogError($"Error when update information for account with id '{context.Message.AccountId}'.");
                 return;

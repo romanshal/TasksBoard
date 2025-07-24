@@ -28,9 +28,10 @@ namespace Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage
 
             boardMessage.Message = request.Message;
 
-            await _unitOfWork.GetBoardMessagesRepository().Update(boardMessage, true, cancellationToken);
+            _unitOfWork.GetBoardMessagesRepository().Update(boardMessage);
 
-            if (boardMessage.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || boardMessage.Id == Guid.Empty)
             {
                 _logger.LogError("Can't update board message.");
                 throw new ArgumentException(nameof(boardMessage));

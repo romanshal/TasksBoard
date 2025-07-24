@@ -23,10 +23,15 @@ namespace Notification.Application.Features.Notifications.Commands.SetNotificati
             {
                 notification.Read = true;
 
-                await _unitOfWork.GetApplicationEventRepository().Update(notification, false, cancellationToken);
+                _unitOfWork.GetApplicationEventRepository().Update(notification);
             }
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if(affectedRows == 0)
+            {
+                _logger.LogError("Can't save notifications.");
+                throw new ArgumentException("Can't save notifications.");
+            }
 
             return Unit.Value;
         }

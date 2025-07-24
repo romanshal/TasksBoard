@@ -8,10 +8,10 @@ using TasksBoard.Domain.Entities;
 namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
 {
     public class DeleteBoardCommandHandler(
-        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
+        ILogger<DeleteBoardCommandHandler> logger,
         IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardCommand, Unit>
     {
-        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
+        private readonly ILogger<DeleteBoardCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
@@ -23,7 +23,14 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
                 throw new NotFoundException($"Board with id '{request.Id}' not found.");
             }
 
-            await _unitOfWork.GetRepository<Board>().Delete(board, true, cancellationToken);
+            _unitOfWork.GetRepository<Board>().Delete(board);
+
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0)
+            {
+                _logger.LogError("Can't delete board with id '{boardId}'.", request.Id);
+                throw new ArgumentException($"Can't delete board with id '{request.Id}'.");
+            }
 
             _logger.LogInformation("Board with id '{id}' deleted'.", request.Id);
 

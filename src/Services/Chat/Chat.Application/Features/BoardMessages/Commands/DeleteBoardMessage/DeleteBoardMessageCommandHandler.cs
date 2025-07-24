@@ -25,7 +25,13 @@ namespace Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage
 
             boardMessage.IsDeleted = true;
 
-            await _unitOfWork.GetBoardMessagesRepository().Update(boardMessage, true, cancellationToken);
+            _unitOfWork.GetBoardMessagesRepository().Update(boardMessage);
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if(affectedRows == 0)
+            {
+                _logger.LogError("Can't save new board message.");
+                throw new ArgumentException("Can't save new board message.");
+            }
 
             _logger.LogInformation("Board message with id '{id}' logical deleted in board with id '{boardId}'.", boardMessage.Id, request.BoardId);
 

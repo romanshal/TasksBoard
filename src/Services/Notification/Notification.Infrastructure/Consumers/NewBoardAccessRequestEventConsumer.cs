@@ -13,6 +13,7 @@ namespace Notification.Infrastructure.Consumers
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<NewBoardAccessRequestEventConsumer> _logger = logger;
+
         public async Task Consume(ConsumeContext<NewBoardAccessRequestEvent> context)
         {
             if (!context.Message.BoardMembersIds.Any())
@@ -31,12 +32,12 @@ namespace Notification.Infrastructure.Consumers
                     Payload = JsonSerializer.Serialize(context.Message)
                 };
 
-                _unitOfWork.GetRepository<ApplicationEvent>().Add(applicationEvent, false);
+                _unitOfWork.GetRepository<ApplicationEvent>().Add(applicationEvent);
             }
 
-            var result = await _unitOfWork.SaveChangesAsync();
+            var affectedRows = await _unitOfWork.SaveChangesAsync();
 
-            if (result == 0)
+            if (affectedRows == 0)
             {
                 _logger.LogError($"Error when create new event with id '{context.MessageId}'.");
             }

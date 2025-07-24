@@ -39,7 +39,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
 
             inviteRequest.Status = request.Decision ? (int)BoardInviteRequestStatuses.Accepted : (int)BoardInviteRequestStatuses.Rejected;
 
-            await _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest, false, cancellationToken);
+            _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest);
 
             if (request.Decision)
             {

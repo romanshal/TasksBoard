@@ -52,15 +52,18 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             });
 
             repository
-                .Setup(s => s.Update(It.IsAny<BoardAccessRequest>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+                .Setup(s => s.Update(It.IsAny<BoardAccessRequest>()));
+
+            unitOfWork
+                .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
 
             var actual = await sut.Handle(command, CancellationToken.None);
 
             actual.Should().Be(requestId);
 
             repository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
-            repository.Verify(s => s.Update(It.IsAny<BoardAccessRequest>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+            repository.Verify(s => s.Update(It.IsAny<BoardAccessRequest>()), Times.Once);
             repository.VerifyNoOtherCalls();
         }
 

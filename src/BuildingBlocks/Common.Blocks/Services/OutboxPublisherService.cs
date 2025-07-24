@@ -36,7 +36,13 @@ namespace Common.Blocks.Services
 
                         outboxEvent.Status = OutboxEventStatuses.Sent;
 
-                        await unitOfWork.GetOutboxEventRepository().Update(outboxEvent, true, stoppingToken);
+                        unitOfWork.GetOutboxEventRepository().Update(outboxEvent);
+
+                        var affectedRows = await unitOfWork.SaveChangesAsync(stoppingToken);
+                        if(affectedRows == 0)
+                        {
+                            throw new Exception("Can't update outbox entity.");
+                        }
                     }
                 }
                 catch (Exception ex)

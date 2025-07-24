@@ -53,9 +53,10 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
 
             inviteRequest = _mapper.Map<BoardInviteRequest>(request);
 
-            await _unitOfWork.GetRepository<BoardInviteRequest>().Add(inviteRequest, true, cancellationToken);
+            _unitOfWork.GetRepository<BoardInviteRequest>().Add(inviteRequest);
 
-            if (inviteRequest.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || inviteRequest.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new board invite request to board with id '{boardId}'.", request.BoardId);
                 throw new ArgumentException(nameof(inviteRequest));

@@ -24,9 +24,10 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
 
             accessRequest.Status = (int)BoardAccessRequestStatuses.Canceled;
 
-            await _unitOfWork.GetBoardAccessRequestRepository().Update(accessRequest, true, cancellationToken);
+            _unitOfWork.GetBoardAccessRequestRepository().Update(accessRequest);
 
-            if (accessRequest.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || accessRequest.Id == Guid.Empty)
             {
                 _logger.LogError("Can't cancel board access request with id '{id}'.", accessRequest.Id);
                 throw new ArgumentException(nameof(accessRequest));

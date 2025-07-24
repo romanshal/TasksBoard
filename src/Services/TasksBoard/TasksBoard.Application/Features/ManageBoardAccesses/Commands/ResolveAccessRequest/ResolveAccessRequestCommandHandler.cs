@@ -39,7 +39,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
 
             accessRequest.Status = request.Decision ? (int)BoardAccessRequestStatuses.Accepted : (int)BoardAccessRequestStatuses.Rejected;
 
-            await _unitOfWork.GetRepository<BoardAccessRequest>().Update(accessRequest, false, cancellationToken);
+            _unitOfWork.GetRepository<BoardAccessRequest>().Update(accessRequest);
 
             if (request.Decision)
             {
@@ -67,7 +67,12 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
             }
             else
             {
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+                if(affectedRows == 0)
+                {
+                    _logger.LogError("Can't save new access request.");
+                    throw new ArgumentException("Can't save new access request.");
+                }
             }
 
             await _outboxService.CreateNewOutboxEvent(new ResolveAccessRequestEvent

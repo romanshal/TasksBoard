@@ -86,8 +86,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             });
 
             boardNoticeRepository
-                .Setup(s => s.Add(It.IsAny<BoardNotice>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+                .Setup(s => s.Add(It.IsAny<BoardNotice>()));
+
+            unitOfWork
+                .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
 
             var actual = await sut.Handle(command, CancellationToken.None);
             actual.Should().Be(noticeId);

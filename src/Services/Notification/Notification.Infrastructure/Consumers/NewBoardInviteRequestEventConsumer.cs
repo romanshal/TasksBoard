@@ -30,9 +30,10 @@ namespace Notification.Infrastructure.Consumers
                 Payload = JsonSerializer.Serialize(context.Message)
             };
 
-            await _unitOfWork.GetRepository<ApplicationEvent>().Add(applicationEvent, true);
+            _unitOfWork.GetRepository<ApplicationEvent>().Add(applicationEvent);
 
-            if (applicationEvent.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync();
+            if (affectedRows == 0 || applicationEvent.Id == Guid.Empty)
             {
                 _logger.LogError($"Error when create new event with id '{context.MessageId}'.");
             }

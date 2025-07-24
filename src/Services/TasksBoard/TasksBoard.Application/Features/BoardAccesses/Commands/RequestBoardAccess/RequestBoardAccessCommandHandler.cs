@@ -59,9 +59,10 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
 
             accessRequest = _mapper.Map<BoardAccessRequest>(request);
 
-            await _unitOfWork.GetBoardAccessRequestRepository().Add(accessRequest, true, cancellationToken);
+            _unitOfWork.GetBoardAccessRequestRepository().Add(accessRequest);
 
-            if (accessRequest.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || accessRequest.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new board access request to board with id '{boardId}'.", request.BoardId);
                 throw new ArgumentException(nameof(accessRequest));

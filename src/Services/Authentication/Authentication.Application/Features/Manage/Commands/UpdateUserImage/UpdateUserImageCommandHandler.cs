@@ -38,17 +38,18 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
                     Extension = request.ImageExtension
                 };
 
-                await _unitOfWork.GetApplicationUserImageRepository().Add(image, true, cancellationToken);
+                _unitOfWork.GetApplicationUserImageRepository().Add(image);
             }
             else
             {
                 image.Image = request.Image;
                 image.Extension = request.ImageExtension;
 
-                await _unitOfWork.GetApplicationUserImageRepository().Update(image, true, cancellationToken);
+                _unitOfWork.GetApplicationUserImageRepository().Update(image);
             }
 
-            if (image.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || image.Id == Guid.Empty)
             {
                 _logger.LogError("Can't update user image with id '{id}'.", user.Id);
                 throw new ArgumentException(nameof(image));

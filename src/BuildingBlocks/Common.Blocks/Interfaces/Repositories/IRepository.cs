@@ -33,29 +33,24 @@ namespace Common.Blocks.Interfaces.Repositories
         /// Add new entity to database.
         /// </summary>
         /// <param name="entity">Database entity.</param>
-        /// <param name="needSaveChanges">Is need save changes.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Id of new entity</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        Task Add(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default);
+        void Add(T entity);
 
         /// <summary>
         /// Update entity in database.
         /// </summary>
         /// <param name="entity">Database entity.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        Task Update(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default);
+        void Update(T entity);
 
         /// <summary>
         /// Delete entity by id.
         /// </summary>
         /// <param name="entity">Database entity.</param>
-        /// <param name="needSaveChanges">Is need save changes.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
-        Task Delete(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default);
+        void Delete(T entity);
 
         /// <summary>
         /// Return count in sequence.

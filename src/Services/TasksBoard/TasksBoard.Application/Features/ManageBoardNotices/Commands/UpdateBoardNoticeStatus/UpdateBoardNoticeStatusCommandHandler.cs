@@ -37,9 +37,10 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 
             boardNotice.Completed = request.Complete;
 
-            await _unitOfWork.GetRepository<BoardNotice>().Update(boardNotice, true, cancellationToken);
+            _unitOfWork.GetRepository<BoardNotice>().Update(boardNotice);
 
-            if (boardNotice.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || boardNotice.Id == Guid.Empty)
             {
                 _logger.LogError("Can't update board notice.");
                 throw new ArgumentException(nameof(boardNotice));

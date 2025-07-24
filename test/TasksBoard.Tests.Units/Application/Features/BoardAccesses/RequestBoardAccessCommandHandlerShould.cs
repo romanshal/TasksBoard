@@ -82,8 +82,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 .Setup(s => s.GetByBoardIdAndToAccountIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            accessRepository.Setup(s => s.Add(It.IsAny<BoardAccessRequest>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+            accessRepository.Setup(s => s.Add(It.IsAny<BoardAccessRequest>()));
 
             mapper.Setup(s => s.Map<BoardAccessRequest>(command))
                 .Returns(new BoardAccessRequest
@@ -95,6 +94,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     AccountEmail = "Test account email",
                     Status = 1
                 });
+
+            unitOfWork
+                .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
 
             var actual = await sut.Handle(command, CancellationToken.None);
             actual.Should().Be(requestId);

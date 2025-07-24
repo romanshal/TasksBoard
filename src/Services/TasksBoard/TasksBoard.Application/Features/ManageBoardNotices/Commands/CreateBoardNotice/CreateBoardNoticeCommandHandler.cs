@@ -31,9 +31,10 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
 
             var notice = _mapper.Map<BoardNotice>(request);
 
-            await _unitOfWork.GetRepository<BoardNotice>().Add(notice, true, cancellationToken);
+            _unitOfWork.GetRepository<BoardNotice>().Add(notice);
 
-            if (notice.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || notice.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new board notice to board with id '{boardId}'.", request.BoardId);
                 throw new ArgumentException(nameof(notice));

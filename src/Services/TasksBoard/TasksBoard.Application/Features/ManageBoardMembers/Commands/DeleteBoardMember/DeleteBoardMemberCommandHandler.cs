@@ -1,4 +1,5 @@
-﻿using Common.Blocks.Exceptions;
+﻿using AutoMapper.Execution;
+using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
@@ -33,7 +34,14 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
                 throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 
-            await _unitOfWork.GetBoardMemberRepository().Delete(member, true, cancellationToken);
+            _unitOfWork.GetBoardMemberRepository().Delete(member);
+
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if(affectedRows == 0)
+            {
+                _logger.LogError("Can't delete board member with id '{memberId}' from board with id '{boardId}'.", request.MemberId, request.BoardId);
+                throw new ArgumentException($"Can't delete board member with id '{request.MemberId}' from board with id '{request.BoardId}'.");
+            }
 
             var removeEvent = new RemoveBoardMemberEvent
             {

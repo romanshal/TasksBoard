@@ -72,56 +72,36 @@ namespace Common.Blocks.Repositories
         /// Add new entity to database.
         /// </summary>
         /// <param name="entity">Database entity.</param>
-        /// <param name="needSaveChanges">Is need save changes.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Id of new entity</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task Add(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default)
+        public virtual void Add(T entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             DbSet.Add(entity);
-
-            if (needSaveChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
         }
 
         /// <summary>
         /// Update entity in database.
         /// </summary>
         /// <param name="entity">Database entity.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task Update(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default)
+        public virtual void Update(T entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             DbSet.Update(entity);
-
-            if (needSaveChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
         }
 
         /// <summary>
         /// Delete entity by id.
         /// </summary>
         /// <param name="entity">Database entity.</param>
-        /// <param name="needSaveChanges">Is need save changes.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
-        public virtual async Task Delete(T entity, bool needSaveChanges = false, CancellationToken cancellationToken = default)
+        public virtual void Delete(T entity)
         {
             DbSet.Remove(entity);
-
-            if (needSaveChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
         }
 
         /// <summary>

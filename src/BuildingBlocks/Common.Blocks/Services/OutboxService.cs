@@ -24,9 +24,10 @@ namespace Common.Blocks.Services
                 Status = OutboxEventStatuses.Created
             };
 
-            await _unitOfWork.GetRepository<OutboxEvent>().Add(outboxEvent, true, cancellationToken);
+            _unitOfWork.GetRepository<OutboxEvent>().Add(outboxEvent);
 
-            if (outboxEvent.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || outboxEvent.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new outbox event.");
                 throw new ArgumentException(nameof(outboxEvent));

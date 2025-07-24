@@ -30,7 +30,14 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoar
                 throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
             }
 
-            await _unitOfWork.GetRepository<BoardNotice>().Delete(boardNotice, true, cancellationToken);
+            _unitOfWork.GetRepository<BoardNotice>().Delete(boardNotice);
+
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0)
+            {
+                _logger.LogError("Can't delete board notice with id '{noticeId}' from board with id '{boardId}'.", request.NoticeId, request.BoardId);
+                throw new ArgumentException($"Can't delete board notice with id '{request.NoticeId}' from board with id '{request.BoardId}'.");
+            }
 
             _logger.LogInformation("Board notice with id '{id}' deleted from board with id '{boardId}'.", boardNotice.Id, request.BoardId);
 

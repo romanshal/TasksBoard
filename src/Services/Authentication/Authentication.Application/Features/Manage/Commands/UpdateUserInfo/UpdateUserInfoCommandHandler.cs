@@ -51,12 +51,19 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
                 AccountSurname = user.Surname
             };
 
-            await _unitOfWork.GetRepository<OutboxEvent>().Add(new OutboxEvent
+            _unitOfWork.GetRepository<OutboxEvent>().Add(new OutboxEvent
             {
                 EventType = updateEvent.GetType().Name!,
                 Payload = JsonSerializer.Serialize(updateEvent),
                 Status = OutboxEventStatuses.Created
-            }, true, cancellationToken);
+            });
+
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if(affectedRows == 0)
+            {
+                _logger.LogError("Can't save outbox event.");
+                throw new ArgumentException("Can't save outbox event.");
+            }
 
             _logger.LogInformation("User with id '{id}' was successfully updated.", user.Id);
 

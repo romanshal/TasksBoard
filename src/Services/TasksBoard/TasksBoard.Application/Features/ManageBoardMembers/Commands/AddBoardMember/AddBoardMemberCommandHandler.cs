@@ -52,9 +52,10 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 ]
             };
 
-            await _unitOfWork.GetBoardMemberRepository().Add(member, true, cancellationToken);
+            _unitOfWork.GetBoardMemberRepository().Add(member);
 
-            if (member.Id == Guid.Empty)
+            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (affectedRows == 0 || member.Id == Guid.Empty)
             {
                 _logger.LogError("Can't add new board member.");
                 throw new ArgumentException(nameof(member));
