@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards.API")
-    .AddApiMetrics();
+    .AddApiMetrics(builder.Configuration, "TasksBoards.API");
 
 builder.Services.AddCors(options =>
 {
@@ -74,8 +74,9 @@ app.UseAuthorization();
 
 app.UseExeptionWrappingMiddleware();
 
-app.MapControllers()
-    .RequireAuthorization();
+app.MapControllers().RequireAuthorization();
 app.MapPrometheusScrapingEndpoint();
 
 app.Run();
+
+public partial class Program { }
