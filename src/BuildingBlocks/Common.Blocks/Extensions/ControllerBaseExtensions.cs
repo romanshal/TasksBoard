@@ -19,6 +19,7 @@ namespace Common.Blocks.Extensions
                },
                onFailure: error => controller.MapErrors(error));
         }
+
         public static IActionResult HandleResponse<T>(this ControllerBase controller, Result<T> result, Func<IActionResult> onSuccessHandler = null)
         {
             return result.Match(
@@ -36,6 +37,7 @@ namespace Common.Blocks.Extensions
             Error error) => error.Code switch
             {
                 ErrorCodes.NotFound => controller.NotFound(ApiResponse.Error(error.Description)),
+                ErrorCodes.Unauthorized => controller.Unauthorized(),
                 ErrorCodes.Forbidden => controller.Forbid(),
                 ErrorCodes.AlreadyExist => controller.BadRequest(ApiResponse.Error(error.Description)),
                 ErrorCodes.NoEntities => controller.NotFound(ApiResponse.Error(error.Description)),

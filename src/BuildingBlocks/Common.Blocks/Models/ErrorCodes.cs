@@ -8,6 +8,7 @@
         public const string CantCancel = "cant.cancel";
         public const string CantDelete = "cant.delete";
         public const string NoEntities = "no.entities";
+        public const string Unauthorized = "unauthorized";
         public const string Forbidden = "forbidden";
         public const string AlreadyExist = "already.exist";
     }
