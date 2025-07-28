@@ -1,5 +1,4 @@
 ﻿using Common.Blocks.Constants;
-using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;

@@ -1,6 +1,5 @@
 ﻿using Chat.Domain.Constants.Errors.DomainErrors;
 using Chat.Domain.Interfaces.UnitOfWorks;
-using Common.Blocks.Exceptions;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;

@@ -1,11 +1,10 @@
-﻿using Common.Blocks.Models.ApiResponses;
+﻿using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByBoardIdAndAccountId;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMembersByBoardId;
-using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {

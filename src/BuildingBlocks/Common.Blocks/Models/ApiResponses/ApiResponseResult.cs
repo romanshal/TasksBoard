@@ -6,7 +6,7 @@ namespace Common.Blocks.Models.ApiResponses
     {
         private readonly T? _result;
 
-        protected internal ApiResponse(T? result, string? description = default, bool isError = false) : base(description, isError) => 
+        protected internal ApiResponse(T? result, string? description = default, bool isError = false) : base(description, isError) =>
             _result = result;
 
         [NotNull]

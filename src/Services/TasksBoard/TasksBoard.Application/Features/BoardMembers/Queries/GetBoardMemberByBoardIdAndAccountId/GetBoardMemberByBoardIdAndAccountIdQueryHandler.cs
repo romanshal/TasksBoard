@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Blocks.Exceptions;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;

@@ -1,5 +1,4 @@
-﻿using Common.Blocks.Models;
-using Common.Blocks.Models.ApiResponses;
+﻿using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,6 @@ using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoti
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserIdAndBoardId;
 using TasksBoard.Application.Models;
-using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {

@@ -1,9 +1,7 @@
-﻿using Common.Blocks.Models;
-using Common.Blocks.Models.ApiResponses;
+﻿using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Application.Dtos;
 using Notification.Application.Features.Notifications.Commands.SetNotificationsRead;
 using Notification.Application.Features.Notifications.Queries.GetNewNotificationsByAccountId;
 using Notification.Application.Features.Notifications.Queries.GetNewPaginatedNotificationsByAccountId;
@@ -35,9 +33,7 @@ namespace Notification.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = ApiResponse.Success(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("new/paginated/{accountId:Guid}")]
@@ -54,9 +50,7 @@ namespace Notification.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = ApiResponse.Success(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("new/{accountId:Guid}")]
@@ -71,9 +65,7 @@ namespace Notification.API.Controllers
                 AccountId = accountId
             });
 
-            var response = ApiResponse.Success(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpPost("{accountId:Guid}")]
@@ -89,9 +81,7 @@ namespace Notification.API.Controllers
                 NotificationIds = notificationIds
             });
 
-            var response = ApiResponse.Success();
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

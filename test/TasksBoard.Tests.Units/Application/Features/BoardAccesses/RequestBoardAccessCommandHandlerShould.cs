@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
 using EventBus.Messages.Events;
 using FluentAssertions;

@@ -1,22 +1,24 @@
-﻿using MediatR;
+﻿using Common.Blocks.Models.DomainResults;
+using MediatR;
 using Microsoft.Extensions.Logging;
+using Notification.Domain.Constants;
 using Notification.Domain.Interfaces.UnitOfWorks;
 
 namespace Notification.Application.Features.Notifications.Commands.SetNotificationsRead
 {
     public class SetNotificationsReadCommandHandler(
         IUnitOfWork unitOfWork,
-        ILogger<SetNotificationsReadCommandHandler> logger) : IRequestHandler<SetNotificationsReadCommand, Unit>
+        ILogger<SetNotificationsReadCommandHandler> logger) : IRequestHandler<SetNotificationsReadCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<SetNotificationsReadCommandHandler> _logger = logger;
 
-        public async Task<Unit> Handle(SetNotificationsReadCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SetNotificationsReadCommand request, CancellationToken cancellationToken)
         {
             var notifications = await _unitOfWork.GetApplicationEventRepository().GetByIdsAsync(request.NotificationIds, cancellationToken);
             if (!notifications.Any())
             {
-                return Unit.Value;
+                return Result.Success();
             }
 
             foreach (var notification in notifications)
@@ -29,11 +31,13 @@ namespace Notification.Application.Features.Notifications.Commands.SetNotificati
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
             if (affectedRows == 0)
             {
-                _logger.LogError("Can't save notifications.");
-                throw new ArgumentException("Can't save notifications.");
+                _logger.LogError("Can't update notifications.");
+                return Result.Failure(NotificationErrors.CantUpdate);
+
+                //throw new ArgumentException("Can't save notifications.");
             }
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

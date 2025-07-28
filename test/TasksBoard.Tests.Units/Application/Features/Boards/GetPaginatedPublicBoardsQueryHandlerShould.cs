@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Blocks.Exceptions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -1,6 +1,4 @@
-﻿using Common.Blocks.Exceptions;
-using FluentAssertions;
-using MediatR;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;

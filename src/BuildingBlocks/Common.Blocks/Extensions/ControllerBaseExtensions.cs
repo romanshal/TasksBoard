@@ -1,9 +1,8 @@
-﻿using Common.Blocks.Models.ApiResponses;
-using Common.Blocks.Models;
+﻿using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
+using Common.Blocks.Models.DomainResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Common.Blocks.Models.DomainResults;
-using Npgsql;
 
 namespace Common.Blocks.Extensions
 {

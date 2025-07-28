@@ -4,11 +4,11 @@ using Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage;
 using Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoardId;
+using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Common.Blocks.Extensions;
 
 namespace Chat.API.Controllers
 {

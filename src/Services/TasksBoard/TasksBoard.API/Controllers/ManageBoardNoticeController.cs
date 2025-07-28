@@ -1,4 +1,5 @@
-﻿using Common.Blocks.Models.ApiResponses;
+﻿using Common.Blocks.Extensions;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNot
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus;
-using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {

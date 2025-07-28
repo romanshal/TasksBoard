@@ -1,11 +1,8 @@
 ﻿using Common.Blocks.Extensions;
-using Common.Blocks.Models;
-using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Models.Requests.BoardAccessRequests;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess;
 using TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess;
 using TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestByAccountId;

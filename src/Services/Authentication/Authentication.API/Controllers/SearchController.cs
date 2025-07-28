@@ -1,5 +1,4 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Features.Search.Queries.SearchUsers;
+﻿using Authentication.Application.Features.Search.Queries.SearchUsers;
 using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

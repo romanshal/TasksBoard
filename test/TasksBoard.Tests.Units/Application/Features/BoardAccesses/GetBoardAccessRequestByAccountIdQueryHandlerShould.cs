@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Blocks.Models.DomainResults;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;

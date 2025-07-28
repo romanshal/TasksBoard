@@ -1,5 +1,4 @@
-﻿using Common.Blocks.Exceptions;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess;

@@ -4,7 +4,6 @@ using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
 using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
 using Authentication.Application.Features.Manage.Queries.GetUserImage;
 using Authentication.Application.Features.Manage.Queries.GetUserInfo;
-using Common.Blocks.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

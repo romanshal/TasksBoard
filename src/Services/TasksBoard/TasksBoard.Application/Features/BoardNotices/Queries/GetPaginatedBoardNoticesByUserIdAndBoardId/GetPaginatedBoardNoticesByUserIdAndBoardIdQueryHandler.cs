@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Blocks.Exceptions;
 using Common.Blocks.Extensions;
 using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;

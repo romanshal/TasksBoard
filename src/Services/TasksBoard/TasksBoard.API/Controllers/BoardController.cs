@@ -1,4 +1,5 @@
-﻿using Common.Blocks.Models.ApiResponses;
+﻿using Common.Blocks.Extensions;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,6 @@ using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoards;
-using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {
