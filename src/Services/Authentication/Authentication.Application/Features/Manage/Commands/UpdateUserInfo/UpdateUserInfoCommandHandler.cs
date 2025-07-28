@@ -1,6 +1,5 @@
 ﻿using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
-using AutoMapper;
 using Common.Blocks.Constants;
 using Common.Blocks.Entities;
 using Common.Blocks.Exceptions;
@@ -59,7 +58,7 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
             });
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if(affectedRows == 0)
+            if (affectedRows == 0)
             {
                 _logger.LogError("Can't save outbox event.");
                 throw new ArgumentException("Can't save outbox event.");

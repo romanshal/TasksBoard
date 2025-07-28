@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
-using TasksBoard.Domain.Constants.Messages;
+using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.ManageBoardNotices
 {
@@ -28,13 +28,13 @@ namespace TasksBoard.Application.Validators.ManageBoardNotices
             RuleFor(x => x.Definition)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(BoardNoticeMessages.DefinitionRequired);            
-            
+                .WithMessage(BoardNoticeMessages.DefinitionRequired);
+
             RuleFor(x => x.BackgroundColor)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(BoardNoticeMessages.BackgroundColorRequired);            
-            
+                .WithMessage(BoardNoticeMessages.BackgroundColorRequired);
+
             RuleFor(x => x.Rotation)
                 .NotNull()
                 .NotEmpty()

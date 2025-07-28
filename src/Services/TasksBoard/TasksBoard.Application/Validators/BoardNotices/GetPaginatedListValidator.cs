@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Models;
-using TasksBoard.Domain.Constants.Messages;
+using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.BoardNotices
 {

@@ -1,5 +1,4 @@
-﻿using Authentication.Application.Features.Authentications.Commands.Logout;
-using Authentication.Application.Features.Authentications.Commands.Register;
+﻿using Authentication.Application.Features.Authentications.Commands.Register;
 using Authentication.Application.Validators.Authentications;
 using FluentAssertions;
 

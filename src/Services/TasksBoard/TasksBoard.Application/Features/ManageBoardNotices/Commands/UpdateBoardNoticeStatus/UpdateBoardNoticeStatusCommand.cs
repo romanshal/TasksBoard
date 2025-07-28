@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Common.Blocks.Models.DomainResults;
+using MediatR;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus
 {
-    public record UpdateBoardNoticeStatusCommand : IRequest<Guid>
+    public record UpdateBoardNoticeStatusCommand : IRequest<Result<Guid>>
     {
         public required Guid BoardId { get; set; }
         public required Guid AccountId { get; set; }

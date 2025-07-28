@@ -1,11 +1,10 @@
 ﻿using Common.Blocks.Exceptions;
-using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Common.Blocks.Middlewares
 {
@@ -50,20 +49,20 @@ namespace Common.Blocks.Middlewares
             };
         }
 
-        private static Response GetResponseDate(Exception ex)
+        private static ApiResponse GetResponseDate(Exception ex)
         {
             return ex switch
             {
-                ValidationException 
-                or AlreadyExistException 
+                ValidationException
+                or AlreadyExistException
                 or InvalidPasswordException
                 or NotFoundException
                 or LockedException
-                or SigninFaultedException 
-                or UnauthorizedException 
-                or SecurityTokenException => new Response(ex.Message, true),
+                or SigninFaultedException
+                or UnauthorizedException
+                or SecurityTokenException => ApiResponse.Error(ex.Message),
 
-                _ => new Response("Something went wrong...", true),
+                _ => ApiResponse.Error("Something went wrong..."),
             };
         }
     }

@@ -5,6 +5,7 @@ using Moq;
 using TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess;
 using TasksBoard.Application.Interfaces.Repositories;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
@@ -60,7 +61,8 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             var actual = await sut.Handle(command, CancellationToken.None);
 
-            actual.Should().Be(requestId);
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeEmpty().And.Be(requestId);
 
             repository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
             repository.Verify(s => s.Update(It.IsAny<BoardAccessRequest>()), Times.Once);
@@ -68,7 +70,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
         }
 
         [Fact]
-        public async Task ReturnNotFoundException_WhenRequestDoesntExist()
+        public async Task ReturnNotFoundResult_WhenRequestDoesntExist()
         {
             var command = new CancelBoardAccessCommand
             {
@@ -76,10 +78,15 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
             repositoryGetSetup.ReturnsAsync(value: null);
 
-           var t = await sut
-                .Invoking(s => s.Handle(command, It.IsAny<CancellationToken>()))
-                .Should()
-                .ThrowAsync<NotFoundException>();
+            //var t = await sut
+            //     .Invoking(s => s.Handle(command, It.IsAny<CancellationToken>()))
+            //     .Should()
+            //     .ThrowAsync<NotFoundException>();
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardAccessErrors.NotFound);
 
             repository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         }

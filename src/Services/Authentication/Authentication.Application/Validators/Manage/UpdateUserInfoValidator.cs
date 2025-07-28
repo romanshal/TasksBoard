@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Authentication.Application.Validators.Manage
 {
-    public class UpdateUserInfoValidator : AbstractValidator<UpdateUserInfoCommand> 
+    public class UpdateUserInfoValidator : AbstractValidator<UpdateUserInfoCommand>
     {
         public UpdateUserInfoValidator()
         {

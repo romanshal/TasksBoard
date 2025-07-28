@@ -1,6 +1,6 @@
 ﻿using Authentication.Application.Dtos;
 using Authentication.Application.Features.Search.Queries.SearchUsers;
-using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ namespace Authentication.API.Controllers
         {
             var result = await _mediator.Send(new SearchUsersQuery { Query = search });
 
-            var response = new ResultResponse<IEnumerable<UserInfoDto>>(result);
+            var response = ApiResponse.Success(result);
 
             return Ok(response);
         }

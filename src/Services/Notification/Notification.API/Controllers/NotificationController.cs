@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,7 @@ namespace Notification.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<NotificationDto>>(result);
+            var response = ApiResponse.Success(result);
 
             return Ok(response);
         }
@@ -53,7 +54,7 @@ namespace Notification.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<NotificationDto>>(result);
+            var response = ApiResponse.Success(result);
 
             return Ok(response);
         }
@@ -70,7 +71,7 @@ namespace Notification.API.Controllers
                 AccountId = accountId
             });
 
-            var response = new ResultResponse<IEnumerable<NotificationDto>>(result);
+            var response = ApiResponse.Success(result);
 
             return Ok(response);
         }
@@ -88,7 +89,7 @@ namespace Notification.API.Controllers
                 NotificationIds = notificationIds
             });
 
-            var response = new Response();
+            var response = ApiResponse.Success();
 
             return Ok(response);
         }

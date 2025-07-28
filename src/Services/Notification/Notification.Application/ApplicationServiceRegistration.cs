@@ -1,6 +1,4 @@
-﻿using EventBus.Messages.Extensions;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Application.BackgroundServices;
 using Notification.Application.Providers;

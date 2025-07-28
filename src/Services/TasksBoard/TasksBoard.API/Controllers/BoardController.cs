@@ -1,16 +1,16 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.API.Models.Requests.Boards;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId;
 using TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoards;
+using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {
@@ -39,9 +39,7 @@ namespace TasksBoard.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("{boardId:guid}")]
@@ -55,14 +53,8 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> GetBoardByIdAsync([FromRoute] Guid boardId)
         {
             var result = await _mediator.Send(new GetBoardByIdQuery { Id = boardId });
-            if (result is null)
-            {
-                return NotFound();
-            }
 
-            var response = new ResultResponse<BoardDto>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         //TODO: add permission check
@@ -83,14 +75,7 @@ namespace TasksBoard.API.Controllers
                 Query = query
             });
 
-            if (result is null)
-            {
-                return NotFound();
-            }
-
-            var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("public")]
@@ -111,14 +96,7 @@ namespace TasksBoard.API.Controllers
                 AccountId = Guid.Parse(userId)
             });
 
-            if (result is null)
-            {
-                return NotFound();
-            }
-
-            var response = new ResultResponse<PaginatedList<BoardForViewDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpPost]
@@ -151,14 +129,16 @@ namespace TasksBoard.API.Controllers
                 ImageExtension = imageExtension
             });
 
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
+            return this.HandleResponse(result, () => Created(Url.Action(nameof(GetBoardByIdAsync), new { id = result.Value }), ApiResponse.Success(result.Value)));
 
-            var response = new ResultResponse<Guid>(result);
+            //if (result.IsFailure)
+            //{
+            //    return BadRequest(ApiResponse.Error(result.Error.Description));
+            //}
 
-            return Created(Url.Action(nameof(GetBoardByIdAsync), new { id = result }), response);
+            //var response = ApiResponse.Success(result.Value);
+
+            //return Created(Url.Action(nameof(GetBoardByIdAsync), new { id = result.Value }), response);
         }
     }
 }

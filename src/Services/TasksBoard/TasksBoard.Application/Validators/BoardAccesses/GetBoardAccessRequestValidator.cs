@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestByAccountId;
-using TasksBoard.Domain.Constants.Messages;
+using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.BoardAccesses
 {

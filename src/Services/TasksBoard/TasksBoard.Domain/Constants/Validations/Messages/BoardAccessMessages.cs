@@ -1,6 +1,4 @@
-﻿using MassTransit;
-
-namespace TasksBoard.Domain.Constants.Messages
+﻿namespace TasksBoard.Domain.Constants.Validations.Messages
 {
     public class BoardAccessMessages : BaseMessages
     {

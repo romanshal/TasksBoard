@@ -104,7 +104,7 @@ namespace Authentication.API.Controllers
         {
             byte[]? imageData = null;
             string? imageExtension = string.Empty;
-            if (request.Image == null && request.Image.Length == 0)
+            if (request.Image == null && request.Image?.Length == 0)
             {
                 return BadRequest();
             }
@@ -127,9 +127,7 @@ namespace Authentication.API.Controllers
                 return BadRequest();
             }
 
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return Ok(result);
         }
     }
 }

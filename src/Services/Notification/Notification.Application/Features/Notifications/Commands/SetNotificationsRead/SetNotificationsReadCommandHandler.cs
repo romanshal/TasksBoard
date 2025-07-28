@@ -27,7 +27,7 @@ namespace Notification.Application.Features.Notifications.Commands.SetNotificati
             }
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if(affectedRows == 0)
+            if (affectedRows == 0)
             {
                 _logger.LogError("Can't save notifications.");
                 throw new ArgumentException("Can't save notifications.");

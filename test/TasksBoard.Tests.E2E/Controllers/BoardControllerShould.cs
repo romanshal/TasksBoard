@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 
@@ -12,7 +11,7 @@ namespace TasksBoard.Tests.E2E.Controllers
         {
             using var httpClient = factory.CreateClient();
 
-            var board = new CreateBoardCommand 
+            var board = new CreateBoardCommand
             {
                 OwnerId = Guid.Parse("56114028-b282-45b3-b6ca-89982965e4c8"),
                 OwnerNickname = "Owner nickname",

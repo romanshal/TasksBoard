@@ -27,7 +27,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage
 
             _unitOfWork.GetBoardMessagesRepository().Update(boardMessage);
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if(affectedRows == 0)
+            if (affectedRows == 0)
             {
                 _logger.LogError("Can't save new board message.");
                 throw new ArgumentException("Can't save new board message.");

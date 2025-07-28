@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Common.Blocks.Exceptions;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
@@ -11,24 +13,26 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
     public class GetPaginatedPublicBoardsQueryHandler(
         ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
         IUnitOfWork unitOfWork,
-        IMapper mapper) : IRequestHandler<GetBoardByIdQuery, BoardDto>
+        IMapper mapper) : IRequestHandler<GetBoardByIdQuery, Result<BoardDto>>
     {
         private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<BoardDto> Handle(GetBoardByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<BoardDto>> Handle(GetBoardByIdQuery request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.Id, cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{id}' was not found.", request.Id);
-                throw new NotFoundException($"Board with id '{request.Id}' was not found.");
+                return Result.Failure<BoardDto>(BoardErrors.NotFound);
+
+                //throw new NotFoundException($"Board with id '{request.Id}' was not found.");
             }
 
             var boardDto = _mapper.Map<BoardDto>(board);
 
-            return boardDto;
+            return Result.Success(boardDto);
         }
     }
 }

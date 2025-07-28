@@ -53,7 +53,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
         public async Task ReturnCreatedBoardId_WhenBoardCreated()
         {
             var boardId = Guid.Parse("cda27b4a-0865-475b-9562-07edb3a73360");
-            var command = new CreateBoardCommand 
+            var command = new CreateBoardCommand
             {
                 OwnerId = Guid.Empty,
                 Name = string.Empty,
@@ -62,7 +62,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             mapper
                 .Setup(s => s.Map<Board>(command))
-                .Returns(new Board 
+                .Returns(new Board
                 {
                     Id = boardId,
                     OwnerId = Guid.Empty,
@@ -87,7 +87,9 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 .ReturnsAsync(1);
 
             var actual = await sut.Handle(command, CancellationToken.None);
-            actual.Should().Be(boardId);
+
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeEmpty().And.Be(boardId);
         }
     }
 }

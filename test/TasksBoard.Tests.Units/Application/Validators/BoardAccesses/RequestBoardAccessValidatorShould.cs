@@ -31,7 +31,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardAccesses
 
         public static IEnumerable<object[]> GetInvalidCommands()
         {
-            var validCommand = new RequestBoardAccessCommand 
+            var validCommand = new RequestBoardAccessCommand
             {
                 BoardId = Guid.Parse("ee1ea84d-4849-4a0c-affa-286a0d145db3"),
                 AccountId = Guid.Parse("dbe15649-33f7-4ef1-9709-a233731b94ba"),

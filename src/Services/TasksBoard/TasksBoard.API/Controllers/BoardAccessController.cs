@@ -1,4 +1,6 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Extensions;
+using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,9 +36,7 @@ namespace TasksBoard.API.Controllers
                 AccountId = accountId
             });
 
-            var response = new ResultResponse<IEnumerable<BoardAccessRequestDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpPost("board/{boardId:guid}")]
@@ -56,14 +56,7 @@ namespace TasksBoard.API.Controllers
                 AccountEmail = request.AccountEmail
             });
 
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpPost("cancel")]
@@ -77,9 +70,7 @@ namespace TasksBoard.API.Controllers
         {
             var result = await _mediator.Send(command);
 
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

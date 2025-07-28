@@ -5,7 +5,7 @@ using Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage;
 using Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoardId;
-using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,7 @@ namespace Chat.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<IEnumerable<BoardMessageDto>>(result);
+            var response = ApiResponse.Success(result);
 
             return Ok(response);
         }
@@ -65,7 +65,7 @@ namespace Chat.API.Controllers
 
             await hubContext.Clients.Group(boardId.ToString()).SendAsync("ReceiveMessage", result);
 
-            var response = new ResultResponse<Guid>(result.Id);
+            var response = ApiResponse.Success(result.Id);
 
             return Ok(response);
         }
@@ -89,7 +89,7 @@ namespace Chat.API.Controllers
 
             await hubContext.Clients.Group(boardId.ToString()).SendAsync("EditMessage", result);
 
-            var response = new ResultResponse<Guid>(result.Id);
+            var response = ApiResponse.Success(result.Id);
 
             return Ok(response);
         }
@@ -109,7 +109,7 @@ namespace Chat.API.Controllers
                 BoardMessageId = messageId,
             });
 
-            var response = new Response();
+            var response = ApiResponse.Success();
 
             return Ok(response);
         }

@@ -1,5 +1,4 @@
-﻿using Castle.Core.Logging;
-using Common.Blocks.Exceptions;
+﻿using Common.Blocks.Exceptions;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -7,6 +6,7 @@ using Moq;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Interfaces.Repositories;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
@@ -38,9 +38,9 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
         }
 
         [Fact]
-        public async Task ReturnUnit_WhenBoardNoticeDeleted()
+        public async Task ReturnSuccessResult_WhenBoardNoticeDeleted()
         {
-            var command = new DeleteBoardNoticeCommand 
+            var command = new DeleteBoardNoticeCommand
             {
                 BoardId = Guid.Empty,
                 NoticeId = Guid.Empty
@@ -70,11 +70,12 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .ReturnsAsync(1);
 
             var actual = await sut.Handle(command, CancellationToken.None);
-            actual.Should().Be(Unit.Value);
+
+            actual.IsSuccess.Should().BeTrue();
         }
 
         [Fact]
-        public async Task ReturnNotFoundException_WhenBoardDoesntExist()
+        public async Task ReturnNotFoundResult_WhenBoardDoesntExist()
         {
             var boardId = Guid.Parse("6333298d-a54b-47fb-aaab-20a205fdca83");
             var command = new DeleteBoardNoticeCommand
@@ -87,15 +88,20 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .Setup(s => s.ExistAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: false);
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<NotFoundException>()
-                .WithMessage($"Board with id '{boardId}' not found.");
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<NotFoundException>()
+            //    .WithMessage($"Board with id '{boardId}' not found.");
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);
         }
 
         [Fact]
-        public async Task ReturnNotFoundException_WhenBoardNoticeDoesntExist()
+        public async Task ReturnNotFoundResult_WhenBoardNoticeDoesntExist()
         {
             var noticeId = Guid.Parse("6333298d-a54b-47fb-aaab-20a205fdca83");
             var command = new DeleteBoardNoticeCommand
@@ -112,11 +118,16 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<NotFoundException>()
-                .WithMessage($"Board notice with id '{noticeId}' not found.");
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<NotFoundException>()
+            //    .WithMessage($"Board notice with id '{noticeId}' not found.");
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardNoticeErrors.NotFound);
         }
     }
 }

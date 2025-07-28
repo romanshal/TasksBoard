@@ -1,4 +1,4 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +9,7 @@ using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNot
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus;
+using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {
@@ -31,7 +32,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeRequest request)
         {
-            var command = new CreateBoardNoticeCommand
+            var result = await _mediator.Send(new CreateBoardNoticeCommand
             {
                 BoardId = boardId,
                 AuthorId = request.AuthorId,
@@ -39,15 +40,7 @@ namespace TasksBoard.API.Controllers
                 Definition = request.Definition,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
-            };
-
-            var result = await _mediator.Send(command);
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var response = new ResultResponse<Guid>(result);
+            });
 
             var locationUrl = Url.Action(
                 action: nameof(BoardController.GetBoardByIdAsync),
@@ -56,7 +49,23 @@ namespace TasksBoard.API.Controllers
                 protocol: Request.Scheme
                 );
 
-            return Created(locationUrl, response);
+            return this.HandleResponse(result, () => Created(locationUrl, ApiResponse.Success(result.Value)));
+
+            //if (result.IsFailure)
+            //{
+            //    return BadRequest(ApiResponse.Error(result.Error.Description));
+            //}
+
+            //var response = ApiResponse.Success(result);
+
+            //var locationUrl = Url.Action(
+            //    action: nameof(BoardController.GetBoardByIdAsync),
+            //    controller: nameof(BoardController),
+            //    values: new { boardId },
+            //    protocol: Request.Scheme
+            //    );
+
+            //return Created(locationUrl, response);
         }
 
         [HttpPut("board/{boardId:guid}")]
@@ -69,7 +78,7 @@ namespace TasksBoard.API.Controllers
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
 
-            var command = new UpdateBoardNoticeCommand
+            var result = await _mediator.Send(new UpdateBoardNoticeCommand
             {
                 BoardId = boardId,
                 NoticeId = request.NoticeId,
@@ -77,17 +86,9 @@ namespace TasksBoard.API.Controllers
                 Definition = request.Definition,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
-            };
+            });
 
-            var result = await _mediator.Send(command);
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpPut("status/board/{boardId:guid}")]
@@ -98,24 +99,16 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateBoardNoticeStatusAsync([FromRoute] Guid boardId, UpdateBoardNoticeStatusRequest request)
         {
-            var command = new UpdateBoardNoticeStatusCommand
+            var result = await _mediator.Send(new UpdateBoardNoticeStatusCommand
             {
                 BoardId = boardId,
                 AccountId = request.AccountId,
                 AccountName = request.AccountName,
                 NoticeId = request.NoticeId,
                 Complete = request.Complete
-            };
+            });
 
-            var result = await _mediator.Send(command);
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpDelete("board/{boardId:guid}/notice/{noticeId:guid}")]
@@ -125,15 +118,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
         {
-            await _mediator.Send(new DeleteBoardNoticeCommand
+            var result = await _mediator.Send(new DeleteBoardNoticeCommand
             {
                 BoardId = boardId,
                 NoticeId = noticeId
             });
 
-            var response = new Response();
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

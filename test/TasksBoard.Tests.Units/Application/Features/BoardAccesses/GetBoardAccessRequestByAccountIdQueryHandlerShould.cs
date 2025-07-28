@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.Models.DomainResults;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -42,8 +43,8 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 AccountId = Guid.Empty
             };
 
-            var list = new List<BoardAccessRequest> 
-            { 
+            var list = new List<BoardAccessRequest>
+            {
                 new() {
                     BoardId = Guid.Empty,
                     AccountId = Guid.Empty,
@@ -60,9 +61,9 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             var listDto = mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
 
             var actual = await sut.Handle(command, CancellationToken.None);
-            actual
-                .Should()
-                .BeEquivalentTo<BoardAccessRequestDto>(listDto);
+
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeNullOrEmpty().And.BeEquivalentTo(listDto);
         }
 
         [Fact]
@@ -82,11 +83,9 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             var listDto = mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
 
             var actual = await sut.Handle(command, CancellationToken.None);
-            actual
-                .Should()
-                .BeEmpty()
-                .And
-                .BeEquivalentTo<BoardAccessRequestDto>(listDto);
+
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().BeEmpty().And.BeEquivalentTo(listDto);
         }
     }
 }

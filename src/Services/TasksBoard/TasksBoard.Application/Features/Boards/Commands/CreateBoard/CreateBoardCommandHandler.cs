@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
@@ -9,13 +11,13 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
     public class CreateBoardCommandHandler(
         ILogger<CreateBoardCommandHandler> logger,
         IUnitOfWork unitOfWork,
-        IMapper mapper) : IRequestHandler<CreateBoardCommand, Guid>
+        IMapper mapper) : IRequestHandler<CreateBoardCommand, Result<Guid>>
     {
         private readonly ILogger<CreateBoardCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<Guid> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
         {
             var board = CreateBoard(request);
 
@@ -28,12 +30,14 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             if (affectedRows == 0 || board.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new board. No rows were affected.");
-                throw new InvalidOperationException("Can't create new board. No rows were affected.");
+                return Result.Failure<Guid>(BoardErrors.CantCreate);
+
+                //throw new InvalidOperationException("Can't create new board. No rows were affected.");
             }
 
             _logger.LogInformation("Created new board with id '{id}'.", board.Id);
 
-            return board.Id;
+            return Result.Success(board.Id);
         }
 
         private Board CreateBoard(CreateBoardCommand request)

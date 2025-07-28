@@ -244,6 +244,5 @@ export class ProfileComponent implements OnInit {
         this.boardAccessRequests = this.boardAccessRequests.filter(req => req.Id !== request.Id);
       }
     });
-
   }
 }

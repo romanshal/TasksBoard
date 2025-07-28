@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
-using TasksBoard.Domain.Constants.Messages;
+using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.ManageBoardNotices
 {
@@ -18,8 +18,8 @@ namespace TasksBoard.Application.Validators.ManageBoardNotices
                 .NotNull()
                 .NotEmpty()
                 .NotEqual(Guid.Empty)
-                .WithMessage(BoardNoticeMessages.BoardNoticeIdRequired);            
-            
+                .WithMessage(BoardNoticeMessages.BoardNoticeIdRequired);
+
             RuleFor(x => x.AccountId)
                 .NotNull()
                 .NotEmpty()

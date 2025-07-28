@@ -1,5 +1,4 @@
-﻿using Authentication.Application.Features.Authentications.Commands.Logout;
-using Authentication.Application.Features.Authentications.Commands.RefreshToken;
+﻿using Authentication.Application.Features.Authentications.Commands.RefreshToken;
 using Authentication.Application.Validators.Authentications;
 using FluentAssertions;
 

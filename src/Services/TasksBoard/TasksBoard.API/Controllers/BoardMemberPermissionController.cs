@@ -1,9 +1,9 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardPermission.Queries.GetBoardPermissions;
+using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {
@@ -27,9 +27,7 @@ namespace TasksBoard.API.Controllers
         {
             var result = await _mediator.Send(new GetBoardPermissionsQuery());
 
-            var response = new ResultResponse<IEnumerable<BoardPermissionDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

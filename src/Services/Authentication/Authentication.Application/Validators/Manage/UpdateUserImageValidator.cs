@@ -1,7 +1,6 @@
 ﻿using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
 using Authentication.Domain.Constants.Messages;
 using FluentValidation;
-using System.Data;
 
 namespace Authentication.Application.Validators.Manage
 {

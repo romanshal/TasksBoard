@@ -1,25 +1,29 @@
-﻿using Common.Blocks.Exceptions;
+﻿using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
     public class UpdateBoardCommandHandler(
         ILogger<UpdateBoardCommandHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Guid>
+        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Result<Guid>>
     {
         private readonly ILogger<UpdateBoardCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Guid> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+
+                _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
+                return Result.Failure<Guid>(BoardErrors.NotFound);
+
+                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             board.Name = request.Name;
@@ -59,12 +63,15 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
             if (affectedRows == 0 || board.Id == Guid.Empty)
             {
                 _logger.LogError("Can't update board with id '{id}'.", board.Id);
-                throw new ArgumentException(nameof(board));
+                return Result.Failure<Guid>(BoardErrors.CantUpdate);
+
+                //throw new ArgumentException(nameof(board));
             }
 
             _logger.LogInformation("Board with id '{id}' updated'.", board.Id);
 
-            return board.Id;
+            return Result.Success(board.Id);
+            //return board.Id;
         }
     }
 }

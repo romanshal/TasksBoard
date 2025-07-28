@@ -11,9 +11,9 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardAccesses
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
         {
-            var validCommand = new CancelBoardAccessCommand 
-            { 
-                RequestId = Guid.Parse("cd5e2136-cfb7-4c36-bb97-97be589a9ce1") 
+            var validCommand = new CancelBoardAccessCommand
+            {
+                RequestId = Guid.Parse("cd5e2136-cfb7-4c36-bb97-97be589a9ce1")
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();

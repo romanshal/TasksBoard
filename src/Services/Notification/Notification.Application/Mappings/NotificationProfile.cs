@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using EventBus.Messages.Events;
-using Notification.Domain.Constants;
 using Notification.Application.Dtos;
+using Notification.Domain.Constants;
 using Notification.Domain.Entities;
 using System.Text.Json;
 

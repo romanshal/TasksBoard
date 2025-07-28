@@ -1,11 +1,11 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByBoardIdAndAccountId;
 using TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMembersByBoardId;
+using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {
@@ -32,9 +32,7 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId,
             });
 
-            var response = new ResultResponse<IEnumerable<BoardMemberDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("board/{boardId:guid}/account/{accountId:guid}")]
@@ -50,9 +48,7 @@ namespace TasksBoard.API.Controllers
                 AccountId = accountId
             });
 
-            var response = new ResultResponse<BoardMemberDto>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         //[HttpGet("board/{boardId:guid}")]

@@ -8,6 +8,7 @@ using Moq;
 using TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess;
 using TasksBoard.Application.Interfaces.Repositories;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
@@ -100,11 +101,13 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 .ReturnsAsync(1);
 
             var actual = await sut.Handle(command, CancellationToken.None);
-            actual.Should().Be(requestId);
+
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeEmpty().And.Be(requestId);
         }
 
         [Fact]
-        public async Task ThrowNotFoundException_WhenBoardNotDoesntExisst()
+        public async Task ReturnNotFoundResult_WhenBoardNotDoesntExisst()
         {
             var command = new RequestBoardAccessCommand
             {
@@ -118,14 +121,19 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<NotFoundException>();
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<NotFoundException>();
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);
         }
 
         [Fact]
-        public async Task ThrowForbiddenException_WhenBoardDoesntPublic()
+        public async Task ReturnForbiddenResult_WhenBoardDoesntPublic()
         {
             var command = new RequestBoardAccessCommand
             {
@@ -146,14 +154,19 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     BoardMembers = []
                 });
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<ForbiddenException>();
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<ForbiddenException>();
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.Private("Test board name"));
         }
 
         [Fact]
-        public async Task ThrowAlreadyExistException_WhenMemberExist()
+        public async Task ReturnAlreadyExistResult_WhenMemberExist()
         {
             var accountId = Guid.Parse("73815cf6-c89d-49d9-b1ac-99ea6f965d10");
             var command = new RequestBoardAccessCommand
@@ -182,14 +195,19 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     ]
                 });
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<AlreadyExistException>();
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<AlreadyExistException>();
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardMemberErrors.AlreadyExist("Test board name"));
         }
 
         [Fact]
-        public async Task ThrowAlreadyExistException_WhenAccessRequestExist()
+        public async Task ReturnAlreadyExistResult_WhenAccessRequestExist()
         {
             var accountId = Guid.Parse("73815cf6-c89d-49d9-b1ac-99ea6f965d10");
             var command = new RequestBoardAccessCommand
@@ -213,8 +231,8 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             accessRepository
                 .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new BoardAccessRequest 
-                { 
+                .ReturnsAsync(new BoardAccessRequest
+                {
                     BoardId = Guid.Empty,
                     AccountId = accountId,
                     AccountName = "Test account name",
@@ -222,14 +240,19 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     Status = 0
                 });
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<AlreadyExistException>();
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<AlreadyExistException>();
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardAccessErrors.AlreadyExist("Test board name"));
         }
 
         [Fact]
-        public async Task ThrowAlreadyExistException_WhenInviteRequestExist()
+        public async Task ReturnAlreadyExistResult_WhenInviteRequestExist()
         {
             var accountId = Guid.Parse("73815cf6-c89d-49d9-b1ac-99ea6f965d10");
             var command = new RequestBoardAccessCommand
@@ -257,8 +280,8 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             inviteRepository
                 .Setup(s => s.GetByBoardIdAndToAccountIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new BoardInviteRequest 
-                { 
+                .ReturnsAsync(new BoardInviteRequest
+                {
                     BoardId = Guid.Empty,
                     FromAccountId = Guid.Empty,
                     FromAccountName = "Test account name",
@@ -268,10 +291,15 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     Status = 0
                 });
 
-            await sut
-                .Invoking(s => s.Handle(command, CancellationToken.None))
-                .Should()
-                .ThrowAsync<AlreadyExistException>();
+            //await sut
+            //    .Invoking(s => s.Handle(command, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<AlreadyExistException>();
+
+            var actual = await sut.Handle(command, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardInviteErrors.AlreadyExist("Test board name"));
         }
     }
 }

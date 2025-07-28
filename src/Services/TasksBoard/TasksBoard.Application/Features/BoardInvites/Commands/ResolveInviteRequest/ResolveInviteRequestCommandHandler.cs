@@ -1,11 +1,13 @@
 ﻿using Common.Blocks.Constants;
 using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteRequest
@@ -14,27 +16,31 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
         IUnitOfWork unitOfWork,
         IOutboxService outboxService,
         IMediator mediator,
-        ILogger<ResolveInviteRequestCommandHandler> logger) : IRequestHandler<ResolveInviteRequestCommand, Guid>
+        ILogger<ResolveInviteRequestCommandHandler> logger) : IRequestHandler<ResolveInviteRequestCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMediator _mediator = mediator;
         private readonly IOutboxService _outboxService = outboxService;
         private readonly ILogger<ResolveInviteRequestCommandHandler> _logger = logger;
 
-        public async Task<Guid> Handle(ResolveInviteRequestCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(ResolveInviteRequestCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+                return Result.Failure<Guid>(BoardErrors.NotFound);
+
+                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, cancellationToken);
             if (inviteRequest is null)
             {
                 _logger.LogWarning("Board access request with id '{requestId}' not found.", request.RequestId);
-                throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
+                return Result.Failure<Guid>(BoardAccessErrors.NotFound);
+
+                //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
             }
 
             inviteRequest.Status = request.Decision ? (int)BoardInviteRequestStatuses.Accepted : (int)BoardInviteRequestStatuses.Rejected;
@@ -50,10 +56,12 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                     Nickname = inviteRequest.ToAccountName
                 }, cancellationToken);
 
-                if (result == Guid.Empty)
+                if (result.IsFailure)
                 {
                     _logger.LogError("Can't add new board member.");
-                    throw new ArgumentException(nameof(inviteRequest));
+                    return Result.Failure<Guid>(BoardMemberErrors.CantCreate);
+
+                    //throw new ArgumentException(nameof(inviteRequest));
                 }
 
                 await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
@@ -70,7 +78,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
 
-            return inviteRequest.Id;
+            return Result.Success(inviteRequest.Id);
         }
     }
 }

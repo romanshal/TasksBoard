@@ -27,7 +27,7 @@ namespace TasksBoard.Tests.Units.Infrastructure
                 .Name;
 
             var options = new DbContextOptionsBuilder<TasksBoardDbContext>()
-                .UseNpgsql(dbContainer.GetConnectionString(), npqsqlOptions => 
+                .UseNpgsql(dbContainer.GetConnectionString(), npqsqlOptions =>
                     npqsqlOptions.MigrationsAssembly(migrationAssembly))
                 .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning))
                 .Options;

@@ -5,14 +5,13 @@ using Microsoft.Extensions.Logging;
 using OpenSearch.Net;
 using Serilog;
 using Serilog.Filters;
-using Serilog.Sinks.Grafana.Loki;
 using Serilog.Sinks.OpenSearch;
 namespace Common.Blocks.Extensions.Monitoring
 {
     public static class LoggingServiceCollectionExtensions
     {
         public static IServiceCollection AddApiLogging(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             IConfiguration configuration,
             IWebHostEnvironment environment,
             string applicationName)

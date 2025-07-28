@@ -1,10 +1,9 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TasksBoard.API.Attributes;
 using TasksBoard.API.Models.Requests.ManageBoardInviteRequests;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoardInviteRequest;
 using TasksBoard.Application.Features.ManageBoardInvites.Queries.GetBoardInviteRequestsByBoardId;
 
@@ -43,9 +42,7 @@ namespace TasksBoard.API.Controllers
                 ToAccountEmail = request.ToAccountEmail
             });
 
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("board/{boardId:guid}")]
@@ -63,9 +60,7 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId
             });
 
-            var response = new ResultResponse<IEnumerable<BoardInviteRequestDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

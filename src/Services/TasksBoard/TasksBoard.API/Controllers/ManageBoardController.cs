@@ -1,4 +1,4 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,14 +52,8 @@ namespace TasksBoard.API.Controllers
             };
 
             var result = await _mediator.Send(command);
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
 
-            var response = new ResultResponse<Guid>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpDelete("{boardId:guid}")]
@@ -71,11 +65,9 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid boardId)
         {
-            await _mediator.Send(new DeleteBoardCommand { Id = boardId });
+            var result = await _mediator.Send(new DeleteBoardCommand { Id = boardId });
 
-            var response = new Response();
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

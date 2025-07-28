@@ -21,14 +21,14 @@ namespace TasksBoard.Tests.Units.Infrastructure.Repositories
             var loggerFactory = new Mock<ILoggerFactory>();
 
             dbContext = fixture.GetDbContext();
-            
+
             sut = new BoardRepository(dbContext, loggerFactory.Object);
         }
 
         [Fact]
         public async Task CreateNewBoard()
         {
-            var board = new Board 
+            var board = new Board
             {
                 OwnerId = Guid.Parse("fe6e93de-5599-4f32-a143-4a4da06e6cd3"),
                 Name = "Test name"

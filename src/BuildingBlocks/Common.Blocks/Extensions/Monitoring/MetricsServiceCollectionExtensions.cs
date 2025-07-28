@@ -9,8 +9,8 @@ namespace Common.Blocks.Extensions.Monitoring
     public static class MetricsServiceCollectionExtensions
     {
         public static IServiceCollection AddApiMetrics(
-            this IServiceCollection services, 
-            IConfiguration configuration, 
+            this IServiceCollection services,
+            IConfiguration configuration,
             string serviceName)
         {
             var jaegerUrl = configuration

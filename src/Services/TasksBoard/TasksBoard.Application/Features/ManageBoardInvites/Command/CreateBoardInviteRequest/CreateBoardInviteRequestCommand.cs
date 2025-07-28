@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Common.Blocks.Models.DomainResults;
+using MediatR;
 
 namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoardInviteRequest
 {
-    public class CreateBoardInviteRequestCommand : IRequest<Guid>
+    public class CreateBoardInviteRequestCommand : IRequest<Result<Guid>>
     {
         public required Guid BoardId { get; set; }
         public required Guid FromAccountId { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models;
+using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoti
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserIdAndBoardId;
 using TasksBoard.Application.Models;
+using Common.Blocks.Extensions;
 
 namespace TasksBoard.API.Controllers
 {
@@ -36,9 +38,7 @@ namespace TasksBoard.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("board/{boardId:Guid}/notice/{noticeId}")]
@@ -50,14 +50,8 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> GetBoardNoticeByBoardIdAndIdAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
         {
             var result = await _mediator.Send(new GetBoardNoticeByIdQuery { Id = noticeId });
-            if (result is null)
-            {
-                return NotFound();
-            }
 
-            var response = new ResultResponse<BoardNoticeDto>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("board/{boardId:Guid}")]
@@ -75,9 +69,7 @@ namespace TasksBoard.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("user/{userId:Guid}")]
@@ -95,9 +87,7 @@ namespace TasksBoard.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("user/{userId:Guid}/board/{boardId:Guid}")]
@@ -116,9 +106,7 @@ namespace TasksBoard.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = new ResultResponse<PaginatedList<BoardNoticeDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("{id:guid}")]
@@ -131,14 +119,8 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> GetBoardNoticeByIdAsync([FromRoute] Guid id)
         {
             var result = await _mediator.Send(new GetBoardNoticeByIdQuery { Id = id });
-            if (result is null)
-            {
-                return NotFound();
-            }
 
-            var response = new ResultResponse<BoardNoticeDto>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

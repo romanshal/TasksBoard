@@ -1,4 +1,4 @@
-﻿namespace TasksBoard.Domain.Constants.Messages
+﻿namespace TasksBoard.Domain.Constants.Validations.Messages
 {
     public class BoardNoticeMessages : BaseMessages
     {

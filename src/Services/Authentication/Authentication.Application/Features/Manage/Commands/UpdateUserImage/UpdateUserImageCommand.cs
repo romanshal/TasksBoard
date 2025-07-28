@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Blocks.Models.DomainResults;
+using MediatR;
 
 namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
 {

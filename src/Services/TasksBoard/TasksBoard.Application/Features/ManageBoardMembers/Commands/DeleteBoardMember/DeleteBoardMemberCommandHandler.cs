@@ -1,10 +1,11 @@
-﻿using AutoMapper.Execution;
-using Common.Blocks.Exceptions;
+﻿using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember
@@ -12,35 +13,41 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
     public class DeleteBoardMemberCommandHandler(
         ILogger<DeleteBoardMemberCommandHandler> logger,
         IOutboxService outboxService,
-        IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardMemberCommand, Unit>
+        IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardMemberCommand, Result>
     {
         private readonly ILogger<DeleteBoardMemberCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IOutboxService _outboxService = outboxService;
 
-        public async Task<Unit> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.",request.BoardId);
-                throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
+                return Result.Failure(BoardErrors.NotFound);
+
+                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var member = board.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
             if (member is null)
             {
                 _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
-                throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
+                return Result.Failure(BoardMemberErrors.NotFound);
+
+                //throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 
             _unitOfWork.GetBoardMemberRepository().Delete(member);
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if(affectedRows == 0)
+            if (affectedRows == 0)
             {
                 _logger.LogError("Can't delete board member with id '{memberId}' from board with id '{boardId}'.", request.MemberId, request.BoardId);
-                throw new ArgumentException($"Can't delete board member with id '{request.MemberId}' from board with id '{request.BoardId}'.");
+                return Result.Failure(BoardMemberErrors.CantDelete);
+
+                //throw new ArgumentException($"Can't delete board member with id '{request.MemberId}' from board with id '{request.BoardId}'.");
             }
 
             var removeEvent = new RemoveBoardMemberEvent
@@ -60,7 +67,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
 
             _logger.LogInformation("Board member with account id '{accountId}' deleted from boar with id '{boardId}'.", member.AccountId, request.BoardId);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

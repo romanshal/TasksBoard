@@ -1,11 +1,10 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.API.Models.Requests.ManageBoardMembers;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember;
 using TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMemberPermissions;
@@ -38,9 +37,7 @@ namespace TasksBoard.API.Controllers
                 MemberId = memberId
             });
 
-            var response = new ResultResponse<IEnumerable<BoardMemberPermissionDto>>(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         //[HttpPost("board/{boardId}")]
@@ -75,19 +72,15 @@ namespace TasksBoard.API.Controllers
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
 
-            var command = new AddBoardMemberPermissionsCommand
+            var result = await _mediator.Send(new AddBoardMemberPermissionsCommand
             {
                 BoardId = boardId,
                 MemberId = request.MemberId,
                 AccountId = Guid.Parse(userId),
                 Permissions = request.Permissions
-            };
+            });
 
-            await _mediator.Send(command);
-
-            var response = new Response();
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpDelete("board/{boardId:guid}/member/{memberId:guid}")]
@@ -96,22 +89,18 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
+        public async Task<IActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            var command = new DeleteBoardMemberCommand
+            var result = await _mediator.Send(new DeleteBoardMemberCommand
             {
                 BoardId = boardId,
                 MemberId = memberId,
                 RemoveByUserId = Guid.Parse(userId!)
-            };
+            });
 
-            await _mediator.Send(command);
-
-            var response = new Response();
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

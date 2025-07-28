@@ -39,7 +39,7 @@ namespace Common.Blocks.Services
                         unitOfWork.GetOutboxEventRepository().Update(outboxEvent);
 
                         var affectedRows = await unitOfWork.SaveChangesAsync(stoppingToken);
-                        if(affectedRows == 0)
+                        if (affectedRows == 0)
                         {
                             throw new Exception("Can't update outbox entity.");
                         }

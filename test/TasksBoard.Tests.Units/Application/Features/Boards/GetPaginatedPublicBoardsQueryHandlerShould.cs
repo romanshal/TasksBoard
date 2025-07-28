@@ -8,6 +8,7 @@ using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
 using TasksBoard.Application.Interfaces.Repositories;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Application.Mappings;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Tests.Units.Application.Features.Boards
@@ -40,12 +41,12 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
         public async Task ReturnBoard_WhenBoardExist()
         {
             var boardId = Guid.Parse("ffe23860-034b-424a-a4c5-bea28307ab0b");
-            var query = new GetBoardByIdQuery 
+            var query = new GetBoardByIdQuery
             {
                 Id = boardId
             };
 
-            var board = new Board 
+            var board = new Board
             {
                 Id = boardId,
                 OwnerId = Guid.Empty,
@@ -60,14 +61,16 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             var boardDto = mapper.Map<BoardDto>(board);
 
             var actual = await sut.Handle(query, CancellationToken.None);
-            actual.Should().BeEquivalentTo(boardDto);
+
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeNull().And.BeEquivalentTo(boardDto);
 
             boardRepository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
             boardRepository.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ThrowNotFoundException_WhenBoardDoesntExist()
+        public async Task ReturnNotFoundResult_WhenBoardDoesntExist()
         {
             var boardId = Guid.Parse("ffe23860-034b-424a-a4c5-bea28307ab0b");
             var query = new GetBoardByIdQuery
@@ -79,11 +82,16 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 .Setup(s => s.GetAsync(boardId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            await sut
-                .Invoking(s => s.Handle(query, CancellationToken.None))
-                .Should()
-                .ThrowAsync<NotFoundException>()
-                .WithMessage($"Board with id '{boardId}' was not found.");
+            //await sut
+            //    .Invoking(s => s.Handle(query, CancellationToken.None))
+            //    .Should()
+            //    .ThrowAsync<NotFoundException>()
+            //    .WithMessage($"Board with id '{boardId}' was not found.");
+
+            var actual = await sut.Handle(query, CancellationToken.None);
+
+            actual.IsSuccess.Should().BeFalse();
+            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using Common.Blocks.Constants;
 using Common.Blocks.Exceptions;
 using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
 using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAccessRequest
@@ -14,27 +16,31 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
         IUnitOfWork unitOfWork,
         IOutboxService outboxService,
         IMediator mediator,
-        ILogger<ResolveAccessRequestCommandHandler> logger) : IRequestHandler<ResolveAccessRequestCommand, Guid>
+        ILogger<ResolveAccessRequestCommandHandler> logger) : IRequestHandler<ResolveAccessRequestCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMediator _mediator = mediator;
         private readonly IOutboxService _outboxService = outboxService;
         private readonly ILogger<ResolveAccessRequestCommandHandler> _logger = logger;
 
-        public async Task<Guid> Handle(ResolveAccessRequestCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(ResolveAccessRequestCommand request, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
             if (board is null)
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+                _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
+                return Result.Failure<Guid>(BoardErrors.NotFound);
+
+                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var accessRequest = await _unitOfWork.GetRepository<BoardAccessRequest>().GetAsync(request.RequestId, cancellationToken);
             if (accessRequest is null)
             {
-                _logger.LogWarning("Board access request with id '{requestId}' not found.", request.RequestId);
-                throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
+                _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
+                return Result.Failure<Guid>(BoardAccessErrors.NotFound);
+
+                //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
             }
 
             accessRequest.Status = request.Decision ? (int)BoardAccessRequestStatuses.Accepted : (int)BoardAccessRequestStatuses.Rejected;
@@ -50,10 +56,12 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                     Nickname = accessRequest.AccountName
                 }, cancellationToken);
 
-                if (result == Guid.Empty)
+                if (result.IsFailure)
                 {
                     _logger.LogError("Can't add new board member.");
-                    throw new ArgumentException(nameof(accessRequest));
+                    return Result.Failure<Guid>(result.Error);
+
+                    //throw new ArgumentException(nameof(accessRequest));
                 }
 
                 await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
@@ -68,10 +76,12 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
             else
             {
                 var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-                if(affectedRows == 0)
+                if (affectedRows == 0)
                 {
-                    _logger.LogError("Can't save new access request.");
-                    throw new ArgumentException("Can't save new access request.");
+                    _logger.LogError("Can't resolve access request.");
+                    return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
+
+                    //throw new ArgumentException("Can't save new access request.");
                 }
             }
 
@@ -85,7 +95,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                 Status = request.Decision
             }, cancellationToken);
 
-            return accessRequest.Id;
+            return Result.Success(accessRequest.Id);
         }
     }
 }

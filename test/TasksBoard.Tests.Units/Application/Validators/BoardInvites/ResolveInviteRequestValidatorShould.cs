@@ -30,7 +30,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardInvites
 
         public static IEnumerable<object[]> GetInvalidCommands()
         {
-            var validCommand = new ResolveInviteRequestCommand 
+            var validCommand = new ResolveInviteRequestCommand
             {
                 RequestId = Guid.Parse("cd5e2136-cfb7-4c36-bb97-97be589a9ce1"),
                 BoardId = Guid.Parse("dd2665b6-69e6-45c1-a3ed-3ab9ba78eae5"),
