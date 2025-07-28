@@ -1,4 +1,4 @@
-﻿namespace Chat.Domain.Constants.Messages
+﻿namespace Chat.Domain.Constants.Validations.Messages
 {
     public class BoardMessageMessages
     {

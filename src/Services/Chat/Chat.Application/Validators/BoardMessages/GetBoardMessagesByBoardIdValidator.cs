@@ -1,5 +1,5 @@
 ﻿using Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoardId;
-using Chat.Domain.Constants.Messages;
+using Chat.Domain.Constants.Validations.Messages;
 using FluentValidation;
 
 namespace Chat.Application.Validators.BoardMessages

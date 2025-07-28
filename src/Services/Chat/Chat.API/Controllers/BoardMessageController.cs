@@ -1,15 +1,14 @@
 ﻿using Chat.API.Hubs;
 using Chat.API.Models.Requests;
-using Chat.Application.DTOs;
 using Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage;
 using Chat.Application.Features.BoardMessages.Commands.UpdateBoardMessage;
 using Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoardId;
-using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Common.Blocks.Extensions;
 
 namespace Chat.API.Controllers
 {
@@ -40,9 +39,7 @@ namespace Chat.API.Controllers
                 PageSize = pageSize
             });
 
-            var response = ApiResponse.Success(result);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpPost("{boardId:guid}")]
@@ -65,9 +62,7 @@ namespace Chat.API.Controllers
 
             await hubContext.Clients.Group(boardId.ToString()).SendAsync("ReceiveMessage", result);
 
-            var response = ApiResponse.Success(result.Id);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
 
@@ -89,9 +84,7 @@ namespace Chat.API.Controllers
 
             await hubContext.Clients.Group(boardId.ToString()).SendAsync("EditMessage", result);
 
-            var response = ApiResponse.Success(result.Id);
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
 
         [HttpDelete("{boardId:guid}/{messageId:guid}")]
@@ -103,15 +96,13 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBoardMessageAsync([FromRoute] Guid boardId, [FromRoute] Guid messageId)
         {
-            await _mediator.Send(new DeleteBoardMessageCommand
+            var result = await _mediator.Send(new DeleteBoardMessageCommand
             {
                 BoardId = boardId,
                 BoardMessageId = messageId,
             });
 
-            var response = ApiResponse.Success();
-
-            return Ok(response);
+            return this.HandleResponse(result);
         }
     }
 }

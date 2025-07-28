@@ -3,6 +3,7 @@ using Common.Blocks.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Common.Blocks.Models.DomainResults;
+using Npgsql;
 
 namespace Common.Blocks.Extensions
 {
@@ -38,6 +39,8 @@ namespace Common.Blocks.Extensions
                 ErrorCodes.NotFound => controller.NotFound(ApiResponse.Error(error.Description)),
                 ErrorCodes.Forbidden => controller.Forbid(),
                 ErrorCodes.AlreadyExist => controller.BadRequest(ApiResponse.Error(error.Description)),
+                ErrorCodes.NoEntities => controller.NotFound(ApiResponse.Error(error.Description)),
+                ErrorCodes.CantCreate or ErrorCodes.CantUpdate or ErrorCodes.CantDelete or ErrorCodes.CantCancel => controller.Problem(detail: error.Description, statusCode: StatusCodes.Status503ServiceUnavailable),
                 _ => controller.Problem(detail: error.Description, statusCode: StatusCodes.Status500InternalServerError)
             };
     }
