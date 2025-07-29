@@ -23,7 +23,7 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
             if (user is null)
             {
                 _logger.LogWarning("User with name {userId} not found.", request.UserId);
-                throw new UnauthorizedException($"User with name {request.UserId} not found.");
+                throw new UnauthorizedException($"User was not found.");
             }
 
             var token = await _tokenService.RefreshTokenAsync(user);

@@ -31,18 +31,19 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
             var signInResult = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
             if (!signInResult.Succeeded)
             {
+                if (signInResult.IsLockedOut)
+                {
+                    _logger.LogWarning("Signin is locked for user: {username}.", request.Username);
+                    throw new LockedException($"Your account is temporarily locked. Please contact support for assistance.");
+                }
+                else if (signInResult.IsNotAllowed)
+                {
+                    _logger.LogWarning("Signin is not allowed for user {username}.", request.Username);
+                    throw new NotAllowedException($"Signin is not allowed for user {request.Username}."); //TODO: change this later
+                }
+
                 _logger.LogWarning("Signin faulted for user: {username}.", request.Username);
-                throw new SigninFaultedException();
-            }
-            else if (signInResult.IsLockedOut)
-            {
-                _logger.LogWarning("Signin is locked for user: {username}.", request.Username);
-                throw new LockedException();
-            }
-            else if (signInResult.IsNotAllowed)
-            {
-                _logger.LogWarning("Signin is not allowed for user {username}.", request.Username);
-                throw new Exception($"Signin is not allowed for user {request.Username}."); //TODO: change this later
+                throw new SigninFaultedException($"The username or password you entered is incorrect. Please try again.");
             }
 
             //await _signInManager.SignInAsync(user, false, "Password");

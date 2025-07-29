@@ -13,12 +13,12 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ITokenService tokenService,
-        ILogger<LoginCommandHandler> logger) : IRequestHandler<RegisterCommand, AuthenticationDto>
+        ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, AuthenticationDto>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly ITokenService _tokenService = tokenService;
-        private readonly ILogger<LoginCommandHandler> _logger = logger;
+        private readonly ILogger<RegisterCommandHandler> _logger = logger;
 
         public async Task<AuthenticationDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
