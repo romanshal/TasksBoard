@@ -26,12 +26,12 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
             userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
             signinManager = new Mock<SignInManager<ApplicationUser>>(
-                userManager.Object, 
-                Mock.Of<IHttpContextAccessor>(), 
-                Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(), 
-                Mock.Of<IOptions<IdentityOptions>>(), 
-                Mock.Of<ILogger<SignInManager<ApplicationUser>>>(), 
-                Mock.Of<IAuthenticationSchemeProvider>(), 
+                userManager.Object,
+                Mock.Of<IHttpContextAccessor>(),
+                Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(),
+                Mock.Of<IOptions<IdentityOptions>>(),
+                Mock.Of<ILogger<SignInManager<ApplicationUser>>>(),
+                Mock.Of<IAuthenticationSchemeProvider>(),
                 Mock.Of<IUserConfirmation<ApplicationUser>>());
 
             tokenService = new Mock<ITokenService>();
@@ -51,13 +51,13 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 Username = userName,
                 Password = string.Empty
             };
-            var user = new ApplicationUser 
+            var user = new ApplicationUser
             {
                 Id = userId,
                 UserName = userName
             };
-            var token = new TokenDto 
-            { 
+            var token = new TokenDto
+            {
                 AccessToken = "ddf564f1-6cb9-4337-9a4c-5956e7189f53",
                 RefreshToken = "ddf564f1-6cb9-4337-9a4c-5956e7189f53"
             };
@@ -132,14 +132,14 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 .ThrowAsync<SigninFaultedException>()
                 .WithMessage($"The username or password you entered is incorrect. Please try again.");
         }
-        
+
         [Fact]
         public async Task ThrowLockedException_WhenSigninLocked()
         {
             var userName = "Test";
             var command = new LoginCommand
             {
-                Username =userName,
+                Username = userName,
                 Password = string.Empty
             };
             var user = new ApplicationUser
@@ -162,14 +162,14 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 .ThrowAsync<LockedException>()
                 .WithMessage($"Your account is temporarily locked. Please contact support for assistance.");
         }
-        
+
         [Fact]
         public async Task ThrowNotAllowedException_WhenSigninNotAllowed()
         {
             var userName = "Test";
             var command = new LoginCommand
             {
-                Username = userName ,
+                Username = userName,
                 Password = string.Empty
             };
             var user = new ApplicationUser

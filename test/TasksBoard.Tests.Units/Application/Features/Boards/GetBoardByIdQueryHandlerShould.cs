@@ -4,27 +4,27 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
-using TasksBoard.Application.Interfaces.Repositories;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Application.Mappings;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Tests.Units.Application.Features.Boards
 {
-    public class GetPaginatedPublicBoardsQueryHandlerShould
+    public class GetBoardByIdQueryHandlerShould
     {
         private readonly Mock<IBoardRepository> boardRepository;
-        private readonly Mock<ILogger<GetPaginatedPublicBoardsQueryHandler>> logger;
+        private readonly Mock<ILogger<GetBoardByIdQueryHandler>> logger;
         private readonly IMapper mapper;
         private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly GetPaginatedPublicBoardsQueryHandler sut;
+        private readonly GetBoardByIdQueryHandler sut;
 
-        public GetPaginatedPublicBoardsQueryHandlerShould()
+        public GetBoardByIdQueryHandlerShould()
         {
             boardRepository = new Mock<IBoardRepository>();
 
-            logger = new Mock<ILogger<GetPaginatedPublicBoardsQueryHandler>>();
+            logger = new Mock<ILogger<GetBoardByIdQueryHandler>>();
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
@@ -33,7 +33,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardProfile>()));
 
-            sut = new GetPaginatedPublicBoardsQueryHandler(logger.Object, unitOfWork.Object, mapper);
+            sut = new GetBoardByIdQueryHandler(logger.Object, unitOfWork.Object, mapper);
         }
 
         [Fact]

@@ -1,9 +1,12 @@
 ﻿using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Interfaces.Repositories;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Caches;
+using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Infrastructure.CachedRepositories;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.Repositories;
 
@@ -11,6 +14,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
         TasksBoardDbContext context,
+        IServiceProvider provider,
         ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
     {
         private readonly TasksBoardDbContext _context = context;
@@ -39,6 +43,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board>))
             {
                 var repositoryInstance = new BoardRepository(_context, _loggerFactory);
+                //var cacheRepositoryInstance = new CachedBoardRepository(repositoryInstance, provider.GetRequiredService<ICacheRepository>());
 
                 value = repositoryInstance;
 

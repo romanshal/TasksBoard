@@ -1,7 +1,7 @@
 ﻿using Common.Blocks.Interfaces.UnitOfWorks;
-using TasksBoard.Application.Interfaces.Repositories;
+using TasksBoard.Domain.Interfaces.Repositories;
 
-namespace TasksBoard.Application.Interfaces.UnitOfWorks
+namespace TasksBoard.Domain.Interfaces.UnitOfWorks
 {
     public interface IUnitOfWork : IUnitOfWorkBase
     {

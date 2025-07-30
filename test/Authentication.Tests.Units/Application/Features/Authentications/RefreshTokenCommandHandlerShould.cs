@@ -1,5 +1,4 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Application.Features.Authentications.Commands.RefreshToken;
 using Authentication.Application.Interfaces.Services;
 using Authentication.Domain.Entities;
@@ -8,7 +7,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json.Linq;
 
 namespace Authentication.Tests.Units.Application.Features.Authentications
 {

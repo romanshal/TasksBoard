@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.API.Attributes
 {

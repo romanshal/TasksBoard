@@ -3,19 +3,18 @@ using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice
 {
     public class UpdateBoardNoticeCommandHandler(
-        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
+        ILogger<UpdateBoardNoticeCommandHandler> logger,
         IOutboxService outboxService,
         IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardNoticeCommand, Result<Guid>>
     {
-        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
+        private readonly ILogger<UpdateBoardNoticeCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IOutboxService _outboxService = outboxService;
 

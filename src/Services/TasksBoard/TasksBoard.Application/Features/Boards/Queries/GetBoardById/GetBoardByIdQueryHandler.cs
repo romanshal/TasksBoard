@@ -3,18 +3,18 @@ using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
 {
-    public class GetPaginatedPublicBoardsQueryHandler(
-        ILogger<GetPaginatedPublicBoardsQueryHandler> logger,
+    public class GetBoardByIdQueryHandler(
+        ILogger<GetBoardByIdQueryHandler> logger,
         IUnitOfWork unitOfWork,
         IMapper mapper) : IRequestHandler<GetBoardByIdQuery, Result<BoardDto>>
     {
-        private readonly ILogger<GetPaginatedPublicBoardsQueryHandler> _logger = logger;
+        private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
 

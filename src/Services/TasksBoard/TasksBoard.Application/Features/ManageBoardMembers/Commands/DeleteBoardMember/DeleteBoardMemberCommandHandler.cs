@@ -3,9 +3,9 @@ using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember
 {

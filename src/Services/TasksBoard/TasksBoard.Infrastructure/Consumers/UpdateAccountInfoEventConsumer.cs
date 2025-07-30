@@ -1,7 +1,7 @@
 ﻿using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Infrastructure.Consumers
 {
@@ -54,14 +54,13 @@ namespace TasksBoard.Infrastructure.Consumers
             }
 
             var affectedRows = await _unitOfWork.SaveChangesAsync();
-
             if (affectedRows == 0)
             {
-                _logger.LogError($"Error when update information for account with id '{context.Message.AccountId}'.");
+                _logger.LogError("Error when update information for account with id '{accountId}'.", context.Message.AccountId);
                 return;
             }
 
-            _logger.LogInformation($"Information for account with id '{context.Message.AccountId}' successfully updated.");
+            _logger.LogInformation("Information for account with id '{accountId}' successfully updated.", context.Message.AccountId);
         }
     }
 }

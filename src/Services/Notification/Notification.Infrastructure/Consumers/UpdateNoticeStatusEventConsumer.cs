@@ -1,6 +1,7 @@
 ﻿using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Notification.Domain.Constants;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using System.Text.Json;
@@ -18,7 +19,7 @@ namespace Notification.Infrastructure.Consumers
         {
             if (!context.Message.BoardMembersIds.Any())
             {
-                _logger.LogWarning($"No members ids for save in '{nameof(UpdateNoticeStatusEvent)}' event.");
+                _logger.LogWarning(NotificationEventLogMessages.NoMemberIds, nameof(UpdateNoticeStatusEvent));
                 return;
             }
 
@@ -39,10 +40,10 @@ namespace Notification.Infrastructure.Consumers
 
             if (affectedRows == 0)
             {
-                _logger.LogError($"Error when create new event with id '{context.MessageId}'.");
+                _logger.LogError(NotificationEventLogMessages.Error, context.MessageId);
             }
 
-            _logger.LogInformation($"Event with id '{context.MessageId!}' created.");
+            _logger.LogInformation(NotificationEventLogMessages.Created, context.MessageId);
         }
     }
 }

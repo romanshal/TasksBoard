@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestByAccountId;
-using TasksBoard.Application.Interfaces.Repositories;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Application.Mappings;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 {

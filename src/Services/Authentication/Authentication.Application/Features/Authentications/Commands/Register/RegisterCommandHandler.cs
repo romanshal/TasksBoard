@@ -1,5 +1,4 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Application.Interfaces.Services;
 using Authentication.Domain.Entities;
 using Common.Blocks.Exceptions;

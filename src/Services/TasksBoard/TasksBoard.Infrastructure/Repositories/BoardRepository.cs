@@ -1,8 +1,8 @@
 ﻿using Common.Blocks.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.Interfaces.Repositories;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Infrastructure.Data.Contexts;
 
 namespace TasksBoard.Infrastructure.Repositories
@@ -26,7 +26,7 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
-                .Where(board => board.BoardMembers.Any(member => member.AccountId == userId) && board.Name.ToLower().StartsWith(query.Trim().ToLower()))
+                .Where(board => board.BoardMembers.Any(member => member.AccountId == userId) && board.Name.StartsWith(query.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 .OrderBy(e => e.Name)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
@@ -62,7 +62,7 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
-                .CountAsync(board => board.BoardMembers.Any(member => member.AccountId == userId) && board.Name.ToLower().StartsWith(query.Trim().ToLower()), cancellationToken);
+                .CountAsync(board => board.BoardMembers.Any(member => member.AccountId == userId) && board.Name.StartsWith(query.Trim(), StringComparison.CurrentCultureIgnoreCase), cancellationToken);
         }
 
         public async Task<int> CountPublicAsync(CancellationToken cancellationToken = default)

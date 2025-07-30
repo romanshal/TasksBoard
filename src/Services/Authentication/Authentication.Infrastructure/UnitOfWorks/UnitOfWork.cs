@@ -31,10 +31,5 @@ namespace Authentication.Infrastructure.UnitOfWorks
 
             return (IApplicationUserImageRepository)value;
         }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
     }
 }

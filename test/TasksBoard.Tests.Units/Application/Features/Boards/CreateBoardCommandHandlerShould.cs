@@ -4,9 +4,9 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
-using TasksBoard.Application.Interfaces.Repositories;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Tests.Units.Application.Features.Boards
 {

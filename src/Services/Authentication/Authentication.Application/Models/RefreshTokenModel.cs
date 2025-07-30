@@ -4,9 +4,9 @@ using System.Security.Claims;
 namespace Authentication.Application.Models
 {
     public class RefreshTokenModel(
-        ApplicationUser user, 
-        IEnumerable<Claim> userClaims, 
-        string refreshToken, 
+        ApplicationUser user,
+        IEnumerable<Claim> userClaims,
+        string refreshToken,
         string storedRefreshToken) : CreateTokenModel(user, userClaims)
     {
         public string RefreshToken { get; set; } = refreshToken;

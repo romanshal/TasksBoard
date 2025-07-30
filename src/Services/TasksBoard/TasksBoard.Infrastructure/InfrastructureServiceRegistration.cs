@@ -1,4 +1,5 @@
-﻿using Common.Blocks.Interfaces.Repositories;
+﻿using Common.Blocks.Extensions;
+using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
 using EventBus.Messages.Extensions;
@@ -6,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using TasksBoard.Application.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.Interfaces.Caches;
+using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Infrastructure.Cache;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.UnitOfWorks;
 
@@ -30,6 +33,10 @@ namespace TasksBoard.Infrastructure
             services.AddScoped<IUnitOfWorkBase>(sp => sp.GetRequiredService<IUnitOfWork>());
 
             services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
+
+            services.AddRedis(configuration);
+
+            services.AddSingleton<ICacheRepository, RedisCacheRepository>();
 
             return services;
         }
