@@ -2,6 +2,7 @@ using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TasksBoard.Application;
 using TasksBoard.Infrastructure;
@@ -76,6 +77,13 @@ app.UseExeptionWrappingMiddleware();
 
 app.MapControllers().RequireAuthorization();
 app.MapPrometheusScrapingEndpoint();
+
+app.UseHealthChecks(
+    "/health",
+    new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+    {
+        ResponseWriter =  UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.Run();
 

@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.API.Models.Requests.ManageBoards;
 using TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard;
@@ -65,7 +66,12 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid boardId)
         {
-            var result = await _mediator.Send(new DeleteBoardCommand { Id = boardId });
+            var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
+            var result = await _mediator.Send(new DeleteBoardCommand 
+            { 
+                Id = boardId,
+                AccountId = Guid.Parse(userId)
+            });
 
             return this.HandleResponse(result);
         }

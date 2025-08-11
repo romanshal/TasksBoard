@@ -1,12 +1,9 @@
 ﻿using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Caches;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
-using TasksBoard.Infrastructure.CachedRepositories;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.Repositories;
 
@@ -14,7 +11,6 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
         TasksBoardDbContext context,
-        IServiceProvider provider,
         ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
     {
         private readonly TasksBoardDbContext _context = context;
@@ -100,5 +96,40 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
             return (IBoardInviteRequestRepository)value;
         }
+
+        public async Task TransactionAsync(Func<CancellationToken, Task> action, CancellationToken cancellationToken = default)
+        {
+            var hasActic = _context.Database.CurrentTransaction is not null;
+
+            if (hasActic)
+            {
+                await action(cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+                return;
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            await action(cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        public async Task<TResult> TransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> action, CancellationToken cancellationToken = default)
+        {
+            var hasActive = _context.Database.CurrentTransaction is not null;
+
+            if (hasActive)
+            {
+                return await action(cancellationToken);
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            var result = await action(cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return result;
+        }
+
+        //public ValueTask DisposeAsync() => _context.DisposeAsync();
     }
 }

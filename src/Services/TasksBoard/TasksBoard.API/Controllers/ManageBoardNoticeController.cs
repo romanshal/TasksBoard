@@ -7,7 +7,7 @@ using System.Security.Claims;
 using TasksBoard.API.Attributes;
 using TasksBoard.API.Models.Requests.ManageBoardNotices;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
-using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus;
 
@@ -29,6 +29,8 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeRequest request)
         {
@@ -72,6 +74,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request)
@@ -95,6 +98,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateBoardNoticeStatusAsync([FromRoute] Guid boardId, UpdateBoardNoticeStatusRequest request)
@@ -115,6 +119,8 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
         {

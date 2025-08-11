@@ -20,52 +20,55 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 
         public async Task<Result<Guid>> Handle(UpdateBoardNoticeCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
-            if (board is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                return Result.Failure<Guid>(BoardErrors.NotFound);
+                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                if (board is null)
+                {
+                    _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
+                    return Result.Failure<Guid>(BoardErrors.NotFound);
 
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
-            }
+                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+                }
 
-            var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.NoticeId, cancellationToken);
-            if (boardNotice is null)
-            {
-                _logger.LogWarning("Board notice with id '{noticeId}' not found.", request.NoticeId);
-                return Result.Failure<Guid>(BoardNoticeErrors.NotFound);
+                var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.NoticeId, token);
+                if (boardNotice is null)
+                {
+                    _logger.LogWarning("Board notice with id '{noticeId}' was not found.", request.NoticeId);
+                    return Result.Failure<Guid>(BoardNoticeErrors.NotFound);
 
-                //throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
-            }
+                    //throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
+                }
 
-            boardNotice.Definition = request.Definition;
-            boardNotice.BackgroundColor = request.BackgroundColor;
+                boardNotice.Definition = request.Definition;
+                boardNotice.BackgroundColor = request.BackgroundColor;
 
-            _unitOfWork.GetRepository<BoardNotice>().Update(boardNotice);
+                _unitOfWork.GetRepository<BoardNotice>().Update(boardNotice);
 
-            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || boardNotice.Id == Guid.Empty)
-            {
-                _logger.LogError("Can't update board notice with id '{boardNoticeId}'.", boardNotice.Id);
-                return Result.Failure<Guid>(BoardNoticeErrors.CantUpdate);
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0 || boardNotice.Id == Guid.Empty)
+                {
+                    _logger.LogError("Can't update board notice with id '{boardNoticeId}'.", boardNotice.Id);
+                    return Result.Failure<Guid>(BoardNoticeErrors.CantUpdate);
 
-                //throw new ArgumentException(nameof(boardNotice));
-            }
+                    //throw new ArgumentException(nameof(boardNotice));
+                }
 
-            await _outboxService.CreateNewOutboxEvent(new UpdateNoticeEvent
-            {
-                BoardId = board.Id,
-                BoardName = board.Name,
-                AccountId = request.AccountId,
-                AccountName = board.BoardMembers.First(m => m.AccountId == request.AccountId).Nickname,
-                NoticeId = boardNotice.Id,
-                NoticeDefinition = boardNotice.Definition,
-                BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
+                await _outboxService.CreateNewOutboxEvent(new UpdateNoticeEvent
+                {
+                    BoardId = board.Id,
+                    BoardName = board.Name,
+                    AccountId = request.AccountId,
+                    AccountName = board.BoardMembers.First(m => m.AccountId == request.AccountId).Nickname,
+                    NoticeId = boardNotice.Id,
+                    NoticeDefinition = boardNotice.Definition,
+                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
+                }, token);
+
+                _logger.LogInformation("Board notice with id '{id}' updated in board with id '{boardId}'.", boardNotice.Id, request.BoardId);
+
+                return Result.Success(boardNotice.Id);
             }, cancellationToken);
-
-            _logger.LogInformation("Board notice with id '{id}' updated in board with id '{boardId}'.", boardNotice.Id, request.BoardId);
-
-            return Result.Success(boardNotice.Id);
         }
     }
 }

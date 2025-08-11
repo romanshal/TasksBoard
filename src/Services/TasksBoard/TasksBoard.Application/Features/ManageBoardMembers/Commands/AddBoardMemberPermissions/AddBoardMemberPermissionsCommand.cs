@@ -1,7 +1,7 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using MediatR;
 
-namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand
+namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMemberPermissions
 {
     public record AddBoardMemberPermissionsCommand : IRequest<Result>
     {

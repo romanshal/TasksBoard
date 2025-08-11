@@ -20,53 +20,56 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
 
         public async Task<Result> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
-            if (board is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                return Result.Failure(BoardErrors.NotFound);
+                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                if (board is null)
+                {
+                    _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
+                    return Result.Failure(BoardErrors.NotFound);
 
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
-            }
+                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+                }
 
-            var member = board.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
-            if (member is null)
-            {
-                _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
-                return Result.Failure(BoardMemberErrors.NotFound);
+                var member = board.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
+                if (member is null)
+                {
+                    _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
+                    return Result.Failure(BoardMemberErrors.NotFound);
 
-                //throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
-            }
+                    //throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
+                }
 
-            _unitOfWork.GetBoardMemberRepository().Delete(member);
+                _unitOfWork.GetBoardMemberRepository().Delete(member);
 
-            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0)
-            {
-                _logger.LogError("Can't delete board member with id '{memberId}' from board with id '{boardId}'.", request.MemberId, request.BoardId);
-                return Result.Failure(BoardMemberErrors.CantDelete);
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0)
+                {
+                    _logger.LogError("Can't delete board member with id '{memberId}' from board with id '{boardId}'.", request.MemberId, request.BoardId);
+                    return Result.Failure(BoardMemberErrors.CantDelete);
 
-                //throw new ArgumentException($"Can't delete board member with id '{request.MemberId}' from board with id '{request.BoardId}'.");
-            }
+                    //throw new ArgumentException($"Can't delete board member with id '{request.MemberId}' from board with id '{request.BoardId}'.");
+                }
 
-            var removeEvent = new RemoveBoardMemberEvent
-            {
-                BoardId = board.Id,
-                BoardName = board.Name,
-                RemovedAccountId = member.AccountId,
-                RemovedAccountName = member.Nickname,
-                RemoveByAccountId = request.RemoveByUserId,
-                RemoveByAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.RemoveByUserId)!.Nickname,
-                BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.RemoveByUserId).Select(member => member.AccountId)]
-            };
+                var removeEvent = new RemoveBoardMemberEvent
+                {
+                    BoardId = board.Id,
+                    BoardName = board.Name,
+                    RemovedAccountId = member.AccountId,
+                    RemovedAccountName = member.Nickname,
+                    RemoveByAccountId = request.RemoveByUserId,
+                    RemoveByAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.RemoveByUserId)!.Nickname,
+                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.RemoveByUserId).Select(member => member.AccountId)]
+                };
 
-            removeEvent.BoardMembersIds.Add(member.AccountId);
+                removeEvent.BoardMembersIds.Add(member.AccountId);
 
-            await _outboxService.CreateNewOutboxEvent(removeEvent, cancellationToken);
+                await _outboxService.CreateNewOutboxEvent(removeEvent, token);
 
-            _logger.LogInformation("Board member with account id '{accountId}' deleted from boar with id '{boardId}'.", member.AccountId, request.BoardId);
+                _logger.LogInformation("Board member with account id '{accountId}' deleted from boar with id '{boardId}'.", member.AccountId, request.BoardId);
 
-            return Result.Success();
+                return Result.Success();
+            }, cancellationToken);
         }
     }
 }

@@ -24,60 +24,63 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
 
         public async Task<Result<Guid>> Handle(ResolveInviteRequestCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
-            if (board is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
-            }
-
-            var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, cancellationToken);
-            if (inviteRequest is null)
-            {
-                _logger.LogWarning("Board access request with id '{requestId}' not found.", request.RequestId);
-                return Result.Failure<Guid>(BoardAccessErrors.NotFound);
-
-                //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
-            }
-
-            inviteRequest.Status = request.Decision ? (int)BoardInviteRequestStatuses.Accepted : (int)BoardInviteRequestStatuses.Rejected;
-
-            _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest);
-
-            if (request.Decision)
-            {
-                var result = await _mediator.Send(new AddBoardMemberCommand
+                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                if (board is null)
                 {
-                    BoardId = inviteRequest.BoardId,
-                    AccountId = inviteRequest.ToAccountId,
-                    Nickname = inviteRequest.ToAccountName
-                }, cancellationToken);
+                    _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
+                    return Result.Failure<Guid>(BoardErrors.NotFound);
 
-                if (result.IsFailure)
-                {
-                    _logger.LogError("Can't add new board member.");
-                    return Result.Failure<Guid>(BoardMemberErrors.CantCreate);
-
-                    //throw new ArgumentException(nameof(inviteRequest));
+                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
+                var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, token);
+                if (inviteRequest is null)
                 {
-                    BoardId = board.Id,
-                    BoardName = board.Name,
-                    AccountId = inviteRequest.ToAccountId,
-                    AccountName = inviteRequest.ToAccountName,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId)]
-                }, cancellationToken);
-            }
-            else
-            {
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-            }
+                    _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
+                    return Result.Failure<Guid>(BoardAccessErrors.NotFound);
 
-            return Result.Success(inviteRequest.Id);
+                    //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
+                }
+
+                inviteRequest.Status = request.Decision ? (int)BoardInviteRequestStatuses.Accepted : (int)BoardInviteRequestStatuses.Rejected;
+
+                _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest);
+
+                if (request.Decision)
+                {
+                    var result = await _mediator.Send(new AddBoardMemberCommand
+                    {
+                        BoardId = inviteRequest.BoardId,
+                        AccountId = inviteRequest.ToAccountId,
+                        Nickname = inviteRequest.ToAccountName
+                    }, token);
+
+                    if (result.IsFailure)
+                    {
+                        _logger.LogError("Can't add new board member.");
+                        return Result.Failure<Guid>(BoardMemberErrors.CantCreate);
+
+                        //throw new ArgumentException(nameof(inviteRequest));
+                    }
+
+                    await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
+                    {
+                        BoardId = board.Id,
+                        BoardName = board.Name,
+                        AccountId = inviteRequest.ToAccountId,
+                        AccountName = inviteRequest.ToAccountName,
+                        BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId)]
+                    }, token);
+                }
+                else
+                {
+                    await _unitOfWork.SaveChangesAsync(token);
+                }
+
+                return Result.Success(inviteRequest.Id);
+            }, cancellationToken);
         }
     }
 }

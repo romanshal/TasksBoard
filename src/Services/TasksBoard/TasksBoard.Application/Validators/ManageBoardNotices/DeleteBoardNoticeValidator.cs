@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardNotice;
 using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.ManageBoardNotices

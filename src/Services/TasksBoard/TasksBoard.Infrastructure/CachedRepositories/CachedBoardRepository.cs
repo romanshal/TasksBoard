@@ -11,6 +11,8 @@ namespace TasksBoard.Infrastructure.CachedRepositories
 
         public void Add(Board entity)
         {
+            string key = $"board_{entity.Id}";
+            _cache.Create(key, entity);
             _decorated.Add(entity);
         }
 
@@ -36,6 +38,9 @@ namespace TasksBoard.Infrastructure.CachedRepositories
 
         public void Delete(Board entity)
         {
+            string key = $"board_{entity.Id}";
+
+            _cache.Remove(key);
             _decorated.Delete(entity);
         }
 
@@ -57,8 +62,7 @@ namespace TasksBoard.Infrastructure.CachedRepositories
 
         public async Task<IEnumerable<Board>> GetPaginatedAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
-            string key = $"all_boards_page_{pageIndex}_size_{pageSize}";
-            return await _cache.GetOrCreateAsync(key, () => _decorated.GetPaginatedAsync(pageIndex, pageSize, cancellationToken));
+            return await _decorated.GetPaginatedAsync(pageIndex, pageSize, cancellationToken);
         }
 
         public async Task<IEnumerable<Board>> GetPaginatedByUserIdAndQueryAsync(Guid userId, string query, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
@@ -68,14 +72,12 @@ namespace TasksBoard.Infrastructure.CachedRepositories
 
         public async Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
-            string key = $"user_boards_page_{pageIndex}_size_{pageSize}";
-            return await _cache.GetOrCreateAsync(key, () => _decorated.GetPaginatedByUserIdAsync(userId, pageIndex, pageSize, cancellationToken));
+            return await  _decorated.GetPaginatedByUserIdAsync(userId, pageIndex, pageSize, cancellationToken);
         }
 
         public async Task<IEnumerable<Board>> GetPaginatedPublicAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
-            string key = $"public_boards_page_{pageIndex}_size_{pageSize}";
-            return await _cache.GetOrCreateAsync(key, () => _decorated.GetPaginatedPublicAsync(pageIndex, pageSize, cancellationToken));
+            return await _decorated.GetPaginatedPublicAsync(pageIndex, pageSize, cancellationToken);
         }
 
         public async Task<bool> HasAccessAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
@@ -85,6 +87,8 @@ namespace TasksBoard.Infrastructure.CachedRepositories
 
         public void Update(Board entity)
         {
+            string key = $"board_{entity.Id}";
+            _cache.Update(key, entity);
             _decorated.Update(entity);
         }
     }

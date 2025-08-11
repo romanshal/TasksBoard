@@ -26,7 +26,6 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             await AddPermissionsAsync(boardMember.Id, cancellationToken);
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-
             if (affectedRows == 0 || board.Id == Guid.Empty)
             {
                 _logger.LogError("Can't create new board. No rows were affected.");

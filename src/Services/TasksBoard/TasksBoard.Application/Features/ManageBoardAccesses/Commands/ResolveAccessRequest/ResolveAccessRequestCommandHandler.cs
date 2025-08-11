@@ -24,77 +24,80 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
 
         public async Task<Result<Guid>> Handle(ResolveAccessRequestCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
-            if (board is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
-                return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
-            }
-
-            var accessRequest = await _unitOfWork.GetRepository<BoardAccessRequest>().GetAsync(request.RequestId, cancellationToken);
-            if (accessRequest is null)
-            {
-                _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
-                return Result.Failure<Guid>(BoardAccessErrors.NotFound);
-
-                //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
-            }
-
-            accessRequest.Status = request.Decision ? (int)BoardAccessRequestStatuses.Accepted : (int)BoardAccessRequestStatuses.Rejected;
-
-            _unitOfWork.GetRepository<BoardAccessRequest>().Update(accessRequest);
-
-            if (request.Decision)
-            {
-                var result = await _mediator.Send(new AddBoardMemberCommand
+                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                if (board is null)
                 {
-                    BoardId = accessRequest.BoardId,
-                    AccountId = accessRequest.AccountId,
-                    Nickname = accessRequest.AccountName
-                }, cancellationToken);
+                    _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
+                    return Result.Failure<Guid>(BoardErrors.NotFound);
 
-                if (result.IsFailure)
-                {
-                    _logger.LogError("Can't add new board member.");
-                    return Result.Failure<Guid>(result.Error);
-
-                    //throw new ArgumentException(nameof(accessRequest));
+                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
+                var accessRequest = await _unitOfWork.GetRepository<BoardAccessRequest>().GetAsync(request.RequestId, token);
+                if (accessRequest is null)
+                {
+                    _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
+                    return Result.Failure<Guid>(BoardAccessErrors.NotFound);
+
+                    //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
+                }
+
+                accessRequest.Status = request.Decision ? (int)BoardAccessRequestStatuses.Accepted : (int)BoardAccessRequestStatuses.Rejected;
+
+                _unitOfWork.GetRepository<BoardAccessRequest>().Update(accessRequest);
+
+                if (request.Decision)
+                {
+                    var result = await _mediator.Send(new AddBoardMemberCommand
+                    {
+                        BoardId = accessRequest.BoardId,
+                        AccountId = accessRequest.AccountId,
+                        Nickname = accessRequest.AccountName
+                    }, cancellationToken);
+
+                    if (result.IsFailure)
+                    {
+                        _logger.LogError("Can't add new board member.");
+                        return Result.Failure<Guid>(result.Error);
+
+                        //throw new ArgumentException(nameof(accessRequest));
+                    }
+
+                    await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
+                    {
+                        BoardId = board.Id,
+                        BoardName = board.Name,
+                        AccountId = accessRequest.AccountId,
+                        AccountName = accessRequest.AccountName,
+                        BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != accessRequest.AccountId).Select(member => member.AccountId)]
+                    }, token);
+                }
+                else
+                {
+                    var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                    if (affectedRows == 0)
+                    {
+                        _logger.LogError("Can't resolve access request.");
+                        return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
+
+                        //throw new ArgumentException("Can't save new access request.");
+                    }
+                }
+
+                await _outboxService.CreateNewOutboxEvent(new ResolveAccessRequestEvent
                 {
                     BoardId = board.Id,
                     BoardName = board.Name,
                     AccountId = accessRequest.AccountId,
-                    AccountName = accessRequest.AccountName,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != accessRequest.AccountId).Select(member => member.AccountId)]
-                }, cancellationToken);
-            }
-            else
-            {
-                var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-                if (affectedRows == 0)
-                {
-                    _logger.LogError("Can't resolve access request.");
-                    return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
+                    SourceAccountId = request.ResolveUserId,
+                    SourceAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.ResolveUserId)!.Nickname,
+                    Status = request.Decision
+                }, token);
 
-                    //throw new ArgumentException("Can't save new access request.");
-                }
-            }
-
-            await _outboxService.CreateNewOutboxEvent(new ResolveAccessRequestEvent
-            {
-                BoardId = board.Id,
-                BoardName = board.Name,
-                AccountId = accessRequest.AccountId,
-                SourceAccountId = request.ResolveUserId,
-                SourceAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.ResolveUserId)!.Nickname,
-                Status = request.Decision
+                return Result.Success(accessRequest.Id);
             }, cancellationToken);
-
-            return Result.Success(accessRequest.Id);
         }
     }
 }

@@ -38,6 +38,10 @@ namespace TasksBoard.Infrastructure
 
             services.AddSingleton<ICacheRepository, RedisCacheRepository>();
 
+            services.AddHealthChecks()
+                .AddNpgSql(connectionString)
+                .AddRabbitMQ();
+
             return services;
         }
     }

@@ -36,7 +36,7 @@ namespace TasksBoard.API.Attributes
             var permissions = await unitOfWork.GetRepository<BoardPermission>().GetAllAsync();
             if (!permissions.Any(permission => permission.Name == _permission))
             {
-                context.Result = new UnprocessableEntityObjectResult($"Permission with name '{_permission}' not found");
+                context.Result = new UnprocessableEntityObjectResult($"Permission with name '{_permission}' was not found");
                 return;
             }
 

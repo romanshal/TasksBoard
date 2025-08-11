@@ -1,7 +1,7 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using MediatR;
 
-namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand
+namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardNotice
 {
     public record DeleteBoardNoticeCommand : IRequest<Result>
     {

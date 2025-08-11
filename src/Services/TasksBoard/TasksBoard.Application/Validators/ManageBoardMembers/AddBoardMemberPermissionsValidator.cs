@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand;
+using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMemberPermissions;
 using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.ManageBoardMembers

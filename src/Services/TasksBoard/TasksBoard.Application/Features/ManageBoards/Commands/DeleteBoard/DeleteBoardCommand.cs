@@ -6,5 +6,6 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
     public record DeleteBoardCommand : IRequest<Result>
     {
         public required Guid Id { get; set; }
+        public required Guid AccountId { get; set; }
     }
 }

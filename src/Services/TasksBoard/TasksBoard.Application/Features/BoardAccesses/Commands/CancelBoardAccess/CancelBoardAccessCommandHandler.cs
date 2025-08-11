@@ -16,31 +16,36 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
 
         public async Task<Result<Guid>> Handle(CancelBoardAccessCommand request, CancellationToken cancellationToken)
         {
-            var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetAsync(request.RequestId, cancellationToken);
-            if (accessRequest is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
-                return Result.Failure<Guid>(BoardAccessErrors.NotFound);
+                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetAsync(request.RequestId, token);
+                if (accessRequest is null)
+                {
+                    _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
+                    return Result.Failure<Guid>(BoardAccessErrors.NotFound);
 
-                //throw new NotFoundException($"Board access request not found.");
-            }
+                    //throw new NotFoundException($"Board access request not found.");
+                }
 
-            accessRequest.Status = (int)BoardAccessRequestStatuses.Canceled;
+                accessRequest.Status = (int)BoardAccessRequestStatuses.Canceled;
 
-            _unitOfWork.GetBoardAccessRequestRepository().Update(accessRequest);
+                _unitOfWork.GetBoardAccessRequestRepository().Update(accessRequest);
 
-            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || accessRequest.Id == Guid.Empty)
-            {
-                _logger.LogError("Can't cancel board access request with id '{id}'.", accessRequest.Id);
-                return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0 || accessRequest.Id == Guid.Empty)
+                {
+                    _logger.LogError("Can't cancel board access request with id '{id}'.", accessRequest.Id);
+                    return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
 
-                //throw new ArgumentException(nameof(accessRequest));
-            }
+                    //throw new ArgumentException(nameof(accessRequest));
+                }
 
-            _logger.LogInformation("Board access request with id '{id}' canceled.", accessRequest.Id);
+                //TODO: add event
 
-            return Result.Success(accessRequest.Id);
+                _logger.LogInformation("Board access request with id '{id}' canceled.", accessRequest.Id);
+
+                return Result.Success(accessRequest.Id);
+            }, cancellationToken);
         }
     }
 }

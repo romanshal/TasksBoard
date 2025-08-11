@@ -70,6 +70,7 @@ namespace Common.Blocks.Services
                 nameof(NewBoardAccessRequestEvent) => JsonSerializer.Deserialize<NewBoardAccessRequestEvent>(outboxEvent.Payload)!,
                 nameof(NewBoardMemberPermissionsEvent) => JsonSerializer.Deserialize<NewBoardMemberPermissionsEvent>(outboxEvent.Payload)!,
                 nameof(UpdateNoticeEvent) => JsonSerializer.Deserialize<UpdateNoticeEvent>(outboxEvent.Payload)!,
+                nameof(DeleteBoardEvent) => JsonSerializer.Deserialize<DeleteBoardEvent>(outboxEvent.Payload)!,
                 _ => throw new Exception(),
             };
         }
@@ -109,6 +110,9 @@ namespace Common.Blocks.Services
                     break;
                 case nameof(UpdateNoticeEvent):
                     await publishEndpoint.Publish<UpdateNoticeEvent>(applicationEvent, cancellationToken);
+                    break;                
+                case nameof(DeleteBoardEvent):
+                    await publishEndpoint.Publish<DeleteBoardEvent>(applicationEvent, cancellationToken);
                     break;
             }
         }

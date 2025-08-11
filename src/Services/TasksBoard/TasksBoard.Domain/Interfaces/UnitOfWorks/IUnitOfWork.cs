@@ -10,5 +10,8 @@ namespace TasksBoard.Domain.Interfaces.UnitOfWorks
         IBoardMemberRepository GetBoardMemberRepository();
         IBoardAccessRequestRepository GetBoardAccessRequestRepository();
         IBoardInviteRequestRepository GetBoardInviteRequestRepository();
+
+        Task TransactionAsync(Func<CancellationToken, Task> action, CancellationToken cancellationToken = default);
+        Task<TResult> TransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> action, CancellationToken cancellationToken = default);
     }
 }

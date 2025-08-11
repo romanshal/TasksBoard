@@ -24,67 +24,70 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
 
         public async Task<Result<Guid>> Handle(CreateBoardInviteRequestCommand request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
-            if (board is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
-                return Result.Failure<Guid>(BoardErrors.NotFound);
+                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                if (board is null)
+                {
+                    _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
+                    return Result.Failure<Guid>(BoardErrors.NotFound);
 
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
-            }
+                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
+                }
 
-            var isMemberExist = board.BoardMembers.Any(member => member.AccountId == request.ToAccountId);
-            if (isMemberExist)
-            {
-                _logger.LogInformation("Board member with account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
-                return Result.Failure<Guid>(BoardMemberErrors.AlreadyExist(board.Name));
+                var isMemberExist = board.BoardMembers.Any(member => member.AccountId == request.ToAccountId);
+                if (isMemberExist)
+                {
+                    _logger.LogInformation("Board member with account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
+                    return Result.Failure<Guid>(BoardMemberErrors.AlreadyExist(board.Name));
 
-                //throw new AlreadyExistException($"Board member is already exist for board '{board.Name}'.");
-            }
+                    //throw new AlreadyExistException($"Board member is already exist for board '{board.Name}'.");
+                }
 
-            var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(request.BoardId, request.ToAccountId, cancellationToken);
-            if (inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
-            {
-                _logger.LogInformation("Board invite request to account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
-                return Result.Failure<Guid>(BoardInviteErrors.AlreadyExist(board.Name));
+                var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(request.BoardId, request.ToAccountId, token);
+                if (inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
+                {
+                    _logger.LogInformation("Board invite request to account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
+                    return Result.Failure<Guid>(BoardInviteErrors.AlreadyExist(board.Name));
 
-                //throw new AlreadyExistException($"Invite request is already exist for board '{board.Name}'.");
-            }
+                    //throw new AlreadyExistException($"Invite request is already exist for board '{board.Name}'.");
+                }
 
-            var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(request.BoardId, request.ToAccountId, cancellationToken);
-            if (accessRequest is not null && accessRequest.Status == (int)BoardAccessRequestStatuses.Pending)
-            {
-                _logger.LogInformation("Board access request to account from '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
-                return Result.Failure<Guid>(BoardAccessErrors.AlreadyExist(board.Name));
+                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(request.BoardId, request.ToAccountId, token);
+                if (accessRequest is not null && accessRequest.Status == (int)BoardAccessRequestStatuses.Pending)
+                {
+                    _logger.LogInformation("Board access request to account from '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
+                    return Result.Failure<Guid>(BoardAccessErrors.AlreadyExist(board.Name));
 
-                //throw new AlreadyExistException($"Access request is already exist for board '{board.Name}'.");
-            }
+                    //throw new AlreadyExistException($"Access request is already exist for board '{board.Name}'.");
+                }
 
-            inviteRequest = _mapper.Map<BoardInviteRequest>(request);
+                inviteRequest = _mapper.Map<BoardInviteRequest>(request);
 
-            _unitOfWork.GetRepository<BoardInviteRequest>().Add(inviteRequest);
+                _unitOfWork.GetRepository<BoardInviteRequest>().Add(inviteRequest);
 
-            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || inviteRequest.Id == Guid.Empty)
-            {
-                _logger.LogError("Can't create new board invite request to board with id '{boardId}'.", request.BoardId);
-                return Result.Failure<Guid>(BoardInviteErrors.CantCreate(board.Name));
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0 || inviteRequest.Id == Guid.Empty)
+                {
+                    _logger.LogError("Can't create new board invite request to board with id '{boardId}'.", request.BoardId);
+                    return Result.Failure<Guid>(BoardInviteErrors.CantCreate(board.Name));
 
-                //throw new ArgumentException(nameof(inviteRequest));
-            }
+                    //throw new ArgumentException(nameof(inviteRequest));
+                }
 
-            await _outboxService.CreateNewOutboxEvent(new NewBoardInviteRequestEvent
-            {
-                BoardId = board.Id,
-                BoardName = board.Name,
-                AccountId = inviteRequest.ToAccountId,
-                FromAccountId = inviteRequest.FromAccountId,
-                FromAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == inviteRequest.FromAccountId)!.Nickname
+                await _outboxService.CreateNewOutboxEvent(new NewBoardInviteRequestEvent
+                {
+                    BoardId = board.Id,
+                    BoardName = board.Name,
+                    AccountId = inviteRequest.ToAccountId,
+                    FromAccountId = inviteRequest.FromAccountId,
+                    FromAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == inviteRequest.FromAccountId)!.Nickname
+                }, token);
+
+                _logger.LogInformation("Board invite request with id '{id}' added to board with id '{boardId}'.", inviteRequest.Id, request.BoardId);
+
+                return Result.Success(inviteRequest.Id);
             }, cancellationToken);
-
-            _logger.LogInformation("Board invite request with id '{id}' added to board with id '{boardId}'.", inviteRequest.Id, request.BoardId);
-
-            return Result.Success(inviteRequest.Id);
         }
     }
 }
