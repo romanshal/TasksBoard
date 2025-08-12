@@ -102,6 +102,8 @@ namespace Chat.API.Controllers
                 BoardMessageId = messageId,
             });
 
+            await hubContext.Clients.Group(boardId.ToString()).SendAsync("DeleteMessage", messageId);
+
             return this.HandleResponse(result);
         }
     }

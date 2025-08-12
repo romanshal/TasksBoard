@@ -1,24 +1,77 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Concurrent;
+using System.Security.Claims;
 
 namespace Chat.API.Hubs
 {
     [Authorize]
     public class BoardChatHub : Hub
     {
-        private static Dictionary<string, string> connections = [];
+        //<userId, HashSet<ConnectionId>>
+        private static readonly ConcurrentDictionary<string, HashSet<string>> connectedUsers = new();
+
+        //<ConnectionId, HashSet<boardId>>
+        private static readonly ConcurrentDictionary<string, HashSet<string>> userBoards = new();
+
+        public override Task OnConnectedAsync()
+        {
+            var userId = ExtractUserId();
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                connectedUsers.AddOrUpdate(userId,
+                    _ => [Context.ConnectionId],
+                    (_, connectionIds) =>
+                    {
+                        connectionIds.Add(Context.ConnectionId);
+                        return connectionIds;
+                    });
+            }
+
+            return base.OnConnectedAsync();
+        }
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            var userId = ExtractUserId();
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                connectedUsers.TryGetValue(userId, out var connectionIds);
+                connectionIds?.Remove(Context.ConnectionId);
+            }
+
+            return base.OnDisconnectedAsync(exception);
+        }
 
         public async Task JoinBoard(string boardId, string userId)
         {
-            var user = Context.User;
-            await Groups.AddToGroupAsync(Context.ConnectionId, boardId);
+            if (userBoards.TryGetValue(Context.ConnectionId, out var boardIds) && boardIds.Contains(boardId)) return;
 
-            var t = Groups;
+            userBoards.AddOrUpdate(userId,
+                _ => [Context.ConnectionId],
+                (_, boardIds) =>
+                {
+                    boardIds.Add(boardId);
+                    return boardIds;
+                });
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, boardId);
         }
 
-        public async Task LeaveBoard(string boardId, CancellationToken cancellationToken = default)
+        public async Task LeaveBoard(string boardId)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, boardId, cancellationToken);
+            if (!userBoards.TryGetValue(Context.ConnectionId, out var boardIds) || !boardIds.Remove(boardId))
+                return;
+
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, boardId);
+
+            if (boardIds.Count == 0)
+                userBoards.TryRemove(Context.ConnectionId, out _);
+        }
+
+        private string? ExtractUserId()
+        {
+            return Context?.User?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
         }
     }
 }

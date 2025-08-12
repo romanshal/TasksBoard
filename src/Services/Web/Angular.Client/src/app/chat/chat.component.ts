@@ -4,6 +4,7 @@ import { SessionStorageService } from '../common/services/session-storage/sessio
 import { BoardMessageService } from '../common/services/board-message/board-message.service';
 import { ChatService } from '../common/services/chat/chat.service';
 import { BoardMemberModel } from '../common/models/board-member/board-member.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -23,6 +24,9 @@ export class ChatComponent implements OnInit {
   pageSize = 10;
 
   messages: BoardMessageModel[] = [];
+
+  private subs: Subscription[] = [];
+  state: 'disconnected' | 'connecting' | 'connected' = 'disconnected';
 
   messageForUpdate?: BoardMessageModel;
 
@@ -45,17 +49,16 @@ export class ChatComponent implements OnInit {
     this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.boardMessageService.getMessages(this.boardId, this.pageIndex, this.pageSize).subscribe(result => {
       if (result) {
-        console.log(result);
         this.messages = result.reverse();
       }
     });
 
-    this.chatService.messages$.subscribe(msg => {
-      if (msg) {
-        this.messages.push(...msg);
+    this.subs.push(
+      this.chatService.onMessage().subscribe(m => {
+        this.messages.push(m);
         this.scrollToBottom();
 
         if (!this.isChatOpen) {
@@ -67,8 +70,35 @@ export class ChatComponent implements OnInit {
             this.unread = this.unreadCount.toString();
           }
         }
-      }
-    });
+      }),
+      this.chatService.onEdit().subscribe(msg => {
+        const idx = this.messages.findIndex(m => m.Id === msg.Id);
+        if (idx === -1) return;
+
+        const edited = {
+          ...this.messages[idx],
+          ...msg
+        };
+
+        // Обновляем элемент
+        this.messages.splice(idx, 1, edited);
+
+        // Если компонент с OnPush — обновим ссылку на массив
+        this.messages = [...this.messages];
+      }),
+      this.chatService.onDelete().subscribe(id => {
+        const idx = this.messages.findIndex(m => m.Id === id);
+        if (idx === -1) return;
+
+        this.messages[idx].IsDeleted = true;
+      }),
+      this.chatService.connectionState().subscribe(s => (this.state = s))
+    );
+
+    await this.chatService.startConnection();
+    if (this.boardId) {
+      await this.chatService.switchBoard(this.boardId, this.userId);
+    }
   }
 
   changeChatVisability() {

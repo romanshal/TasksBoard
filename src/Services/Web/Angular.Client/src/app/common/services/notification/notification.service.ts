@@ -39,7 +39,9 @@ export class NotificationService {
             return this.sessionService.getAccessToken()!;
           }
         })
-        .withAutomaticReconnect()
+        .withAutomaticReconnect({ 
+          nextRetryDelayInMilliseconds: ctx => Math.min(1000 * (ctx.previousRetryCount + 1), 10000) 
+        })
         .build();
 
       this.startConnection();
@@ -48,8 +50,6 @@ export class NotificationService {
 
   startConnection(): Promise<any> {
     this.hubConnection!.on('ReceiveNotification', (data) => {
-      console.log('new notify')
-      console.log(data);
       let notification = new NotificationModel(
         data.id,
         data.type,
@@ -96,7 +96,7 @@ export class NotificationService {
         }));
   }
 
-  getNewPaginatedByAccountId(accountId: string,pageIndex: number, pageSize: number) : Observable<PaginatedList<NotificationModel>> {
+  getNewPaginatedByAccountId(accountId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<NotificationModel>> {
     const url = '/api/notifications/new/paginated/' + accountId;
     return this.http.get(this.baseUrl + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize) })
       .pipe(

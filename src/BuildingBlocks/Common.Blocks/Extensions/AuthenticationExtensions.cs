@@ -36,6 +36,21 @@ namespace Common.Blocks.Extensions
                         ValidAudience = jwt.Audience ?? throw new InvalidOperationException("Configuration setting 'Audience' not found"),
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret ?? throw new InvalidOperationException("Configuration setting 'Secret' not found")))
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            // Разрешаем токен в query для WebSocket
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            if (!string.IsNullOrEmpty(accessToken))
+                                context.Token = accessToken;
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             return builder;

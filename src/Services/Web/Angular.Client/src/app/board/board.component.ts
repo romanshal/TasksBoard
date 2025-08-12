@@ -79,13 +79,10 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getPermissions();
-
-    this.chatService.joinBoard(this.boardId, this.userId);
   }
 
-  ngOnDestroy(): void {
-    console.log('ondestroy');
-    this.chatService.leaveBoard(this.boardId);
+  async ngOnDestroy(): Promise<void> {
+    await this.chatService.stop();
   }
 
   private getBoard() {
