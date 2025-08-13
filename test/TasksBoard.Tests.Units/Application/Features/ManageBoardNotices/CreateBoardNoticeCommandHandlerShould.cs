@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -36,6 +37,9 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             unitOfWork
                 .Setup(s => s.GetRepository<BoardNotice>())
                 .Returns(boardNoticeRepository.Object);
+            unitOfWork
+                .Setup(u => u.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(),It.IsAny<CancellationToken>()))
+                .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
 
             mapper = new Mock<IMapper>();
             mapperSetup = mapper.Setup(s => s.Map<BoardNotice>(It.IsAny<CreateBoardNoticeCommand>()));

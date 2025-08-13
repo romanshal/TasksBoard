@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Common.Blocks.Models.DomainResults;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess;
@@ -26,6 +27,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(s => s.GetBoardAccessRequestRepository())
                 .Returns(repository.Object);
+            unitOfWork.Setup(u => u.TransactionAsync(
+                It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(),
+                It.IsAny<CancellationToken>()))
+            .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
 
             logger = new Mock<ILogger<CancelBoardAccessCommandHandler>>();
 
@@ -71,23 +76,23 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
         [Fact]
         public async Task ReturnNotFoundResult_WhenRequestDoesntExist()
         {
+            var requestId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037");
             var command = new CancelBoardAccessCommand
             {
-                RequestId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037")
+                RequestId = requestId
             };
-            repositoryGetSetup.ReturnsAsync(value: null);
 
-            //var t = await sut
-            //     .Invoking(s => s.Handle(command, It.IsAny<CancellationToken>()))
-            //     .Should()
-            //     .ThrowAsync<NotFoundException>();
+            repositoryGetSetup
+                     .ReturnsAsync((BoardAccessRequest)null!);
 
             var actual = await sut.Handle(command, CancellationToken.None);
 
-            actual.IsSuccess.Should().BeFalse();
-            actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardAccessErrors.NotFound);
+            actual.IsFailure.Should().BeTrue();
+            actual.Error.Should().Be(BoardAccessErrors.NotFound);
 
-            repository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+            repository.Verify(r => r.GetAsync(requestId, It.IsAny<CancellationToken>()), Times.Once);
+            repository.Verify(r => r.Update(It.IsAny<BoardAccessRequest>()), Times.Never);
+            unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

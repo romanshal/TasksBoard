@@ -15,7 +15,7 @@ namespace TasksBoard.Infrastructure.Data.Contexts
             }
         }
 
-        private static IEnumerable<BoardPermission> GetPreconfiguredPermissions()
+        public static IEnumerable<BoardPermission> GetPreconfiguredPermissions()
         {
             return
                 [

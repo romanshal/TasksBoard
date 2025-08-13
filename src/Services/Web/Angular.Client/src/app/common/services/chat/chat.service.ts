@@ -119,7 +119,7 @@ export class ChatService {
 
     if (this.boardId && this.userId) {
       console.log('Exect join board on front');
-      await this.safeInvoke('JoinBoard', this.boardId, this.userId);
+      await this.safeInvoke('JoinBoard', this.boardId);
     }
   }
 
@@ -131,7 +131,7 @@ export class ChatService {
       await this.startConnection();
     }
 
-    await this.safeInvoke('JoinBoard', boardId, userId);
+    await this.safeInvoke('JoinBoard', boardId);
   }
 
   async stop(): Promise<void> {

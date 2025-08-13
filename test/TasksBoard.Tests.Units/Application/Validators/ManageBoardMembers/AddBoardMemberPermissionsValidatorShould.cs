@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardPermissionsCommand;
+using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMemberPermissions;
 using TasksBoard.Application.Validators.ManageBoardMembers;
 
 namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardMembers

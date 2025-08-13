@@ -11,6 +11,10 @@ namespace TasksBoard.Application.Validators.ManageBoards
             RuleFor(p => p.Id)
                 .NotEqual(Guid.Empty)
                 .WithMessage(BoardMessages.BoardIdRequired);
+
+            RuleFor(p => p.AccountId)
+                .NotEqual(Guid.Empty)
+                .WithMessage(BoardMessages.AccountIdRequired);
         }
     }
 }

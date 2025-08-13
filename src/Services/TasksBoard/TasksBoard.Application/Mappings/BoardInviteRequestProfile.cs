@@ -11,7 +11,11 @@ namespace TasksBoard.Application.Mappings
         public BoardInviteRequestProfile()
         {
             CreateMap<CreateBoardInviteRequestCommand, BoardInviteRequest>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)BoardInviteRequestStatuses.Pending));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)BoardInviteRequestStatuses.Pending))
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Board, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore());
 
             CreateMap<BoardInviteRequest, BoardInviteRequestDto>()
                 .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name));

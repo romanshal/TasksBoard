@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using Common.Blocks.Interfaces.Services;
+using Common.Blocks.Models.DomainResults;
+using EventBus.Messages.Events;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard;
@@ -14,6 +17,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
         private readonly Mock<IBoardRepository> boardRepository;
         private readonly Mock<ILogger<DeleteBoardCommandHandler>> logger;
         private readonly Mock<IUnitOfWork> unitOfWork;
+        private readonly Mock<IOutboxService> outboxService;
         private readonly DeleteBoardCommandHandler sut;
 
         public DeleteBoardCommandHandlerShould()
@@ -26,8 +30,16 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             unitOfWork
                 .Setup(s => s.GetRepository<Board>())
                 .Returns(boardRepository.Object);
+            unitOfWork
+                .Setup(s => s.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result>>>(), It.IsAny<CancellationToken>()))
+                .Returns((Func<CancellationToken, Task<Result>> func, CancellationToken ct) => func(ct));
 
-            sut = new DeleteBoardCommandHandler(logger.Object, unitOfWork.Object);
+            outboxService = new Mock<IOutboxService>();
+            outboxService
+                .Setup(s => s.CreateNewOutboxEvent(It.IsAny<BaseEvent>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Guid.NewGuid());
+
+            sut = new DeleteBoardCommandHandler(logger.Object, unitOfWork.Object, outboxService.Object);
         }
 
         [Fact]
@@ -35,7 +47,8 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
         {
             var command = new DeleteBoardCommand
             {
-                Id = Guid.Empty
+                Id = Guid.Empty,
+                AccountId = Guid.Empty
             };
 
             boardRepository
@@ -43,7 +56,15 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                 .ReturnsAsync(new Board
                 {
                     OwnerId = Guid.Empty,
-                    Name = string.Empty
+                    Name = string.Empty,
+                    BoardMembers =
+                    [
+                        new BoardMember
+                        {
+                            AccountId = Guid.Empty,
+                            Nickname = "Test"
+                        }
+                    ]
                 });
 
             boardRepository
@@ -64,7 +85,8 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             var boardId = Guid.Parse("f03b80d1-da7a-4054-ae5c-261310dec753");
             var command = new DeleteBoardCommand
             {
-                Id = boardId
+                Id = boardId,
+                AccountId = Guid.Empty
             };
 
             boardRepository

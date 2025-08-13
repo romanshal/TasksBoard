@@ -12,7 +12,7 @@ namespace Chat.API.Hubs
         private static readonly ConcurrentDictionary<string, HashSet<string>> connectedUsers = new();
 
         //<ConnectionId, HashSet<boardId>>
-        private static readonly ConcurrentDictionary<string, HashSet<string>> userBoards = new();
+        private static readonly ConcurrentDictionary<string, HashSet<string>> connectedBoards = new();
 
         public override Task OnConnectedAsync()
         {
@@ -43,11 +43,11 @@ namespace Chat.API.Hubs
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task JoinBoard(string boardId, string userId)
+        public async Task JoinBoard(string boardId)
         {
-            if (userBoards.TryGetValue(Context.ConnectionId, out var boardIds) && boardIds.Contains(boardId)) return;
+            if (connectedBoards.TryGetValue(Context.ConnectionId, out var boardIds) && boardIds.Contains(boardId)) return;
 
-            userBoards.AddOrUpdate(userId,
+            connectedBoards.AddOrUpdate(Context.ConnectionId,
                 _ => [Context.ConnectionId],
                 (_, boardIds) =>
                 {
@@ -60,13 +60,13 @@ namespace Chat.API.Hubs
 
         public async Task LeaveBoard(string boardId)
         {
-            if (!userBoards.TryGetValue(Context.ConnectionId, out var boardIds) || !boardIds.Remove(boardId))
+            if (!connectedBoards.TryGetValue(Context.ConnectionId, out var boardIds) || !boardIds.Remove(boardId))
                 return;
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, boardId);
 
             if (boardIds.Count == 0)
-                userBoards.TryRemove(Context.ConnectionId, out _);
+                connectedBoards.TryRemove(Context.ConnectionId, out _);
         }
 
         private string? ExtractUserId()

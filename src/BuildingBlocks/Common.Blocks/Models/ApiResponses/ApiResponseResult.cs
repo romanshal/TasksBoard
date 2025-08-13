@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace Common.Blocks.Models.ApiResponses
 {
@@ -6,6 +7,7 @@ namespace Common.Blocks.Models.ApiResponses
     {
         private readonly T? _result;
 
+        [JsonConstructor]
         protected internal ApiResponse(T? result, string? description = default, bool isError = false) : base(description, isError) =>
             _result = result;
 

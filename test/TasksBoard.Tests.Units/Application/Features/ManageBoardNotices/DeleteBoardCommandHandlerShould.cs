@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
+using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardNotice;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;

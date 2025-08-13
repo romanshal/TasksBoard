@@ -16,7 +16,6 @@ import { BoardPermissionService } from '../common/services/board-permission/boar
 import { BoardMemberAuthService } from '../common/services/board-member-auth/board-member-auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChatService } from '../common/services/chat/chat.service';
-import { ChatComponent } from '../chat/chat.component';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -81,8 +80,8 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.getPermissions();
   }
 
-  async ngOnDestroy(): Promise<void> {
-    await this.chatService.stop();
+  ngOnDestroy() {
+    this.chatService.stop();
   }
 
   private getBoard() {
@@ -120,7 +119,7 @@ export class BoardComponent implements OnInit, OnDestroy {
           this.isLoading = true;
 
           this.notesForView = result.Items;
-        }, 500);
+        }, 200);
 
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;

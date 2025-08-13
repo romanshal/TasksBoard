@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Common.Blocks.Models.ApiResponses
 {
@@ -7,6 +9,7 @@ namespace Common.Blocks.Models.ApiResponses
         public string? Description { get; }
         public bool IsError { get; }
 
+        [JsonConstructor]
         protected ApiResponse(string? description = default, bool isError = false)
         {
             Description = description;
@@ -26,7 +29,7 @@ namespace Common.Blocks.Models.ApiResponses
 
         public override string ToString()
         {
-            return JsonSerializer.Serialize(this, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            return System.Text.Json.JsonSerializer.Serialize(this, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }

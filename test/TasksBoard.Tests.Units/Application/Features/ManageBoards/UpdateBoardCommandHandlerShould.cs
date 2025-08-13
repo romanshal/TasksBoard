@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Common.Blocks.Models.DomainResults;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
@@ -26,6 +27,10 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             unitOfWork
                 .Setup(s => s.GetRepository<Board>())
                 .Returns(boardRepository.Object);
+            unitOfWork.Setup(u => u.TransactionAsync(
+                It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(),
+                It.IsAny<CancellationToken>()))
+                .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
 
             sut = new UpdateBoardCommandHandler(logger.Object, unitOfWork.Object);
         }

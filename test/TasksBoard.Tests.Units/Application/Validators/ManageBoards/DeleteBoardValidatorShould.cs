@@ -13,7 +13,8 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoards
         {
             var validCommand = new DeleteBoardCommand
             {
-                Id = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037")
+                Id = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
+                AccountId = Guid.Parse("9bc9e2e5-6580-498d-a551-4f520c1a445b")
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();
@@ -30,9 +31,12 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoards
         {
             var validCommand = new DeleteBoardCommand
             {
-                Id = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037")
+                Id = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
+                AccountId = Guid.Parse("9bc9e2e5-6580-498d-a551-4f520c1a445b")
             };
             yield return new object[] { validCommand with { Id = Guid.Empty } };
+            yield return new object[] { validCommand with { AccountId = Guid.Empty } };
+            yield return new object[] { validCommand with { Id = Guid.Empty, AccountId = Guid.Empty } };
         }
     }
 }
