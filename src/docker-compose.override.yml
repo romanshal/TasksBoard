@@ -1,0 +1,257 @@
+x-db-env: &db-env
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+x-default-env: &default-env
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: "https://+:443;http://+:80"
+  "OpenSearch:Urls": "https://opensearch-node1:9200,https://opensearch-node2:9200"
+  "OpenSearch:Login": "admin"
+  "OpenSearch:Password": "A1X8t6ESr_Gpuph35"
+  # "Grafana:Url": ""
+  "Jaeger:Url": http://jaeger:4317
+  "Authentication:Jwt:Secret": Hg4EtbzOqvc5pRBJ2KGkz4aPD38D1Sgr
+  "Authentication:Jwt:Issuer": https://authentication.api:443
+  "Authentication:Jwt:Audience": https://tasksboard.api:443
+  "Authentication:Jwt:ExpirationInMinutes": 480
+
+networks:
+  my_network:
+    driver: bridge
+  opensearch_network:
+    driver: bridge
+
+services:
+  authenticationdb:
+    container_name: authenticationdb
+    environment:
+      <<: *db-env
+      POSTGRES_DB: tasks-board-authentication-db
+    restart: always
+    ports:
+        - "5432:5432"
+    volumes:
+      - postgres_authentication:/var/lib/postgresql/data/
+
+  tasksboarddb:
+    container_name: tasksboarddb
+    environment:
+      <<: *db-env
+      POSTGRES_DB: tasks-board-db
+    restart: always
+    ports:
+        - "5433:5432"
+    volumes:
+      - postgres_tasksboard:/var/lib/postgresql/data/
+
+  chatdb:
+    container_name: chatdb
+    environment:
+      <<: *db-env
+      POSTGRES_DB: tasks-board-chat-db
+    restart: always
+    ports:
+        - "5434:5432"
+    volumes:
+      - postgres_chat:/var/lib/postgresql/data/
+ 
+  notificationdb:
+    container_name: notificationdb
+    environment:
+      <<: *db-env
+      POSTGRES_DB: tasks-board-notification-db
+    restart: always
+    ports:
+        - "5435:5432"
+    volumes:
+      - postgres_notification:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgres@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
+  rabbitmq:
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+
+  opensearch-node1:
+    container_name: opensearch-node1
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=A1X8t6ESr_Gpuph35
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    # networks:
+    #   - opensearch_network
+
+  opensearch-node2:
+    container_name: opensearch-node2
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node2
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=A1X8t6ESr_Gpuph35
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+    # networks:
+    #   - opensearch_network
+
+  opensearch-dashboards:
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - '5601'
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
+    # networks:
+    #   - opensearch_network
+
+  prometheus:
+    container_name: prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+
+  grafana:
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GF_INSTALL_PLUGINS: 'grafana-clock-panel,grafana-simple-json-datasource'
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - '3000:3000'
+    depends_on:
+      - prometheus
+
+  jaeger:
+    container_name: 'jaeger'
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    ports:
+      - '4317:4317'
+      - '16686:16686'
+
+  redis:
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+
+  authentication.api:
+    container_name: authentication.api
+    environment:
+      <<: *default-env
+      "ConnectionStrings:AuthenticationDbConnection": "Server=authenticationdb;Port=5432;Database=tasks-board-authentication-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "authentication.api-index-{0:yyyy.MM.dd}"
+      "MessageBroker:Host": amqp://rabbitmq:5672
+      "MessageBroker:UserName": guest
+      "MessageBroker:Password": guest
+      "MessageBroker:StartTimeout": 30
+      "MessageBroker:StopTimeout": 1
+    depends_on:
+      - rabbitmq
+      - authenticationdb
+    ports:
+      - "8000:80"
+      - "9000:443"
+
+  tasksboard.api:
+    container_name: tasksboard.api
+    environment:
+      <<: *default-env
+      "ConnectionStrings:TasksBoardDbConnection": "Server=tasksboarddb;Port=5432;Database=tasks-board-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "tasksboard.api-index-{0:yyyy.MM.dd}"
+      "MessageBroker:Host": amqp://rabbitmq:5672
+      "MessageBroker:UserName": guest
+      "MessageBroker:Password": guest
+      "MessageBroker:StartTimeout": 30
+      "MessageBroker:StopTimeout": 1
+      "Cache:Redis:Host": redis
+      "Cache:Redis:Port": 6379
+      "Cache:Redis:Password": redispassword
+      "Cache:ExpirationTimeSeconds": 300
+    depends_on:
+      - tasksboarddb
+      - rabbitmq
+      - redis
+    ports:
+      - "8001:80"
+      - "9001:443"
+
+  chat.api:
+    container_name: chat.api
+    environment:
+      <<: *default-env
+      "ConnectionStrings:ChatDbConnection": "Server=chatdb;Port=5432;Database=tasks-board-chat-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "chat.api-index-{0:yyyy.MM.dd}"
+    depends_on:
+      - chatdb
+    ports:
+      - "8002:80"
+      - "9002:443"
+
+  notification.api:
+    container_name: notification.api
+    environment:      
+      <<: *default-env
+      "ConnectionStrings:NotificationDbConnection": "Server=notificationdb;Port=5432;Database=tasks-board-notification-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "notification.api-index-{0:yyyy.MM.dd}"
+      "MessageBroker:Host": amqp://rabbitmq:5672
+      "MessageBroker:UserName": guest
+      "MessageBroker:Password": guest
+      "MessageBroker:StartTimeout": 30
+      "MessageBroker:StopTimeout": 1 
+    depends_on:
+      - notificationdb
+      - rabbitmq
+    ports:
+      - "8003:80"
+      - "9003:443"

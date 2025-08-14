@@ -1,8 +1,0 @@
-﻿################################################################################
-# Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
-################################################################################
-
-/src/docker-compose.dcproj
-/src/docker-compose.override.yml
-/src/docker-compose.yml
-/src/launchSettings.json

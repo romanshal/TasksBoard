@@ -1,0 +1,77 @@
+services:
+  authenticationdb:
+    image: postgres
+
+  tasksboarddb:
+    image: postgres
+
+  chatdb:
+    image: postgres
+
+  notificationdb:
+    image: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+
+  rabbitmq:
+    image: rabbitmq:4-management
+
+  opensearch-node1:
+    image: opensearchproject/opensearch:latest
+
+  opensearch-node2:
+    image: opensearchproject/opensearch:latest
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+
+  prometheus:
+    image: prom/prometheus
+
+  grafana:
+    image: grafana/grafana
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+
+  redis:
+    image: redis:latest
+
+  authentication.api:
+    image: ${DOCKER_REGISTRY-}authenticationapi
+    build:
+      context: .
+      dockerfile: Services/Authentication/Authentication.API/Dockerfile
+
+  tasksboard.api:
+    image: ${DOCKER_REGISTRY-}tasksboardapi
+    build:
+      context: .
+      dockerfile: Services/TasksBoard/TasksBoard.API/Dockerfile
+
+  chat.api:
+    image: ${DOCKER_REGISTRY-}chatapi
+    container_name: chat.api
+    build:
+      context: .
+      dockerfile: Services/Chat/Chat.API/Dockerfile
+
+  notification.api:
+    image: ${DOCKER_REGISTRY-}notificationapi
+    container_name: notification.api
+    build:
+      context: .
+      dockerfile: Services/Notification/Notification.API/Dockerfile
+
+volumes:
+  postgres_authentication:
+  postgres_tasksboard:
+  postgres_chat:
+  postgres_notification:
+  pgadmin:
+  opensearch-data1:
+  opensearch-data2:
+  prometheus:
+  grafana:
+

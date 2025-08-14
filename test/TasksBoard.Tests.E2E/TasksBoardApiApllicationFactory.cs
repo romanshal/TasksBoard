@@ -13,6 +13,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using TasksBoard.Domain.Entities;
 using TasksBoard.Infrastructure.Data.Contexts;
 using Testcontainers.PostgreSql;
 
@@ -51,13 +52,13 @@ namespace TasksBoard.Tests.E2E
             var credentionals = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new List<Claim>
-                {
+                Subject = new ClaimsIdentity(
+                [
                     new(ClaimTypes.Name, username),
                     new(ClaimTypes.Email, "test@gmail.com"),
                     new(ClaimTypes.NameIdentifier, userId.ToString()),
                     new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                }),
+                ]),
                 Expires = DateTime.Now.AddMinutes(int.Parse(configuration["Authentication:Jwt:ExpirationInMinutes"]!)),
                 SigningCredentials = credentionals,
                 Issuer = configuration["Authentication:Jwt:Issuer"],

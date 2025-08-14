@@ -1,55 +1,84 @@
 ﻿using Common.Blocks.Models.ApiResponses;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Net;
 using System.Net.Http.Json;
 using TasksBoard.API.Models.Requests.ManageBoardNotices;
-using TasksBoard.Domain.Entities;
-using TasksBoard.Infrastructure.Data.Contexts;
+using TasksBoard.Domain.Constants.Errors.DomainErrors;
 
 
 namespace TasksBoard.Tests.E2E.Controllers
 {
-    public class ManageBoardNoticeControllerShould(
-        TasksBoardApiApllicationFactory factory) : IClassFixture<TasksBoardApiApllicationFactory>
+    public class ManageBoardNoticeControllerShould : IClassFixture<TasksBoardApiApllicationFactory>
     {
-        private readonly (Guid UserId, string Username) _user = factory.GetUserCredentials();
+        private readonly PreconfigurationDatabaseFactory _preconfig;
+        private readonly TasksBoardApiApllicationFactory _factory;
+
+        public ManageBoardNoticeControllerShould(TasksBoardApiApllicationFactory factory)
+        {
+            _factory = factory;
+            _preconfig = new(factory);
+        }
 
         [Fact]
         public async Task CreateNewBoardNotice()
         {
-            var boardId = await PreconfigureBoard();
+            var boardId = await _preconfig.PreconfigureBoard();
 
-            using var httpClient = factory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = factory.GetAuthentication();
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
 
             var request = new CreateBoardNoticeRequest 
             {
-                AuthorId = _user.UserId,
-                AuthorName = _user.Username,
+                AuthorId = _preconfig.User.UserId,
+                AuthorName = _preconfig.User.Username,
                 Definition = "Test notice",
                 BackgroundColor = "BackgroundColor",
                 Rotation = "Rotation"
             };
 
             var createNoticeResponse = await httpClient.PostAsync($"api/managenotices/board/{boardId}", JsonContent.Create(request));
+            var responseString = await createNoticeResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse<Guid>>(responseString, _factory.GetJsonSettings());
 
             createNoticeResponse.IsSuccessStatusCode.Should().BeTrue();
+            createNoticeResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             createNoticeResponse.Content.Should().NotBeNull();
-
-            var responseString = await createNoticeResponse.Content.ReadAsStringAsync();
-            var response = JsonConvert.DeserializeObject<ApiResponse<Guid>>(responseString, factory.GetJsonSettings());
-
             response.Should().NotBeNull();
             response.IsError.Should().BeFalse();
             response.Result.Should().NotBeEmpty();
         }
 
         [Fact]
+        public async Task ReturnForbbidenResponse_WhenHasntBoardAccess()
+        {
+            var boardId = Guid.NewGuid();
+
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
+
+            var request = new CreateBoardNoticeRequest
+            {
+                AuthorId = _preconfig.User.UserId,
+                AuthorName = _preconfig.User.Username,
+                Definition = "Test notice",
+                BackgroundColor = "BackgroundColor",
+                Rotation = "Rotation"
+            };
+
+            var createNoticeResponse = await httpClient.PostAsync($"api/managenotices/board/{boardId}", JsonContent.Create(request));
+            var responseString = await createNoticeResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse>(responseString, _factory.GetJsonSettings());
+
+            createNoticeResponse.IsSuccessStatusCode.Should().BeFalse();
+            createNoticeResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
         public async Task UpdateBoardNotice()
         {
-            var boardId = await PreconfigureBoard();
-            var noticeId = await PreconfigureBoardNotice(boardId);
+            var boardId = await _preconfig.PreconfigureBoard();
+            var noticeId = await _preconfig.PreconfigureBoardNotice(boardId);
             
             var request = new UpdateBoardNoticeRequest 
             {
@@ -59,127 +88,121 @@ namespace TasksBoard.Tests.E2E.Controllers
                 Rotation = "Rotation"
             };
 
-            using var httpClient = factory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = factory.GetAuthentication();
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
 
             var updateNoticeResponse = await httpClient.PutAsync($"api/managenotices/board/{boardId}", JsonContent.Create(request));
+            var responseString = await updateNoticeResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse<Guid>>(responseString, _factory.GetJsonSettings());
 
             updateNoticeResponse.IsSuccessStatusCode.Should().BeTrue();
             updateNoticeResponse.Content.Should().NotBeNull();
-
-            var responseString = await updateNoticeResponse.Content.ReadAsStringAsync();
-            var response = JsonConvert.DeserializeObject<ApiResponse<Guid>>(responseString, factory.GetJsonSettings());
-
             response.Should().NotBeNull();
             response.IsError.Should().BeFalse();
             response.Result.Should().NotBeEmpty().And.Be(noticeId);
         }
 
         [Fact]
-        public async Task UpdateBoardNoticeStatus()
+        public async Task ReturnNotFoundResponse_WhenBoardNoticeNotFound_WhenUpdateBoardNotice()
         {
-            var boardId = await PreconfigureBoard();
-            var noticeId = await PreconfigureBoardNotice(boardId);
+            var boardId = await _preconfig.PreconfigureBoard();
+            var noticeId = Guid.Parse("c4d77651-8057-48ea-8771-856b31d88b87");
 
-            var request = new UpdateBoardNoticeStatusRequest
+            var request = new UpdateBoardNoticeRequest
             {
-                AccountId = _user.UserId,
-                AccountName = _user.Username,
                 NoticeId = noticeId,
-                Complete = true
-            };
-
-            using var httpClient = factory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = factory.GetAuthentication();
-
-            var updateNoticeStatusResponse = await httpClient.PutAsync($"api/managenotices/status/board/{boardId}", JsonContent.Create(request));
-
-            updateNoticeStatusResponse.IsSuccessStatusCode.Should().BeTrue();
-            updateNoticeStatusResponse.Content.Should().NotBeNull();
-
-            var responseString = await updateNoticeStatusResponse.Content.ReadAsStringAsync();
-            var response = JsonConvert.DeserializeObject<ApiResponse<Guid>>(responseString, factory.GetJsonSettings());
-
-            response.Should().NotBeNull();
-            response.IsError.Should().BeFalse();
-            response.Result.Should().NotBeEmpty().And.Be(noticeId);
-        }
-
-        [Fact]
-        public async Task DeleteBoardNotice()
-        {
-            var boardId = await PreconfigureBoard();
-            var noticeId = await PreconfigureBoardNotice(boardId);
-
-            using var httpClient = factory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = factory.GetAuthentication();
-
-            var deleteNoticeResponse = await httpClient.DeleteAsync($"api/managenotices/board/{boardId}/notice/{noticeId}");
-
-            deleteNoticeResponse.IsSuccessStatusCode.Should().BeTrue();
-            deleteNoticeResponse.Content.Should().NotBeNull();
-
-            var responseString = await deleteNoticeResponse.Content.ReadAsStringAsync();
-            var response = JsonConvert.DeserializeObject<ApiResponse>(responseString, factory.GetJsonSettings());
-
-            response.Should().NotBeNull();
-            response.IsError.Should().BeFalse();
-        }
-
-        private async Task<Guid> PreconfigureBoard()
-        {
-            var dbContext = factory.GetDbContext();
-
-            var permissionsExist = await dbContext.BoardPermissions.AnyAsync();
-            if (!permissionsExist)
-            {
-                await dbContext.BoardPermissions.AddRangeAsync(DataSeedMaker.GetPreconfiguredPermissions());
-                await dbContext.SaveChangesAsync();
-            }
-            var permissions = await dbContext.BoardPermissions.ToListAsync();
-
-            var board = new Board
-            {
-                Name = "Test board",
-                OwnerId = _user.UserId,
-                BoardMembers =
-                [
-                    new() {
-                        AccountId = _user.UserId,
-                        Nickname = _user.Username,
-                        BoardMemberPermissions = [.. permissions.Select(perm => new BoardMemberPermission
-                        {
-                            BoardPermissionId = perm.Id
-                        })]
-                    }
-                ]
-            };
-
-            dbContext.Boards.Add(board);
-
-            await dbContext.SaveChangesAsync();
-
-            return board.Id;
-        }
-
-        private async Task<Guid> PreconfigureBoardNotice(Guid boardId)
-        {
-            var dbContext = factory.GetDbContext();
-
-            var notice = new BoardNotice
-            {
-                BoardId = boardId,
-                AuthorId = _user.UserId,
-                AuthorName = _user.Username,
                 Definition = "Test notice",
                 BackgroundColor = "BackgroundColor",
                 Rotation = "Rotation"
             };
 
-            dbContext.BoardNotices.Add(notice);
-            await dbContext.SaveChangesAsync();
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
 
-            return notice.Id;
+            var updateNoticeResponse = await httpClient.PutAsync($"api/managenotices/board/{boardId}", JsonContent.Create(request));
+            var responseString = await updateNoticeResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse>(responseString, _factory.GetJsonSettings());
+
+            updateNoticeResponse.IsSuccessStatusCode.Should().BeFalse();
+            updateNoticeResponse.Content.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.IsError.Should().BeTrue();
+            response.Description.Should().BeEquivalentTo(BoardNoticeErrors.NotFound.Description);
+        }
+
+        [Fact]
+        public async Task UpdateBoardNoticeStatus()
+        {
+            var boardId = await _preconfig.PreconfigureBoard();
+            var noticeId = await _preconfig.PreconfigureBoardNotice(boardId);
+
+            var request = new UpdateBoardNoticeStatusRequest
+            {
+                AccountId = _preconfig.User.UserId,
+                AccountName = _preconfig.User.Username,
+                NoticeId = noticeId,
+                Complete = true
+            };
+
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
+
+            var updateNoticeStatusResponse = await httpClient.PutAsync($"api/managenotices/status/board/{boardId}", JsonContent.Create(request));
+            var responseString = await updateNoticeStatusResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse<Guid>>(responseString, _factory.GetJsonSettings());
+
+            updateNoticeStatusResponse.IsSuccessStatusCode.Should().BeTrue();
+            updateNoticeStatusResponse.Content.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.IsError.Should().BeFalse();
+            response.Result.Should().NotBeEmpty().And.Be(noticeId);
+        }
+
+        [Fact]
+        public async Task ReturnNotFoundResponse_WhenBoardNoticeNotFound_WhenUpdateBoardNoticeStatus()
+        {
+            var boardId = await _preconfig.PreconfigureBoard();
+            var noticeId = Guid.Parse("c4d77651-8057-48ea-8771-856b31d88b87");
+
+            var request = new UpdateBoardNoticeStatusRequest
+            {
+                AccountId = _preconfig.User.UserId,
+                AccountName = _preconfig.User.Username,
+                NoticeId = noticeId,
+                Complete = true
+            };
+
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
+
+            var updateNoticeStatusResponse = await httpClient.PutAsync($"api/managenotices/status/board/{boardId}", JsonContent.Create(request));
+            var responseString = await updateNoticeStatusResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse>(responseString, _factory.GetJsonSettings());
+
+            updateNoticeStatusResponse.IsSuccessStatusCode.Should().BeFalse();
+            updateNoticeStatusResponse.Content.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.IsError.Should().BeTrue();
+            response.Description.Should().BeEquivalentTo(BoardNoticeErrors.NotFound.Description);
+        }
+
+        [Fact]
+        public async Task DeleteBoardNotice()
+        {
+            var boardId = await _preconfig.PreconfigureBoard();
+            var noticeId = await _preconfig.PreconfigureBoardNotice(boardId);
+
+            using var httpClient = _factory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
+
+            var deleteNoticeResponse = await httpClient.DeleteAsync($"api/managenotices/board/{boardId}/notice/{noticeId}");
+            var responseString = await deleteNoticeResponse.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<ApiResponse>(responseString, _factory.GetJsonSettings());
+
+            deleteNoticeResponse.IsSuccessStatusCode.Should().BeTrue();
+            deleteNoticeResponse.Content.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.IsError.Should().BeFalse();
         }
     }
 }
