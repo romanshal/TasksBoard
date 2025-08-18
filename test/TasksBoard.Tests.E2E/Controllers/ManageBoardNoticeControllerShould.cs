@@ -23,7 +23,7 @@ namespace TasksBoard.Tests.E2E.Controllers
             using var httpClient = _factory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = _factory.GetAuthentication();
 
-            var request = new CreateBoardNoticeRequest 
+            var request = new CreateBoardNoticeRequest
             {
                 AuthorId = _preconfig.User.UserId,
                 AuthorName = _preconfig.User.Username,
@@ -74,8 +74,8 @@ namespace TasksBoard.Tests.E2E.Controllers
         {
             var boardId = await _preconfig.PreconfigureBoard();
             var noticeId = await _preconfig.PreconfigureBoardNotice(boardId);
-            
-            var request = new UpdateBoardNoticeRequest 
+
+            var request = new UpdateBoardNoticeRequest
             {
                 NoticeId = noticeId,
                 Definition = "Test notice",

@@ -1,4 +1,4 @@
-﻿namespace TasksBoard.Domain.Models
+﻿namespace Common.Blocks.Models.Users
 {
     public sealed record NegativeMarker
     {

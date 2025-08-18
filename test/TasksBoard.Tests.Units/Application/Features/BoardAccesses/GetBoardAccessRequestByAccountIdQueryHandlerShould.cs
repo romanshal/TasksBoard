@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.Interfaces.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -15,6 +16,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
     {
         private readonly Mock<IUnitOfWork> unitOfWork;
         private readonly Mapper mapper;
+        private readonly Mock<IUserProfileService> profileServie;
         private readonly Mock<IBoardAccessRequestRepository> accessRepository;
         private readonly Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>> logger;
         private readonly GetBoardAccessRequestByAccountIdQueryHandler sut;
@@ -31,7 +33,9 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>()));
 
-            sut = new GetBoardAccessRequestByAccountIdQueryHandler(unitOfWork.Object, logger.Object, mapper);
+            profileServie = new Mock<IUserProfileService>();
+
+            sut = new GetBoardAccessRequestByAccountIdQueryHandler(unitOfWork.Object, logger.Object, mapper, profileServie.Object);
         }
 
         [Fact]

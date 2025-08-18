@@ -38,7 +38,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .Setup(s => s.GetRepository<BoardNotice>())
                 .Returns(boardNoticeRepository.Object);
             unitOfWork
-                .Setup(u => u.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(),It.IsAny<CancellationToken>()))
+                .Setup(u => u.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(), It.IsAny<CancellationToken>()))
                 .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
 
             mapper = new Mock<IMapper>();

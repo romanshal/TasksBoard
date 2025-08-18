@@ -5,7 +5,8 @@ using Notification.Application.Interfaces.HubServices;
 
 namespace Notification.API.HubServices
 {
-    public class HubNotificationService(IHubContext<NotificationHub> hubContext) : IHubNotificationService
+    public class HubNotificationService(
+        IHubContext<NotificationHub> hubContext) : IHubNotificationService
     {
         private readonly IHubContext<NotificationHub> _hubContext = hubContext;
 

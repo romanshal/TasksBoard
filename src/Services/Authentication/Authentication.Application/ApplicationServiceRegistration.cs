@@ -37,7 +37,7 @@ namespace Authentication.Application
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
-            services.AddHostedService<OutboxPublisherService>();
+            //services.AddHostedService<OutboxPublisherService>();
 
             return services;
         }

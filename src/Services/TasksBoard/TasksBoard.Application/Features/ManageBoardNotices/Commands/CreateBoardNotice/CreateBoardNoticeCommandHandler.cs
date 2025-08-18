@@ -54,7 +54,6 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
                     NoticeId = notice.Id,
                     NoticeDefinition = notice.Definition,
                     AccountId = notice.AuthorId,
-                    //AccountName = notice.AuthorName,
                     BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AuthorId).Select(member => member.AccountId)]
                 }, token);
 

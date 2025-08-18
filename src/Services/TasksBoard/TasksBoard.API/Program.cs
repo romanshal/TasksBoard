@@ -82,7 +82,7 @@ app.UseHealthChecks(
     "/health",
     new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
     {
-        ResponseWriter =  UIResponseWriter.WriteHealthCheckUIResponse
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
 
 app.Run();

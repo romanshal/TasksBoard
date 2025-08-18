@@ -1,13 +1,13 @@
 ﻿using Common.Blocks.Configurations;
+using Common.Blocks.Interfaces.Caches;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using TasksBoard.Domain.Interfaces.Caches;
 
-namespace TasksBoard.Infrastructure.Cache
+namespace Common.Blocks.Repositories
 {
     public class RedisCacheRepository(
-        IConnectionMultiplexer multiplexer, 
+        IConnectionMultiplexer multiplexer,
         IOptions<CacheConfiguration> options) : ICacheRepository
     {
         private readonly IDatabase _db = multiplexer.GetDatabase();
@@ -35,7 +35,7 @@ namespace TasksBoard.Infrastructure.Cache
         public async Task<IDictionary<string, T?>> GetManyAsync<T>(IEnumerable<string> keys)
         {
             var redisKeys = keys.Distinct().Select(k => (RedisKey)k.ToString()).ToArray();
-            if (redisKeys.Length == 0) 
+            if (redisKeys.Length == 0)
                 return new Dictionary<string, T?>();
 
             var values = await _db.StringGetAsync(redisKeys);

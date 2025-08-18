@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
+using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
-using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Services;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardInvites.Queries.GetBoardInviteRequestByToAccountId

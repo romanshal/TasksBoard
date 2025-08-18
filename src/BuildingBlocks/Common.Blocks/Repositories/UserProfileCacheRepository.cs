@@ -1,7 +1,7 @@
-﻿using TasksBoard.Domain.Interfaces.Caches;
-using TasksBoard.Domain.Models;
+﻿using Common.Blocks.Interfaces.Caches;
+using Common.Blocks.Models.Users;
 
-namespace TasksBoard.Infrastructure.Cache
+namespace Common.Blocks.Repositories
 {
     public class UserProfileCacheRepository(
         ICacheRepository cacheRepository) : IUserProfileCacheRepository
@@ -12,7 +12,7 @@ namespace TasksBoard.Infrastructure.Cache
         public async Task SetManyAsync(IEnumerable<UserProfile> users)
         {
             var tasks = new List<Task>();
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 tasks.Add(cacheRepository.CreateAsync(Key(user.Id), user));
             }
@@ -22,7 +22,8 @@ namespace TasksBoard.Infrastructure.Cache
 
         public async Task SetNegativeAsync(IEnumerable<Guid> missings)
         {
-            var tasks = missings.Select(id => {
+            var tasks = missings.Select(id =>
+            {
                 var key = NegativeKey(id);
                 return cacheRepository.CreateAsync(key, NegativeMarker.Instance);
             });
@@ -33,7 +34,7 @@ namespace TasksBoard.Infrastructure.Cache
         public async Task<IDictionary<Guid, UserProfile?>> GetManyAsync(IEnumerable<Guid> userIds)
         {
             var result = new Dictionary<Guid, UserProfile?>();
-            if(!userIds.Any()) return result;
+            if (!userIds.Any()) return result;
 
             var ids = userIds.Distinct().ToArray();
             var redisKeys = ids.Select(Key).ToArray();
@@ -46,7 +47,7 @@ namespace TasksBoard.Infrastructure.Cache
                 var id = ids[i];
                 var key = redisKeys[i];
 
-                if(cached.TryGetValue(key, out var profile) && profile is not null) result[id] = profile;
+                if (cached.TryGetValue(key, out var profile) && profile is not null) result[id] = profile;
                 else notFoundIds.Add(id);
             }
 
@@ -55,12 +56,12 @@ namespace TasksBoard.Infrastructure.Cache
             var negativeKeys = notFoundIds.Select(NegativeKey).ToArray();
             var negativeMarkers = await cacheRepository.GetManyAsync<NegativeMarker>(negativeKeys);
 
-            for(int i = 0; i < notFoundIds.Count; i++)
+            for (int i = 0; i < notFoundIds.Count; i++)
             {
                 var id = notFoundIds[i];
                 var nKey = NegativeKey(id);
 
-                if(negativeMarkers.TryGetValue(nKey, out var marker) && marker is not null) result[id] = null;
+                if (negativeMarkers.TryGetValue(nKey, out var marker) && marker is not null) result[id] = null;
             }
 
             return result;

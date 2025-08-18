@@ -1,5 +1,5 @@
-﻿using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Caches;
+﻿using Common.Blocks.Interfaces.Caches;
+using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 
 namespace TasksBoard.Infrastructure.CachedRepositories

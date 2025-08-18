@@ -1,22 +1,19 @@
 ﻿using Common.Blocks.Extensions;
+using Common.Blocks.Interfaces.Caches;
 using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
 using EventBus.Messages.Extensions;
-using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using TasksBoard.Domain.Interfaces.Caches;
-using TasksBoard.Domain.Interfaces.Services;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
-using TasksBoard.Infrastructure.Cache;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.Services;
 using TasksBoard.Infrastructure.UnitOfWorks;
 using static Common.Blocks.Protos.UserProfiles;
-
 
 namespace TasksBoard.Infrastructure
 {
@@ -24,7 +21,7 @@ namespace TasksBoard.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddGrpcClient<UserProfilesClient>(option => 
+            services.AddGrpcClient<UserProfilesClient>(option =>
             {
                 option.Address = new Uri(configuration["gRPC:Address"]!);
             });

@@ -24,7 +24,7 @@ namespace TasksBoard.Tests.E2E.Controllers
             var getNoticesResponse = await httpClient.GetAsync($"api/boardnotices/board/{boardId}?pageIndex=1&pageSize=10");
             var responseString = await getNoticesResponse.Content.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<ApiResponse<PaginatedList<BoardNoticeDto>>>(
-                responseString, 
+                responseString,
                 _factory.GetJsonSettings());
 
             getNoticesResponse.IsSuccessStatusCode.Should().BeTrue();

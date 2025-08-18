@@ -1,5 +1,4 @@
-﻿using Docker.DotNet.Models;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -13,7 +12,6 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Infrastructure.Data.Contexts;
 using Testcontainers.PostgreSql;
 

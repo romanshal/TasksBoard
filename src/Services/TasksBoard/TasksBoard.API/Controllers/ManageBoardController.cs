@@ -67,8 +67,8 @@ namespace TasksBoard.API.Controllers
         public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid boardId)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
-            var result = await _mediator.Send(new DeleteBoardCommand 
-            { 
+            var result = await _mediator.Send(new DeleteBoardCommand
+            {
                 Id = boardId,
                 AccountId = Guid.Parse(userId)
             });

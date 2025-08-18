@@ -7,9 +7,9 @@ using System.Reflection;
 
 namespace Authentication.Infrastructure.Data.Contexts
 {
-    public class AuthenticationDbContext(DbContextOptions<AuthenticationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
+    public class AuthenticationDbContext(
+        DbContextOptions<AuthenticationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
     {
-        public DbSet<OutboxEvent> OutboxEvents { get; set; }
         public DbSet<ApplicationUserImage> ApplicationUserImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -17,7 +17,6 @@ namespace Authentication.Infrastructure.Data.Contexts
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            builder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(OutboxEvent))!);
 
             builder.Entity<ApplicationUser>(entity => entity.ToTable(name: "users"));
             builder.Entity<ApplicationRole>(entity => entity.ToTable(name: "roles"));

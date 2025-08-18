@@ -1,4 +1,7 @@
-﻿using Common.Blocks.Interfaces.Repositories;
+﻿using Common.Blocks.Extensions;
+using Common.Blocks.Interfaces.Caches;
+using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Repositories;
 using EventBus.Messages.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -6,8 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using Notification.Infrastructure.Data.Contexts;
+using Notification.Infrastructure.Services;
 using Notification.Infrastructure.UnitOfWorks;
 using System.Reflection;
+using static Common.Blocks.Protos.UserProfiles;
 
 namespace Notification.Infrastructure
 {
@@ -15,6 +20,11 @@ namespace Notification.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddGrpcClient<UserProfilesClient>(option =>
+            {
+                option.Address = new Uri(configuration["gRPC:Address"]!);
+            });
+
             var connectionString = configuration.GetConnectionString("NotificationDbConnection") ?? throw new InvalidOperationException("Connection string 'NotificationDbConnection' not found");
             services.AddDbContext<NotificationDbContext>(options =>
             {
@@ -24,10 +34,17 @@ namespace Notification.Infrastructure
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+            services.AddRedis(configuration);
+
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
+
+            services.AddSingleton<ICacheRepository, RedisCacheRepository>();
+            services.AddSingleton<IUserProfileCacheRepository, UserProfileCacheRepository>();
+
+            services.AddScoped<IUserProfileService, UserProfileService>();
 
             return services;
         }

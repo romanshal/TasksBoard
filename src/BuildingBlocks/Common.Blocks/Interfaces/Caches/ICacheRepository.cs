@@ -1,4 +1,4 @@
-﻿namespace TasksBoard.Domain.Interfaces.Caches
+﻿namespace Common.Blocks.Interfaces.Caches
 {
     public interface ICacheRepository
     {

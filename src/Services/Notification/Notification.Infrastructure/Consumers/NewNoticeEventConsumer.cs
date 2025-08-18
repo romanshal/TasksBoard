@@ -42,7 +42,7 @@ namespace Notification.Infrastructure.Consumers
                 _logger.LogError(NotificationEventLogMessages.Error, context.MessageId);
             }
 
-            _logger.LogInformation( NotificationEventLogMessages.Created, context.MessageId);
+            _logger.LogInformation(NotificationEventLogMessages.Created, context.MessageId);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Extensions;
+using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
@@ -7,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Services;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId
@@ -54,14 +54,14 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
 
             if (userProfiles.Count > 0)
             {
-                foreach(var notice in boardNoticeDto)
+                foreach (var notice in boardNoticeDto)
                 {
                     var isExist = userProfiles.TryGetValue(notice.AuthorId, out var profile);
 
-                    if(isExist && profile is not null)
+                    if (isExist && profile is not null)
                     {
                         notice.AuthorName = profile.Username;
-                    } 
+                    }
                 }
             }
 

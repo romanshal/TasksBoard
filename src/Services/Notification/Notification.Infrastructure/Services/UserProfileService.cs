@@ -3,7 +3,7 @@ using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Models.Users;
 using Common.Blocks.Protos;
 
-namespace TasksBoard.Infrastructure.Services
+namespace Notification.Infrastructure.Services
 {
     public class UserProfileService(
         IUserProfileCacheRepository cache,

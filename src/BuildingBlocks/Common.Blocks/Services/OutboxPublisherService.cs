@@ -47,7 +47,7 @@ namespace Common.Blocks.Services
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"Error in publishing outboxevent: {ex.Message}");
+                    logger.LogError("Error in publishing outboxevent: {message}", ex.Message);
                 }
                 finally
                 {
@@ -60,7 +60,6 @@ namespace Common.Blocks.Services
         {
             return outboxEvent.EventType switch
             {
-                nameof(UpdateAccountInfoEvent) => JsonSerializer.Deserialize<UpdateAccountInfoEvent>(outboxEvent.Payload)!,
                 nameof(NewNoticeEvent) => JsonSerializer.Deserialize<NewNoticeEvent>(outboxEvent.Payload)!,
                 nameof(UpdateNoticeStatusEvent) => JsonSerializer.Deserialize<UpdateNoticeStatusEvent>(outboxEvent.Payload)!,
                 nameof(NewBoardMemberEvent) => JsonSerializer.Deserialize<NewBoardMemberEvent>(outboxEvent.Payload)!,
@@ -81,9 +80,6 @@ namespace Common.Blocks.Services
 
             switch (type)
             {
-                case nameof(UpdateAccountInfoEvent):
-                    await publishEndpoint.Publish<UpdateAccountInfoEvent>(applicationEvent, cancellationToken);
-                    break;
                 case nameof(NewNoticeEvent):
                     await publishEndpoint.Publish<NewNoticeEvent>(applicationEvent, cancellationToken);
                     break;
@@ -110,7 +106,7 @@ namespace Common.Blocks.Services
                     break;
                 case nameof(UpdateNoticeEvent):
                     await publishEndpoint.Publish<UpdateNoticeEvent>(applicationEvent, cancellationToken);
-                    break;                
+                    break;
                 case nameof(DeleteBoardEvent):
                     await publishEndpoint.Publish<DeleteBoardEvent>(applicationEvent, cancellationToken);
                     break;

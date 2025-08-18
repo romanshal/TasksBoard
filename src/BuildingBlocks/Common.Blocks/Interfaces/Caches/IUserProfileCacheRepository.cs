@@ -1,6 +1,6 @@
-﻿using TasksBoard.Domain.Models;
+﻿using Common.Blocks.Models.Users;
 
-namespace TasksBoard.Domain.Interfaces.Caches
+namespace Common.Blocks.Interfaces.Caches
 {
     public interface IUserProfileCacheRepository
     {

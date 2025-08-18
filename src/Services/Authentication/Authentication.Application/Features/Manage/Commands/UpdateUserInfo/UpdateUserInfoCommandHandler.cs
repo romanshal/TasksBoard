@@ -41,22 +41,6 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
                 throw new Exception($"Can't update user info with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
             }
 
-            var updateEvent = new UpdateAccountInfoEvent
-            {
-                AccountId = user.Id,
-                AccountName = user.UserName,
-                AccountEmail = user.Email,
-                AccountFirstname = user.FirstName,
-                AccountSurname = user.Surname
-            };
-
-            _unitOfWork.GetRepository<OutboxEvent>().Add(new OutboxEvent
-            {
-                EventType = updateEvent.GetType().Name!,
-                Payload = JsonSerializer.Serialize(updateEvent),
-                Status = OutboxEventStatuses.Created
-            });
-
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
             if (affectedRows == 0)
             {

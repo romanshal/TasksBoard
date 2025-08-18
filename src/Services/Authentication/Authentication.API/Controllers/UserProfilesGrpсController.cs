@@ -1,8 +1,8 @@
 ﻿using Authentication.Application.Features.Search.Queries.SearchUsersById;
 using AutoMapper;
+using Common.Blocks.Protos;
 using Grpc.Core;
 using MediatR;
-using Common.Blocks.Protos;
 
 namespace Authentication.API.Controllers
 {
