@@ -43,21 +43,11 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
 
             var boardMemberDto = _mapper.Map<BoardMemberDto>(boardMember);
 
-            var userIds = new List<Guid>
+            var userProfile = await _profileService.ResolveAsync(boardMemberDto.AccountId, cancellationToken);
+
+            if (userProfile is not null)
             {
-                boardMemberDto.AccountId
-            };
-
-            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
-
-            if (userProfiles.Count > 0)
-            {
-                var isExist = userProfiles.TryGetValue(boardMemberDto.AccountId, out var profile);
-
-                if (isExist && profile is not null)
-                {
-                    boardMemberDto.Nickname = profile.Username;
-                }
+                boardMemberDto.Nickname = userProfile.Username;
             }
 
             return Result.Success(boardMemberDto);

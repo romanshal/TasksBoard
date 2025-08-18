@@ -16,6 +16,8 @@ namespace Notification.Application.BackgroundServices
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await Task.Yield();
+
             using IServiceScope scope = serviceScopeFactory.CreateScope();
 
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();

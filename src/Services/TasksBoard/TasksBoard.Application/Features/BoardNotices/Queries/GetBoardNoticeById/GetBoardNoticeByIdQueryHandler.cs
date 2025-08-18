@@ -33,21 +33,11 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
             }
             var boardNoticeDto = _mapper.Map<BoardNoticeDto>(boardNotice);
 
-            var userIds = new List<Guid>
+            var userProfile = await _profileService.ResolveAsync(boardNoticeDto.AuthorId, cancellationToken);
+
+            if (userProfile is not null)
             {
-                boardNoticeDto.AuthorId
-            };
-
-            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
-
-            if (userProfiles.Count > 0)
-            {
-                var isExist = userProfiles.TryGetValue(boardNoticeDto.AuthorId, out var profile);
-
-                if (isExist && profile is not null)
-                {
-                    boardNoticeDto.AuthorName = profile.Username;
-                }
+                boardNoticeDto.AuthorName = userProfile.Username;
             }
 
             return Result.Success(boardNoticeDto);

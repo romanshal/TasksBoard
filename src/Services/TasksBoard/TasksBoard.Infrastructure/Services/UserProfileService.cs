@@ -10,11 +10,13 @@ namespace TasksBoard.Infrastructure.Services
         UserProfiles.UserProfilesClient grpcClient
         ) : IUserProfileService
     {
-        public async Task<IReadOnlyDictionary<Guid, UserProfile>> ResolveAsync(
+        public async Task<UserProfile?> ResolveAsync(
             Guid id,
             CancellationToken cancellationToken = default)
         {
-            return await ResolveAsync([id], cancellationToken);
+            var profiles = await ResolveAsync([id], cancellationToken);
+
+            return profiles.GetValueOrDefault(id);
         }
 
         public async Task<IReadOnlyDictionary<Guid, UserProfile>> ResolveAsync(
