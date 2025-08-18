@@ -59,7 +59,6 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
                     BoardName = board.Name,
                     NoticeId = boardNotice.Id,
                     AccountId = request.AccountId,
-                    AccountName = request.AccountName,
                     Completed = request.Complete,
                     BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AccountId).Select(member => member.AccountId)]
                 }, token);

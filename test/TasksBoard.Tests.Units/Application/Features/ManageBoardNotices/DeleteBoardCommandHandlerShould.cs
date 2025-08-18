@@ -54,7 +54,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .ReturnsAsync(new BoardNotice
                 {
                     AuthorId = Guid.Empty,
-                    AuthorName = string.Empty,
+                    //AuthorName = string.Empty,
                     BoardId = Guid.Empty,
                     Definition = string.Empty,
                     BackgroundColor = string.Empty,

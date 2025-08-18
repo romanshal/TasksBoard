@@ -1,11 +1,16 @@
 ﻿using FluentValidation;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNotice;
 using TasksBoard.Domain.Constants.Validations.Messages;
 
 namespace TasksBoard.Application.Validators.ManageBoardNotices
 {
-    public class UpdateBoardNoticeValidator : AbstractValidator<UpdateBoardNoticeCommand>
+    public partial class UpdateBoardNoticeValidator : AbstractValidator<UpdateBoardNoticeCommand>
     {
+        private static readonly Regex Hex6 = BackgroundColor();
+        private static readonly Regex Deg = Rotation();
+
         public UpdateBoardNoticeValidator()
         {
             RuleFor(x => x.BoardId)
@@ -34,12 +39,33 @@ namespace TasksBoard.Application.Validators.ManageBoardNotices
             RuleFor(x => x.BackgroundColor)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(BoardNoticeMessages.BackgroundColorRequired);
+                .WithMessage(BoardNoticeMessages.BackgroundColorRequired)
+                .Must(m => m is not null && Hex6.IsMatch(m))
+                .WithMessage(BoardNoticeMessages.BackgroundColorInvalid);
 
             RuleFor(x => x.Rotation)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(BoardNoticeMessages.RotationRequired);
+                .WithMessage(BoardNoticeMessages.RotationRequired)
+                .Must(m => m is not null && Deg.IsMatch(m))
+                .Must(IsRotationInRange)
+                .WithMessage(BoardNoticeMessages.RotationInvalid);
         }
+
+        private static bool IsRotationInRange(string? rotation)
+        {
+            if (string.IsNullOrWhiteSpace(rotation) || !Deg.IsMatch(rotation))
+                return false;
+
+            var numPart = rotation[..^3];
+            return double.TryParse(numPart, NumberStyles.Float, CultureInfo.InvariantCulture, out var value)
+                   && value >= -360 && value <= 360;
+        }
+
+        [GeneratedRegex(@"^#[0-9A-Fa-f]{6}$", RegexOptions.Compiled)]
+        private static partial Regex BackgroundColor();
+
+        [GeneratedRegex(@"^-?\d+(?:\.\d+)?deg$", RegexOptions.Compiled)]
+        private static partial Regex Rotation();
     }
 }

@@ -51,7 +51,6 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 {
                     BoardId = request.BoardId,
                     AccountId = request.AccountId,
-                    Nickname = request.Nickname,
                     BoardMemberPermissions =
                     [
                         new BoardMemberPermission

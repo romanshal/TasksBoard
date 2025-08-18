@@ -9,16 +9,11 @@ using TasksBoard.Domain.Constants.Errors.DomainErrors;
 
 namespace TasksBoard.Tests.E2E.Controllers
 {
-    public class ManageBoardNoticeControllerShould : IClassFixture<TasksBoardApiApllicationFactory>
+    public class ManageBoardNoticeControllerShould(
+        TasksBoardApiApllicationFactory factory) : IClassFixture<TasksBoardApiApllicationFactory>
     {
-        private readonly PreconfigurationDatabaseFactory _preconfig;
-        private readonly TasksBoardApiApllicationFactory _factory;
-
-        public ManageBoardNoticeControllerShould(TasksBoardApiApllicationFactory factory)
-        {
-            _factory = factory;
-            _preconfig = new(factory);
-        }
+        private readonly PreconfigurationDatabaseFactory _preconfig = new(factory);
+        private readonly TasksBoardApiApllicationFactory _factory = factory;
 
         [Fact]
         public async Task CreateNewBoardNotice()

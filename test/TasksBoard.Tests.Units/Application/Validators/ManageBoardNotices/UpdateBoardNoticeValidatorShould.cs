@@ -17,7 +17,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardNotices
                 AccountId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
                 NoticeId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
                 Definition = "Test definition",
-                BackgroundColor = "Test color",
+                BackgroundColor = "#111111",
                 Rotation = "100deg"
             };
 
@@ -47,8 +47,10 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardNotices
             yield return new object[] { validCommand with { Definition = "" } };
             yield return new object[] { validCommand with { Definition = null } };
             yield return new object[] { validCommand with { BackgroundColor = "" } };
+            yield return new object[] { validCommand with { BackgroundColor = "adasd" } };
             yield return new object[] { validCommand with { BackgroundColor = null } };
             yield return new object[] { validCommand with { Rotation = "" } };
+            yield return new object[] { validCommand with { Rotation = "adasd" } };
             yield return new object[] { validCommand with { Rotation = null } };
             yield return new object[] { validCommand with { AccountId = Guid.Empty, BoardId = Guid.Empty } };
             yield return new object[] { validCommand with { AccountId = Guid.Empty, BoardId = Guid.Empty, NoticeId = Guid.Empty } };

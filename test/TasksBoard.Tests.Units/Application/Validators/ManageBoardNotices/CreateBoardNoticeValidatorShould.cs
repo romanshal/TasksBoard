@@ -17,7 +17,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardNotices
                 AuthorName = "Test author",
                 BoardId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
                 Definition = "Test definition",
-                BackgroundColor = "Test color",
+                BackgroundColor = "#111111",
                 Rotation = "100deg"
             };
 
@@ -49,8 +49,10 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardNotices
             yield return new object[] { validCommand with { Definition = "" } };
             yield return new object[] { validCommand with { Definition = null } };
             yield return new object[] { validCommand with { BackgroundColor = "" } };
+            yield return new object[] { validCommand with { BackgroundColor = "asdasd" } };
             yield return new object[] { validCommand with { BackgroundColor = null } };
             yield return new object[] { validCommand with { Rotation = "" } };
+            yield return new object[] { validCommand with { Rotation = "adasda" } };
             yield return new object[] { validCommand with { Rotation = null } };
             yield return new object[] { validCommand with { AuthorId = Guid.Empty, AuthorName = null } };
             yield return new object[] { validCommand with { AuthorId = Guid.Empty, AuthorName = null, BoardId = Guid.Empty } };

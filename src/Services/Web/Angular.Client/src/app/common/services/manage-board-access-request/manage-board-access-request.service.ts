@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { ResultResponse } from '../../models/response/response.model';
 import { BoardAccessRequestModel } from '../../models/board-access-request/board-access-request.model';
 
 @Injectable({

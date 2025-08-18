@@ -8,7 +8,9 @@
         public const string StatusIdRequired = "Notice status is required.";
         public const string DefinitionRequired = "Definition is required.";
         public const string BackgroundColorRequired = "Background is required.";
+        public const string BackgroundColorInvalid = "Background is invalid.";
         public const string RotationRequired = "Rotation is required.";
+        public const string RotationInvalid = "Rotation is invalid.";
         public const string PageIndexLessZero = "Page index must be greater than zero.";
         public const string PageSizeLessZero = "Page size must be greater than zero.";
     }

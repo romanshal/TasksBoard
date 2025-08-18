@@ -75,57 +75,57 @@ export class BoardService {
           board.Tags = response.result.tags,
           board.Public = response.result.public,
           board.Image = response.result.image,
-          board.ImageExtension = response.result.imageExtension,
-          board.Members = response.result.members.map((item: any) => { 
-            let member = new BoardMemberModel();
-              member.Id = item.id;
-              member.AccountId = item.accountId;
-              member.BoardId = item.boardId;
-              member.IsOwner = item.isOwner;
-              member.Nickname = item.nickname;
-              member.CreatedAt = item.createdAt;
-              member.Permissions = item.permissions.map((perm: any) => {
-                let permission = new BoardMemberPermission();
-                permission.BoardMemberId = perm.boardMemberId;
-                permission.BoardPermissionId = perm.boardPermissionId;
-                permission.BoardPermissionName = perm.boardPermissionName;
-                permission.BoardPermissionDescription = perm.boardPermissionDescription;
+          board.ImageExtension = response.result.imageExtension
+          // board.Members = response.result.members.map((item: any) => { 
+          //   let member = new BoardMemberModel();
+          //     member.Id = item.id;
+          //     member.AccountId = item.accountId;
+          //     member.BoardId = item.boardId;
+          //     member.IsOwner = item.isOwner;
+          //     member.Nickname = item.nickname;
+          //     member.CreatedAt = item.createdAt;
+          //     member.Permissions = item.permissions.map((perm: any) => {
+          //       let permission = new BoardMemberPermission();
+          //       permission.BoardMemberId = perm.boardMemberId;
+          //       permission.BoardPermissionId = perm.boardPermissionId;
+          //       permission.BoardPermissionName = perm.boardPermissionName;
+          //       permission.BoardPermissionDescription = perm.boardPermissionDescription;
 
-                return permission;
-              })
+          //       return permission;
+          //     })
 
-            return member;
-          }),
+          //   return member;
+          // }),
 
-          board.AccessRequests = response.result.accessRequests.map((item: any) => {
-            let request = new BoardAccessRequestModel(
-              item.id,
-              item.boardId,
-              item.boardName,
-              item.accountId,
-              item.accountName,
-              item.accountEmail,
-              item.createdAt
-            );
+          // board.AccessRequests = response.result.accessRequests.map((item: any) => {
+          //   let request = new BoardAccessRequestModel(
+          //     item.id,
+          //     item.boardId,
+          //     item.boardName,
+          //     item.accountId,
+          //     item.accountName,
+          //     item.accountEmail,
+          //     item.createdAt
+          //   );
 
-            return request
-          })
+          //   return request
+          // })
 
-          board.InviteRequests = response.result.inviteRequests.map((item: any) => {
-            let request = new BoardInviteRequestModel(
-              item.id,
-              item.boardId,
-              item.boardName,
-              item.fromAccountId,
-              item.fromAccountName,
-              item.toAccountId,
-              item.toAccountName,
-              item.toAccountEmail,
-              item.createdAt
-            );
+          // board.InviteRequests = response.result.inviteRequests.map((item: any) => {
+          //   let request = new BoardInviteRequestModel(
+          //     item.id,
+          //     item.boardId,
+          //     item.boardName,
+          //     item.fromAccountId,
+          //     item.fromAccountName,
+          //     item.toAccountId,
+          //     item.toAccountName,
+          //     item.toAccountEmail,
+          //     item.createdAt
+          //   );
 
-            return request
-          })
+          //   return request
+          // })
 
           return board;
         }),

@@ -16,6 +16,12 @@ import { BoardPermissionService } from '../common/services/board-permission/boar
 import { BoardMemberAuthService } from '../common/services/board-member-auth/board-member-auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChatService } from '../common/services/chat/chat.service';
+import { BoardAccessRequestService } from '../common/services/board-access-request/board-access-request.service';
+import { BoardMemberService } from '../common/services/board-member/board-member.service';
+import { ManageBoardAccessRequestService } from '../common/services/manage-board-access-request/manage-board-access-request.service';
+import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
+import { BoardInviteRequestModel } from '../common/models/board-invite-request/board-invite-request.model';
+import { ManageBoardInviteRequestService } from '../common/services/manage-board-invite-request/manage-board-invite-request.service';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -50,6 +56,10 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   boardMembers: BoardMemberModel[] = [];
 
+  accessRequests: BoardAccessRequestModel[] = [];
+
+  inviteRequests: BoardInviteRequestModel[] = [];
+
   boardPermissions: BoardPermission[] = [];
 
   canAddNotices = false;
@@ -64,6 +74,9 @@ export class BoardComponent implements OnInit, OnDestroy {
     private boardPermissionService: BoardPermissionService,
     private sessionStorageService: SessionStorageService,
     private boardMemberAuthService: BoardMemberAuthService,
+    private boardAccessRequestService: ManageBoardAccessRequestService,
+    private boardInviteReqquestService: ManageBoardInviteRequestService,
+    private boardMemberService: BoardMemberService,
     private chatService: ChatService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -89,12 +102,29 @@ export class BoardComponent implements OnInit, OnDestroy {
       if (result) {
         this.board = result;
 
-        this.boardMembers = result.Members;
+        this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
+          if (result) {
+            this.boardMembers = result;
 
-        this.currentMember = this.boardMembers.find(member => member.AccountId === this.userId)!
+            this.currentMember = this.boardMembers.find(member => member.AccountId === this.userId)!
 
-        this.boardMemberAuthService.initialize(this.board, this.currentMember);
-        this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
+            this.boardMemberAuthService.initialize(this.board, this.currentMember);
+
+            this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
+          }
+        });
+
+        this.boardAccessRequestService.getBoardAccessRequestByBoardId(this.boardId).subscribe(result => {
+          if (result) {
+            this.accessRequests = result;
+          }
+        });
+
+        this.boardInviteReqquestService.getBoardInviteRequestByBoardId(this.boardId).subscribe(result => {
+          if (result) {
+            this.inviteRequests = result;
+          }
+        });
 
         this.getBoardNotices(this.pageIndex, this.pageSize);
 
@@ -119,7 +149,7 @@ export class BoardComponent implements OnInit, OnDestroy {
           this.isLoading = true;
 
           this.notesForView = result.Items;
-        }, 200);
+        }, 500);
 
         this.pageIndex = result.PageIndex;
         this.pageSize = result.PageSize;
@@ -179,14 +209,14 @@ export class BoardComponent implements OnInit, OnDestroy {
         members: this.boardMembers,
         permissions: this.boardPermissions,
         userId: this.userId,
-        accessRequests: this.board.AccessRequests,
-        inviteRequests: this.board.InviteRequests
+        accessRequests: this.accessRequests,
+        inviteRequests: this.inviteRequests
       }
     })
       .afterClosed().subscribe((result) => {
         this.boardMembers = result.members;
-        this.board.AccessRequests = result.accessRequests;
-        this.board.InviteRequests = result.inviteRequests;
+        this.accessRequests = result.accessRequests;
+        this.inviteRequests = result.inviteRequests;
       });
   }
 

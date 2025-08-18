@@ -9,8 +9,8 @@
         public bool Public { get; set; }
         public byte[]? Image { get; set; }
         public string? ImageExtension { get; set; }
-        public IEnumerable<BoardMemberDto> Members { get; set; }
-        public IEnumerable<BoardAccessRequestDto> AccessRequests { get; set; }
-        public IEnumerable<BoardInviteRequestDto> InviteRequests { get; set; }
+        //public IEnumerable<BoardMemberDto> Members { get; set; }
+        //public IEnumerable<BoardAccessRequestDto> AccessRequests { get; set; }
+        //public IEnumerable<BoardInviteRequestDto> InviteRequests { get; set; }
     }
 }

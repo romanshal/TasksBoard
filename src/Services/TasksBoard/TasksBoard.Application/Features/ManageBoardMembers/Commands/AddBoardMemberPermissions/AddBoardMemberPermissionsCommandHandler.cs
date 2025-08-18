@@ -64,9 +64,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                     BoardId = board.Id,
                     BoardName = board.Name,
                     AccountId = member.AccountId,
-                    AccountName = member.Nickname,
                     SourceAccountId = request.AccountId,
-                    SourceAccountName = board.BoardMembers.First(m => m.AccountId == request.AccountId).Nickname,
                     BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
                 }, token);
 

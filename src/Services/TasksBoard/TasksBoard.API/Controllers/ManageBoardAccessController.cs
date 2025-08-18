@@ -14,11 +14,8 @@ namespace TasksBoard.API.Controllers
     [Authorize]
     [HasBoardAccess]
     [Route("api/manageaccessrequests")]
-    public class ManageBoardAccessController(
-        ILogger<ManageBoardAccessController> logger,
-        IMediator mediator) : ControllerBase
+    public class ManageBoardAccessController(IMediator mediator) : ControllerBase
     {
-        private readonly ILogger<ManageBoardAccessController> _logger = logger;
         private readonly IMediator _mediator = mediator;
 
         [HttpPost("resolve/board/{boardId:guid}")]

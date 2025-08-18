@@ -25,8 +25,8 @@ namespace Authentication.Tests.Units.Application.Providers
                     Issuer = "issuer",
                     Audience = "audience",
                     ExpirationInMinutes = 1
-                })
-                ;
+                });
+
             sut = new TokenProvider(options.Object);
         }
 

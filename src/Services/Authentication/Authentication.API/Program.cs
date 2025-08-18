@@ -1,3 +1,4 @@
+using Authentication.API.Controllers;
 using Authentication.Application;
 using Authentication.Domain.Entities;
 using Authentication.Infrastructure;
@@ -6,6 +7,7 @@ using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 using Microsoft.AspNetCore.Identity;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Authentication.API");
 
 builder.Services.AddControllers();
+
+builder.Services.AddGrpc();
 
 builder.Services.AddCors(options =>
 {
@@ -49,6 +53,8 @@ builder.Services.AddJwtAuthentication(builder.Configuration)
         config.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientSecret' not found.");
     });
 
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
 var app = builder.Build();
 
 app.MigrateDatabase<AuthenticationDbContext>((context, services) =>
@@ -73,7 +79,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseExeptionWrappingMiddleware();
 
@@ -81,5 +87,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers().RequireAuthorization();
+app.MapGrpcService<UserProfilesGrpñController>();
+//app.MapGrpcReflectionService();
 
 app.Run();

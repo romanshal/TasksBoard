@@ -53,8 +53,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             var boardMember = new BoardMember
             {
                 AccountId = userId,
-                BoardId = boardId,
-                Nickname = ownerNickname
+                BoardId = boardId
             };
 
             _unitOfWork.GetRepository<BoardMember>().Add(boardMember);

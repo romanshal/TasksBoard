@@ -13,52 +13,47 @@ namespace TasksBoard.Infrastructure.Cache
         private readonly IDatabase _db = multiplexer.GetDatabase();
         private readonly CacheConfiguration _conf = options.Value;
 
-        public void Create<T>(string key, T entity)
+        public Task CreateAsync<T>(string key, T entity)
         {
             var payload = JsonConvert.SerializeObject(entity);
             var optionsTtl = TimeSpan.FromSeconds(_conf.ExpirationTimeSeconds);
 
-            _db.StringSet(key, payload, optionsTtl);
+            return _db.StringSetAsync(key, payload, optionsTtl);
         }
 
-        public async Task<T> GetOrCreateAsync<T>(string key, Func<Task<T>> factory)
+        public async Task<T?> GetAsync<T>(string key)
         {
             var cached = await _db.StringGetAsync(key);
-            if (cached.HasValue)
+            if (cached.IsNullOrEmpty)
             {
-                return JsonConvert.DeserializeObject<T>(cached!)!;
+                return default;
             }
 
-            var result = await factory();
+            return JsonConvert.DeserializeObject<T>(cached!);
+        }
 
-            var optionsTtl = TimeSpan.FromSeconds(_conf.ExpirationTimeSeconds);
-            var payload = JsonConvert.SerializeObject(result);
-            await _db.StringSetAsync(key, payload, optionsTtl);
+        public async Task<IDictionary<string, T?>> GetManyAsync<T>(IEnumerable<string> keys)
+        {
+            var redisKeys = keys.Distinct().Select(k => (RedisKey)k.ToString()).ToArray();
+            if (redisKeys.Length == 0) 
+                return new Dictionary<string, T?>();
+
+            var values = await _db.StringGetAsync(redisKeys);
+
+            var result = new Dictionary<string, T?>(redisKeys.Length);
+            for (int i = 0; i < redisKeys.Length; i++)
+            {
+                var value = values[i];
+                if (value.IsNullOrEmpty)
+                {
+                    result[(string)redisKeys[i]!] = default;
+                    continue;
+                }
+
+                result[(string)redisKeys[i]!] = JsonConvert.DeserializeObject<T>(value!);
+            }
 
             return result;
-        }
-
-        public void Update<T>(string key, T entity)
-        {
-            var cached = _db.StringGet(key);
-            if(cached.HasValue)
-            {
-                Remove(key);
-            }
-
-            var payload = JsonConvert.SerializeObject(entity);
-            var optionsTtl = TimeSpan.FromSeconds(_conf.ExpirationTimeSeconds);
-            _db.StringSet(key, payload, optionsTtl);
-        }
-
-        public Task RemoveAsync(string key)
-        {
-            return _db.KeyDeleteAsync(key);
-        }
-
-        public void Remove(string key)
-        {
-            _db.KeyDelete(key);
         }
     }
 }

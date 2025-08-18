@@ -81,7 +81,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             {
                 Id = noticeId,
                 AuthorId = Guid.Empty,
-                AuthorName = string.Empty,
+                //AuthorName = string.Empty,
                 BoardId = Guid.Empty,
                 Definition = string.Empty,
                 BackgroundColor = string.Empty,

@@ -25,30 +25,30 @@ namespace TasksBoard.Infrastructure.Consumers
 
             foreach (var member in members)
             {
-                member.Nickname = context.Message.AccountName;
+                //member.Nickname = context.Message.AccountName;
 
                 _unitOfWork.GetBoardMemberRepository().Update(member);
             }
 
             foreach (var request in accessRequests)
             {
-                request.AccountName = context.Message.AccountName;
-                request.AccountEmail = context.Message.AccountEmail;
+                //request.AccountName = context.Message.AccountName;
+                //request.AccountEmail = context.Message.AccountEmail;
 
                 _unitOfWork.GetBoardAccessRequestRepository().Update(request);
             }
 
             foreach (var request in toInviteRequests)
             {
-                request.ToAccountName = context.Message.AccountName;
-                request.ToAccountEmail = context.Message.AccountEmail;
+                //request.ToAccountName = context.Message.AccountName;
+                //request.ToAccountEmail = context.Message.AccountEmail;
 
                 _unitOfWork.GetBoardInviteRequestRepository().Update(request);
             }
 
             foreach (var request in fromInviteRequests)
             {
-                request.FromAccountName = context.Message.AccountName;
+                //request.FromAccountName = context.Message.AccountName;
 
                 _unitOfWork.GetBoardInviteRequestRepository().Update(request);
             }

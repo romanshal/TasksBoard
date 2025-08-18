@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Common.Blocks.Protos";
+
+service UserProfiles{
+	rpc ResolveUsers (ResolveUsersRequest) returns (ResolveUsersResponse);
+}
+
+message ResolveUsersRequest{
+	repeated string userIds = 1;
+}
+
+message ResolveUsersResponse {
+	repeated User users = 1;
+}
+
+message User {
+	string id = 1;
+	string username = 2;
+	string email = 3;
+}

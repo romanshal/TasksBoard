@@ -11,7 +11,7 @@
             <button class="note-button" (click)=openMembersModal()>
                 <i class="fa-solid fa-users"></i>
                 Members
-                <div class="assess-request-alert" *ngIf="board.AccessRequests?.length !== 0">
+                <div class="assess-request-alert" *ngIf="accessRequests?.length !== 0">
                     <i class="fa-solid fa-circle-exclamation fa-lg"></i>
                 </div>
             </button>

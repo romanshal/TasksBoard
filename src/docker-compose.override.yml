@@ -207,6 +207,7 @@ services:
     container_name: tasksboard.api
     environment:
       <<: *default-env
+      "gRPC:Address": "http://authentication.api"
       "ConnectionStrings:TasksBoardDbConnection": "Server=tasksboarddb;Port=5432;Database=tasks-board-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "tasksboard.api-index-{0:yyyy.MM.dd}"
       "MessageBroker:Host": amqp://rabbitmq:5672
@@ -219,6 +220,7 @@ services:
       "Cache:Redis:Password": redispassword
       "Cache:ExpirationTimeSeconds": 300
     depends_on:
+      - authentication.api
       - tasksboarddb
       - rabbitmq
       - redis

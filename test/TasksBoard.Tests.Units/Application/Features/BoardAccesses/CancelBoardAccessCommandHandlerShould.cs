@@ -51,8 +51,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 Id = requestId,
                 BoardId = Guid.Empty,
                 AccountId = Guid.Empty,
-                AccountName = string.Empty,
-                AccountEmail = string.Empty,
                 Status = 1
             });
 

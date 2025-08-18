@@ -88,7 +88,6 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
                     BoardId = board.Id,
                     BoardName = board.Name,
                     AccountId = accessRequest.AccountId,
-                    AccountName = accessRequest.AccountName,
                     BoardMembersIds = [.. board.BoardMembers.Select(member => member.AccountId)]
                 }, token);
 

@@ -95,8 +95,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     Id = requestId,
                     BoardId = boardId,
                     AccountId = accountId,
-                    AccountName = "Test account name",
-                    AccountEmail = "Test account email",
                     Status = 1
                 });
 
@@ -193,8 +191,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     [
                         new BoardMember
                         {
-                            AccountId = accountId,
-                            Nickname = "Test nickname"
+                            AccountId = accountId
                         }
                     ]
                 });
@@ -239,8 +236,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 {
                     BoardId = Guid.Empty,
                     AccountId = accountId,
-                    AccountName = "Test account name",
-                    AccountEmail = "Test email",
                     Status = 0
                 });
 
@@ -288,10 +283,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 {
                     BoardId = Guid.Empty,
                     FromAccountId = Guid.Empty,
-                    FromAccountName = "Test account name",
                     ToAccountId = Guid.Empty,
-                    ToAccountName = "Test account name",
-                    ToAccountEmail = "Test account email",
                     Status = 0
                 });
 

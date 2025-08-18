@@ -6,6 +6,5 @@
         public required string BoardName { get; set; }
         public required Guid AccountId { get; set; }
         public required Guid FromAccountId { get; set; }
-        public required string FromAccountName { get; set; }
     }
 }

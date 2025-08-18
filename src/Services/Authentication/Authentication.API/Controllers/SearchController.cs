@@ -1,4 +1,4 @@
-﻿using Authentication.Application.Features.Search.Queries.SearchUsers;
+﻿using Authentication.Application.Features.Search.Queries.SearchUsersByQuery;
 using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +25,7 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SearchAsync([FromQuery] string search)
         {
-            var result = await _mediator.Send(new SearchUsersQuery { Query = search });
+            var result = await _mediator.Send(new SearchUsersByQueryQuery { Query = search });
 
             var response = ApiResponse.Success(result);
 

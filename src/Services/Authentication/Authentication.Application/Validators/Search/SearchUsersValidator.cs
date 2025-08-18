@@ -1,10 +1,10 @@
-﻿using Authentication.Application.Features.Search.Queries.SearchUsers;
+﻿using Authentication.Application.Features.Search.Queries.SearchUsersByQuery;
 using Authentication.Domain.Constants.Messages;
 using FluentValidation;
 
 namespace Authentication.Application.Validators.Search
 {
-    public class SearchUsersValidator : AbstractValidator<SearchUsersQuery>
+    public class SearchUsersValidator : AbstractValidator<SearchUsersByQueryQuery>
     {
         public SearchUsersValidator()
         {

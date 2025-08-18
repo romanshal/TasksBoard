@@ -12,18 +12,14 @@ namespace TasksBoard.API.Controllers
     [ApiController]
     [Authorize]
     [HasBoardAccess]
-    [HasBoardPermission("manage_member")]
+
     [Route("api/manageinviterequests")]
-    public class ManageBoardInviteController(
-        ILogger<ManageBoardInviteController> logger,
-        IMediator mediator) : ControllerBase
+    public class ManageBoardInviteController(IMediator mediator) : ControllerBase
     {
-        private readonly ILogger<ManageBoardInviteController> _logger = logger;
         private readonly IMediator _mediator = mediator;
 
-
         [HttpPost("board/{boardId:guid}")]
-        [HasBoardAccess]
+        [HasBoardPermission("manage_member")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -46,7 +42,6 @@ namespace TasksBoard.API.Controllers
         }
 
         [HttpGet("board/{boardId:guid}")]
-        [HasBoardAccess]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

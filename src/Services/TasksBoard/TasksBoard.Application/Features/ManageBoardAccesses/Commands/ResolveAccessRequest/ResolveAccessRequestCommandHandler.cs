@@ -53,8 +53,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                     var result = await _mediator.Send(new AddBoardMemberCommand
                     {
                         BoardId = accessRequest.BoardId,
-                        AccountId = accessRequest.AccountId,
-                        Nickname = accessRequest.AccountName
+                        AccountId = accessRequest.AccountId
                     }, cancellationToken);
 
                     if (result.IsFailure)
@@ -70,7 +69,6 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                         BoardId = board.Id,
                         BoardName = board.Name,
                         AccountId = accessRequest.AccountId,
-                        AccountName = accessRequest.AccountName,
                         BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != accessRequest.AccountId).Select(member => member.AccountId)]
                     }, token);
                 }
@@ -92,7 +90,6 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                     BoardName = board.Name,
                     AccountId = accessRequest.AccountId,
                     SourceAccountId = request.ResolveUserId,
-                    SourceAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.ResolveUserId)!.Nickname,
                     Status = request.Decision
                 }, token);
 

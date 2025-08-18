@@ -3,15 +3,20 @@ using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
 using EventBus.Messages.Extensions;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TasksBoard.Domain.Interfaces.Caches;
+using TasksBoard.Domain.Interfaces.Services;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Cache;
 using TasksBoard.Infrastructure.Data.Contexts;
+using TasksBoard.Infrastructure.Services;
 using TasksBoard.Infrastructure.UnitOfWorks;
+using static Common.Blocks.Protos.UserProfiles;
+
 
 namespace TasksBoard.Infrastructure
 {
@@ -19,6 +24,11 @@ namespace TasksBoard.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddGrpcClient<UserProfilesClient>(option => 
+            {
+                option.Address = new Uri(configuration["gRPC:Address"]!);
+            });
+
             var connectionString = configuration.GetConnectionString("TasksBoardDbConnection") ?? throw new InvalidOperationException("Connection string 'TasksBoardDbConnection' not found");
             services.AddDbContext<TasksBoardDbContext>(options =>
             {
@@ -37,6 +47,9 @@ namespace TasksBoard.Infrastructure
             services.AddRedis(configuration);
 
             services.AddSingleton<ICacheRepository, RedisCacheRepository>();
+            services.AddSingleton<IUserProfileCacheRepository, UserProfileCacheRepository>();
+
+            services.AddScoped<IUserProfileService, UserProfileService>();
 
             services.AddHealthChecks()
                 .AddNpgSql(connectionString)

@@ -46,7 +46,7 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.NoticeId, payload.NoticeId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.NoticeDefinition, payload.NoticeDefinition);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
+                //notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
             }
             else if (eventType == nameof(UpdateNoticeStatusEvent))
             {
@@ -56,7 +56,6 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.NoticeId, payload.NoticeId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
                 notificationPayload.Add(NotificationLinkTypes.Status, payload.Completed.ToString());
             }
             else if (eventType == nameof(NewBoardMemberEvent))
@@ -66,7 +65,6 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardId, payload.BoardId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
             }
             else if (eventType == nameof(RemoveBoardMemberEvent))
             {
@@ -75,9 +73,7 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardId, payload.BoardId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.RemovedAccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.RemovedAccountName);
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountId, payload.RemoveByAccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.SourceAccountName, payload.RemoveByAccountName);
             }
             else if (eventType == nameof(ResolveAccessRequestEvent))
             {
@@ -86,7 +82,6 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardId, payload.BoardId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountId, payload.SourceAccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.SourceAccountName, payload.SourceAccountName);
                 notificationPayload.Add(NotificationLinkTypes.Status, payload.Status.ToString());
             }
             else if (eventType == nameof(NewBoardInviteRequestEvent))
@@ -97,7 +92,6 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountId, payload.FromAccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.SourceAccountName, payload.FromAccountName);
             }
             else if (eventType == nameof(NewBoardAccessRequestEvent))
             {
@@ -106,7 +100,6 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardId, payload.BoardId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
             }
             else if (eventType == nameof(NewBoardMemberPermissionsEvent))
             {
@@ -115,9 +108,7 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardId, payload.BoardId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
                 notificationPayload.Add(NotificationLinkTypes.SourceAccountId, payload.SourceAccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.SourceAccountName, payload.SourceAccountName);
             }
             else if (eventType == nameof(UpdateNoticeEvent))
             {
@@ -126,7 +117,6 @@ namespace Notification.Application.Mappings
                 notificationPayload.Add(NotificationLinkTypes.BoardId, payload.BoardId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.BoardName, payload.BoardName);
                 notificationPayload.Add(NotificationLinkTypes.AccountId, payload.AccountId.ToString());
-                notificationPayload.Add(NotificationLinkTypes.AccountName, payload.AccountName);
                 notificationPayload.Add(NotificationLinkTypes.NoticeId, payload.NoticeId.ToString());
                 notificationPayload.Add(NotificationLinkTypes.NoticeDefinition, payload.NoticeDefinition);
             }

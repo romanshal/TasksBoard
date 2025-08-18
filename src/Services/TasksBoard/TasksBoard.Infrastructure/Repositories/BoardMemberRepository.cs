@@ -17,7 +17,6 @@ namespace TasksBoard.Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(member => member.BoardId == boardId)
                 .OrderByDescending(member => member.Board.OwnerId == member.AccountId)
-                .ThenBy(member => member.Nickname)
                 .ToListAsync(cancellationToken);
         }
 
@@ -27,7 +26,6 @@ namespace TasksBoard.Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(member => member.BoardId == boardId)
                 .OrderByDescending(member => member.Board.OwnerId == member.AccountId)
-                .ThenBy(member => member.Nickname)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);

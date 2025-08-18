@@ -15,7 +15,6 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardMembers
             {
                 BoardId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
                 AccountId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
-                Nickname = "test nickname"
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();
@@ -34,19 +33,11 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardMembers
             {
                 BoardId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
                 AccountId = Guid.Parse("3f73ccb5-1ae0-4752-8803-f6e502bd1037"),
-                Nickname = "test nickname"
             };
 
             yield return new object[] { validCommand with { BoardId = Guid.Empty } };
             yield return new object[] { validCommand with { AccountId = Guid.Empty } };
-            yield return new object[] { validCommand with { Nickname = string.Empty } };
-            yield return new object[] { validCommand with { Nickname = "" } };
-            yield return new object[] { validCommand with { Nickname = null } };
-            yield return new object[] { validCommand with { BoardId = Guid.Empty, Nickname = null } };
             yield return new object[] { validCommand with { BoardId = Guid.Empty, AccountId = Guid.Empty } };
-            yield return new object[] { validCommand with { BoardId = Guid.Empty, AccountId = Guid.Empty, Nickname = null } };
-            yield return new object[] { validCommand with { BoardId = Guid.Empty, AccountId = Guid.Empty, Nickname = string.Empty } };
-            yield return new object[] { validCommand with { BoardId = Guid.Empty, AccountId = Guid.Empty, Nickname = "" } };
         }
     }
 }

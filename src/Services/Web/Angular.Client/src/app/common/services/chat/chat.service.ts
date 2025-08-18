@@ -153,9 +153,6 @@ export class ChatService {
     try {
       await this.connection.invoke(method, ...args);
     } catch (err) {
-      console.log('Error when invoke: ' + method);
-      console.log((err as Error).message);
-      console.log((err as Error).stack);
       throw err;
     }
   }

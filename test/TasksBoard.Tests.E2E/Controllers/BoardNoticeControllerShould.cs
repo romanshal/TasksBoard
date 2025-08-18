@@ -6,16 +6,11 @@ using TasksBoard.Application.DTOs;
 
 namespace TasksBoard.Tests.E2E.Controllers
 {
-    public class BoardNoticeControllerShould : IClassFixture<TasksBoardApiApllicationFactory>
+    public class BoardNoticeControllerShould(
+        TasksBoardApiApllicationFactory factory) : IClassFixture<TasksBoardApiApllicationFactory>
     {
-        private readonly PreconfigurationDatabaseFactory _preconfig;
-        private readonly TasksBoardApiApllicationFactory _factory;
-
-        public BoardNoticeControllerShould(TasksBoardApiApllicationFactory factory)
-        {
-            _factory = factory;
-            _preconfig = new(factory);
-        }
+        private readonly PreconfigurationDatabaseFactory _preconfig = new(factory);
+        private readonly TasksBoardApiApllicationFactory _factory = factory;
 
         [Fact]
         public async Task GetPaginatedBoardNoticesByBoardId()

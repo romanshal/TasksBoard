@@ -56,9 +56,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
                     BoardId = board.Id,
                     BoardName = board.Name,
                     RemovedAccountId = member.AccountId,
-                    RemovedAccountName = member.Nickname,
                     RemoveByAccountId = request.RemoveByUserId,
-                    RemoveByAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.RemoveByUserId)!.Nickname,
                     BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.RemoveByUserId).Select(member => member.AccountId)]
                 };
 

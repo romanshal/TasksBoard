@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Services;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByBoardIdAndAccountId
@@ -12,11 +13,13 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
     public class GetBoardMemberByBoardIdAndAccountIdQueryHandler(
         IUnitOfWork unitOfWork,
         ILogger<GetBoardMemberByBoardIdAndAccountIdQueryHandler> logger,
-        IMapper mapper) : IRequestHandler<GetBoardMemberByBoardIdAndAccountIdQuery, Result<BoardMemberDto>>
+        IMapper mapper,
+        IUserProfileService profileService) : IRequestHandler<GetBoardMemberByBoardIdAndAccountIdQuery, Result<BoardMemberDto>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardMemberByBoardIdAndAccountIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
+        private readonly IUserProfileService _profileService = profileService;
 
         public async Task<Result<BoardMemberDto>> Handle(GetBoardMemberByBoardIdAndAccountIdQuery request, CancellationToken cancellationToken)
         {
@@ -39,6 +42,23 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
             }
 
             var boardMemberDto = _mapper.Map<BoardMemberDto>(boardMember);
+
+            var userIds = new List<Guid>
+            {
+                boardMemberDto.AccountId
+            };
+
+            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
+
+            if (userProfiles.Count > 0)
+            {
+                var isExist = userProfiles.TryGetValue(boardMemberDto.AccountId, out var profile);
+
+                if (isExist && profile is not null)
+                {
+                    boardMemberDto.Nickname = profile.Username;
+                }
+            }
 
             return Result.Success(boardMemberDto);
         }

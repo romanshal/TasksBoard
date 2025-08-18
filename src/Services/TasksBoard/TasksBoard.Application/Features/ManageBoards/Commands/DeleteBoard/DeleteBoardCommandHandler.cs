@@ -47,7 +47,6 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
                     BoardId = board.Id,
                     BoardName = board.Name,
                     AccountId = request.AccountId,
-                    AccountName = board.BoardMembers.First(m => m.AccountId == request.AccountId).Nickname,
                     BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
                 }, token);
 

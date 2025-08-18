@@ -6,18 +6,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Authentication.Application.Features.Search.Queries.SearchUsers
+namespace Authentication.Application.Features.Search.Queries.SearchUsersByQuery
 {
-    public class SearchUsersQueryHandler(
+    public class SearchUsersByQueryQueryHandler(
         UserManager<ApplicationUser> userManager,
         IMapper mapper,
-        ILogger<SearchUsersQueryHandler> logger) : IRequestHandler<SearchUsersQuery, IEnumerable<UserInfoDto>>
+        ILogger<SearchUsersByQueryQueryHandler> logger) : IRequestHandler<SearchUsersByQueryQuery, IEnumerable<UserInfoDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IMapper _mapper = mapper;
-        private readonly ILogger<SearchUsersQueryHandler> _logger = logger;
+        private readonly ILogger<SearchUsersByQueryQueryHandler> _logger = logger;
 
-        public async Task<IEnumerable<UserInfoDto>> Handle(SearchUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserInfoDto>> Handle(SearchUsersByQueryQuery request, CancellationToken cancellationToken)
         {
             var searchString = request.Query.Trim().ToLower();
 

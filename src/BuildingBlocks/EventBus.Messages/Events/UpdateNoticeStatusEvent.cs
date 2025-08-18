@@ -6,7 +6,6 @@
         public required string BoardName { get; set; }
         public required Guid NoticeId { get; set; }
         public required Guid AccountId { get; set; }
-        public required string AccountName { get; set; }
         public bool Completed { get; set; }
         public required IList<Guid> BoardMembersIds { get; set; }
     }

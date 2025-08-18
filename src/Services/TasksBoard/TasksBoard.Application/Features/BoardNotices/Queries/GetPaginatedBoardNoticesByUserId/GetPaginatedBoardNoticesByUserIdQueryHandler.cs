@@ -5,6 +5,8 @@ using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Services;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByUserId
@@ -12,11 +14,13 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
     public class GetPaginatedBoardNoticesByUserIdQueryHandler(
         IUnitOfWork unitOfWork,
         ILogger<GetPaginatedBoardNoticesByUserIdQueryHandler> logger,
-        IMapper mapper) : IRequestHandler<GetPaginatedBoardNoticesByUserIdQuery, Result<PaginatedList<BoardNoticeDto>>>
+        IMapper mapper,
+        IUserProfileService profileService) : IRequestHandler<GetPaginatedBoardNoticesByUserIdQuery, Result<PaginatedList<BoardNoticeDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetPaginatedBoardNoticesByUserIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
+        private readonly IUserProfileService _profileService = profileService;
 
         public async Task<Result<PaginatedList<BoardNoticeDto>>> Handle(GetPaginatedBoardNoticesByUserIdQuery request, CancellationToken cancellationToken)
         {
@@ -29,9 +33,29 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
 
             var boardNotice = await _unitOfWork.GetBoardNoticeRepository().GetPaginatedByUserIdAsync(request.UserId, request.PageIndex, request.PageSize, cancellationToken);
 
-            var boardNoticeDto = _mapper.Map<IEnumerable<BoardNoticeDto>>(boardNotice);
+            var boardNoticesDto = _mapper.Map<IEnumerable<BoardNoticeDto>>(boardNotice);
 
-            return Result.Success(boardNoticeDto.ToPaginatedList(request.PageIndex, request.PageSize, count));
+            var userIds = boardNoticesDto
+                .SelectMany(notice => new[] { notice.AuthorId })
+                .Where(id => id != Guid.Empty)
+                .Distinct();
+
+            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
+
+            if (userProfiles.Count > 0)
+            {
+                foreach (var notice in boardNoticesDto)
+                {
+                    var isExist = userProfiles.TryGetValue(notice.AuthorId, out var profile);
+
+                    if (isExist && profile is not null)
+                    {
+                        notice.AuthorName = profile.Username;
+                    }
+                }
+            }
+
+            return Result.Success(boardNoticesDto.ToPaginatedList(request.PageIndex, request.PageSize, count));
         }
     }
 }

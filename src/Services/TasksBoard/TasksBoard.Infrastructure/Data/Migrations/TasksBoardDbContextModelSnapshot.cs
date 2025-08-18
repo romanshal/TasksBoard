@@ -17,7 +17,7 @@ namespace TasksBoard.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -90,16 +90,8 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AccountEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("AccountName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uuid");
@@ -166,26 +158,14 @@ namespace TasksBoard.Infrastructure.Data.Migrations
                     b.Property<Guid>("FromAccountId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("FromAccountName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ToAccountEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid>("ToAccountId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ToAccountName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -211,13 +191,6 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Nickname")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasDefaultValue("default");
 
                     b.HasKey("Id");
 
@@ -262,10 +235,6 @@ namespace TasksBoard.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("AuthorName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("BackgroundColor")
                         .IsRequired()

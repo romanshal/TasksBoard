@@ -28,7 +28,6 @@ namespace TasksBoard.Tests.E2E
                 [
                     new() {
                         AccountId = User.UserId,
-                        Nickname = User.Username,
                         BoardMemberPermissions = [.. permissions.Select(perm => new BoardMemberPermission
                         {
                             BoardPermissionId = perm.Id
@@ -52,7 +51,7 @@ namespace TasksBoard.Tests.E2E
             {
                 BoardId = boardId,
                 AuthorId = User.UserId,
-                AuthorName = User.Username,
+                //AuthorName = User.Username,
                 Definition = "Test notice",
                 BackgroundColor = "BackgroundColor",
                 Rotation = "Rotation"

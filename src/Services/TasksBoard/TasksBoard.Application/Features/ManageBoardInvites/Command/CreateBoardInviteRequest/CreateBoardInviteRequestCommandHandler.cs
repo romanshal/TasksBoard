@@ -80,8 +80,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
                     BoardId = board.Id,
                     BoardName = board.Name,
                     AccountId = inviteRequest.ToAccountId,
-                    FromAccountId = inviteRequest.FromAccountId,
-                    FromAccountName = board.BoardMembers.FirstOrDefault(member => member.AccountId == inviteRequest.FromAccountId)!.Nickname
+                    FromAccountId = inviteRequest.FromAccountId
                 }, token);
 
                 _logger.LogInformation("Board invite request with id '{id}' added to board with id '{boardId}'.", inviteRequest.Id, request.BoardId);

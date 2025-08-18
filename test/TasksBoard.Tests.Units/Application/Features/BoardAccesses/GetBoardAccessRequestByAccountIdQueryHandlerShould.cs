@@ -47,8 +47,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 new() {
                     BoardId = Guid.Empty,
                     AccountId = Guid.Empty,
-                    AccountName = "Test account name",
-                    AccountEmail = "Test account email",
                     Status = 0
                 }
             };

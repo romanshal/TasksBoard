@@ -61,8 +61,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                     [
                         new BoardMember
                         {
-                            AccountId = Guid.Empty,
-                            Nickname = "Test"
+                            AccountId = Guid.Empty
                         }
                     ]
                 });
