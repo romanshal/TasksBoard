@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Common.gRPC\Common.gRPC.csproj" />
     <ProjectReference Include="..\Chat.Domain\Chat.Domain.csproj" />
   </ItemGroup>
 

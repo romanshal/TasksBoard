@@ -232,10 +232,17 @@ services:
     container_name: chat.api
     environment:
       <<: *default-env
+      "gRPC:Address": "http://authentication.api"
       "ConnectionStrings:ChatDbConnection": "Server=chatdb;Port=5432;Database=tasks-board-chat-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "chat.api-index-{0:yyyy.MM.dd}"
+      "Cache:Redis:Host": redis
+      "Cache:Redis:Port": 6379
+      "Cache:Redis:Password": redispassword
+      "Cache:ExpirationTimeSeconds": 300
     depends_on:
+      - authentication.api
       - chatdb
+      - redis
     ports:
       - "8002:80"
       - "9002:443"

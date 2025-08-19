@@ -20,11 +20,6 @@ namespace Chat.Application.Validators.BoardMessages
                 .NotEqual(Guid.Empty)
                 .WithMessage(BoardMessageMessages.MemberIdRequired);
 
-            RuleFor(p => p.MemberNickname)
-                .NotNull()
-                .NotEmpty()
-                .WithMessage(BoardMessageMessages.NicknameRequired);
-
             RuleFor(p => p.Message)
                 .NotNull()
                 .NotEmpty()

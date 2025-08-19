@@ -56,7 +56,6 @@ namespace Chat.API.Controllers
                 BoardId = boardId,
                 MemberId = request.MemberId,
                 AccountId = request.AccountId,
-                MemberNickname = request.MemberNickname,
                 Message = request.Message
             });
 
@@ -64,7 +63,6 @@ namespace Chat.API.Controllers
 
             return this.HandleResponse(result);
         }
-
 
         [HttpPut("{boardId:guid}")]
         //[HasBoardAccess] TODO: add grpc connect

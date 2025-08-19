@@ -45,6 +45,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRe
                     }
                 }
             }
+
             return Result.Success(accessRequestsDto);
         }
     }

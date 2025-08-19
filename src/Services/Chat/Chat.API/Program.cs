@@ -29,9 +29,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGetWithAuth("Chat API");
 
-var connectionString = builder.Configuration.GetConnectionString("ChatDbConnection") ?? throw new InvalidOperationException("Connection string 'ChatDbConnection' not found");
 builder.Services
-    .AddInfrastructureServices(connectionString)
+    .AddInfrastructureServices(builder.Configuration)
     .AddApplicationServices();
 
 var jwt = builder.Configuration.GetRequiredSection("Authentication:Jwt").Get<JwtCofiguration>() ?? throw new InvalidOperationException("Configuration section 'Jwt' not found.");
