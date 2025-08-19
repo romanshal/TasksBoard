@@ -153,7 +153,6 @@ export class ChatComponent implements OnInit {
       let message = {
         memberId: this.currentMember.Id,
         accountId: this.currentMember.AccountId,
-        memberNickname: this.currentMember.Nickname,
         message: this.message
       };
 

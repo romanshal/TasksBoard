@@ -4,6 +4,7 @@ using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -14,12 +15,12 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
         IUnitOfWork unitOfWork,
         ILogger<GetBoardMemberByBoardIdAndAccountIdQueryHandler> logger,
         IMapper mapper,
-        IUserProfileService profileService) : IRequestHandler<GetBoardMemberByBoardIdAndAccountIdQuery, Result<BoardMemberDto>>
+         UserProfileHandler profileHandler) : IRequestHandler<GetBoardMemberByBoardIdAndAccountIdQuery, Result<BoardMemberDto>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardMemberByBoardIdAndAccountIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly IUserProfileService _profileService = profileService;
+        private readonly UserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<BoardMemberDto>> Handle(GetBoardMemberByBoardIdAndAccountIdQuery request, CancellationToken cancellationToken)
         {
@@ -43,12 +44,11 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
 
             var boardMemberDto = _mapper.Map<BoardMemberDto>(boardMember);
 
-            var userProfile = await _profileService.ResolveAsync(boardMemberDto.AccountId, cancellationToken);
-
-            if (userProfile is not null)
-            {
-                boardMemberDto.Nickname = userProfile.Username;
-            }
+            await _profileHandler.Handle(
+                boardMemberDto,
+                x => x.AccountId,
+                (x, username) => x.Nickname = username,
+                cancellationToken);
 
             return Result.Success(boardMemberDto);
         }

@@ -4,6 +4,7 @@ using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
 namespace TasksBoard.Application.Features.BoardInvites.Queries.GetBoardInviteRequestByToAccountId
@@ -12,12 +13,12 @@ namespace TasksBoard.Application.Features.BoardInvites.Queries.GetBoardInviteReq
         IUnitOfWork unitOfWork,
         ILogger<GetBoardInviteRequestByToAccountIdQueryHandler> logger,
         IMapper mapper,
-        IUserProfileService profileService) : IRequestHandler<GetBoardInviteRequestByToAccountIdQuery, Result<IEnumerable<BoardInviteRequestDto>>>
+        UserProfileHandler profileHandler) : IRequestHandler<GetBoardInviteRequestByToAccountIdQuery, Result<IEnumerable<BoardInviteRequestDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardInviteRequestByToAccountIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly IUserProfileService _profileService = profileService;
+        private readonly UserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<IEnumerable<BoardInviteRequestDto>>> Handle(GetBoardInviteRequestByToAccountIdQuery request, CancellationToken cancellationToken)
         {
@@ -25,29 +26,20 @@ namespace TasksBoard.Application.Features.BoardInvites.Queries.GetBoardInviteReq
 
             var inviteRequestsDto = _mapper.Map<IEnumerable<BoardInviteRequestDto>>(inviteRequests);
 
-            var userIds = inviteRequestsDto
-                .SelectMany(req => new[] { req.ToAccountId, req.FromAccountId })
-                .Where(id => id != Guid.Empty)
-                .Distinct();
+            await _profileHandler.Handle(
+                inviteRequestsDto,
+                x => x.ToAccountId,
+                (x, username, email) => { 
+                    x.ToAccountName = username;
+                    x.ToAccountEmail = email;
+                },
+                cancellationToken);
 
-            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
-
-            if (userProfiles.Count > 0)
-            {
-                foreach (var req in inviteRequestsDto)
-                {
-                    if (userProfiles.TryGetValue(req.ToAccountId, out var profileTo) && profileTo is not null)
-                    {
-                        req.ToAccountName = profileTo.Username;
-                        req.ToAccountEmail = profileTo.Email;
-                    }
-
-                    if (userProfiles.TryGetValue(req.FromAccountId, out var profileFrom) && profileFrom is not null)
-                    {
-                        req.FromAccountName = profileFrom.Username;
-                    }
-                }
-            }
+            await _profileHandler.Handle(
+                inviteRequestsDto,
+                x => x.FromAccountId,
+                (x, username) => x.FromAccountName = username,
+                cancellationToken);
 
             return Result.Success(inviteRequestsDto);
         }

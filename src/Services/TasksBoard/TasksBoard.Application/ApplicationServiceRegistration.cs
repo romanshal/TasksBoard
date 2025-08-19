@@ -5,6 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using TasksBoard.Application.Handlers;
 
 namespace TasksBoard.Application
 {
@@ -26,6 +27,8 @@ namespace TasksBoard.Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+
+            services.AddScoped<UserProfileHandler>();
 
             return services;
         }

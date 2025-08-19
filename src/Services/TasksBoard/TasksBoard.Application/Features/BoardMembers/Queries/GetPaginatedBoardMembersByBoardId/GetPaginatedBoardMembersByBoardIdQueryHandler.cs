@@ -6,6 +6,7 @@ using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -16,12 +17,13 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoard
         IUnitOfWork unitOfWork,
         ILogger<GetBoardMembersByBoardIdQueryHandler> logger,
         IMapper mapper,
-        IUserProfileService profileService) : IRequestHandler<GetPaginatedBoardMembersByBoardIdQuery, Result<PaginatedList<BoardMemberDto>>>
+        UserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardMembersByBoardIdQuery, Result<PaginatedList<BoardMemberDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardMembersByBoardIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly IUserProfileService _profileService = profileService;
+        private readonly UserProfileHandler _profileHandler = profileHandler;
+
         public async Task<Result<PaginatedList<BoardMemberDto>>> Handle(GetPaginatedBoardMembersByBoardIdQuery request, CancellationToken cancellationToken)
         {
             var boardExist = await _unitOfWork.GetRepository<Board>().ExistAsync(request.BoardId, cancellationToken);
@@ -44,25 +46,11 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoard
 
             var boardMembersDto = _mapper.Map<IEnumerable<BoardMemberDto>>(boardMembers);
 
-            var userIds = boardMembersDto
-                .SelectMany(notice => new[] { notice.AccountId })
-                .Where(id => id != Guid.Empty)
-                .Distinct();
-
-            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
-
-            if (userProfiles.Count > 0)
-            {
-                foreach (var member in boardMembersDto)
-                {
-                    var isExist = userProfiles.TryGetValue(member.AccountId, out var profile);
-
-                    if (isExist && profile is not null)
-                    {
-                        member.Nickname = profile.Username;
-                    }
-                }
-            }
+            await _profileHandler.Handle(
+                boardMembersDto,
+                x => x.AccountId,
+                (x, username) => x.Nickname = username,
+                cancellationToken);
 
             return Result.Success(boardMembersDto.ToPaginatedList(request.PageIndex, request.PageSize, count));
         }

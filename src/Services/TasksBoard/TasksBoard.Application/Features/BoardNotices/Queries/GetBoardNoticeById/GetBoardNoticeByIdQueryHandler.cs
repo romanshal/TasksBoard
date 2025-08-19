@@ -4,6 +4,7 @@ using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -14,12 +15,12 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
         ILogger<GetBoardNoticeByIdQueryHandler> logger,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IUserProfileService profileService) : IRequestHandler<GetBoardNoticeByIdQuery, Result<BoardNoticeDto>>
+        UserProfileHandler profileHandler) : IRequestHandler<GetBoardNoticeByIdQuery, Result<BoardNoticeDto>>
     {
         private readonly ILogger<GetBoardNoticeByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly IUserProfileService _profileService = profileService;
+        private readonly UserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<BoardNoticeDto>> Handle(GetBoardNoticeByIdQuery request, CancellationToken cancellationToken)
         {
@@ -33,12 +34,11 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
             }
             var boardNoticeDto = _mapper.Map<BoardNoticeDto>(boardNotice);
 
-            var userProfile = await _profileService.ResolveAsync(boardNoticeDto.AuthorId, cancellationToken);
-
-            if (userProfile is not null)
-            {
-                boardNoticeDto.AuthorName = userProfile.Username;
-            }
+            await _profileHandler.Handle(
+                boardNoticeDto,
+                x => x.AuthorId,
+                (x, username) => x.AuthorName = username,
+                cancellationToken);
 
             return Result.Success(boardNoticeDto);
         }
