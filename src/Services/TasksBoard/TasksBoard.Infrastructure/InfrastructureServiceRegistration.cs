@@ -1,9 +1,12 @@
 ﻿using Common.Blocks.Extensions;
 using Common.Blocks.Interfaces.Caches;
 using Common.Blocks.Interfaces.Repositories;
-using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
+using Common.gRPC.Interfaces.Caches;
+using Common.gRPC.Interfaces.Services;
+using Common.gRPC.Repositories;
+using Common.gRPC.Services;
 using EventBus.Messages.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
-using TasksBoard.Infrastructure.Services;
 using TasksBoard.Infrastructure.UnitOfWorks;
-using static Common.Blocks.Protos.UserProfiles;
+using static Common.gRPC.Protos.UserProfiles;
 
 namespace TasksBoard.Infrastructure
 {

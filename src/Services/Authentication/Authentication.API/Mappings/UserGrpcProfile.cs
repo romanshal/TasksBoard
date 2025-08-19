@@ -7,7 +7,7 @@ namespace Authentication.API.Mappings
     {
         public UserGrpcProfile()
         {
-            CreateMap<UserInfoDto, Common.Blocks.Protos.User>()
+            CreateMap<UserInfoDto, Common.gRPC.Protos.User>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));

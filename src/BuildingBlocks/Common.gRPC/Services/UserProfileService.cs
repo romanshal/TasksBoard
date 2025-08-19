@@ -1,9 +1,9 @@
-﻿using Common.Blocks.Interfaces.Caches;
-using Common.Blocks.Interfaces.Services;
-using Common.Blocks.Models.Users;
-using Common.Blocks.Protos;
+﻿using Common.gRPC.Interfaces.Caches;
+using Common.gRPC.Interfaces.Services;
+using Common.gRPC.Models;
+using Common.gRPC.Protos;
 
-namespace Notification.Infrastructure.Services
+namespace Common.gRPC.Services
 {
     public class UserProfileService(
         IUserProfileCacheRepository cache,

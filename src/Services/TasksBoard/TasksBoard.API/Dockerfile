@@ -13,9 +13,9 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/TasksBoard/TasksBoard.API/TasksBoard.API.csproj", "Services/TasksBoard/TasksBoard.API/"]
-COPY ["Services/Authentication/Authentication.Domain/Authentication.Domain.csproj", "Services/Authentication/Authentication.Domain/"]
-COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
 COPY ["Services/TasksBoard/TasksBoard.Application/TasksBoard.Application.csproj", "Services/TasksBoard/TasksBoard.Application/"]
+COPY ["BuildingBlocks/Common.gRPC/Common.gRPC.csproj", "BuildingBlocks/Common.gRPC/"]
+COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
 COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
 COPY ["Services/TasksBoard/TasksBoard.Domain/TasksBoard.Domain.csproj", "Services/TasksBoard/TasksBoard.Domain/"]
 COPY ["Services/TasksBoard/TasksBoard.Infrastructure/TasksBoard.Infrastructure.csproj", "Services/TasksBoard/TasksBoard.Infrastructure/"]

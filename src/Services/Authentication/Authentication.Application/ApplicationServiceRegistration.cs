@@ -4,7 +4,6 @@ using Authentication.Application.Providers;
 using Authentication.Application.Services;
 using Common.Blocks.Behaviours;
 using Common.Blocks.Configurations;
-using Common.Blocks.Services;
 using EventBus.Messages.Extensions;
 using FluentValidation;
 using MediatR;

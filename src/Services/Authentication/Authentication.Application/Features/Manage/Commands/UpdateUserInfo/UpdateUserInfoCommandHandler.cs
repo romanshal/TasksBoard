@@ -1,13 +1,9 @@
 ﻿using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
-using Common.Blocks.Constants;
-using Common.Blocks.Entities;
 using Common.Blocks.Exceptions;
-using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
 {

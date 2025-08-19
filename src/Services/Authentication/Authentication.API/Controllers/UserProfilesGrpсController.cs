@@ -1,6 +1,6 @@
 ﻿using Authentication.Application.Features.Search.Queries.SearchUsersById;
 using AutoMapper;
-using Common.Blocks.Protos;
+using Common.gRPC.Protos;
 using Grpc.Core;
 using MediatR;
 

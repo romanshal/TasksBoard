@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.Blocks.Interfaces.Services;
+using Common.gRPC.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -50,7 +50,7 @@ namespace Notification.Application.BackgroundServices
                             ids.Add(Guid.Parse(accountId));
                         }
 
-                        if(sourceAccountIdExist && !string.IsNullOrWhiteSpace(sourceAccountId))
+                        if (sourceAccountIdExist && !string.IsNullOrWhiteSpace(sourceAccountId))
                         {
                             ids.Add(Guid.Parse(sourceAccountId));
                         }

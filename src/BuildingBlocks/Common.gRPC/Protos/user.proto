@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "Common.Blocks.Protos";
+option csharp_namespace = "Common.gRPC.Protos";
 
 service UserProfiles{
 	rpc ResolveUsers (ResolveUsersRequest) returns (ResolveUsersResponse);

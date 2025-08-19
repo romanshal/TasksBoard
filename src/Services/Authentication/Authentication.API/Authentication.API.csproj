@@ -11,8 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
-		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.71.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.72.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
@@ -25,13 +27,14 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.gRPC\Common.gRPC.csproj" />
 		<ProjectReference Include="..\Authentication.Application\Authentication.Application.csproj" />
 		<ProjectReference Include="..\Authentication.Domain\Authentication.Domain.csproj" />
 		<ProjectReference Include="..\Authentication.Infrastructure\Authentication.Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="..\..\..\BuildingBlocks\Common.Blocks\Protos\user.proto" GrpcServices="Server" />
+		<Protobuf Include="..\..\..\BuildingBlocks\Common.gRPC\Protos\user.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.Blocks.Interfaces.Services;
+using Common.gRPC.Interfaces.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;

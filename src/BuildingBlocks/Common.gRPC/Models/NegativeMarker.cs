@@ -1,4 +1,4 @@
-﻿namespace Common.Blocks.Models.Users
+﻿namespace Common.gRPC.Models
 {
     public sealed record NegativeMarker
     {

@@ -1,6 +1,6 @@
-﻿using Common.Blocks.Models.Users;
+﻿using Common.gRPC.Models;
 
-namespace Common.Blocks.Interfaces.Services
+namespace Common.gRPC.Interfaces.Services
 {
     public interface IUserProfileService
     {

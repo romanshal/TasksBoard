@@ -1,7 +1,8 @@
 ﻿using Common.Blocks.Interfaces.Caches;
-using Common.Blocks.Models.Users;
+using Common.gRPC.Interfaces.Caches;
+using Common.gRPC.Models;
 
-namespace Common.Blocks.Repositories
+namespace Common.gRPC.Repositories
 {
     public class UserProfileCacheRepository(
         ICacheRepository cacheRepository) : IUserProfileCacheRepository

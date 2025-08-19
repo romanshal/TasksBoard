@@ -1,6 +1,6 @@
-﻿using Common.Blocks.Models.Users;
+﻿using Common.gRPC.Models;
 
-namespace Common.Blocks.Interfaces.Caches
+namespace Common.gRPC.Interfaces.Caches
 {
     public interface IUserProfileCacheRepository
     {
