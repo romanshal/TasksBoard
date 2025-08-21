@@ -13,7 +13,8 @@ x-default-env: &default-env
   "Authentication:Jwt:Secret": Hg4EtbzOqvc5pRBJ2KGkz4aPD38D1Sgr
   "Authentication:Jwt:Issuer": https://authentication.api:443
   "Authentication:Jwt:Audience": https://tasksboard.api:443
-  "Authentication:Jwt:ExpirationInMinutes": 480
+  "Authentication:Jwt:AccessTokenExpirationMinutes": 1
+  "Authentication:Jwt:RefreshTokenExpirationDays": 7
 
 networks:
   my_network:

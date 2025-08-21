@@ -14,7 +14,10 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
             var validCommand = new RefreshTokenCommand
             {
                 UserId = Guid.Parse("fe6e93de-5599-4f32-a143-4a4da06e6cd3"),
-                RefreshToken = "fe6e93de-5599-4f32-a143-4a4da06e6cd3"
+                RefreshToken = "fe6e93de-5599-4f32-a143-4a4da06e6cd3",
+                UserIp = "",
+                UserAgent = "",
+                DeviceId = ""
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();
@@ -32,7 +35,10 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
             var validCommand = new RefreshTokenCommand
             {
                 UserId = Guid.Parse("fe6e93de-5599-4f32-a143-4a4da06e6cd3"),
-                RefreshToken = "fe6e93de-5599-4f32-a143-4a4da06e6cd3"
+                RefreshToken = "fe6e93de-5599-4f32-a143-4a4da06e6cd3",
+                UserIp = "",
+                UserAgent = "",
+                DeviceId = ""
             };
             yield return new object[] { validCommand with { UserId = Guid.Empty } };
             yield return new object[] { validCommand with { RefreshToken = null } };

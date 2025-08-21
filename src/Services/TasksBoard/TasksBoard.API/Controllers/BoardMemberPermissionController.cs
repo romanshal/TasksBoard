@@ -9,11 +9,8 @@ namespace TasksBoard.API.Controllers
     [ApiController]
     [Authorize]
     [Route("api/permissions")]
-    public class BoardPermissionController(
-        ILogger<BoardController> logger,
-        IMediator mediator) : ControllerBase
+    public class BoardPermissionController(IMediator mediator) : ControllerBase
     {
-        private readonly ILogger<BoardController> _logger = logger;
         private readonly IMediator _mediator = mediator;
 
         [HttpGet]

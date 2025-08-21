@@ -8,5 +8,6 @@ namespace Authentication.Domain.Entities
         public string? Surname { get; set; }
 
         public virtual ApplicationUserImage Image { get; set; }
+        public virtual ICollection<ApplicationUserSession> RefreshTokens { get; set; }
     }
 }

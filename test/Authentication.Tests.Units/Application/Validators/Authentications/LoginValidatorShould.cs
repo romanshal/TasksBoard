@@ -14,7 +14,10 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
             var validCommand = new LoginCommand
             {
                 Username = "Test username",
-                Password = "Test password"
+                Password = "Test password",
+                UserIp = "",
+                UserAgent = "",
+                DeviceId = ""
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();
@@ -32,7 +35,10 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
             var validCommand = new LoginCommand
             {
                 Username = "Test username",
-                Password = "Test password"
+                Password = "Test password",
+                UserIp = "",
+                UserAgent = "",
+                DeviceId = ""
             };
             yield return new object[] { validCommand with { Username = null } };
             yield return new object[] { validCommand with { Username = string.Empty } };

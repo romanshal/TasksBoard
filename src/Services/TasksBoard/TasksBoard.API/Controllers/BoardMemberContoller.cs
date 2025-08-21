@@ -12,15 +12,13 @@ namespace TasksBoard.API.Controllers
     [Authorize]
     [HasBoardAccess]
     [Route("api/boardmembers")]
-    public class BoardMemberContoller(
-        IMediator mediator,
-        ILogger<BoardMemberContoller> logger) : ControllerBase
+    public class BoardMemberContoller(IMediator mediator) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
-        private ILogger<BoardMemberContoller> _logger = logger;
 
         [HttpGet("board/{boardId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -36,6 +34,7 @@ namespace TasksBoard.API.Controllers
 
         [HttpGet("board/{boardId:guid}/account/{accountId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

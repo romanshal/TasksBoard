@@ -1,5 +1,6 @@
 ﻿using Authentication.Application.Dtos;
 using Authentication.Application.Interfaces.Services;
+using Authentication.Application.Models;
 using Authentication.Domain.Entities;
 using Common.Blocks.Exceptions;
 using MediatR;
@@ -51,7 +52,15 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
 
             await _signInManager.SignInAsync(user, false, "Password");
 
-            var token = await _tokenService.GenerateTokenAsync(user);
+            var generateModel = new GenerateTokensModel
+            {
+                User = user,
+                DeviceId = request.DeviceId,
+                UserAgent = request.UserAgent,
+                IpAddress = request.UserIp
+            };
+
+            var token = await _tokenService.IssueAsync(generateModel, cancellationToken);
 
             _logger.LogInformation("Success register for user: {username}.", request.Username);
             if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))

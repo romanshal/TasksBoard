@@ -165,6 +165,58 @@ namespace Authentication.Infrastructure.Data.Migrations
                     b.ToTable("userimages", (string)null);
                 });
 
+            modelBuilder.Entity("Authentication.Domain.Entities.ApplicationUserSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshTokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshTokenSalt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ReplacedBySessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("RevokedAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReplacedBySessionId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId", "RefreshTokenHash")
+                        .IsUnique();
+
+                    b.ToTable("usersessions", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -279,6 +331,24 @@ namespace Authentication.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Authentication.Domain.Entities.ApplicationUserSession", b =>
+                {
+                    b.HasOne("Authentication.Domain.Entities.ApplicationUserSession", "ReplacedBySession")
+                        .WithOne("ReplaceSession")
+                        .HasForeignKey("Authentication.Domain.Entities.ApplicationUserSession", "ReplacedBySessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Authentication.Domain.Entities.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReplacedBySession");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Authentication.Domain.Entities.ApplicationRole", null)
@@ -334,6 +404,13 @@ namespace Authentication.Infrastructure.Data.Migrations
                 {
                     b.Navigation("Image")
                         .IsRequired();
+
+                    b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Authentication.Domain.Entities.ApplicationUserSession", b =>
+                {
+                    b.Navigation("ReplaceSession");
                 });
 #pragma warning restore 612, 618
         }

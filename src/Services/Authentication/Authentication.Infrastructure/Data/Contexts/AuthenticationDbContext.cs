@@ -11,6 +11,7 @@ namespace Authentication.Infrastructure.Data.Contexts
         DbContextOptions<AuthenticationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
     {
         public DbSet<ApplicationUserImage> ApplicationUserImages { get; set; }
+        public DbSet<ApplicationUserSession> Sessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

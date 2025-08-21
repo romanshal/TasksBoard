@@ -7,7 +7,5 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
     {
         public required Guid BoardId { get; set; }
         public required Guid AccountId { get; set; }
-        public required string AccountName { get; set; }
-        public required string AccountEmail { get; set; }
     }
 }

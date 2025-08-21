@@ -8,11 +8,10 @@ import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SigninComponent } from './auth/signin/signin.component';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './auth/guard/auth.guard';
 import { AuthRequestInterceptor } from './common/interceptors/auth-request.interceptor';
 import { NotFoundComponent } from './error/not-found/not-found.component';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { ForbiddenComponent } from './error/forbidden/forbidden.component';
 import { BadRequestComponent } from './error/bad-request/bad-request.component';
 import { BoardComponent } from './board/board.component';
@@ -97,8 +96,7 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ResponseInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

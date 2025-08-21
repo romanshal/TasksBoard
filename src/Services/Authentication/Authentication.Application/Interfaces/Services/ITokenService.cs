@@ -1,15 +1,22 @@
 ﻿using Authentication.Application.Dtos;
+using Authentication.Application.Models;
 using Authentication.Domain.Entities;
-using Google.Apis.Auth;
-using Microsoft.AspNetCore.Identity;
 
 namespace Authentication.Application.Interfaces.Services
 {
     public interface ITokenService
     {
-        Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string? provider, string? tokenId);
-        Task<TokenDto> GenerateTokenAsync(ApplicationUser user);
-        Task<TokenDto> RefreshTokenAsync(ApplicationUser user);
-        Task<IdentityResult> DeleteRefreshToken(ApplicationUser user);
+        Task<TokenPairDto> IssueAsync(
+            GenerateTokensModel model,
+            CancellationToken cancellationToken = default);
+
+        Task<TokenPairDto> RotateAsync(
+            GenerateTokensModel model,
+            string oldRefreshToken,
+            CancellationToken cancellationToken = default);
+
+        Task RevokeAsync(
+            ApplicationUser user,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -12,11 +12,8 @@ namespace TasksBoard.API.Controllers
     [ApiController]
     [Authorize]
     [Route("api/boardaccessrequests")]
-    public class BoardAccessController(
-        ILogger<BoardAccessController> logger,
-        IMediator mediator) : ControllerBase
+    public class BoardAccessController(IMediator mediator) : ControllerBase
     {
-        private readonly ILogger<BoardAccessController> _logger = logger;
         private readonly IMediator _mediator = mediator;
 
         [HttpGet("account/{accountId:guid}")]
@@ -49,8 +46,6 @@ namespace TasksBoard.API.Controllers
             {
                 BoardId = boardId,
                 AccountId = request.AccountId,
-                AccountName = request.AccountName,
-                AccountEmail = request.AccountEmail
             });
 
             return this.HandleResponse(result);

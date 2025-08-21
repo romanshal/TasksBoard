@@ -37,8 +37,6 @@ export class BoardMemberRequestModal {
 
     let request = {
       accountId: userId,
-      accountName: user?.Username,
-      accountEmail: user?.Email
     };
 
     this.boardAccessService.requestBoardAccess(this.boardId, request).subscribe({

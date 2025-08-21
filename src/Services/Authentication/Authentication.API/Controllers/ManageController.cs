@@ -13,12 +13,9 @@ namespace Authentication.API.Controllers
     [ApiController]
     [Authorize]
     [Route("api/manage")]
-    public class ManageController(
-        IMediator mediator,
-        ILogger<ManageController> logger) : ControllerBase
+    public class ManageController(IMediator mediator) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
-        private readonly ILogger<ManageController> _logger = logger;
 
         [HttpGet("{userId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -101,17 +98,16 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateUserImageAsync([FromRoute] Guid userId, [FromForm] UpdateUserImageRequest request)
         {
-            byte[]? imageData = null;
-            string? imageExtension = string.Empty;
             if (request.Image == null && request.Image?.Length == 0)
             {
                 return BadRequest();
             }
 
             using var ms = new MemoryStream();
-            await request.Image.CopyToAsync(ms);
-            imageData = ms.ToArray();
+            await request.Image!.CopyToAsync(ms);
+            byte[]? imageData = ms.ToArray();
 
+            string? imageExtension = string.Empty;
             imageExtension = Path.GetExtension(request.Image.FileName);
 
             var result = await _mediator.Send(new UpdateUserImageCommand

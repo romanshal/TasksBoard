@@ -1,4 +1,6 @@
-﻿using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
+﻿using Authentication.API.Models.Requests.Authentication;
+using Authentication.API.Models.Responses;
+using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
 using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Application.Features.Authentications.Commands.Logout;
 using Authentication.Application.Features.Authentications.Commands.RefreshToken;
@@ -19,10 +21,27 @@ namespace Authentication.API.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> LoginAsync(LoginCommand command)
+        public async Task<IActionResult> LoginAsync(LoginRequest request)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgent = Request.Headers.UserAgent.ToString();
+
+            var result = await _mediator.Send(new LoginCommand
+            {
+                Username = request.Username,
+                Password = request.Password,
+                UserIp = userIp,
+                UserAgent = userAgent,
+                DeviceId = request.DeviceId
+            });
+
+            SetRefreshTokenCookies(result.RefreshToken);
+
+            return Ok(new AuthenticationResponse
+            {
+                UserId = result.UserId,
+                AccessToken = result.AccessToken
+            });
         }
 
         [HttpPost]
@@ -35,18 +54,56 @@ namespace Authentication.API.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterCommand command)
+        public async Task<IActionResult> RegisterAsync(RegisterRequest request)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgent = Request.Headers.UserAgent.ToString();
+
+            var result = await _mediator.Send(new RegisterCommand
+            {
+                Username = request.Username,
+                Email = request.Email,
+                Password = request.Password,
+                UserIp = userIp,
+                UserAgent = userAgent,
+                DeviceId = request.DeviceId
+            });
+
+            SetRefreshTokenCookies(result.RefreshToken);
+
+            return Ok(new AuthenticationResponse
+            {
+                UserId = result.UserId,
+                AccessToken = result.AccessToken
+            });
         }
 
         [HttpPost]
-        [Route("token")]
-        public async Task<IActionResult> RefreshAsync(RefreshTokenCommand command)
+        [Route("refresh")]
+        public async Task<IActionResult> RefreshAsync(RefreshTokenRequest request)
         {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgent = Request.Headers.UserAgent.ToString();
+
+            if (!Request.Cookies.TryGetValue("refresh_token", out var refreshToken)) 
+                return Unauthorized();
+
+            var result = await _mediator.Send(new RefreshTokenCommand 
+            {
+                UserId = request.UserId,
+                RefreshToken = refreshToken,
+                UserIp = userIp,
+                UserAgent = userAgent,
+                DeviceId = request.DeviceId
+            });
+
+            SetRefreshTokenCookies(result.RefreshToken);
+
+            return Ok(new AuthenticationResponse
+            {
+                UserId = result.UserId,
+                AccessToken = result.AccessToken
+            });
         }
 
         [HttpDelete]
@@ -65,6 +122,18 @@ namespace Authentication.API.Controllers
             });
 
             return NoContent();
+        }
+
+        private void SetRefreshTokenCookies(string token)
+        {
+            Response.Cookies.Append("refresh_token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/api/authentication/refresh",
+                MaxAge = TimeSpan.FromDays(7)
+            });
         }
     }
 }

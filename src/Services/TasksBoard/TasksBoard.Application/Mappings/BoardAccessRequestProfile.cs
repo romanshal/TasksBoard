@@ -18,7 +18,9 @@ namespace TasksBoard.Application.Mappings
                 .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore());
 
             CreateMap<BoardAccessRequest, BoardAccessRequestDto>()
-                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name));
+                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name))
+                .ForMember(dest => dest.AccountName, opt => opt.Ignore())
+                .ForMember(dest => dest.AccountEmail, opt => opt.Ignore());
         }
     }
 }

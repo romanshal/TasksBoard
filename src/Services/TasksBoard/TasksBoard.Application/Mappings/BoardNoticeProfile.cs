@@ -17,7 +17,8 @@ namespace TasksBoard.Application.Mappings
                 .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore());
 
             CreateMap<BoardNotice, BoardNoticeDto>()
-                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name));
+                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name))
+                .ForMember(dest => dest.AuthorName, opt => opt.Ignore());
         }
     }
 }

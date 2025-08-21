@@ -1,11 +1,11 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Models;
+﻿using Authentication.Application.Models;
+using Authentication.Domain.Entities;
 
 namespace Authentication.Application.Interfaces.Providers
 {
     public interface ITokenProvider
     {
-        TokenDto Create(CreateTokenModel model);
-        TokenDto Refresh(RefreshTokenModel request);
+        Task<TokenModel> GenerateAccessTokenAsync(ApplicationUser user);
+        TokenModel GenerateRefreshToken();
     }
 }

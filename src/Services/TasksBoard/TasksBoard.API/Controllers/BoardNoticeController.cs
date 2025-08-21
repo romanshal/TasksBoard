@@ -15,16 +15,14 @@ namespace TasksBoard.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/boardnotices")]
-    public class BoardNoticeController(
-        ILogger<BoardController> logger,
-        IMediator mediator) : ControllerBase
+    public class BoardNoticeController(IMediator mediator) : ControllerBase
     {
-        private readonly ILogger<BoardController> _logger = logger;
         private readonly IMediator _mediator = mediator;
 
         [HttpGet("{pageIndex:int}/{pageSize:int}")]
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -42,8 +40,10 @@ namespace TasksBoard.API.Controllers
         [HttpGet("board/{boardId:Guid}/notice/{noticeId}")]
         [HasBoardAccess]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetBoardNoticeByBoardIdAndIdAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
         {
@@ -55,8 +55,10 @@ namespace TasksBoard.API.Controllers
         [HttpGet("board/{boardId:Guid}")]
         [HasBoardAccess]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
@@ -73,8 +75,10 @@ namespace TasksBoard.API.Controllers
         [HttpGet("user/{userId:Guid}")]
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByUserIdAsync([FromRoute] Guid userId, int pageIndex = 1, int pageSize = 10)
         {
@@ -91,8 +95,10 @@ namespace TasksBoard.API.Controllers
         [HttpGet("user/{userId:Guid}/board/{boardId:Guid}")]
         [HasBoardAccess]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPaginatedBoardNoticesByUserIdAndBoardIdAsync([FromRoute] Guid userId, [FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
         {
@@ -110,6 +116,7 @@ namespace TasksBoard.API.Controllers
         [HttpGet("{id:guid}")]
         [Authorize(Policy = "AdminOnly")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

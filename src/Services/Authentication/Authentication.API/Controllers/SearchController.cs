@@ -9,12 +9,9 @@ namespace Authentication.API.Controllers
     [ApiController]
     [Authorize]
     [Route("api/search")]
-    public class SearchController(
-        IMediator mediator,
-        ILogger<SearchController> logger) : ControllerBase
+    public class SearchController(IMediator mediator) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
-        private readonly ILogger<SearchController> _logger = logger;
 
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -24,7 +24,8 @@ builder.Services.AddCors(options =>
         builder => builder
         .WithOrigins("http://localhost:4200")
         .AllowAnyHeader()
-        .AllowAnyMethod());
+        .AllowAnyMethod()
+        .AllowCredentials());
 });
 
 builder.Services.AddSwaggerGetWithAuth("Authentication API");
@@ -51,6 +52,10 @@ builder.Services.AddJwtAuthentication(builder.Configuration)
     {
         config.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");
         config.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientSecret' not found.");
+        //config.CallbackPath = builder.Configuration["Authentication:Google:CallbackPath"] ?? throw new InvalidOperationException("Configuration setting 'Google:CallbackPath' not found.");
+        config.SignInScheme = IdentityConstants.ExternalScheme;
+        config.Scope.Add("email");
+        config.Scope.Add("profile");
     });
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

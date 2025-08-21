@@ -2,6 +2,7 @@
 using Authentication.Application.Interfaces.Services;
 using Authentication.Application.Providers;
 using Authentication.Application.Services;
+using Authentication.Domain.Interfaces.Repositories;
 using Common.Blocks.Behaviours;
 using Common.Blocks.Configurations;
 using EventBus.Messages.Extensions;
@@ -24,9 +25,7 @@ namespace Authentication.Application
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
             });
 
-            services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddScoped<IUserClaimsService, UserClaimsService>();
-            services.AddScoped<ITokenService, TokenService>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

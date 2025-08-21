@@ -64,8 +64,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 BoardId = boardId,
                 AccountId = accountId,
-                AccountName = "Test account name",
-                AccountEmail = "Test account email"
             };
 
             boardRepository
@@ -115,8 +113,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 BoardId = Guid.Empty,
                 AccountId = Guid.Empty,
-                AccountName = "Test account name",
-                AccountEmail = "Test account email"
             };
 
             boardRepository
@@ -141,8 +137,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 BoardId = Guid.Empty,
                 AccountId = Guid.Empty,
-                AccountName = "Test account name",
-                AccountEmail = "Test account email"
             };
 
             boardRepository
@@ -175,8 +169,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 BoardId = Guid.Empty,
                 AccountId = accountId,
-                AccountName = "Test account name",
-                AccountEmail = "Test account email"
             };
 
             boardRepository
@@ -215,8 +207,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 BoardId = Guid.Empty,
                 AccountId = accountId,
-                AccountName = "Test account name",
-                AccountEmail = "Test account email"
             };
 
             boardRepository
@@ -258,8 +248,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 BoardId = Guid.Empty,
                 AccountId = accountId,
-                AccountName = "Test account name",
-                AccountEmail = "Test account email"
             };
 
             boardRepository

@@ -27,12 +27,9 @@ namespace Authentication.Application.Features.Authentications.Commands.Logout
                 throw new UnauthorizedException($"User with id '{request.UserId}' not found.");
             }
 
-            var result = await _tokenService.DeleteRefreshToken(user);
-            if (!result.Succeeded)
-            {
-                _logger.LogError("Signout faulted for user: {userId}.", request.UserId);
-                throw new SignoutFaultedException();
-            }
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            await _tokenService.RevokeAsync(user, cancellationToken);
 
             await _signInManager.SignOutAsync();
 

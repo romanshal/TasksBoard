@@ -18,7 +18,10 @@ namespace TasksBoard.Application.Mappings
                 .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore());
 
             CreateMap<BoardInviteRequest, BoardInviteRequestDto>()
-                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name));
+                .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name))
+                .ForMember(dest => dest.ToAccountName, opt => opt.Ignore())
+                .ForMember(dest => dest.ToAccountEmail, opt => opt.Ignore())
+                .ForMember(dest => dest.FromAccountName, opt => opt.Ignore());
         }
     }
 }

@@ -17,9 +17,10 @@ namespace Authentication.Application.Services
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.Name, user.UserName!),
+                new(ClaimTypes.Email, user.Email!),
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
@@ -33,6 +34,10 @@ namespace Authentication.Application.Services
             //user clams
             var userClaims = await _userManager.GetClaimsAsync(user);
             claims.AddRange(userClaims);
+
+            //user stamp
+            var userStamp = await _userManager.GetSecurityStampAsync(user);
+            claims.Add(new Claim("sst", userStamp));
 
             //role claims
             foreach (var userRole in userRoles)

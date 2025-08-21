@@ -1,5 +1,6 @@
 ﻿using Authentication.Application.Dtos;
 using Authentication.Application.Interfaces.Services;
+using Authentication.Application.Models;
 using Authentication.Domain.Entities;
 using Common.Blocks.Exceptions;
 using MediatR;
@@ -26,7 +27,16 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
                 throw new UnauthorizedException($"User was not found.");
             }
 
-            var token = await _tokenService.RefreshTokenAsync(user);
+            var generateModel = new GenerateTokensModel
+            {
+                User = user,
+                DeviceId = request.DeviceId,
+                UserAgent = request.UserAgent,
+                IpAddress = request.UserIp
+            };
+
+            var token = await _tokenService.RotateAsync(generateModel, request.RefreshToken, cancellationToken);
+
             if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))
             {
                 _logger.LogCritical("Can't create access or refresh tokens for user {id}.", user.Id);

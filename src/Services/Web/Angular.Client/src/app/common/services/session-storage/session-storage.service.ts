@@ -9,6 +9,7 @@ export class SessionStorageService {
     public refreshTokenKey = 'refresh_token';
     public userIdKey = 'user_id';
     private userKey = 'user';
+    public currentDeviceId = 'device_id';
 
     getItem(key: string): string | null {
         return sessionStorage.getItem(key);
@@ -44,6 +45,14 @@ export class SessionStorageService {
 
     setRefreshToken(value: string) {
         sessionStorage.setItem(this.refreshTokenKey, value);
+    }
+
+    getDeviceId(){
+        return sessionStorage.getItem(this.currentDeviceId);
+    }
+
+    setDeviceId(value: string){
+        sessionStorage.setItem(this.currentDeviceId, value);
     }
 
     logout() {
