@@ -6,8 +6,6 @@ import { UserInfoModel } from "../../models/user/user-info.model";
 })
 export class SessionStorageService {
     public accessTokenKey = 'access_token';
-    public refreshTokenKey = 'refresh_token';
-    public userIdKey = 'user_id';
     private userKey = 'user';
     public currentDeviceId = 'device_id';
 
@@ -19,12 +17,8 @@ export class SessionStorageService {
         sessionStorage.setItem(key, value);
     }
 
-    getUserInfo(): UserInfoModel | undefined {
-        if(sessionStorage.getItem(this.userKey)){
-            return JSON.parse(sessionStorage.getItem(this.userKey)!) as UserInfoModel;
-        }
-
-        return undefined;
+    getUserInfo(): UserInfoModel | null {
+        return JSON.parse(sessionStorage.getItem(this.userKey)!) as UserInfoModel;
     }
 
     setUserInfo(value: UserInfoModel) {
@@ -39,19 +33,11 @@ export class SessionStorageService {
         sessionStorage.setItem(this.accessTokenKey, value);
     }
 
-    getRefreshToken() {
-        return sessionStorage.getItem(this.refreshTokenKey);
-    }
-
-    setRefreshToken(value: string) {
-        sessionStorage.setItem(this.refreshTokenKey, value);
-    }
-
-    getDeviceId(){
+    getDeviceId() {
         return sessionStorage.getItem(this.currentDeviceId);
     }
 
-    setDeviceId(value: string){
+    setDeviceId(value: string) {
         sessionStorage.setItem(this.currentDeviceId, value);
     }
 

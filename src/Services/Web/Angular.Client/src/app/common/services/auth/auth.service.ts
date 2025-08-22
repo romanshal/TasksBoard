@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { SigninRequestModel } from '../../models/auth/auth.signin.model';
 import { TokenResponseModel } from '../../models/auth/auth.token.model';
 import { SessionStorageService } from '../session-storage/session-storage.service';
@@ -15,28 +15,26 @@ import { v4 as uuidv4 } from 'uuid';
 export class AuthService {
   private baseUrl: string = environment.authUrl;
   private accessToken$ = new BehaviorSubject<string | null>(null);
+  private authenticated$ = new BehaviorSubject<boolean>(false);
+
+  isAuthenticated$: Observable<boolean> = this.authenticated$.asObservable();
 
   constructor(
     private http: HttpClient,
     private sessionService: SessionStorageService
-  ) { }
+  ) {
+    if (this.getToken()) {
+      this.authenticated$.next(true);
+    }
+  }
 
   private setToken(token: string) {
     this.accessToken$.next(token);
     this.sessionService.setAccessToken(token);
   }
 
-  getToken(): string | null { return this.accessToken$.value ?? this.sessionService.getAccessToken(); }
-
-  isAuthenticated(): boolean {
-    if (this.getToken()) {
-      // const payload = JSON.parse(atob(token.split('.')[1]));
-      // return payload.exp > Date.now() / 1000;
-
-      return true;
-    }
-
-    return false;
+  getToken(): string | null {
+    return this.accessToken$.value ?? this.sessionService.getAccessToken();
   }
 
   private generateDeviceId() {
@@ -44,6 +42,11 @@ export class AuthService {
     this.sessionService.setDeviceId(deviceId);
 
     return deviceId;
+  }
+
+  private setAuthData(response: any) {
+    this.setToken(response.accessToken);
+    this.authenticated$.next(true);
   }
 
   signin(credentials: SigninRequestModel): Observable<TokenResponseModel> {
@@ -54,9 +57,7 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials, { withCredentials: true })
       .pipe(
         map((response: any) => {
-          this.setToken(response.accessToken);
-
-          this.sessionService.setItem(this.sessionService.userIdKey, response.userId);
+          this.setAuthData(response);
 
           return new TokenResponseModel(response.userId);
         }),
@@ -77,9 +78,7 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials)
       .pipe(
         map((response: any) => {
-          this.setToken(response.accessToken);
-
-          this.sessionService.setItem(this.sessionService.userIdKey, response.userId);
+          this.setAuthData(response);
 
           return new TokenResponseModel(response.userId);
         }),
@@ -87,6 +86,7 @@ export class AuthService {
           // Handle the error here
           let response: Response = error.error;
           console.log(response);
+
           return throwError(() => response);
         })
       );
@@ -96,30 +96,28 @@ export class AuthService {
     const url = '/api/authentication/refresh';
 
     let body = {
-      userId: this.sessionService.getItem(this.sessionService.userIdKey),
+      userId: this.sessionService.getUserInfo()!.Id,
       deviceId: this.sessionService.getDeviceId()
     };
 
     return this.http.post<TokenResponseModel>(this.baseUrl + url, body, { withCredentials: true })
       .pipe(
-        switchMap((response: any) => {
-          this.setToken(response.accessToken);
-
-          this.sessionService.setItem(this.sessionService.userIdKey, response.userId);
-
-          return of(new TokenResponseModel(response.userId));
+        tap((response: any) => {
+          console.log('refresh success');
+          this.setAuthData(response);
         }),
-        catchError((error) => {
-          // Handle the error here
-          let response: Response = error.error;
-          console.log(response);
-          return throwError(() => response);
+        catchError((error: HttpErrorResponse) => {
+          console.log('refresh error');
+          return throwError(() => error.error);
         })
       );
   }
 
   signout() {
+    this.sessionService.logout();
+    this.authenticated$.next(false);
+
     const url = '/api/authentication/logout';
-    return this.http.delete(this.baseUrl + url);
+    return this.http.delete<void>(this.baseUrl + url);
   }
 }

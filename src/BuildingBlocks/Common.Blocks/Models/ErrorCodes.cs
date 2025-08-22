@@ -11,5 +11,6 @@
         public const string Unauthorized = "unauthorized";
         public const string Forbidden = "forbidden";
         public const string AlreadyExist = "already.exist";
+        public const string Invalid = "invalid";
     }
 }

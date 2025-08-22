@@ -1,5 +1,5 @@
-﻿using Authentication.Application.Interfaces.Services;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Secutiry;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -10,12 +10,12 @@ namespace Authentication.Application.Features.Authentications.Commands.Logout
     public class LogoutCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ITokenService tokenService,
+        ITokenManager tokenService,
         ILogger<LogoutCommandHandler> logger) : IRequestHandler<LogoutCommand, Unit>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly ITokenService _tokenService = tokenService;
+        private readonly ITokenManager _tokenService = tokenService;
         private readonly ILogger<LogoutCommandHandler> _logger = logger;
 
         public async Task<Unit> Handle(LogoutCommand request, CancellationToken cancellationToken)

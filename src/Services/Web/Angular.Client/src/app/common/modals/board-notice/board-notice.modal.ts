@@ -7,7 +7,6 @@ import { SessionStorageService } from '../../services/session-storage/session-st
 import { BoardNoticeModel } from '../../models/board-notice/board-notice.model';
 import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
-import { BoardMemberModel } from '../../models/board-member/board-member.model';
 import { BoardMemberAuthService } from '../../services/board-member-auth/board-member-auth.service';
 
 interface NoteStyle {
@@ -54,19 +53,20 @@ export class BoardNoticeModal implements OnInit {
   public backgroundColor!: NoteStyle;
   private rotation?: string;
 
-  currentUser!: UserInfoModel;
+  currentUser?: UserInfoModel | null;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<BoardNoticeModal>,
     private noticeService: BoardNoticeService,
-    private sessionService: SessionStorageService,
     private userService: UserService,
     private boardMemberAuthService: BoardMemberAuthService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel }
   ) {
     this.note = data.note;
-    this.currentUser = this.sessionService.getUserInfo()!;
+    this.userService.currentUser$.subscribe(user => {
+        this.currentUser = user;
+    })
 
     if (data.note !== undefined) {
       this.disabledActions = true;
@@ -81,8 +81,8 @@ export class BoardNoticeModal implements OnInit {
     } else {
       this.backgroundColor = this.getRandomColor();
       this.rotation = this.getRandomRotation();
-      this.authorId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-      this.authorName = this.sessionService.getUserInfo()!.Username;
+      this.authorId = this.currentUser!.Id;
+      this.authorName = this.currentUser!.Username;
     }
   }
 
@@ -123,8 +123,8 @@ export class BoardNoticeModal implements OnInit {
     }
 
     let body = {
-      accountId: this.currentUser.Id,
-      accountName: this.currentUser.Username,
+      accountId: this.currentUser!.Id,
+      accountName: this.currentUser!.Username,
       noticeId: this.note.Id,
       complete: comlete
     }

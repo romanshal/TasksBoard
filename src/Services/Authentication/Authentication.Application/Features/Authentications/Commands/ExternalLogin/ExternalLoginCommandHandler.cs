@@ -1,33 +1,29 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
+using Common.Blocks.Exceptions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentications.Commands.ExternalLogin
 {
     public class ExternalLoginCommandHandler(
-        UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ITokenService tokenService,
-        ILogger<ExternalLoginCommandHandler> logger) : IRequestHandler<ExternalLoginCommand, AuthenticationDto>
+        ILogger<ExternalLoginCommandHandler> logger) : IRequestHandler<ExternalLoginCommand, AuthenticationProperties>
     {
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly ITokenService _tokenService = tokenService;
         private readonly ILogger<ExternalLoginCommandHandler> _logger = logger;
 
-        public async Task<AuthenticationDto> Handle(ExternalLoginCommand request, CancellationToken cancellationToken)
+        public async Task<AuthenticationProperties> Handle(ExternalLoginCommand request, CancellationToken cancellationToken)
         {
-            
+            var providers = (await _signInManager.GetExternalAuthenticationSchemesAsync()).Select(p => p.Name).ToList();
 
-            return new AuthenticationDto
-            {
-                AccessToken = "",
-                RefreshToken = "",
-                UserId = Guid.Empty
-            };
+            if (string.IsNullOrWhiteSpace(request.Provider) || !providers.Contains(request.Provider, StringComparer.OrdinalIgnoreCase))
+                throw new NotFoundException("Unsupported provider.");
+
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(request.Provider, request.RedirectUrl);
+
+            return properties;
         }
     }
 }

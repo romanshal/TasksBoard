@@ -21,7 +21,6 @@ import { AuthService } from '../common/services/auth/auth.service';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
-  userId!: string;
   user!: UserInfoModel;
   isCurrentUser = false;
   userAvatarSrc = '';
@@ -51,21 +50,21 @@ export class ProfileComponent implements OnInit {
     private boardAccessRequestService: BoardAccessRequestService,
     private dialog: MatDialog,
   ) {
-    if (this.route.snapshot.paramMap.get('userid') === null) {
-      this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-      this.isCurrentUser = true;
-    } else {
-      this.userId = this.route.snapshot.paramMap.get('userid')!;
+    const routeUserId = this.route.snapshot.paramMap.get('userid');
+    const currentUserId = this.userService.getCurrentUser()?.Id;
 
-      if (this.userId === this.sessionService.getItem(this.sessionService.userIdKey)) {
-        this.isCurrentUser = true;
-      }
+    let userId = currentUserId; // по умолчанию — текущий пользователь
+    this.isCurrentUser = true;
+
+    if (routeUserId && routeUserId !== currentUserId) {
+      userId = routeUserId;
+      this.isCurrentUser = false;
     }
 
-    this.userService.getUserInfo(this.userId).subscribe(result => {
+    this.userService.getUserInfo(userId!).subscribe(result => {
       this.user = result;
 
-      this.userService.getUserAvatar(this.userId).subscribe(result => {
+      this.userService.getUserAvatar(userId!).subscribe(result => {
         if (result) {
           this.userAvatarSrc = result;
         }
@@ -84,7 +83,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getBoardInviteRequests() {
-    this.boardInviteRequestService.getByAccountId(this.userId).subscribe(result => {
+    this.boardInviteRequestService.getByAccountId(this.user.Id).subscribe(result => {
       if (result) {
         this.boardInviteRequests = result;
       }
@@ -92,7 +91,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getBoardAccessRequests() {
-    this.boardAccessRequestService.getByAccountId(this.userId).subscribe(result => {
+    this.boardAccessRequestService.getByAccountId(this.user.Id).subscribe(result => {
       if (result) {
         console.log(result);
         this.boardAccessRequests = result;
@@ -119,7 +118,7 @@ export class ProfileComponent implements OnInit {
   openProfileAvater() {
     this.dialog.open(ProfileAvatarModal, {
       data: {
-        userId: this.userId,
+        userId: this.user.Id,
         avatar: this.userAvatarSrc
       }
     })
@@ -151,20 +150,15 @@ export class ProfileComponent implements OnInit {
 
     this.userService.updateUserInfo(this.user!.Id, this.generalSettingsForm.value).subscribe(result => {
       if (result) {
-        this.userService.getUserInfo(result).subscribe(result => {
-          this.sessionService.setUserInfo(result);
-          this.user = this.sessionService.getUserInfo()!;
+        this.user = result;
 
-          this.initGeneralSettingsForm();
+        this.initGeneralSettingsForm();
 
-          this.dialog.open(OperationResultMessageModal, {
-            data: {
-              isSuccess: true,
-              message: 'Profile was successfully updated'
-            }
-          })
-        }, error => {
-          console.error(error);
+        this.dialog.open(OperationResultMessageModal, {
+          data: {
+            isSuccess: true,
+            message: 'Profile was successfully updated'
+          }
         });
       }
     });

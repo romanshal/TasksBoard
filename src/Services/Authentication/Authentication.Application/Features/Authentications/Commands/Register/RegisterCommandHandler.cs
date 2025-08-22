@@ -1,7 +1,7 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Application.Models;
 using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Secutiry;
+using Authentication.Domain.Models;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -12,12 +12,12 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
     public class RegisterCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ITokenService tokenService,
+        ITokenManager tokenService,
         ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, AuthenticationDto>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly ITokenService _tokenService = tokenService;
+        private readonly ITokenManager _tokenService = tokenService;
         private readonly ILogger<RegisterCommandHandler> _logger = logger;
 
         public async Task<AuthenticationDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -52,13 +52,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
 
             await _signInManager.SignInAsync(user, false, "Password");
 
-            var generateModel = new GenerateTokensModel
-            {
-                User = user,
-                DeviceId = request.DeviceId,
-                UserAgent = request.UserAgent,
-                IpAddress = request.UserIp
-            };
+            var generateModel = new GenerateTokensModel(user, request.DeviceId, request.UserAgent, request.UserIp);
 
             var token = await _tokenService.IssueAsync(generateModel, cancellationToken);
 

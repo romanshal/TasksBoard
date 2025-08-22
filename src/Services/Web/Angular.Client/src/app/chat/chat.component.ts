@@ -5,6 +5,7 @@ import { BoardMessageService } from '../common/services/board-message/board-mess
 import { ChatService } from '../common/services/chat/chat.service';
 import { BoardMemberModel } from '../common/models/board-member/board-member.model';
 import { Subscription } from 'rxjs';
+import { UserService } from '../common/services/user/user.service';
 
 @Component({
   selector: 'app-chat',
@@ -42,11 +43,13 @@ export class ChatComponent implements OnInit {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   constructor(
-    private sessionStorageService: SessionStorageService,
+    private userService: UserService,
     private boardMessageService: BoardMessageService,
     private chatService: ChatService
   ) {
-    this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
+    this.userService.currentUser$.subscribe(user => {
+      this.userId = user?.Id;
+    });
   }
 
   async ngOnInit(): Promise<void> {

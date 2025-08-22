@@ -12,8 +12,7 @@ namespace Authentication.Application.Features.Search.Queries.SearchUsersById
 {
     public class SearchUsersByIdQueryHandler(
         UserManager<ApplicationUser> userManager,
-        IMapper mapper,
-        ILogger<SearchUsersByQueryQueryHandler> logger) : IRequestHandler<SearchUsersByIdQuery, IEnumerable<UserInfoDto>>
+        IMapper mapper) : IRequestHandler<SearchUsersByIdQuery, IEnumerable<UserInfoDto>>
     {
         public async Task<IEnumerable<UserInfoDto>> Handle(SearchUsersByIdQuery request, CancellationToken cancellationToken) =>
             await userManager.Users

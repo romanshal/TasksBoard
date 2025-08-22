@@ -6,8 +6,10 @@ using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,17 +40,23 @@ builder.Services
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
 {
-    config.Password.RequiredLength = 4;
+    config.Password.RequiredLength = 8;
     config.Password.RequireDigit = false;
     config.Password.RequireNonAlphanumeric = false;
     config.Password.RequireUppercase = false;
     config.Password.RequireLowercase = false;
+
+    config.User.RequireUniqueEmail = true;
+
+    config.Lockout.AllowedForNewUsers = true;
+    config.Lockout.MaxFailedAccessAttempts = 5;
+    config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 })
 .AddEntityFrameworkStores<AuthenticationDbContext>()
 .AddDefaultTokenProviders();
 
 builder.Services.AddJwtAuthentication(builder.Configuration)
-    .AddGoogle(config =>
+    .AddGoogle("Google", config =>
     {
         config.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");
         config.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientSecret' not found.");
@@ -56,7 +64,41 @@ builder.Services.AddJwtAuthentication(builder.Configuration)
         config.SignInScheme = IdentityConstants.ExternalScheme;
         config.Scope.Add("email");
         config.Scope.Add("profile");
+        config.ClaimActions.MapJsonKey("email_verified", "email_verified");
     });
+    //.AddFacebook("Facebook", fb =>
+    //{
+    //    fb.SignInScheme = IdentityConstants.ExternalScheme;
+    //    fb.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
+    //    fb.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
+    //    fb.Fields.Add("email");
+    //    fb.Fields.Add("name");
+    //});
+
+builder.Services.ConfigureExternalCookie(o =>
+{
+    o.Cookie.HttpOnly = true;
+    o.Cookie.SameSite = SameSiteMode.Lax;
+    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        var key = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 60,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 5,
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            AutoReplenishment = true
+        });
+    });
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

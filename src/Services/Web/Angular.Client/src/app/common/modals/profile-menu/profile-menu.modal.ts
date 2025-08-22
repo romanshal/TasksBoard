@@ -14,7 +14,6 @@ export class ProfileMenuModal {
   username!: string;
 
   constructor(
-    private sessionService: SessionStorageService,
     private authService: AuthService,
     private dialogRef: MatDialogRef<ProfileMenuModal>,
     private router: Router,
@@ -25,10 +24,7 @@ export class ProfileMenuModal {
 
   signout() {
     this.authService.signout().subscribe(result => {
-      this.sessionService.logout();
-
-      window.location.href = '/signin';
-
+      this.router.navigate(['/signin']);
       this.closeModal();
     })
   }

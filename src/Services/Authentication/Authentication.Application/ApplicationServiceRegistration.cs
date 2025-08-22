@@ -1,9 +1,4 @@
-﻿using Authentication.Application.Interfaces.Providers;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Application.Providers;
-using Authentication.Application.Services;
-using Authentication.Domain.Interfaces.Repositories;
-using Common.Blocks.Behaviours;
+﻿using Common.Blocks.Behaviours;
 using Common.Blocks.Configurations;
 using EventBus.Messages.Extensions;
 using FluentValidation;
@@ -24,8 +19,6 @@ namespace Authentication.Application
             {
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
             });
-
-            services.AddScoped<IUserClaimsService, UserClaimsService>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

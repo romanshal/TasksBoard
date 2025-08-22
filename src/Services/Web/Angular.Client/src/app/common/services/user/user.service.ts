@@ -2,31 +2,54 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { UserInfoModel } from '../../models/user/user-info.model';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { SessionStorageService } from '../session-storage/session-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private baseUrl: string = environment.authUrl;
+  private currentUserSubject$ = new BehaviorSubject<UserInfoModel | null>(null);
+
+  currentUser$: Observable<UserInfoModel | null> = this.currentUserSubject$.asObservable();
 
   constructor(
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+    private sessionStorageService: SessionStorageService
+  ) {
+    let user = this.sessionStorageService.getUserInfo();
+    if (user) {
+      this.currentUserSubject$.next(user);
+    }
+  }
+
+  private setCurrentUser(user: UserInfoModel) {
+    this.currentUserSubject$.next(user);
+    this.sessionStorageService.setUserInfo(user);
+  }
+
+  getCurrentUser() {
+    return this.currentUserSubject$.value ?? this.sessionStorageService.getUserInfo();
+  }
 
   getUserInfo(userId: string): Observable<UserInfoModel> {
     const url = '/api/manage/' + userId;
     return this.http.get<UserInfoModel>(this.baseUrl + url)
       .pipe(
         map((response: any) => {
-          return new UserInfoModel
-            (
-              response.id,
-              response.username,
-              response.email,
-              response.firstname,
-              response.surname
-            );
+
+          var user = new UserInfoModel(
+            response.id,
+            response.username,
+            response.email,
+            response.firstname,
+            response.surname
+          );
+
+          this.setCurrentUser(user);
+
+          return user;
         })
       );
   }
@@ -57,9 +80,25 @@ export class UserService {
       );
   }
 
-  updateUserInfo(userId: string, form: any) {
+  updateUserInfo(userId: string, form: any): Observable<UserInfoModel> {
     const url = '/api/manage/info/' + userId;
-    return this.http.post<string>(this.baseUrl + url, form);
+    return this.http.post<string>(this.baseUrl + url, form)
+      .pipe(
+        map((response: any) => {
+
+          var user = new UserInfoModel(
+            response.id,
+            response.username,
+            response.email,
+            response.firstname,
+            response.surname
+          );
+
+          this.setCurrentUser(user);
+
+          return user;
+        })
+      );;
   }
 
   changeUserPassword(userId: string, form: any) {

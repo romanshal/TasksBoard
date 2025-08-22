@@ -1,8 +1,5 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Interfaces.Providers;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Application.Models;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
+using Authentication.Infrastructure.Models;
 using Common.Blocks.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -13,9 +10,9 @@ using System.Text;
 
 namespace Authentication.Infrastructure.Security
 {
-    public class TokenProvider(
+    public class TokenFactory(
         IOptions<JwtCofiguration> options,
-        IUserClaimsService userClaims) : ITokenProvider
+        IUserClaimsService userClaims) : ITokenFactory
     {
         private readonly JwtCofiguration _jwtConfig = options.Value;
         private readonly IUserClaimsService _userClaims = userClaims;

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 
-namespace Authentication.Application.Providers
+namespace Authentication.Infrastructure.Security
 {
-    public static class TokenHasher
+    internal static class TokenHasher
     {
         public static (string Hash, string Salt) Hash(string token)
         {

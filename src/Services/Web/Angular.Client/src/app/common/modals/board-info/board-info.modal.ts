@@ -8,6 +8,7 @@ import { UserInfoModel } from '../../models/user/user-info.model';
 import { BoardService } from '../../services/board/board.service';
 import { DeleteConfirmationModal } from '../delete-confirmation/delete-confirmation.modal';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-board-info',
@@ -20,8 +21,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
   form!: FormGroup;
   isOwner = false;
 
-  private currentUserId?: string;
-  private currentUser?: UserInfoModel;
+  private currentUser?: UserInfoModel | null;
 
   public disabledActions = true;
 
@@ -45,7 +45,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
     private dialogRef: MatDialogRef<BoardInfoModal>,
     private boardService: BoardService,
     private manageBoardService: ManageBoardService,
-    private sessionService: SessionStorageService,
+    private userService: UserService,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) private data: { board: BoardModel, isOwner: boolean }
   ) {
@@ -53,8 +53,9 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
       this.newBoard = true;
       this.disabledActions = false;
 
-      this.currentUserId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-      this.currentUser = this.sessionService.getUserInfo();
+      this.userService.currentUser$.subscribe(user => {
+        this.currentUser = user;
+      });
     }
     else {
       this.board = data.board;
@@ -75,7 +76,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
 
   initForm() {
     this.form = this.fb.group({
-      ownerId: [this.currentUserId],
+      ownerId: [this.currentUser?.Id],
       ownerNickname: [this.currentUser?.Username],
       name: [{ value: this.board?.Name ?? '', disabled: this.disabledActions }, Validators.required],
       description: [{ value: this.board?.Description ?? '', disabled: this.disabledActions }, Validators.required],
@@ -311,7 +312,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
     }).afterClosed().subscribe(result => {
       if (result === 'confirmed') {
         this.manageBoardService.deleteBoard(this.board!.Id).subscribe(result => {
-          if(result){
+          if (result) {
             this.closeModal();
             this.router.navigate(['/boards']);
           }

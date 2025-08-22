@@ -24,17 +24,21 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private sessionService: SessionStorageService,
+    private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
     private notificationService: NotificationService,
   ) {
-    this.isAuthenticated = this.authService.isAuthenticated();
+    this.authService.isAuthenticated$.subscribe(status => {
+      this.isAuthenticated = status;
+    });
 
-    if (this.isAuthenticated) {
-      this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
-      this.username = this.sessionService.getUserInfo()?.Username!;
-    }
+    this.userService.currentUser$.subscribe(user => {
+      if (user && this.isAuthenticated) {
+        this.username = user?.Username;
+        this.userId = user?.Id;
+      }
+    });
   }
 
   ngOnInit() {

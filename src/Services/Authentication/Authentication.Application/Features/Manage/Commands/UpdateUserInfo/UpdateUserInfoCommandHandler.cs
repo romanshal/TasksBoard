@@ -1,5 +1,7 @@
-﻿using Authentication.Domain.Entities;
+﻿using Authentication.Application.Dtos;
+using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
+using AutoMapper;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -10,13 +12,15 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
     public class UpdateUserInfoCommandHandler(
         UserManager<ApplicationUser> userManager,
         IUnitOfWork unitOfWork,
-        ILogger<UpdateUserInfoCommandHandler> logger) : IRequestHandler<UpdateUserInfoCommand, Guid>
+        IMapper mapper,
+        ILogger<UpdateUserInfoCommandHandler> logger) : IRequestHandler<UpdateUserInfoCommand, UserInfoDto>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IMapper _mapper = mapper;
         private readonly ILogger<UpdateUserInfoCommandHandler> _logger = logger;
 
-        public async Task<Guid> Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)
+        public async Task<UserInfoDto> Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -46,7 +50,9 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
 
             _logger.LogInformation("User with id '{id}' was successfully updated.", user.Id);
 
-            return user.Id;
+            var userDto = _mapper.Map<UserInfoDto>(user);
+
+            return userDto;
         }
     }
 }

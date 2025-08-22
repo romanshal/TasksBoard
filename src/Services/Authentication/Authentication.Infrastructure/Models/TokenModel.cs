@@ -1,4 +1,4 @@
-﻿namespace Authentication.Application.Models
+﻿namespace Authentication.Infrastructure.Models
 {
     public class TokenModel
     {

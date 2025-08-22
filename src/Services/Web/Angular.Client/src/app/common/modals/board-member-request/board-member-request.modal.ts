@@ -2,6 +2,8 @@ import { Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SessionStorageService } from '../../services/session-storage/session-storage.service';
 import { BoardAccessRequestService } from '../../services/board-access-request/board-access-request.service';
+import { UserService } from '../../services/user/user.service';
+import { UserInfoModel } from '../../models/user/user-info.model';
 
 @Component({
   selector: 'app-board-member-request',
@@ -12,6 +14,8 @@ import { BoardAccessRequestService } from '../../services/board-access-request/b
 export class BoardMemberRequestModal {
   boardId!: string;
 
+  currentUser?: UserInfoModel | null;
+
   errorMessage = '';
 
   success = false;
@@ -20,23 +24,23 @@ export class BoardMemberRequestModal {
   constructor(
     private dialogRef: MatDialogRef<BoardMemberRequestModal>,
     private boardAccessService: BoardAccessRequestService,
-    private sessionStorageService: SessionStorageService,
+    private userService: UserService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string }
   ) {
-    this.boardId = data.boardId
+    this.boardId = data.boardId;
+
+    this.userService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
   }
 
   requestAccess() {
-    let user = this.sessionStorageService.getUserInfo();
-    let userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
-
-    if (user === undefined || user?.Username === null || user?.Email === null || userId === null) {
-      console.log('log in again');
+    if (this.currentUser === null || this.currentUser?.Username === null || this.currentUser?.Email === null || this.currentUser?.Id === null) {
       return;
     }
 
     let request = {
-      accountId: userId,
+      accountId: this.currentUser?.Id,
     };
 
     this.boardAccessService.requestBoardAccess(this.boardId, request).subscribe({

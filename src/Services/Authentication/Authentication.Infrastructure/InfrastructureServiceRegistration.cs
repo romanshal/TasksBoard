@@ -1,6 +1,5 @@
-﻿using Authentication.Application.Interfaces.Providers;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Domain.Interfaces.Repositories;
+﻿using Authentication.Domain.Interfaces.Repositories;
+using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Infrastructure.Data.Contexts;
 using Authentication.Infrastructure.Repositories;
@@ -28,8 +27,9 @@ namespace Authentication.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUnitOfWorkBase>(sp => sp.GetRequiredService<IUnitOfWork>());
 
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<ITokenProvider, TokenProvider>();
+            services.AddScoped<ITokenManager, TokenManager>();
+            services.AddScoped<ITokenFactory, TokenFactory>();
+            services.AddScoped<IUserClaimsService, UserClaimsService>();
 
             return services;
         }

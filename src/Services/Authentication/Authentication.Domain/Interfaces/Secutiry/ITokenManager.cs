@@ -1,16 +1,15 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Models;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
+using Authentication.Domain.Models;
 
-namespace Authentication.Application.Interfaces.Services
+namespace Authentication.Domain.Interfaces.Secutiry
 {
-    public interface ITokenService
+    public interface ITokenManager
     {
-        Task<TokenPairDto> IssueAsync(
+        Task<TokenPairModel> IssueAsync(
             GenerateTokensModel model,
             CancellationToken cancellationToken = default);
 
-        Task<TokenPairDto> RotateAsync(
+        Task<TokenPairModel> RotateAsync(
             GenerateTokensModel model,
             string oldRefreshToken,
             CancellationToken cancellationToken = default);

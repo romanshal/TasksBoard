@@ -1,6 +1,6 @@
 ﻿namespace Authentication.Application.Dtos
 {
-    public class UserInfoDto
+    public record UserInfoDto
     {
         public Guid Id { get; set; }
         public required string Username { get; set; }

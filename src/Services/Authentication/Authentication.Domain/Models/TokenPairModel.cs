@@ -1,6 +1,6 @@
-﻿namespace Authentication.Application.Dtos
+﻿namespace Authentication.Domain.Models
 {
-    public class TokenPairDto
+    public record TokenPairModel
     {
         public required string AccessToken { get; set; }
         public required string RefreshToken { get; set; }

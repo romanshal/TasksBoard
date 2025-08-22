@@ -13,13 +13,13 @@ using System.Security.Claims;
 namespace Authentication.API.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
     [Route("api/authentication")]
     public class AuthenticationController(IMediator mediator) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("login")]
         public async Task<IActionResult> LoginAsync(LoginRequest request)
         {
@@ -45,6 +45,7 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("external")]
         public async Task<IActionResult> ExternalLoginAsync(ExternalLoginCommand command)
         {
@@ -53,6 +54,7 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("register")]
         public async Task<IActionResult> RegisterAsync(RegisterRequest request)
         {
@@ -79,6 +81,7 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("refresh")]
         public async Task<IActionResult> RefreshAsync(RefreshTokenRequest request)
         {

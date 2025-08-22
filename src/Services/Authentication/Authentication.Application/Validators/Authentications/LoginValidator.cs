@@ -1,5 +1,5 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.Login;
-using Authentication.Domain.Constants.Messages;
+using Authentication.Domain.Constants.Validations.Messages;
 using FluentValidation;
 
 namespace Authentication.Application.Validators.Authentications

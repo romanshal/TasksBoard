@@ -1,7 +1,7 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Application.Models;
 using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Secutiry;
+using Authentication.Domain.Models;
 using Common.Blocks.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -11,11 +11,11 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
 {
     public class RefreshTokenCommandHandler(
         UserManager<ApplicationUser> userManager,
-        ITokenService tokenService,
+        ITokenManager tokenService,
         ILogger<RefreshTokenCommandHandler> logger) : IRequestHandler<RefreshTokenCommand, AuthenticationDto>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly ITokenService _tokenService = tokenService;
+        private readonly ITokenManager _tokenService = tokenService;
         private readonly ILogger<RefreshTokenCommandHandler> _logger = logger;
 
         public async Task<AuthenticationDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
@@ -27,13 +27,7 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
                 throw new UnauthorizedException($"User was not found.");
             }
 
-            var generateModel = new GenerateTokensModel
-            {
-                User = user,
-                DeviceId = request.DeviceId,
-                UserAgent = request.UserAgent,
-                IpAddress = request.UserIp
-            };
+            var generateModel = new GenerateTokensModel(user, request.DeviceId, request.UserAgent, request.UserIp);
 
             var token = await _tokenService.RotateAsync(generateModel, request.RefreshToken, cancellationToken);
 

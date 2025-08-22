@@ -1,38 +1,36 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Interfaces.Providers;
-using Authentication.Application.Interfaces.Services;
-using Authentication.Application.Models;
-using Authentication.Application.Providers;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Repositories;
+using Authentication.Domain.Interfaces.Secutiry;
+using Authentication.Domain.Models;
+using Authentication.Infrastructure.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Authentication.Infrastructure.Security
 {
-    public class TokenService(
-        ITokenProvider tokenProvider,
-        ILogger<TokenService> logger,
-        IApplicationUserSessionRepository sessionRepository) : ITokenService
+    public class TokenManager(
+        ITokenFactory tokenFactory,
+        ILogger<TokenManager> logger,
+        IApplicationUserSessionRepository sessionRepository) : ITokenManager
     {
-        private readonly ITokenProvider _tokenProvider = tokenProvider;
-        private readonly ILogger<TokenService> _logger = logger;
+        private readonly ITokenFactory _tokenFactory = tokenFactory;
+        private readonly ILogger<TokenManager> _logger = logger;
         private readonly IApplicationUserSessionRepository _sessionRepository = sessionRepository;
 
-        public async Task<TokenPairDto> IssueAsync(
+        public async Task<TokenPairModel> IssueAsync(
             GenerateTokensModel model,
             CancellationToken cancellationToken = default)
         {
             var (accessToken, refreshToken) = await GenerateTokensAsync(model, cancellationToken);
 
-            return new TokenPairDto
+            return new TokenPairModel
             {
                 AccessToken = accessToken.Token,
                 RefreshToken = refreshToken.Token
             };
         }
 
-        public async Task<TokenPairDto> RotateAsync(
+        public async Task<TokenPairModel> RotateAsync(
             GenerateTokensModel model,
             string oldRefreshToken,
             CancellationToken cancellationToken = default)
@@ -62,7 +60,7 @@ namespace Authentication.Infrastructure.Security
                 throw new Exception();
             }
 
-            return new TokenPairDto
+            return new TokenPairModel
             {
                 AccessToken = newAccessToken.Token,
                 RefreshToken = newRefreshToken.Token
@@ -90,8 +88,8 @@ namespace Authentication.Infrastructure.Security
             GenerateTokensModel model,
             CancellationToken cancellationToken = default)
         {
-            var accessToken = await _tokenProvider.GenerateAccessTokenAsync(model.User);
-            var refreshToken = _tokenProvider.GenerateRefreshToken();
+            var accessToken = await _tokenFactory.GenerateAccessTokenAsync(model.User);
+            var refreshToken = _tokenFactory.GenerateRefreshToken();
 
             var (hash, salt) = TokenHasher.Hash(refreshToken.Token);
 

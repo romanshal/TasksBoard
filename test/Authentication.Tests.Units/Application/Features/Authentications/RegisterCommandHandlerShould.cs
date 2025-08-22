@@ -1,6 +1,7 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.Register;
-using Authentication.Application.Interfaces.Services;
+using Authentication.Application.Interfaces.Secutiry;
 using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Secutiry;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +15,7 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
     {
         private readonly Mock<UserManager<ApplicationUser>> userManager;
         private readonly Mock<SignInManager<ApplicationUser>> signinManager;
-        private readonly Mock<ITokenService> tokenService;
+        private readonly Mock<ITokenManager> tokenService;
         private readonly Mock<ILogger<RegisterCommandHandler>> logger;
         private readonly RegisterCommandHandler sut;
 
@@ -31,7 +32,7 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 Mock.Of<IAuthenticationSchemeProvider>(),
                 Mock.Of<IUserConfirmation<ApplicationUser>>());
 
-            tokenService = new Mock<ITokenService>();
+            tokenService = new Mock<ITokenManager>();
 
             logger = new Mock<ILogger<RegisterCommandHandler>>();
 

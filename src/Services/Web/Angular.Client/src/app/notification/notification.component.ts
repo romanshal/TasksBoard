@@ -29,7 +29,6 @@ export class NotificationComponent {
   currentFilter: string = this.filters[0];
 
   constructor(
-    private sessionService: SessionStorageService,
     private notificationService: NotificationService,
     private router: Router,
     private userService: UserService,
@@ -37,8 +36,11 @@ export class NotificationComponent {
   ) {
     this.spinner.show();
 
-    this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
 
+    this.userService.currentUser$.subscribe(user => {
+      this.userId = user?.Id!;
+    })
+    
     this.getNotifications();
   }
 

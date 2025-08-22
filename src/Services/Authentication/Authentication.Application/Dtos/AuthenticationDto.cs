@@ -1,6 +1,8 @@
-﻿namespace Authentication.Application.Dtos
+﻿using Authentication.Domain.Models;
+
+namespace Authentication.Application.Dtos
 {
-    public class AuthenticationDto : TokenPairDto
+    public record AuthenticationDto : TokenPairModel
     {
         public Guid UserId { get; set; }
     }

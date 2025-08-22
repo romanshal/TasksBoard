@@ -22,6 +22,7 @@ import { ManageBoardAccessRequestService } from '../common/services/manage-board
 import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
 import { BoardInviteRequestModel } from '../common/models/board-invite-request/board-invite-request.model';
 import { ManageBoardInviteRequestService } from '../common/services/manage-board-invite-request/manage-board-invite-request.service';
+import { UserService } from '../common/services/user/user.service';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -72,7 +73,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     private boardService: BoardService,
     private boardNoticeService: BoardNoticeService,
     private boardPermissionService: BoardPermissionService,
-    private sessionStorageService: SessionStorageService,
+    private userService: UserService,
     private boardMemberAuthService: BoardMemberAuthService,
     private boardAccessRequestService: ManageBoardAccessRequestService,
     private boardInviteReqquestService: ManageBoardInviteRequestService,
@@ -84,7 +85,10 @@ export class BoardComponent implements OnInit, OnDestroy {
   ) {
     this.spinner.show();
 
-    this.userId = this.sessionStorageService.getItem(this.sessionStorageService.userIdKey);
+    this.userService.currentUser$.subscribe(user => {
+      this.userId = user?.Id;
+    })
+
     this.boardId = this.route.snapshot.paramMap.get('boardid')!;
     this.getBoard();
   }

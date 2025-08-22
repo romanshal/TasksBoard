@@ -1,10 +1,9 @@
-﻿using Authentication.Application.Interfaces.Services;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Authentication.Application.Services
+namespace Authentication.Infrastructure.Security
 {
     public class UserClaimsService(
         UserManager<ApplicationUser> userManager,

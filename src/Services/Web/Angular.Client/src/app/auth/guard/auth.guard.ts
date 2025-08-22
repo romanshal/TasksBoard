@@ -6,13 +6,19 @@ import { Injectable } from "@angular/core";
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
+    private isAuthenticated = false;
+
     constructor(
         private authService: AuthService,
         private router: Router
-    ) { }
+    ) {
+        this.authService.isAuthenticated$.subscribe(status => {
+            this.isAuthenticated = status;
+        });
+    }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
-        if (this.authService.isAuthenticated()) {
+        if (this.isAuthenticated) {
             return true;
         } else {
             const currentUrl = state.url;

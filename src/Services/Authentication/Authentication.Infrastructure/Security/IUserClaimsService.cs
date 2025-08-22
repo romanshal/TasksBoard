@@ -1,7 +1,7 @@
 ﻿using Authentication.Domain.Entities;
 using System.Security.Claims;
 
-namespace Authentication.Application.Interfaces.Services
+namespace Authentication.Infrastructure.Security
 {
     public interface IUserClaimsService
     {

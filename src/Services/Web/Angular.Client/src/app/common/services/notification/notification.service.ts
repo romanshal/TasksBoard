@@ -8,6 +8,7 @@ import { SessionStorageService } from '../session-storage/session-storage.servic
 import * as signalR from '@microsoft/signalr';
 import { AuthService } from '../auth/auth.service';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,23 +21,29 @@ export class NotificationService {
   private notificationsSubject = new BehaviorSubject<NotificationModel[]>([]);
   public notification$ = this.notificationsSubject.asObservable();
 
+  private isAuthenticated = false;
+
   constructor(
     private http: HttpClient,
     private httpOption: HttpOptionService,
-    private sessionService: SessionStorageService,
+    private userService: UserService,
     private authService: AuthService
   ) {
-    if (this.authService.isAuthenticated()) {
-      this.getNewByAccountId(this.sessionService.getUserInfo()!.Id).subscribe(result => {
+    this.authService.isAuthenticated$.subscribe(status => {
+      this.isAuthenticated = status;
+    })
+    if (this.isAuthenticated) {
+      let userId = userService.getCurrentUser()?.Id;
+      this.getNewByAccountId(userId!).subscribe(result => {
         if (result) {
           this.notificationsSubject.next(result);
         }
       });
 
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl(this.NOTIFICATION_HUB_URL + '?accountId=' + this.sessionService.getItem(this.sessionService.userIdKey), {
+        .withUrl(this.NOTIFICATION_HUB_URL + '?accountId=' + userId!, {
           accessTokenFactory: () => {
-            return this.sessionService.getAccessToken()!;
+            return this.authService.getToken()!;
           }
         })
         .withAutomaticReconnect({ 
@@ -48,7 +55,7 @@ export class NotificationService {
     }
   }
 
-  startConnection(): Promise<any> {
+  async startConnection(): Promise<any> {
     this.hubConnection!.on('ReceiveNotification', (data) => {
       let notification = new NotificationModel(
         data.id,
@@ -62,9 +69,12 @@ export class NotificationService {
       this.notificationsSubject.next([notification, ...currentNotifications]);
     });
 
-    return this.hubConnection!.start()
-      .then(() => console.log('SignalR подключен'))
-      .catch(err => console.error(err));
+    try {
+      await this.hubConnection!.start();
+      return console.log('SignalR подключен');
+    } catch (err) {
+      return console.error(err);
+    }
   }
 
   getAllPaginatedByAccountId(accountId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<NotificationModel>> {

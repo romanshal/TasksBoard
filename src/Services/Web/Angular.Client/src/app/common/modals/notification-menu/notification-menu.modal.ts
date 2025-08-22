@@ -25,7 +25,6 @@ export class NotificationMenuModal {
 
   constructor(
     private dialogRef: MatDialogRef<NotificationMenuModal>,
-    private sessionService: SessionStorageService,
     private notificationService: NotificationService,
     private spinner: NgxSpinnerService,
     private router: Router,
@@ -36,8 +35,9 @@ export class NotificationMenuModal {
     this.notificationService.notification$.subscribe((notifications: NotificationModel[]) => {
       this.notifications = notifications;
     })
-
-    this.userId = this.sessionService.getItem(this.sessionService.userIdKey)!;
+    this.userService.currentUser$.subscribe(user => {
+      this.userId = user?.Id!;
+    });
 
     this.isLoading = true;
     this.spinner.hide();
@@ -112,7 +112,7 @@ export class NotificationMenuModal {
 
   openBoardMembers(boardId: string) {
     this.router.navigate(['/board/' + boardId], { queryParams: { boardmembers: true } });
-    
+
     this.closeModal();
   }
 
