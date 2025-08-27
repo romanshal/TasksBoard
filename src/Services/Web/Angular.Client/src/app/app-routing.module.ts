@@ -14,12 +14,14 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { ProfileComponent } from './profile/profile.component';
 import { InternalServerErrorComponent } from './error/internal-server-error/internal-server-error.component';
 import { NotificationComponent } from './notification/notification.component';
+import { ExternalCallbackComponent } from './auth/external-callback/external-callback.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
 
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'external-callback', component: ExternalCallbackComponent },
 
   { path: 'board/:boardid', component: BoardComponent, canActivate: [AuthGuard] },
   { path: 'boards', component: BoardsListComponent, canActivate: [AuthGuard] },

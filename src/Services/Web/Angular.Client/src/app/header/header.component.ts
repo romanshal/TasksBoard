@@ -1,6 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { AuthService } from '../common/services/auth/auth.service';
-import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../common/services/user/user.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +6,7 @@ import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.mod
 import { NotificationMenuModal } from '../common/modals/notification-menu/notification-menu.modal';
 import { NotificationService } from '../common/services/notification/notification.service';
 import { NotificationModel } from '../common/models/notification/notification.model';
+import { AuthStateService } from '../common/services/auth-state/auth-state.service';
 
 @Component({
   selector: 'app-header',
@@ -23,17 +22,17 @@ export class HeaderComponent implements OnInit {
   notifications: NotificationModel[] = [];
 
   constructor(
-    private authService: AuthService,
     private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
     private notificationService: NotificationService,
+    private authStateService: AuthStateService
   ) {
-    this.authService.isAuthenticated$.subscribe(status => {
+    this.authStateService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
     });
 
-    this.userService.currentUser$.subscribe(user => {
+    this.authStateService.currentUser$.subscribe(user => {
       if (user && this.isAuthenticated) {
         this.username = user?.Username;
         this.userId = user?.Id;

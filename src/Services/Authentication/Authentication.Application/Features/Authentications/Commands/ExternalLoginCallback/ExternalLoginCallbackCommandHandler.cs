@@ -3,11 +3,8 @@ using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Models;
-using Common.Blocks.Exceptions;
-using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
@@ -36,16 +33,23 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
             var provider = info.LoginProvider;
             var providerKey = info.ProviderKey;
 
+            var name = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? 
+                info.Principal.FindFirstValue(ClaimTypes.Surname) ?? 
+                info.Principal.FindFirstValue(ClaimTypes.Name)?.Trim();
+
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            if (string.IsNullOrWhiteSpace(email))
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(name))
             {
-                return Result.Failure<AuthenticationDto>(ExternalAuthenticationErrors.Invalid("Provider did not return an email"));
+                _logger.LogError("External provider didn't return valid data.");
+                return Result.Failure<AuthenticationDto>(ExternalAuthenticationErrors.Invalid("Invalid data."));
             }
 
             var emailVerifiedClaim = info.Principal.FindFirst("email_verified")?.Value;
             if (emailVerifiedClaim is not null && (!bool.TryParse(emailVerifiedClaim, out var verified) || !verified))
             {
-                return Result.Failure<AuthenticationDto>(ExternalAuthenticationErrors.Invalid("Email is not verified by provider"));
+                _logger.LogWarning("Email '{email}' isn't verified by provider '{provider}'.", email, provider);
+                return Result.Failure<AuthenticationDto>(ExternalAuthenticationErrors.Invalid("Email isn't verified."));
             }
 
             // Попытка входа по привязанному логину
@@ -70,8 +74,10 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                 {
                     user = new ApplicationUser
                     {
-                        UserName = email,
+                        UserName = name,
                         Email = email,
+                        FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName),
+                        Surname = info.Principal.FindFirstValue(ClaimTypes.Surname),
                         EmailConfirmed = emailVerifiedClaim is not null && string.Equals(emailVerifiedClaim, "true", StringComparison.OrdinalIgnoreCase)
                     };
 

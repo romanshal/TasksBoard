@@ -43,6 +43,7 @@ import { NotificationMenuModal } from './common/modals/notification-menu/notific
 import { NotificationComponent } from './notification/notification.component';
 import { PaginatorNewComponent } from './common/paginator-new/paginator-new.component';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { ExternalCallbackComponent } from './auth/external-callback/external-callback.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
     ProfileAvatarModal,
     NotificationMenuModal,
     NotificationComponent,
-    PaginatorNewComponent
+    PaginatorNewComponent,
+    ExternalCallbackComponent
   ],
   imports: [
     BrowserModule,

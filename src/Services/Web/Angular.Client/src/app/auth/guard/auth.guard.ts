@@ -1,6 +1,6 @@
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from "@angular/router";
-import { AuthService } from "../../common/services/auth/auth.service";
 import { Injectable } from "@angular/core";
+import { AuthStateService } from "../../common/services/auth-state/auth-state.service";
 
 @Injectable({
     providedIn: 'root'
@@ -9,10 +9,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     private isAuthenticated = false;
 
     constructor(
-        private authService: AuthService,
+        private authStateService: AuthStateService,
         private router: Router
     ) {
-        this.authService.isAuthenticated$.subscribe(status => {
+        this.authStateService.isAuthenticated$.subscribe(status => {
             this.isAuthenticated = status;
         });
     }

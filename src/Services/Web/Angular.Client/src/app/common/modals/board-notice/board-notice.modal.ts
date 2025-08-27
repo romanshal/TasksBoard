@@ -8,6 +8,7 @@ import { BoardNoticeModel } from '../../models/board-notice/board-notice.model';
 import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
 import { BoardMemberAuthService } from '../../services/board-member-auth/board-member-auth.service';
+import { AuthStateService } from '../../services/auth-state/auth-state.service';
 
 interface NoteStyle {
   value: any;
@@ -60,11 +61,12 @@ export class BoardNoticeModal implements OnInit {
     private dialogRef: MatDialogRef<BoardNoticeModal>,
     private noticeService: BoardNoticeService,
     private userService: UserService,
+    private authStateService: AuthStateService,
     private boardMemberAuthService: BoardMemberAuthService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel }
   ) {
     this.note = data.note;
-    this.userService.currentUser$.subscribe(user => {
+    this.authStateService.currentUser$.subscribe(user => {
         this.currentUser = user;
     })
 

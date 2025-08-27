@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, filter, finalize, Observable, switchMap, take, throwError } from "rxjs";
 import { AuthService } from "../services/auth/auth.service";
 import { Router } from "@angular/router";
+import { AuthStateService } from "../services/auth-state/auth-state.service";
 
 @Injectable()
 export class AuthRequestInterceptor implements HttpInterceptor {
@@ -12,10 +13,11 @@ export class AuthRequestInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private authStateService: AuthStateService
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
+    const token = this.authStateService.getAccessToken();
     let authReq = req;
 
     if (token) {
@@ -57,12 +59,12 @@ export class AuthRequestInterceptor implements HttpInterceptor {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
 
-      console.log('handle');
-
       return this.authService.refresh().pipe(
         switchMap(() => {
-          const token = this.authService.getToken();
+          const token = this.authStateService.getAccessToken();
+
           this.refreshTokenSubject.next(token);
+
           return next.handle(this.addToken(req, token!));
         }),
         catchError(err => {

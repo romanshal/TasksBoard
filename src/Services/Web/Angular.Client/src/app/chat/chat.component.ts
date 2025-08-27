@@ -6,6 +6,7 @@ import { ChatService } from '../common/services/chat/chat.service';
 import { BoardMemberModel } from '../common/models/board-member/board-member.model';
 import { Subscription } from 'rxjs';
 import { UserService } from '../common/services/user/user.service';
+import { AuthStateService } from '../common/services/auth-state/auth-state.service';
 
 @Component({
   selector: 'app-chat',
@@ -43,11 +44,11 @@ export class ChatComponent implements OnInit {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   constructor(
-    private userService: UserService,
+    private authStateService: AuthStateService,
     private boardMessageService: BoardMessageService,
     private chatService: ChatService
   ) {
-    this.userService.currentUser$.subscribe(user => {
+    this.authStateService.currentUser$.subscribe(user => {
       this.userId = user?.Id;
     });
   }

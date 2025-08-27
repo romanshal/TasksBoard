@@ -2,11 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from '../../common/services/auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { authConfig } from '../../common/auth/auth.config';
 import { Response } from '../../common/models/response/response.model';
 import { UserService } from '../../common/services/user/user.service';
-import { SessionStorageService } from '../../common/services/session-storage/session-storage.service';
+import { AuthStateService } from '../../common/services/auth-state/auth-state.service';
 
 @Component({
   selector: 'app-signin',
@@ -24,11 +22,13 @@ export class SigninComponent implements OnInit {
 
   isLoading = false;
 
+  returnUrl!: string;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private authStateService: AuthStateService,
     private userService: UserService,
-    private oauthService: OAuthService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -39,8 +39,7 @@ export class SigninComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.oauthService.configure(authConfig);
-    // this.oauthService.loadDiscoveryDocumentAndTrysignin();
+    this.returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
   }
 
   onSubmit() {
@@ -56,10 +55,11 @@ export class SigninComponent implements OnInit {
     this.authService.signin(credentials).subscribe({
       next: (result) => {
         this.userService.getUserInfo(result.UserId).subscribe({
-          next: () => {
-            const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
+          next: (user) => {
+            this.authStateService.setCurrentUser(user);
+
             this.isLoading = false;
-            this.router.navigate([returnUrl]);
+            this.router.navigate([this.returnUrl]);
           },
           error: (error: Response) => {
             this.isLoading = false;
@@ -76,6 +76,6 @@ export class SigninComponent implements OnInit {
   }
 
   externalSignin(provider: string) {
-
+    this.authService.externalSignin(provider, this.returnUrl);
   }
 }

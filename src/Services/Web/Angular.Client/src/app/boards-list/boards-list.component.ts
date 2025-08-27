@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { BoardService } from '../common/services/board/board.service';
-import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { Router } from '@angular/router';
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,7 +8,7 @@ import { debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs
 import { BoardMemberRequestModal } from '../common/modals/board-member-request/board-member-request.modal';
 import { BoardForViewModel } from '../common/models/board/board-for-view.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { UserService } from '../common/services/user/user.service';
+import { AuthStateService } from '../common/services/auth-state/auth-state.service';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -50,14 +49,14 @@ export class BoardsListComponent implements OnInit {
 
   constructor(
     private boardService: BoardService,
-    private userService: UserService,
+    private authStateService: AuthStateService,
     private router: Router,
     private dialog: MatDialog,
     private spinner: NgxSpinnerService
   ) {
     this.spinner.show();
 
-    this.userService.currentUser$.subscribe(user => {
+    this.authStateService.currentUser$.subscribe(user => {
       this.userId = user?.Id;
     });
 

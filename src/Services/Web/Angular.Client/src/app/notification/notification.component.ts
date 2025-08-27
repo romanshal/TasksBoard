@@ -6,6 +6,7 @@ import { map, Observable, shareReplay } from 'rxjs';
 import { Router } from '@angular/router';
 import { UserService } from '../common/services/user/user.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { AuthStateService } from '../common/services/auth-state/auth-state.service';
 
 @Component({
   selector: 'app-notification',
@@ -32,12 +33,13 @@ export class NotificationComponent {
     private notificationService: NotificationService,
     private router: Router,
     private userService: UserService,
+    private authStateService: AuthStateService,
     private spinner: NgxSpinnerService,
   ) {
     this.spinner.show();
 
 
-    this.userService.currentUser$.subscribe(user => {
+    this.authStateService.currentUser$.subscribe(user => {
       this.userId = user?.Id!;
     })
     

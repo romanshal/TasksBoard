@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BoardService } from '../common/services/board/board.service';
 import { BoardModel } from '../common/models/board/board.model';
 import { BoardNoticeService } from '../common/services/board-notice/board-notice.service';
-import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardNoticeModal } from '../common/modals/board-notice/board-notice.modal';
@@ -16,13 +15,12 @@ import { BoardPermissionService } from '../common/services/board-permission/boar
 import { BoardMemberAuthService } from '../common/services/board-member-auth/board-member-auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChatService } from '../common/services/chat/chat.service';
-import { BoardAccessRequestService } from '../common/services/board-access-request/board-access-request.service';
 import { BoardMemberService } from '../common/services/board-member/board-member.service';
 import { ManageBoardAccessRequestService } from '../common/services/manage-board-access-request/manage-board-access-request.service';
 import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
 import { BoardInviteRequestModel } from '../common/models/board-invite-request/board-invite-request.model';
 import { ManageBoardInviteRequestService } from '../common/services/manage-board-invite-request/manage-board-invite-request.service';
-import { UserService } from '../common/services/user/user.service';
+import { AuthStateService } from '../common/services/auth-state/auth-state.service';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -73,7 +71,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     private boardService: BoardService,
     private boardNoticeService: BoardNoticeService,
     private boardPermissionService: BoardPermissionService,
-    private userService: UserService,
+    private authStateService: AuthStateService,
     private boardMemberAuthService: BoardMemberAuthService,
     private boardAccessRequestService: ManageBoardAccessRequestService,
     private boardInviteReqquestService: ManageBoardInviteRequestService,
@@ -85,7 +83,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   ) {
     this.spinner.show();
 
-    this.userService.currentUser$.subscribe(user => {
+    this.authStateService.currentUser$.subscribe(user => {
       this.userId = user?.Id;
     })
 

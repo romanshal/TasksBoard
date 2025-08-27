@@ -2,43 +2,23 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { UserInfoModel } from '../../models/user/user-info.model';
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { SessionStorageService } from '../session-storage/session-storage.service';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private baseUrl: string = environment.authUrl;
-  private currentUserSubject$ = new BehaviorSubject<UserInfoModel | null>(null);
-
-  currentUser$: Observable<UserInfoModel | null> = this.currentUserSubject$.asObservable();
 
   constructor(
-    private http: HttpClient,
-    private sessionStorageService: SessionStorageService
-  ) {
-    let user = this.sessionStorageService.getUserInfo();
-    if (user) {
-      this.currentUserSubject$.next(user);
-    }
-  }
-
-  private setCurrentUser(user: UserInfoModel) {
-    this.currentUserSubject$.next(user);
-    this.sessionStorageService.setUserInfo(user);
-  }
-
-  getCurrentUser() {
-    return this.currentUserSubject$.value ?? this.sessionStorageService.getUserInfo();
-  }
+    private http: HttpClient
+  ) { }
 
   getUserInfo(userId: string): Observable<UserInfoModel> {
     const url = '/api/manage/' + userId;
     return this.http.get<UserInfoModel>(this.baseUrl + url)
       .pipe(
         map((response: any) => {
-
           var user = new UserInfoModel(
             response.id,
             response.username,
@@ -46,8 +26,6 @@ export class UserService {
             response.firstname,
             response.surname
           );
-
-          this.setCurrentUser(user);
 
           return user;
         })
@@ -93,9 +71,7 @@ export class UserService {
             response.firstname,
             response.surname
           );
-
-          this.setCurrentUser(user);
-
+          
           return user;
         })
       );;

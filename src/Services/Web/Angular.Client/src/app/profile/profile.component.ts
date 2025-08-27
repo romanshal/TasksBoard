@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UserInfoModel } from '../common/models/user/user-info.model';
-import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../common/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +12,7 @@ import { map, Observable, shareReplay } from 'rxjs';
 import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
 import { BoardAccessRequestService } from '../common/services/board-access-request/board-access-request.service';
 import { AuthService } from '../common/services/auth/auth.service';
+import { AuthStateService } from '../common/services/auth-state/auth-state.service';
 
 @Component({
   selector: 'app-profile',
@@ -42,16 +42,16 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private sessionService: SessionStorageService,
     private userService: UserService,
     private authService: AuthService,
+    private authStateService: AuthStateService,
     private route: ActivatedRoute,
     private boardInviteRequestService: BoardInviteRequestService,
     private boardAccessRequestService: BoardAccessRequestService,
     private dialog: MatDialog,
   ) {
     const routeUserId = this.route.snapshot.paramMap.get('userid');
-    const currentUserId = this.userService.getCurrentUser()?.Id;
+    const currentUserId = this.authStateService.getCurrentUser()?.Id;
 
     let userId = currentUserId; // по умолчанию — текущий пользователь
     this.isCurrentUser = true;
@@ -130,10 +130,10 @@ export class ProfileComponent implements OnInit {
   }
 
   signout() {
-    this.authService.signout().subscribe(result => {
-      this.sessionService.logout();
-
-      window.location.href = '/signin';
+    this.authService.signout().subscribe({
+      next: () => {
+        window.location.href = '/signin';
+      }
     })
   }
 

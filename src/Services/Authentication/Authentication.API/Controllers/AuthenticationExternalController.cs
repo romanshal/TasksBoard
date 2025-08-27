@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Authentication.API.Controllers
 {
@@ -19,20 +20,29 @@ namespace Authentication.API.Controllers
         private readonly IMediator _mediator = mediator;
         private readonly ILogger<AuthenticationExternalController> _logger = logger;
 
-        [HttpGet("external-login")]
-        public async Task<IActionResult> ExternalLoginAsync([FromQuery] string provider, [FromQuery] string? returnUrl = null)
+        [HttpGet("login")]
+        public async Task<IActionResult> ExternalLoginAsync(
+            [FromServices] LinkGenerator linkGenerator, 
+            [FromQuery] string provider,
+            [FromQuery] string deviceId,
+            [FromQuery] string? redirectUrl = "/")
         {
+            var retrunUrl = linkGenerator.GetPathByAction(HttpContext, "ExternalLoginCallback") + $"?returnUrl={redirectUrl}&deviceId={deviceId}";
+
             var result = await _mediator.Send(new ExternalLoginCommand 
             { 
                 Provider = provider, 
-                RedirectUrl = returnUrl 
+                RedirectUrl = retrunUrl
             });
 
-            return Challenge(result, provider);
+            return Challenge(result, ["Google"]);
         }
 
-        [HttpGet("external-login-callback")]
-        public async Task<IActionResult> ExternalLoginCallback([FromQuery] string deviceId, [FromQuery] string? returnUrl = null, [FromQuery] string? remoteError = null)
+        [HttpGet("login-callback")]
+        public async Task<IActionResult> ExternalLoginCallback(
+            [FromQuery] string deviceId, 
+            [FromQuery] string returnUrl, 
+            [FromQuery] string? remoteError = null)
         {
             if (!string.IsNullOrEmpty(remoteError))
             {
@@ -61,7 +71,15 @@ namespace Authentication.API.Controllers
                 };
             }
 
-            return Ok(result.Value);
+            var returnParams = new List<KeyValuePair<string, string?>>
+            {
+                new("accessToken", result.Value.AccessToken),
+                new("userId", result.Value.UserId.ToString())
+            };
+
+            var url = QueryHelpers.AddQueryString(returnUrl, returnParams);
+
+            return Redirect(url);
         }
     }
 }

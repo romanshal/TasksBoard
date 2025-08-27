@@ -56,6 +56,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
 .AddDefaultTokenProviders();
 
 builder.Services.AddJwtAuthentication(builder.Configuration)
+    .AddCookie()
     .AddGoogle("Google", config =>
     {
         config.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Configuration setting 'Google:ClientId' not found.");

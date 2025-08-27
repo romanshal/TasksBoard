@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../common/services/auth/auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '../../common/models/response/response.model';
 import { UserService } from '../../common/services/user/user.service';
 import { SessionStorageService } from '../../common/services/session-storage/session-storage.service';
+import { AuthStateService } from '../../common/services/auth-state/auth-state.service';
 
 @Component({
   selector: 'app-signup',
@@ -13,7 +14,7 @@ import { SessionStorageService } from '../../common/services/session-storage/ses
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
   signupForm!: FormGroup;
 
   showErrors = false;
@@ -23,9 +24,12 @@ export class SignupComponent {
 
   isLoading = false;
 
+  returnUrl!: string;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private authStateService: AuthStateService,
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
@@ -37,8 +41,8 @@ export class SignupComponent {
     });
   }
 
-  get f() {
-    return this.signupForm.controls;
+  ngOnInit(){
+    this.returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
   }
 
   onSubmit() {
@@ -54,10 +58,11 @@ export class SignupComponent {
     this.authService.signup(credentials).subscribe({
       next: (result) => {
         this.userService.getUserInfo(result.UserId).subscribe({
-          next: () => {
-            const returnUrl = this.route.snapshot.queryParams['returnurl'] || '/';
+          next: (user) => {
+            this.authStateService.setCurrentUser(user);
+
             this.isLoading = false;
-            this.router.navigate([returnUrl]);
+            this.router.navigate([this.returnUrl]);
           },
           error: (error: Response) => {
             this.isLoading = false;
