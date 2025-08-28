@@ -52,17 +52,21 @@ services:
 
   chat.api:
     image: ${DOCKER_REGISTRY-}chatapi
-    container_name: chat.api
     build:
       context: .
       dockerfile: Services/Chat/Chat.API/Dockerfile
 
   notification.api:
     image: ${DOCKER_REGISTRY-}notificationapi
-    container_name: notification.api
     build:
       context: .
-      dockerfile: Services/Notification/Notification.API/Dockerfile
+      dockerfile: Services/Notification/Notification.API/Dockerfile  
+      
+  notification.consumer:
+    image: ${DOCKER_REGISTRY-}notificationconsumer
+    build:
+      context: .
+      dockerfile: Services/Notification/Notification.Consumer/Dockerfile
 
 volumes:
   postgres_authentication:

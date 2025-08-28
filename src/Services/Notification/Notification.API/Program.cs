@@ -2,6 +2,7 @@ using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
+using Notification.API.Controllers;
 using Notification.API.Hubs;
 using Notification.API.HubServices;
 using Notification.Application;
@@ -15,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Notification.API");
 
 builder.Services.AddControllers();
+
+builder.Services.AddGrpc();
 
 builder.Services.AddCors(options =>
 {
@@ -62,8 +65,10 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
-
-app.UseHttpsRedirection();
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowSpecificOrigin");
 
@@ -74,7 +79,7 @@ app.UseExeptionWrappingMiddleware();
 
 app.MapHub<NotificationHub>("/notification");
 
-app.MapControllers()
-    .RequireAuthorization();
+app.MapControllers().RequireAuthorization();
+app.MapGrpcService<NotificationGrpcController>();
 
 app.Run();

@@ -69,6 +69,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksBoard.Tests.Units", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.gRPC", "BuildingBlocks\Common.gRPC\Common.gRPC.csproj", "{B7645AD8-A554-44C4-A122-09EBD4DFEB5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notification.Consumer", "Services\Notification\Notification.Consumer\Notification.Consumer.csproj", "{5C3B7AF2-371E-48A2-A869-EA3467F3EB97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -177,6 +179,10 @@ Global
 		{B7645AD8-A554-44C4-A122-09EBD4DFEB5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7645AD8-A554-44C4-A122-09EBD4DFEB5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7645AD8-A554-44C4-A122-09EBD4DFEB5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C3B7AF2-371E-48A2-A869-EA3467F3EB97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C3B7AF2-371E-48A2-A869-EA3467F3EB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C3B7AF2-371E-48A2-A869-EA3467F3EB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C3B7AF2-371E-48A2-A869-EA3467F3EB97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,6 +217,7 @@ Global
 		{19FDB29E-E401-4BBA-B59B-97611741338E} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
 		{9377ED0C-537C-4A6E-9B73-7DCE9C7D7EB5} = {F63EF151-0D91-4CF0-9B27-93658EC37D57}
 		{B7645AD8-A554-44C4-A122-09EBD4DFEB5D} = {3C61DA57-25FB-4367-871A-D150F562672F}
+		{5C3B7AF2-371E-48A2-A869-EA3467F3EB97} = {5BB62E6F-55E9-4313-8640-C69AE3DAF3EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {035AB995-90D6-4002-8BCD-783C17C3C72D}

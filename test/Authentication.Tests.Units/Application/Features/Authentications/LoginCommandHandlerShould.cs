@@ -1,5 +1,4 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.Login;
-using Authentication.Application.Interfaces.Secutiry;
 using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Secutiry;
 using Microsoft.AspNetCore.Authentication;

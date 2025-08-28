@@ -255,20 +255,34 @@ services:
       "gRPC:Address": "http://authentication.api"
       "ConnectionStrings:NotificationDbConnection": "Server=notificationdb;Port=5432;Database=tasks-board-notification-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "notification.api-index-{0:yyyy.MM.dd}"
-      "MessageBroker:Host": amqp://rabbitmq:5672
-      "MessageBroker:UserName": guest
-      "MessageBroker:Password": guest
-      "MessageBroker:StartTimeout": 30
-      "MessageBroker:StopTimeout": 1 
       "Cache:Redis:Host": redis
       "Cache:Redis:Port": 6379
       "Cache:Redis:Password": redispassword
       "Cache:ExpirationTimeSeconds": 300
     depends_on:
       - notificationdb
-      - rabbitmq
       - redis 
       - authentication.api
     ports:
       - "8003:80"
-      - "9003:443"
+      - "9003:443" 
+
+  notification.consumer:
+    container_name: notification.consumer
+    environment:
+      <<: *default-env
+      "gRPC:Address": "http://notification.api"
+      "OpenSearch:IndexFormat": notification.consumer-index-{0:yyyy.MM.dd}"
+      "MessageBroker:Host": amqp://rabbitmq:5672
+      "MessageBroker:UserName": guest
+      "MessageBroker:Password": guest
+      "MessageBroker:StartTimeout": 30
+      "MessageBroker:StopTimeout": 1 
+    depends_on:
+      - rabbitmq
+      - notification.api
+    ports:
+      - "8004:80"
+      - "9004:443" 
+
+    

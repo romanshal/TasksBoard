@@ -6,14 +6,12 @@ using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
 using Common.gRPC.Repositories;
 using Common.gRPC.Services;
-using EventBus.Messages.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using Notification.Infrastructure.Data.Contexts;
 using Notification.Infrastructure.UnitOfWorks;
-using System.Reflection;
 using static Common.gRPC.Protos.UserProfiles;
 
 namespace Notification.Infrastructure
@@ -40,8 +38,6 @@ namespace Notification.Infrastructure
 
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
             services.AddSingleton<ICacheRepository, RedisCacheRepository>();
             services.AddSingleton<IUserProfileCacheRepository, UserProfileCacheRepository>();

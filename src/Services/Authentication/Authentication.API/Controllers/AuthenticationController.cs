@@ -124,6 +124,8 @@ namespace Authentication.API.Controllers
                 UserId = userId
             });
 
+            Response.Cookies.Delete("refresh_token");
+
             return NoContent();
         }
 

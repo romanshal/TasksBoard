@@ -5,6 +5,7 @@ namespace Notification.Domain.Constants
 {
     public static class NotificationErrors
     {
+        public static readonly Error CantCreate = new(ErrorCodes.CantCreate, "Can't create notification.");
         public static readonly Error CantUpdate = new(ErrorCodes.CantUpdate, "Can't update notifications.");
     }
 }

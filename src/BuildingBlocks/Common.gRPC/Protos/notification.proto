@@ -1,0 +1,16 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Common.gRPC.Protos";
+
+import "google/protobuf/empty.proto";
+
+service NotificationGrpc{
+	rpc CreateNotification (CreateNotificationRequest) returns (google.protobuf.Empty);
+}
+
+message CreateNotificationRequest{
+	string EventId = 1;
+	string EventType = 2;
+	string Payload = 3;
+	repeated string AccountIds = 4;
+}
