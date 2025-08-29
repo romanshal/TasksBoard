@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, filter, finalize, Observable, switchMap, take, throwError } from "rxjs";
 import { AuthService } from "../services/auth/auth.service";
 import { Router } from "@angular/router";
-import { AuthStateService } from "../services/auth-state/auth-state.service";
+import { AuthSessionService } from "../services/auth-session/auth-session.service";
 
 @Injectable()
 export class AuthRequestInterceptor implements HttpInterceptor {
@@ -13,11 +13,11 @@ export class AuthRequestInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private authStateService: AuthStateService
+    private authSessionService: AuthSessionService
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authStateService.getAccessToken();
+    const token = this.authSessionService.getAccessToken();
     let authReq = req;
 
     if (token) {
@@ -40,7 +40,9 @@ export class AuthRequestInterceptor implements HttpInterceptor {
           }
         }
 
-        return throwError(() => error);
+        return throwError(() => {
+          return error;
+        });
       })
     );
   }
@@ -61,14 +63,13 @@ export class AuthRequestInterceptor implements HttpInterceptor {
 
       return this.authService.refresh().pipe(
         switchMap(() => {
-          const token = this.authStateService.getAccessToken();
+          const token = this.authSessionService.getAccessToken();
 
           this.refreshTokenSubject.next(token);
 
           return next.handle(this.addToken(req, token!));
         }),
         catchError(err => {
-          this.authService.signout();
           this.router.navigate(['/signin']);
           return throwError(() => err);
         }),

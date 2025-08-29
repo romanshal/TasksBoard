@@ -26,7 +26,9 @@ namespace Authentication.Infrastructure.Security
             return new TokenPairModel
             {
                 AccessToken = accessToken.Token,
-                RefreshToken = refreshToken.Token
+                AccessTokenExpiredAt = accessToken.ExpiresAtUtc,
+                RefreshToken = refreshToken.Token,
+                RefreshTokenExpiredAt = refreshToken.ExpiresAtUtc
             };
         }
 
@@ -63,7 +65,9 @@ namespace Authentication.Infrastructure.Security
             return new TokenPairModel
             {
                 AccessToken = newAccessToken.Token,
-                RefreshToken = newRefreshToken.Token
+                AccessTokenExpiredAt = newAccessToken.ExpiresAtUtc,
+                RefreshToken = newRefreshToken.Token,
+                RefreshTokenExpiredAt = newRefreshToken.ExpiresAtUtc
             };
         }
 

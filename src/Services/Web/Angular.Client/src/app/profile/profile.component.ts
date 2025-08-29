@@ -8,11 +8,11 @@ import { OperationResultMessageModal } from '../common/modals/operation-result-m
 import { ProfileAvatarModal } from '../common/modals/profile-avatar/profile-avatar.modal';
 import { BoardInviteRequestService } from '../common/services/board-invite-request/board-invite-request.service';
 import { BoardInviteRequestModel } from '../common/models/board-invite-request/board-invite-request.model';
-import { map, Observable, shareReplay } from 'rxjs';
+import { forkJoin, map, Observable, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
 import { BoardAccessRequestService } from '../common/services/board-access-request/board-access-request.service';
 import { AuthService } from '../common/services/auth/auth.service';
-import { AuthStateService } from '../common/services/auth-state/auth-state.service';
+import { AuthSessionService } from '../common/services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +23,7 @@ import { AuthStateService } from '../common/services/auth-state/auth-state.servi
 export class ProfileComponent implements OnInit {
   user!: UserInfoModel;
   isCurrentUser = false;
-  userAvatarSrc = '';
+  userAvatarSrc: string | undefined = '';
 
   generalSettingsForm!: FormGroup;
   passwordSettingsForm!: FormGroup;
@@ -40,75 +40,75 @@ export class ProfileComponent implements OnInit {
   boardInviteRequests: BoardInviteRequestModel[] = [];
   boardAccessRequests: BoardAccessRequestModel[] = [];
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private authService: AuthService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private route: ActivatedRoute,
     private boardInviteRequestService: BoardInviteRequestService,
     private boardAccessRequestService: BoardAccessRequestService,
     private dialog: MatDialog,
-  ) {
-    const routeUserId = this.route.snapshot.paramMap.get('userid');
-    const currentUserId = this.authStateService.getCurrentUser()?.Id;
-
-    let userId = currentUserId; // по умолчанию — текущий пользователь
-    this.isCurrentUser = true;
-
-    if (routeUserId && routeUserId !== currentUserId) {
-      userId = routeUserId;
-      this.isCurrentUser = false;
-    }
-
-    this.userService.getUserInfo(userId!).subscribe(result => {
-      this.user = result;
-
-      this.userService.getUserAvatar(userId!).subscribe(result => {
-        if (result) {
-          this.userAvatarSrc = result;
-        }
-      });
-
-      this.initGeneralSettingsForm();
-      this.initPasswordSettingsForm();
-    });
-  }
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
+    this.resolveUserContext();
+  }
+
+  private resolveUserContext(): void {
+    const routeUserId = this.route.snapshot.paramMap.get('userid');
+    const currentUser = this.authSessionService.getCurrentUser()!;
+    this.isCurrentUser = !routeUserId || routeUserId === currentUser.Id;
+
+    const userIdToLoad = this.isCurrentUser ? currentUser.Id : routeUserId!;
+
     if (this.isCurrentUser) {
-      this.getBoardInviteRequests();
-      this.getBoardAccessRequests();
+      this.loadBoardRequests(currentUser.Id);
     }
+
+    this.loadUserData(userIdToLoad);
   }
 
-  getBoardInviteRequests() {
-    this.boardInviteRequestService.getByAccountId(this.user.Id).subscribe(result => {
-      if (result) {
-        this.boardInviteRequests = result;
-      }
+  private loadUserData(userId: string): void {
+    this.userService.getUserInfo(userId)
+      .pipe(
+        tap(user => this.user = user),
+        switchMap(() => this.userService.getUserAvatar(userId)),
+        tap(avatar => this.userAvatarSrc = avatar || undefined),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        complete: () => {
+          this.initGeneralSettingsForm();
+          this.initPasswordSettingsForm();
+        }
+      });
+  }
+
+  private loadBoardRequests(userId: string): void {
+    forkJoin({
+      invites: this.boardInviteRequestService.getByAccountId(userId),
+      access: this.boardAccessRequestService.getByAccountId(userId)
     })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ invites, access }) => {
+        this.boardInviteRequests = invites || [];
+        this.boardAccessRequests = access || [];
+      });
   }
 
-  getBoardAccessRequests() {
-    this.boardAccessRequestService.getByAccountId(this.user.Id).subscribe(result => {
-      if (result) {
-        console.log(result);
-        this.boardAccessRequests = result;
-      }
-    })
-  }
-
-  initGeneralSettingsForm() {
+  private initGeneralSettingsForm(): void {
     this.generalSettingsForm = this.fb.group({
-      username: [{ value: this.user!.Username, disabled: !this.isCurrentUser }, [Validators.required, Validators.minLength(3), Validators.maxLength(20)],],
-      email: [{ value: this.user!.Email, disabled: !this.isCurrentUser }, [Validators.required, Validators.email]],
-      firstName: [{ value: this.user!.Firstname, disabled: !this.isCurrentUser }],
-      surname: [{ value: this.user!.Surname, disabled: !this.isCurrentUser }],
+      username: [{ value: this.user.Username, disabled: !this.isCurrentUser }, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      email: [{ value: this.user.Email, disabled: !this.isCurrentUser }, [Validators.required, Validators.email]],
+      firstName: [{ value: this.user.Firstname, disabled: !this.isCurrentUser }],
+      surname: [{ value: this.user.Surname, disabled: !this.isCurrentUser }],
     });
   }
 
-  initPasswordSettingsForm() {
+  private initPasswordSettingsForm(): void {
     this.passwordSettingsForm = this.fb.group({
       currentPassword: [{ value: '', disabled: !this.isCurrentUser }, [Validators.required, Validators.minLength(8)]],
       newPassword: [{ value: '', disabled: !this.isCurrentUser }, [Validators.required, Validators.minLength(8)]]

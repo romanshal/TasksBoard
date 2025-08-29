@@ -125,7 +125,9 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
             return new AuthenticationDto
             {
                 AccessToken = token.AccessToken,
+                AccessTokenExpiredAt = token.AccessTokenExpiredAt,
                 RefreshToken = token.RefreshToken,
+                RefreshTokenExpiredAt = token.RefreshTokenExpiredAt,
                 UserId = user.Id
             };
         }

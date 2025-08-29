@@ -1,12 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BoardMessageModel } from '../common/models/board-message/board-message.model';
-import { SessionStorageService } from '../common/services/session-storage/session-storage.service';
 import { BoardMessageService } from '../common/services/board-message/board-message.service';
 import { ChatService } from '../common/services/chat/chat.service';
 import { BoardMemberModel } from '../common/models/board-member/board-member.model';
 import { Subscription } from 'rxjs';
-import { UserService } from '../common/services/user/user.service';
-import { AuthStateService } from '../common/services/auth-state/auth-state.service';
+import { AuthSessionService } from '../common/services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-chat',
@@ -44,11 +42,11 @@ export class ChatComponent implements OnInit {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   constructor(
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private boardMessageService: BoardMessageService,
     private chatService: ChatService
   ) {
-    this.authStateService.currentUser$.subscribe(user => {
+    this.authSessionService.currentUser$.subscribe(user => {
       this.userId = user?.Id;
     });
   }

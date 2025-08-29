@@ -12,8 +12,8 @@
         </div>
 
         <div class="name-section">
-            <h2>{{user.Username}}</h2>
-            <span>{{user.Email}}</span>
+            <h2 *ngIf="user">{{user.Username}}</h2>
+            <span *ngIf="user">{{user.Email}}</span>
         </div>
 
         <div class="actions-section">
@@ -37,7 +37,7 @@
             </div>
 
             <div class="profile-info-block__section">
-                <form [formGroup]="generalSettingsForm">
+                <form *ngIf="generalSettingsForm" [formGroup]="generalSettingsForm">
                     <div class="profile-info-block__section-inputs">
                         <div class="input-block">
                             <label>Username</label>
@@ -112,7 +112,7 @@
             </div>
 
             <div class="profile-info-block__section">
-                <form [formGroup]="passwordSettingsForm">
+                <form *ngIf="passwordSettingsForm" [formGroup]="passwordSettingsForm">
                     <div class="profile-info-block__section-inputs">
                         <div class="input-block">
                             <label>Password</label>

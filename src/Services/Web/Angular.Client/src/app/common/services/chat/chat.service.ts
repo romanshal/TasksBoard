@@ -52,7 +52,7 @@ export class ChatService {
       this.connection = new signalR.HubConnectionBuilder()
         .withUrl(this.CHAT_HUB_URL, {
           accessTokenFactory: () => {
-            return this.sessionService.getAccessToken()!;
+            return this.sessionService.getAccessToken()!.Token;
           }
         })
         .withAutomaticReconnect({

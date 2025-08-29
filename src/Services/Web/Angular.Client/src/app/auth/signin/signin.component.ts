@@ -4,7 +4,7 @@ import { AuthService } from '../../common/services/auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '../../common/models/response/response.model';
 import { UserService } from '../../common/services/user/user.service';
-import { AuthStateService } from '../../common/services/auth-state/auth-state.service';
+import { AuthSessionService } from '../../common/services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-signin',
@@ -27,7 +27,7 @@ export class SigninComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
@@ -56,7 +56,7 @@ export class SigninComponent implements OnInit {
       next: (result) => {
         this.userService.getUserInfo(result.UserId).subscribe({
           next: (user) => {
-            this.authStateService.setCurrentUser(user);
+            this.authSessionService.setCurrentUser(user);
 
             this.isLoading = false;
             this.router.navigate([this.returnUrl]);
@@ -76,6 +76,7 @@ export class SigninComponent implements OnInit {
   }
 
   externalSignin(provider: string) {
+    this.isLoading = true;
     this.authService.externalSignin(provider, this.returnUrl);
   }
 }

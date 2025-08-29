@@ -1,4 +1,5 @@
-﻿using Authentication.API.Models.Requests.Authentication;
+﻿using Authentication.API.Extensions;
+using Authentication.API.Models.Requests.Authentication;
 using Authentication.API.Models.Responses;
 using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
 using Authentication.Application.Features.Authentications.Commands.Login;
@@ -35,12 +36,13 @@ namespace Authentication.API.Controllers
                 DeviceId = request.DeviceId
             });
 
-            SetRefreshTokenCookies(result.RefreshToken);
+            this.SetRefreshTokenCookies(result.RefreshToken);
 
             return Ok(new AuthenticationResponse
             {
                 UserId = result.UserId,
-                AccessToken = result.AccessToken
+                AccessToken = result.AccessToken,
+                ExpiredAt = result.AccessTokenExpiredAt
             });
         }
 
@@ -71,12 +73,13 @@ namespace Authentication.API.Controllers
                 DeviceId = request.DeviceId
             });
 
-            SetRefreshTokenCookies(result.RefreshToken);
+            this.SetRefreshTokenCookies(result.RefreshToken);
 
             return Ok(new AuthenticationResponse
             {
                 UserId = result.UserId,
-                AccessToken = result.AccessToken
+                AccessToken = result.AccessToken,
+                ExpiredAt = result.AccessTokenExpiredAt
             });
         }
 
@@ -100,12 +103,13 @@ namespace Authentication.API.Controllers
                 DeviceId = request.DeviceId
             });
 
-            SetRefreshTokenCookies(result.RefreshToken);
+            this.SetRefreshTokenCookies(result.RefreshToken);
 
             return Ok(new AuthenticationResponse
             {
                 UserId = result.UserId,
-                AccessToken = result.AccessToken
+                AccessToken = result.AccessToken,
+                ExpiredAt = result.AccessTokenExpiredAt
             });
         }
 
@@ -127,18 +131,6 @@ namespace Authentication.API.Controllers
             Response.Cookies.Delete("refresh_token");
 
             return NoContent();
-        }
-
-        private void SetRefreshTokenCookies(string token)
-        {
-            Response.Cookies.Append("refresh_token", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Path = "/api/authentication/refresh",
-                MaxAge = TimeSpan.FromDays(7)
-            });
         }
     }
 }

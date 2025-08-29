@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../common/services/user/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../common/services/auth/auth.service';
-import { AuthStateService } from '../../common/services/auth-state/auth-state.service';
+import { AuthSessionService } from '../../common/services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-external-callback',
@@ -15,7 +15,7 @@ export class ExternalCallbackComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute,
@@ -30,7 +30,7 @@ export class ExternalCallbackComponent implements OnInit {
       this.authService.externalSigninCallback(accessToken);
       this.userService.getUserInfo(userId).subscribe({
         next: (user) => {
-          this.authStateService.setCurrentUser(user);
+          this.authSessionService.setCurrentUser(user);
 
           this.isLoading = false;
           this.router.navigate([returnUrl]);

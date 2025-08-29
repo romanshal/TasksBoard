@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserInfoModel } from "../../models/user/user-info.model";
+import { AccessTokenPair } from "../../models/auth/auth.access-token-pair.model";
 
 @Injectable({
     providedIn: 'root'
@@ -18,19 +19,37 @@ export class SessionStorageService {
     }
 
     getUserInfo(): UserInfoModel | null {
-        return JSON.parse(sessionStorage.getItem(this.userKey)!) as UserInfoModel;
+        const raw = sessionStorage.getItem(this.userKey);
+        if (!raw) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(raw) as UserInfoModel;
+        } catch (e) {
+            return null;
+        }
     }
 
     setUserInfo(value: UserInfoModel) {
         sessionStorage.setItem(this.userKey, JSON.stringify(value));
     }
 
-    getAccessToken() {
-        return sessionStorage.getItem(this.accessTokenKey);
+    getAccessToken(): AccessTokenPair | null {
+        const raw = sessionStorage.getItem(this.accessTokenKey);
+        if (!raw) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(raw) as AccessTokenPair;
+        } catch (e) {
+            return null;
+        }
     }
 
-    setAccessToken(value: string) {
-        sessionStorage.setItem(this.accessTokenKey, value);
+    setAccessToken(token: AccessTokenPair) {
+        sessionStorage.setItem(this.accessTokenKey, JSON.stringify(token));
     }
 
     getDeviceId() {

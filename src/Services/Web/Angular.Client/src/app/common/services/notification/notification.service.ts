@@ -6,8 +6,7 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 import { NotificationModel } from '../../models/notification/notification.model';
 import * as signalR from '@microsoft/signalr';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
-import { UserService } from '../user/user.service';
-import { AuthStateService } from '../auth-state/auth-state.service';
+import { AuthSessionService } from '../auth-session/auth-session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,14 +24,13 @@ export class NotificationService {
   constructor(
     private http: HttpClient,
     private httpOption: HttpOptionService,
-    private userService: UserService,
-    private authStateService: AuthStateService
+    private authSessionService: AuthSessionService
   ) {
-    this.authStateService.isAuthenticated$.subscribe(status => {
+    this.authSessionService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
     })
     if (this.isAuthenticated) {
-      let userId = this.authStateService.getCurrentUser()?.Id;
+      let userId = this.authSessionService.getCurrentUser()?.Id;
       this.getNewByAccountId(userId!).subscribe(result => {
         if (result) {
           this.notificationsSubject.next(result);
@@ -42,7 +40,7 @@ export class NotificationService {
       this.hubConnection = new signalR.HubConnectionBuilder()
         .withUrl(this.NOTIFICATION_HUB_URL + '?accountId=' + userId!, {
           accessTokenFactory: () => {
-            return this.authStateService.getAccessToken()!;
+            return this.authSessionService.getAccessToken()!;
           }
         })
         .withAutomaticReconnect({ 

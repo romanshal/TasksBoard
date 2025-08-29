@@ -6,7 +6,7 @@ import { ProfileMenuModal } from '../common/modals/profile-menu/profile-menu.mod
 import { NotificationMenuModal } from '../common/modals/notification-menu/notification-menu.modal';
 import { NotificationService } from '../common/services/notification/notification.service';
 import { NotificationModel } from '../common/models/notification/notification.model';
-import { AuthStateService } from '../common/services/auth-state/auth-state.service';
+import { AuthSessionService } from '../common/services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-header',
@@ -22,17 +22,16 @@ export class HeaderComponent implements OnInit {
   notifications: NotificationModel[] = [];
 
   constructor(
-    private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
     private notificationService: NotificationService,
-    private authStateService: AuthStateService
+    private authSessionService: AuthSessionService
   ) {
-    this.authStateService.isAuthenticated$.subscribe(status => {
+    this.authSessionService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
     });
 
-    this.authStateService.currentUser$.subscribe(user => {
+    this.authSessionService.currentUser$.subscribe(user => {
       if (user && this.isAuthenticated) {
         this.username = user?.Username;
         this.userId = user?.Id;

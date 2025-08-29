@@ -3,12 +3,11 @@ import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BoardNoticeService } from '../../services/board-notice/board-notice.service';
-import { SessionStorageService } from '../../services/session-storage/session-storage.service';
 import { BoardNoticeModel } from '../../models/board-notice/board-notice.model';
 import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
 import { BoardMemberAuthService } from '../../services/board-member-auth/board-member-auth.service';
-import { AuthStateService } from '../../services/auth-state/auth-state.service';
+import { AuthSessionService } from '../../services/auth-session/auth-session.service';
 
 interface NoteStyle {
   value: any;
@@ -61,12 +60,12 @@ export class BoardNoticeModal implements OnInit {
     private dialogRef: MatDialogRef<BoardNoticeModal>,
     private noticeService: BoardNoticeService,
     private userService: UserService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private boardMemberAuthService: BoardMemberAuthService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel }
   ) {
     this.note = data.note;
-    this.authStateService.currentUser$.subscribe(user => {
+    this.authSessionService.currentUser$.subscribe(user => {
         this.currentUser = user;
     })
 

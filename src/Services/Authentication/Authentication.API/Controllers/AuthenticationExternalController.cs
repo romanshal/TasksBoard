@@ -1,4 +1,5 @@
-﻿using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
+﻿using Authentication.API.Extensions;
+using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
 using Authentication.Application.Features.Authentications.Commands.ExternalLoginCallback;
 using Common.Blocks.Models;
 using MediatR;
@@ -74,10 +75,13 @@ namespace Authentication.API.Controllers
             var returnParams = new List<KeyValuePair<string, string?>>
             {
                 new("accessToken", result.Value.AccessToken),
+                new("accessTokenExpiredAt", result.Value.AccessTokenExpiredAt.ToString()),
                 new("userId", result.Value.UserId.ToString())
             };
 
             var url = QueryHelpers.AddQueryString(returnUrl, returnParams);
+
+            this.SetRefreshTokenCookies(result.Value.RefreshToken);
 
             return Redirect(url);
         }

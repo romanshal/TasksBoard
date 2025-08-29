@@ -7,7 +7,7 @@ import { UserInfoModel } from '../../models/user/user-info.model';
 import { BoardService } from '../../services/board/board.service';
 import { DeleteConfirmationModal } from '../delete-confirmation/delete-confirmation.modal';
 import { Router } from '@angular/router';
-import { AuthStateService } from '../../services/auth-state/auth-state.service';
+import { AuthSessionService } from '../../services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-board-info',
@@ -44,7 +44,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
     private dialogRef: MatDialogRef<BoardInfoModal>,
     private boardService: BoardService,
     private manageBoardService: ManageBoardService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) private data: { board: BoardModel, isOwner: boolean }
   ) {
@@ -52,7 +52,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
       this.newBoard = true;
       this.disabledActions = false;
 
-      this.authStateService.currentUser$.subscribe(user => {
+      this.authSessionService.currentUser$.subscribe(user => {
         this.currentUser = user;
       });
     }

@@ -7,7 +7,7 @@ import { NotificationModel } from '../../models/notification/notification.model'
 import { Router } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
 import { UserService } from '../../services/user/user.service';
-import { AuthStateService } from '../../services/auth-state/auth-state.service';
+import { AuthSessionService } from '../../services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-notification',
@@ -30,14 +30,14 @@ export class NotificationMenuModal {
     private spinner: NgxSpinnerService,
     private router: Router,
     private userService: UserService,
-    private authStateService: AuthStateService
+    private authSessionService: AuthSessionService
   ) {
     this.spinner.show();
 
     this.notificationService.notification$.subscribe((notifications: NotificationModel[]) => {
       this.notifications = notifications;
     })
-    this.authStateService.currentUser$.subscribe(user => {
+    this.authSessionService.currentUser$.subscribe(user => {
       this.userId = user?.Id!;
     });
 

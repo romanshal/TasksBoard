@@ -8,7 +8,8 @@ import { SessionStorageService } from '../session-storage/session-storage.servic
 import { SignupRequestModel } from '../../models/auth/auth.signup.model';
 import { Response } from '../../models/response/response.model';
 import { v4 as uuidv4 } from 'uuid';
-import { AuthStateService } from '../auth-state/auth-state.service';
+import { AuthSessionService } from '../auth-session/auth-session.service';
+import { AuthEventService } from '../auth-event/auth-event.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,18 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private sessionService: SessionStorageService,
-    private authStateService: AuthStateService
-  ) { }
+    private sessionStorageService: SessionStorageService,
+    private authSessionService: AuthSessionService,
+    private authEventService: AuthEventService
+  ) {
+    this.authEventService.onRefreshToken().subscribe(() => {
+      this.refresh().subscribe();
+    });
+  }
 
   private generateDeviceId() {
     var deviceId = uuidv4();
-    this.sessionService.setDeviceId(deviceId);
+    this.sessionStorageService.setDeviceId(deviceId);
 
     return deviceId;
   }
@@ -37,7 +43,7 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials, { withCredentials: true })
       .pipe(
         map((response: any) => {
-          this.authStateService.setAccessToken(response.accessToken);
+          this.authSessionService.setAccessToken(response.accessToken);
 
           return new TokenResponseModel(response.userId);
         }),
@@ -66,7 +72,7 @@ export class AuthService {
   }
 
   externalSigninCallback(accessToken: string) {
-    this.authStateService.setAccessToken(accessToken);
+    this.authSessionService.setAccessToken(accessToken);
   }
 
   signup(credentials: SignupRequestModel): Observable<TokenResponseModel> {
@@ -77,7 +83,7 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials)
       .pipe(
         map((response: any) => {
-          this.authStateService.setAccessToken(response.accessToken);
+          this.authSessionService.setAccessToken(response.accessToken);
 
           return new TokenResponseModel(response.userId);
         }),
@@ -95,15 +101,14 @@ export class AuthService {
     const url = '/api/authentication/refresh';
 
     let body = {
-      userId: this.sessionService.getUserInfo()!.Id,
-      deviceId: this.sessionService.getDeviceId()
+      userId: this.sessionStorageService.getUserInfo()!.Id,
+      deviceId: this.sessionStorageService.getDeviceId()
     };
 
     return this.http.post<TokenResponseModel>(this.baseUrl + url, body, { withCredentials: true })
       .pipe(
         tap((response: any) => {
-          console.log('refresh success');
-          this.authStateService.setAccessToken(response.accessToken);
+          this.authSessionService.setAccessToken(response.accessToken);
         }),
         catchError((error: HttpErrorResponse) => {
           console.log('refresh error');
@@ -118,7 +123,7 @@ export class AuthService {
     return this.http.delete<void>(this.baseUrl + url)
       .pipe(
         tap(() => {
-          this.authStateService.logout();
+          this.authSessionService.logout();
         }),
         catchError((error: HttpErrorResponse) => {
           console.log('logout error');

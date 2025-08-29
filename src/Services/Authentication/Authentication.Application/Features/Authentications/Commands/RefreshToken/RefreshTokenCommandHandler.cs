@@ -40,7 +40,9 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
             return new AuthenticationDto
             {
                 AccessToken = token.AccessToken,
+                AccessTokenExpiredAt = token.AccessTokenExpiredAt,
                 RefreshToken = token.RefreshToken,
+                RefreshTokenExpiredAt = token.RefreshTokenExpiredAt,
                 UserId = user.Id
             };
         }

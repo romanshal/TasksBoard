@@ -20,7 +20,9 @@ import { ManageBoardAccessRequestService } from '../common/services/manage-board
 import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
 import { BoardInviteRequestModel } from '../common/models/board-invite-request/board-invite-request.model';
 import { ManageBoardInviteRequestService } from '../common/services/manage-board-invite-request/manage-board-invite-request.service';
-import { AuthStateService } from '../common/services/auth-state/auth-state.service';
+import { AuthSessionService } from '../common/services/auth-session/auth-session.service';
+import { defaultIfEmpty, filter, finalize, forkJoin, switchMap, tap } from 'rxjs';
+import { PaginatedList } from '../common/models/paginated-list/paginated-list.model';
 
 const listAnimation = trigger('listAnimation', [
   transition('* <=> *', [
@@ -71,7 +73,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     private boardService: BoardService,
     private boardNoticeService: BoardNoticeService,
     private boardPermissionService: BoardPermissionService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     private boardMemberAuthService: BoardMemberAuthService,
     private boardAccessRequestService: ManageBoardAccessRequestService,
     private boardInviteReqquestService: ManageBoardInviteRequestService,
@@ -83,7 +85,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   ) {
     this.spinner.show();
 
-    this.authStateService.currentUser$.subscribe(user => {
+    this.authSessionService.currentUser$.subscribe(user => {
       this.userId = user?.Id;
     })
 
@@ -100,65 +102,66 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   private getBoard() {
-    this.boardService.getBoardById(this.boardId).subscribe(result => {
-      if (result) {
-        this.board = result;
-
-        this.boardMemberService.getBoardMembersByBoardId(this.boardId).subscribe(result => {
-          if (result) {
-            this.boardMembers = result;
-
-            this.currentMember = this.boardMembers.find(member => member.AccountId === this.userId)!
-
-            this.boardMemberAuthService.initialize(this.board, this.currentMember);
-
-            this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
-          }
-        });
-
-        this.boardAccessRequestService.getBoardAccessRequestByBoardId(this.boardId).subscribe(result => {
-          if (result) {
-            this.accessRequests = result;
-          }
-        });
-
-        this.boardInviteReqquestService.getBoardInviteRequestByBoardId(this.boardId).subscribe(result => {
-          if (result) {
-            this.inviteRequests = result;
-          }
-        });
-
-        this.getBoardNotices(this.pageIndex, this.pageSize);
-
-        if (this.route.snapshot.queryParamMap.get('boardnotice')) {
-          let noticeId = this.route.snapshot.queryParamMap.get('boardnotice')!;
-          this.openBoardNoticeModalById(noticeId);
+    this.boardService.getBoardById(this.boardId).pipe(
+      filter(Boolean),
+      tap(board => this.board = board),
+      switchMap(board =>
+        forkJoin({
+          members: this.boardMemberService.getBoardMembersByBoardId(board.Id).pipe(defaultIfEmpty([])),
+          accessRequests: this.boardAccessRequestService.getBoardAccessRequestByBoardId(board.Id).pipe(defaultIfEmpty([])),
+          inviteRequests: this.boardInviteReqquestService.getBoardInviteRequestByBoardId(board.Id).pipe(defaultIfEmpty([])),
+          notices: this.boardNoticeService.getBoardNoticesByBoardId(board.Id, this.pageIndex, this.pageSize)
+        })
+      ),
+      tap(({ members, accessRequests, inviteRequests, notices }) => {
+        this.accessRequests = accessRequests;
+        this.inviteRequests = inviteRequests;
+        this.handleNotices(notices);
+        this.handleMembers(members);
+      }),
+      finalize(() => {
+        if (this.route.snapshot.queryParamMap.has('boardnotice')) {
+          this.openBoardNoticeModalById(this.route.snapshot.queryParamMap.get('boardnotice')!);
         }
 
-        if (this.route.snapshot.queryParamMap.get('boardmembers')) {
+        if (this.route.snapshot.queryParamMap.has('boardmembers')) {
           this.openMembersModal();
         }
+        
+        this.spinner.hide();
+        this.isLoading = true;
+      })
+    ).subscribe({
+      error: err => {
+        console.error('Ошибка при загрузке данных:', err);
       }
     });
   }
 
   private getBoardNotices(pageIndex: number, pageSize: number) {
     this.boardNoticeService.getBoardNoticesByBoardId(this.boardId, pageIndex, pageSize).subscribe(result => {
-      if (result) {
-
-        setTimeout(() => {
-          this.spinner.hide();
-          this.isLoading = true;
-
-          this.notesForView = result.Items;
-        }, 500);
-
-        this.pageIndex = result.PageIndex;
-        this.pageSize = result.PageSize;
-        this.totalPages = result.PagesCount;
-        this.totalCount = result.TotalCount;
-      }
+      this.handleNotices(result);
     });
+  }
+
+  private handleNotices(result: PaginatedList<BoardNoticeModel>): void {
+    if (!result) return;
+
+    setTimeout(() => {
+      this.notesForView = result.Items;
+    }, 500);
+
+    this.pageIndex = result.PageIndex;
+    this.pageSize = result.PageSize;
+    this.totalPages = result.PagesCount;
+    this.totalCount = result.TotalCount;
+  }
+
+  private handleMembers(members: BoardMemberModel[]): void {
+    this.boardMembers = members;
+    this.currentMember = members.find(m => m.AccountId === this.userId)!;
+    this.boardMemberAuthService.initialize(this.board, this.currentMember);
+    this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
   }
 
   private openBoardNoticeModalById(boardNoticeId: string) {

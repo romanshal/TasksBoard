@@ -1,10 +1,8 @@
 import { Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SessionStorageService } from '../../services/session-storage/session-storage.service';
 import { BoardAccessRequestService } from '../../services/board-access-request/board-access-request.service';
-import { UserService } from '../../services/user/user.service';
 import { UserInfoModel } from '../../models/user/user-info.model';
-import { AuthStateService } from '../../services/auth-state/auth-state.service';
+import { AuthSessionService } from '../../services/auth-session/auth-session.service';
 
 @Component({
   selector: 'app-board-member-request',
@@ -25,12 +23,12 @@ export class BoardMemberRequestModal {
   constructor(
     private dialogRef: MatDialogRef<BoardMemberRequestModal>,
     private boardAccessService: BoardAccessRequestService,
-    private authStateService: AuthStateService,
+    private authSessionService: AuthSessionService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string }
   ) {
     this.boardId = data.boardId;
 
-    this.authStateService.currentUser$.subscribe(user => {
+    this.authSessionService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
   }
