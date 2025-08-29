@@ -10,7 +10,7 @@ namespace Common.gRPC.Repositories
         private static string Key(Guid id) => $"user:{id:N}";
         private static string NegativeKey(Guid id) => $"user:{id:N}:negative";
 
-        public async Task SetManyAsync(IEnumerable<UserProfile> users)
+        public async Task SetManyAsync(HashSet<UserProfile> users)
         {
             var tasks = new List<Task>();
             foreach (var user in users)
@@ -21,7 +21,7 @@ namespace Common.gRPC.Repositories
             await Task.WhenAll(tasks);
         }
 
-        public async Task SetNegativeAsync(IEnumerable<Guid> missings)
+        public async Task SetNegativeAsync(HashSet<Guid> missings)
         {
             var tasks = missings.Select(id =>
             {
@@ -32,13 +32,13 @@ namespace Common.gRPC.Repositories
             await Task.WhenAll(tasks);
         }
 
-        public async Task<IDictionary<Guid, UserProfile?>> GetManyAsync(IEnumerable<Guid> userIds)
+        public async Task<IDictionary<Guid, UserProfile?>> GetManyAsync(HashSet<Guid> userIds)
         {
             var result = new Dictionary<Guid, UserProfile?>();
-            if (!userIds.Any()) return result;
+            if (userIds.Count == 0) return result;
 
-            var ids = userIds.Distinct().ToArray();
-            var redisKeys = ids.Select(Key).ToArray();
+            var ids = userIds.ToArray();
+            var redisKeys = userIds.Select(Key).ToArray();
 
             var cached = await cacheRepository.GetManyAsync<UserProfile>(redisKeys);
 

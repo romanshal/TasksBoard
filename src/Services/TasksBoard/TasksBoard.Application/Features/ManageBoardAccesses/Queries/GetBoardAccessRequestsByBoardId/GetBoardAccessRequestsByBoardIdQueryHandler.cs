@@ -39,7 +39,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Queries.GetBoardAc
             var userIds = boardAccessRequestsDto
                 .SelectMany(req => new[] { req.AccountId })
                 .Where(id => id != Guid.Empty)
-                .Distinct();
+                .ToHashSet();
 
             var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
 

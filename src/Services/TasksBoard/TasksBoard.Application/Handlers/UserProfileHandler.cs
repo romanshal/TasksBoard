@@ -27,7 +27,7 @@ namespace TasksBoard.Application.Handlers
             var userIds = values
                 .Select(accountIdSelector)
                 .Where(id => id != Guid.Empty)
-                .Distinct();
+                .ToHashSet();
 
             var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
 
@@ -55,7 +55,7 @@ namespace TasksBoard.Application.Handlers
             var userIds = values
                 .Select(accountIdSelector)
                 .Where(id => id != Guid.Empty)
-                .Distinct();
+                .ToHashSet();
 
             var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
 

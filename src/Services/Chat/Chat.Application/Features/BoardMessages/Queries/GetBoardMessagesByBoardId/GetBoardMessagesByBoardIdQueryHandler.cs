@@ -28,7 +28,7 @@ namespace Chat.Application.Features.BoardMessages.Queries.GetBoardMessagesByBoar
             var userIds = boardMessageDto
                 .SelectMany(req => new[] { req.AccountId })
                 .Where(id => id != Guid.Empty)
-                .Distinct();
+                .ToHashSet();
 
             var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
 

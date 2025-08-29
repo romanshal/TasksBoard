@@ -9,7 +9,7 @@ namespace Common.gRPC.Interfaces.Services
             CancellationToken cancellationToken = default);
 
         Task<IReadOnlyDictionary<Guid, UserProfile>> ResolveAsync(
-            IEnumerable<Guid> ids,
+            HashSet<Guid> ids,
             CancellationToken cancellationToken = default);
     }
 }

@@ -19,7 +19,7 @@ namespace Notification.Application.Handlers
             IEnumerable<NotificationDto> notifications,
             CancellationToken cancellationToken = default)
         {
-            var ids = new List<Guid>();
+            var ids = new HashSet<Guid>();
             foreach (var notification in notifications)
             {
                 var accountIdExist = notification.Payload.TryGetValue(NotificationLinkTypes.AccountId, out var accountId);

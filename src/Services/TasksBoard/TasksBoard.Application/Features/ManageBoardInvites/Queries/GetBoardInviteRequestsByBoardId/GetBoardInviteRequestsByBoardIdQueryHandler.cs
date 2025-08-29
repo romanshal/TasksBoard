@@ -39,7 +39,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Queries.GetBoardInv
             var userIds = boardInviteRequestsDto
                 .SelectMany(req => new[] { req.ToAccountId, req.FromAccountId })
                 .Where(id => id != Guid.Empty)
-                .Distinct();
+                .ToHashSet();
 
             var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
 

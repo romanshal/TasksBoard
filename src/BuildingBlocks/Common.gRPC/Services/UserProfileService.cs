@@ -20,18 +20,17 @@ namespace Common.gRPC.Services
         }
 
         public async Task<IReadOnlyDictionary<Guid, UserProfile>> ResolveAsync(
-            IEnumerable<Guid> ids,
+            HashSet<Guid> ids,
             CancellationToken cancellationToken = default)
         {
             var found = new Dictionary<Guid, UserProfile>();
 
-            var distinct = ids.Where(id => id != Guid.Empty).Distinct();
-            if (!distinct.Any()) return found;
+            if (ids.Count == 0) return found;
 
-            var cached = await cache.GetManyAsync(distinct);
+            var cached = await cache.GetManyAsync(ids);
             var misses = new List<Guid>();
 
-            foreach (var id in distinct)
+            foreach (var id in ids)
             {
                 if (cached.TryGetValue(id, out var profile))
                 {
@@ -59,13 +58,13 @@ namespace Common.gRPC.Services
 
             var received = response.Users
                 .Select(user => new UserProfile(Guid.Parse(user.Id), user.Username, user.Email))
-                .ToArray();
+                .ToHashSet();
 
             await cache.SetManyAsync(received);
 
             var receivedIds = received.Select(u => u.Id).ToHashSet();
-            var missingAfterCall = misses.Where(id => !receivedIds.Contains(id)).ToArray();
-            if (missingAfterCall.Length > 0)
+            var missingAfterCall = misses.Where(id => !receivedIds.Contains(id)).ToHashSet();
+            if (missingAfterCall.Count > 0)
                 await cache.SetNegativeAsync(missingAfterCall);
 
             foreach (var u in received) found[u.Id] = u;

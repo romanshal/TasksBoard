@@ -34,7 +34,7 @@ namespace Common.Blocks.Repositories
 
         public async Task<IDictionary<string, T?>> GetManyAsync<T>(IEnumerable<string> keys)
         {
-            var redisKeys = keys.Distinct().Select(k => (RedisKey)k.ToString()).ToArray();
+            var redisKeys = keys.Distinct().Select(k => (RedisKey)k).ToArray();
             if (redisKeys.Length == 0)
                 return new Dictionary<string, T?>();
 
