@@ -1,10 +1,10 @@
 ﻿using Common.gRPC.Interfaces.Services;
-using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Models.UserProfiles;
 
 namespace TasksBoard.Application.Handlers
 {
-    public class UserProfileHandler(
-        IUserProfileService profileService)
+    internal class UserProfileHandler(
+        IUserProfileService profileService) : IUserProfileHandler
     {
         private readonly IUserProfileService _profileService = profileService;
 
@@ -49,17 +49,10 @@ namespace TasksBoard.Application.Handlers
         }
 
         public async Task HandleMany(
-            IEnumerable<IMapping> mappings,
+            IEnumerable<IUserProfileMapping> mappings,
             CancellationToken cancellationToken = default)
         {
             if (mappings == null) return;
-
-            //var allIds = mappings
-            //    .Where(m => m.Items != null)
-            //    .SelectMany(m => m.Items)
-            //    .Select(item => MappId(item, mappings))
-            //    .Where(id => id != Guid.Empty)
-            //    .ToHashSet();            
 
             var allIds = mappings
                 .Where(m => m.Items != null)
@@ -85,49 +78,9 @@ namespace TasksBoard.Application.Handlers
             }
         }
 
-        //private static Guid MappId(object item, IEnumerable<IMapping> maps) => maps.First(m => m.Items.Contains(item)).IdSelector(item);
-        private static IEnumerable<Guid> MappId(IMapping map) => map.Items.Select(m => map.IdSelector(m)).Where(id => id != Guid.Empty);
-
-    }
-
-    public interface IMapping
-    {
-        IEnumerable<object> Items { get; }
-        Func<object, Guid> IdSelector { get; }
-        Action<object, string, string?> Setter { get; }
-
-        void Deconstruct(out IEnumerable<object> items, out Func<object, Guid> idSelector, out Action<object, string, string?> setter);
-    }
-
-    public record MappingImpl(
-        IEnumerable<object> Items,
-        Func<object, Guid> IdSelector,
-        Action<object, string, string?> Setter) : IMapping
-    {
-        public void Deconstruct(out IEnumerable<object> items, out Func<object, Guid> idSelector, out Action<object, string, string?> setter)
-        {
-            items = Items;
-            idSelector = IdSelector;
-            setter = Setter;
-        }
-    }
-
-    public static class MappingFactory
-    {
-        public static IMapping Create<T>(
-            IEnumerable<T> items,
-            Func<T, Guid> idSelector,
-            Action<T, string, string?> setter) where T: BaseDto
-        {
-            ArgumentNullException.ThrowIfNull(items);
-            ArgumentNullException.ThrowIfNull(idSelector);
-            ArgumentNullException.ThrowIfNull(setter);
-
-            return new MappingImpl(
-                items.Cast<object>(),
-                o => idSelector((T)o),
-                (o, username, email) => setter((T)o, username, email)
-            );
-        }
+        private static IEnumerable<Guid> MappId(IUserProfileMapping map) => 
+            map.Items
+            .Select(m => map.IdSelector(m))
+            .Where(id => id != Guid.Empty);
     }
 }

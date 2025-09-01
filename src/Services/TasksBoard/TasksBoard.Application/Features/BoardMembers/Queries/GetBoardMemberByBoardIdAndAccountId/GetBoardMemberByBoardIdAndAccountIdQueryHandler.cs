@@ -15,12 +15,12 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
         IUnitOfWork unitOfWork,
         ILogger<GetBoardMemberByBoardIdAndAccountIdQueryHandler> logger,
         IMapper mapper,
-         UserProfileHandler profileHandler) : IRequestHandler<GetBoardMemberByBoardIdAndAccountIdQuery, Result<BoardMemberDto>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetBoardMemberByBoardIdAndAccountIdQuery, Result<BoardMemberDto>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardMemberByBoardIdAndAccountIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<BoardMemberDto>> Handle(GetBoardMemberByBoardIdAndAccountIdQuery request, CancellationToken cancellationToken)
         {

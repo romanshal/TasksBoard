@@ -15,12 +15,12 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
         ILogger<GetBoardNoticeByIdQueryHandler> logger,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        UserProfileHandler profileHandler) : IRequestHandler<GetBoardNoticeByIdQuery, Result<BoardNoticeDto>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetBoardNoticeByIdQuery, Result<BoardNoticeDto>>
     {
         private readonly ILogger<GetBoardNoticeByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<BoardNoticeDto>> Handle(GetBoardNoticeByIdQuery request, CancellationToken cancellationToken)
         {

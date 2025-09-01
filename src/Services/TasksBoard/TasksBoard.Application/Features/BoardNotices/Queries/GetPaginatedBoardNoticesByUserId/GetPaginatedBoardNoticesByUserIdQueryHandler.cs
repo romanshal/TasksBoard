@@ -2,7 +2,6 @@
 using Common.Blocks.Extensions;
 using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
-using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
@@ -15,12 +14,12 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
         IUnitOfWork unitOfWork,
         ILogger<GetPaginatedBoardNoticesByUserIdQueryHandler> logger,
         IMapper mapper,
-        UserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardNoticesByUserIdQuery, Result<PaginatedList<BoardNoticeDto>>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardNoticesByUserIdQuery, Result<PaginatedList<BoardNoticeDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetPaginatedBoardNoticesByUserIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<PaginatedList<BoardNoticeDto>>> Handle(GetPaginatedBoardNoticesByUserIdQuery request, CancellationToken cancellationToken)
         {

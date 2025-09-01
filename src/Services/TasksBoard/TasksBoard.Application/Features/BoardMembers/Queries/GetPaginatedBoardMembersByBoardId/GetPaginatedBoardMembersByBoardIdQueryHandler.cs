@@ -17,12 +17,12 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoard
         IUnitOfWork unitOfWork,
         ILogger<GetBoardMembersByBoardIdQueryHandler> logger,
         IMapper mapper,
-        UserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardMembersByBoardIdQuery, Result<PaginatedList<BoardMemberDto>>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardMembersByBoardIdQuery, Result<PaginatedList<BoardMemberDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardMembersByBoardIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<PaginatedList<BoardMemberDto>>> Handle(GetPaginatedBoardMembersByBoardIdQuery request, CancellationToken cancellationToken)
         {

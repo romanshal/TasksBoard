@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
-using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
@@ -13,12 +12,12 @@ namespace TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRe
         IUnitOfWork unitOfWork,
         ILogger<GetBoardAccessRequestByAccountIdQueryHandler> logger,
         IMapper mapper,
-        UserProfileHandler profileHandler) : IRequestHandler<GetBoardAccessRequestByAccountIdQuery, Result<IEnumerable<BoardAccessRequestDto>>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetBoardAccessRequestByAccountIdQuery, Result<IEnumerable<BoardAccessRequestDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetBoardAccessRequestByAccountIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<IEnumerable<BoardAccessRequestDto>>> Handle(GetBoardAccessRequestByAccountIdQuery request, CancellationToken cancellationToken)
         {

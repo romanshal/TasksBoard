@@ -2,8 +2,8 @@
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TasksBoard.Application.DTOs;
 using TasksBoard.Application.DTOs.Boards;
+using TasksBoard.Application.Factories;
 using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
@@ -15,12 +15,12 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
         ILogger<GetBoardByIdQueryHandler> logger,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        UserProfileHandler profileHandler) : IRequestHandler<GetBoardByIdQuery, Result<BoardFullDto>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetBoardByIdQuery, Result<BoardFullDto>>
     {
         private readonly ILogger<GetBoardByIdQueryHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<BoardFullDto>> Handle(GetBoardByIdQuery request, CancellationToken cancellationToken)
         {
@@ -37,22 +37,22 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
 
             await _profileHandler.HandleMany(
             [
-                MappingFactory.Create(
+                UserProfileMappingFactory.Create(
                     boardDto.InviteRequests, 
                     x => x.ToAccountId, 
                     (x, u, e) => { x.ToAccountName = u; x.ToAccountEmail = e!; }),
 
-                MappingFactory.Create(
+                UserProfileMappingFactory.Create(
                     boardDto.InviteRequests, 
                     x => x.FromAccountId, 
                     (x, u, _) => { x.FromAccountName = u; }),
 
-                MappingFactory.Create(
+                UserProfileMappingFactory.Create(
                     boardDto.AccessRequests, 
                     x => x.AccountId, 
                     (x, u, e) => { x.AccountName = u; x.AccountEmail = e!; }),
 
-                MappingFactory.Create(
+                UserProfileMappingFactory.Create(
                     boardDto.Members, 
                     x => x.AccountId, 
                     (x, u, _) => { x.Nickname = u; }),

@@ -16,12 +16,12 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
         IUnitOfWork unitOfWork,
         ILogger<GetPaginatedBoardNoticesByUserIdAndBoardIdQueryHandler> logger,
         IMapper mapper,
-        UserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardNoticesByUserIdAndBoardIdQuery, Result<PaginatedList<BoardNoticeDto>>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetPaginatedBoardNoticesByUserIdAndBoardIdQuery, Result<PaginatedList<BoardNoticeDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<GetPaginatedBoardNoticesByUserIdAndBoardIdQueryHandler> _logger = logger;
         private readonly IMapper _mapper = mapper;
-        private readonly UserProfileHandler _profileHandler = profileHandler;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<PaginatedList<BoardNoticeDto>>> Handle(GetPaginatedBoardNoticesByUserIdAndBoardIdQuery request, CancellationToken cancellationToken)
         {

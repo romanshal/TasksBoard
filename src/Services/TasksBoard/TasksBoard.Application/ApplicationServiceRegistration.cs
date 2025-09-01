@@ -28,7 +28,7 @@ namespace TasksBoard.Application
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
-            services.AddScoped<UserProfileHandler>();
+            services.AddScoped<IUserProfileHandler, UserProfileHandler>();
 
             return services;
         }
