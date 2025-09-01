@@ -5,6 +5,7 @@ import { map, Observable } from 'rxjs';
 import { UserInfoModel } from '../../models/user/user-info.model';
 import { ResultResponse } from '../../models/response/response.model';
 import { HttpOptionService } from '../http-option/http-options.service';
+import { SearchModel } from '../../models/user/search-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,20 +18,17 @@ export class SearchMemberService {
     private httpOptionService: HttpOptionService
   ) { }
 
-  seacrhMember(query: string): Observable<UserInfoModel[]> {
+  seacrhMember(query: string): Observable<SearchModel[]> {
     const url = '/api/search';
-    return this.http.get<ResultResponse<UserInfoModel>>(this.SEARCH_URL + url, { params: this.httpOptionService.getOptions('search', query) })
+    return this.http.get<ResultResponse<SearchModel>>(this.SEARCH_URL + url, { params: this.httpOptionService.getOptions('search', query) })
       .pipe(
         map((response: any) => {
-          let list: UserInfoModel[] = [];
+          let list: SearchModel[] = [];
           if (response.result) {
             list = response.result.map((item: any) => {
-              let user = new UserInfoModel(
-                item.id,
+              let user = new SearchModel(
+                item.userId,
                 item.username,
-                item.email,
-                item.firstname,
-                item.surname
               );
 
               return user;

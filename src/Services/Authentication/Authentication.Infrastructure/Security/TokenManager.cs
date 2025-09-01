@@ -1,4 +1,5 @@
 ﻿using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Factories;
 using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Models;
@@ -11,33 +12,37 @@ namespace Authentication.Infrastructure.Security
     public class TokenManager(
         ITokenFactory tokenFactory,
         ILogger<TokenManager> logger,
-        IApplicationUserSessionRepository sessionRepository) : ITokenManager
+        IApplicationUserSessionRepository sessionRepository,
+        IDeviceFactory deviceFactory) : ITokenManager
     {
         private readonly ITokenFactory _tokenFactory = tokenFactory;
         private readonly ILogger<TokenManager> _logger = logger;
         private readonly IApplicationUserSessionRepository _sessionRepository = sessionRepository;
+        private readonly IDeviceFactory _deviceFactory = deviceFactory;
 
-        public async Task<TokenPairModel> IssueAsync(
+        public async Task<(TokenPairModel tokens, string deviceId)> IssueAsync(
             GenerateTokensModel model,
             CancellationToken cancellationToken = default)
         {
-            var (accessToken, refreshToken) = await GenerateTokensAsync(model, cancellationToken);
-
-            return new TokenPairModel
+            var (accessToken, session) = await GenerateTokensAsync(model, cancellationToken: cancellationToken);
+            var tokenPair = new TokenPairModel
             {
                 AccessToken = accessToken.Token,
                 AccessTokenExpiredAt = accessToken.ExpiresAtUtc,
-                RefreshToken = refreshToken.Token,
-                RefreshTokenExpiredAt = refreshToken.ExpiresAtUtc
+                RefreshToken = session.Token,
+                RefreshTokenExpiredAt = session.ExpiresAtUtc
             };
+
+            return (tokenPair, session.DeviceId);
         }
 
-        public async Task<TokenPairModel> RotateAsync(
+        public async Task<(TokenPairModel tokens, string deviceId)> RotateAsync(
             GenerateTokensModel model,
             string oldRefreshToken,
+            string deviceId,
             CancellationToken cancellationToken = default)
         {
-            var token = await _sessionRepository.GetByUserIdAndDeviceId(model.User.Id, model.DeviceId, cancellationToken);
+            var token = await _sessionRepository.GetByUserIdAndDeviceId(model.User.Id, deviceId, cancellationToken);
             if (token is null || !token.IsActive)
             {
                 throw new SecurityTokenException("Invalid token.");
@@ -49,10 +54,10 @@ namespace Authentication.Infrastructure.Security
                 throw new SecurityTokenException("Invalid token.");
             }
 
-            var (newAccessToken, newRefreshToken) = await GenerateTokensAsync(model, cancellationToken);
+            var (newAccessToken, newSession) = await GenerateTokensAsync(model, deviceId, cancellationToken);
 
             token.RevokedAtUtc = DateTime.UtcNow;
-            token.ReplacedBySessionId = newRefreshToken.SessionId;
+            token.ReplacedBySessionId = newSession.SessionId;
 
             _sessionRepository.Update(token);
 
@@ -62,13 +67,15 @@ namespace Authentication.Infrastructure.Security
                 throw new Exception();
             }
 
-            return new TokenPairModel
+            var tokenPair = new TokenPairModel
             {
                 AccessToken = newAccessToken.Token,
                 AccessTokenExpiredAt = newAccessToken.ExpiresAtUtc,
-                RefreshToken = newRefreshToken.Token,
-                RefreshTokenExpiredAt = newRefreshToken.ExpiresAtUtc
+                RefreshToken = newSession.Token,
+                RefreshTokenExpiredAt = newSession.ExpiresAtUtc
             };
+
+            return (tokenPair, newSession.DeviceId);
         }
 
         public async Task RevokeAsync(
@@ -88,8 +95,9 @@ namespace Authentication.Infrastructure.Security
             await _sessionRepository.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<(TokenModel accessToken, SessionModel refreshToken)> GenerateTokensAsync(
+        private async Task<(TokenModel accessToken, SessionModel session)> GenerateTokensAsync(
             GenerateTokensModel model,
+            string? deviceId = null,
             CancellationToken cancellationToken = default)
         {
             var accessToken = await _tokenFactory.GenerateAccessTokenAsync(model.User);
@@ -97,13 +105,15 @@ namespace Authentication.Infrastructure.Security
 
             var (hash, salt) = TokenHasher.Hash(refreshToken.Token);
 
+            deviceId = deviceId ?? _deviceFactory.GenerateId();
+
             var session = new ApplicationUserSession
             {
                 UserId = model.User.Id,
                 RefreshTokenHash = hash,
                 RefreshTokenSalt = salt,
                 IpAddress = model.IpAddress,
-                DeviceId = model.DeviceId,
+                DeviceId = deviceId!,
                 UserAgent = model.UserAgent,
                 CreatedAtUtc = DateTime.UtcNow,
                 ExpiresAtUtc = refreshToken.ExpiresAtUtc
@@ -115,6 +125,7 @@ namespace Authentication.Infrastructure.Security
             var sessionModel = new SessionModel
             {
                 SessionId = session.Id,
+                DeviceId = session.DeviceId,
                 Token = refreshToken.Token,
                 ExpiresAtUtc = refreshToken.ExpiresAtUtc
             };

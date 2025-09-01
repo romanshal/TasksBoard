@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Common.Blocks.Constants;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.DTOs.Boards;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Domain.Entities;
 
@@ -23,6 +25,12 @@ namespace TasksBoard.Application.Mappings
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))
                 .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension))
                 .ForMember(dest => dest.IsMember, opt => opt.Ignore());
+
+            CreateMap<Board, BoardFullDto>()
+                .IncludeBase<Board, BoardDto>()
+                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers.OrderByDescending(member => src.OwnerId == member.AccountId)))
+                .ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
+                .ForMember(dest => dest.InviteRequests, opt => opt.MapFrom(src => src.InviteRequests.Where(request => request.Status == (int)BoardInviteRequestStatuses.Pending)));
 
             CreateMap<CreateBoardCommand, Board>()
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>

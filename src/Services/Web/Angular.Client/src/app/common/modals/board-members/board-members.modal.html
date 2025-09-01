@@ -9,13 +9,14 @@
                 <div class="header">
                     Members
                 </div>
-    
+
                 <div class="members-list">
                     <div class="members-list__member" *ngFor="let member of membersForView;">
                         <div class="members-list__member-avatar">
-                            <img [src]="getBoardMemberAvatar(member.AccountId) | async" (click)="openMemberProfile(member.AccountId)">
+                            <img [src]="getBoardMemberAvatar(member.AccountId) | async"
+                                (click)="openMemberProfile(member.AccountId)">
                         </div>
-    
+
                         <div class="members-list__member-info">
                             <div class="member-info__nickname">
                                 <span (click)="openMemberProfile(member.AccountId)">{{member.Nickname}}</span>
@@ -23,45 +24,49 @@
                                     <i class="fa-solid fa-crown fa-lg"></i>
                                     <div class="tooltip">Owner</div>
                                 </div>
-    
+
                             </div>
-    
+
                             <div class="member-info__permissions">
-                                <div class="member-info__permissions-item" *ngFor="let permission of member.Permissions;">
+                                <div class="member-info__permissions-item"
+                                    *ngFor="let permission of member.Permissions;">
                                     <span>{{permission.BoardPermissionName}}</span>
                                     <div class="tooltip">{{permission.BoardPermissionDescription}}</div>
                                 </div>
                             </div>
                         </div>
-    
-                        <div class="members-list__member-actions" *ngIf="member.AccountId !== userId && canManageMember">
+
+                        <div class="members-list__member-actions"
+                            *ngIf="member.AccountId !== userId && canManageMember">
                             <i class="fa-solid fa-ellipsis-vertical fa-xl" (click)="openMemberPermission(member)"></i>
                         </div>
                     </div>
                 </div>
             </div>
-    
+
             <div class="modal-wrapper__requests" *ngIf="accessRequests.length > 0">
                 <div class="header">
                     Access requests
                 </div>
-    
+
                 <div class="request-list">
                     <div class="request-list__request" *ngFor="let request of accessRequests">
                         <div class="reqest-list__request-avatar">
-                            <img [src]="getBoardMemberAvatar(request.AccountId) | async" (click)="openMemberProfile(request.AccountId)">
+                            <img [src]="getBoardMemberAvatar(request.AccountId) | async"
+                                (click)="openMemberProfile(request.AccountId)">
                         </div>
-    
+
                         <div class="requests-list__request-description">
-                            <span class="account-name" (click)="openMemberProfile(request.AccountId)">{{request.AccountName}}</span>
+                            <span class="account-name"
+                                (click)="openMemberProfile(request.AccountId)">{{request.AccountName}}</span>
                             <span>({{request.AccountEmail}})</span>
                         </div>
-    
+
                         <div class="requests-list__request-actions">
                             <button class="button-accept" (click)="resolveAccessRequest(request, true)">
                                 <i class="fa-solid fa-check"></i>
                             </button>
-    
+
                             <button class="button-reject" (click)="resolveAccessRequest(request, false)">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
@@ -69,21 +74,29 @@
                     </div>
                 </div>
             </div>
-    
+
             <div class="modal-wrapper__requests" *ngIf="inviteRequests.length > 0">
                 <div class="header">
                     Invite requests
                 </div>
-    
+
                 <div class="request-list">
                     <div class="request-list__request" *ngFor="let request of inviteRequests">
                         <div class="reqest-list__request-avatar">
-                            <img [src]="getBoardMemberAvatar(request.ToAccountId) | async" (click)="openMemberProfile(request.ToAccountId)">
+                            <img [src]="getBoardMemberAvatar(request.ToAccountId) | async"
+                                (click)="openMemberProfile(request.ToAccountId)">
                         </div>
-    
+
                         <div class="requests-list__request-description">
-                            <span class="account-name" (click)="openMemberProfile(request.ToAccountId)">{{request.ToAccountName}}</span>
+                            <span class="account-name"
+                                (click)="openMemberProfile(request.ToAccountId)">{{request.ToAccountName}}</span>
                             <span>({{request.ToAccountEmail}})</span>
+                        </div>
+
+                        <div class="requests-list__request-actions">
+                            <button class="button-reject" (click)="cancelInviteRequest(request)">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -7,7 +7,6 @@ import { TokenResponseModel } from '../../models/auth/auth.token.model';
 import { SessionStorageService } from '../session-storage/session-storage.service';
 import { SignupRequestModel } from '../../models/auth/auth.signup.model';
 import { Response } from '../../models/response/response.model';
-import { v4 as uuidv4 } from 'uuid';
 import { AuthSessionService } from '../auth-session/auth-session.service';
 import { AuthEventService } from '../auth-event/auth-event.service';
 
@@ -28,22 +27,14 @@ export class AuthService {
     });
   }
 
-  private generateDeviceId() {
-    var deviceId = uuidv4();
-    this.sessionStorageService.setDeviceId(deviceId);
-
-    return deviceId;
-  }
-
   signin(credentials: SigninRequestModel): Observable<TokenResponseModel> {
     const url = '/api/authentication/login';
-
-    credentials.DeviceId = this.generateDeviceId();
 
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials, { withCredentials: true })
       .pipe(
         map((response: any) => {
           this.authSessionService.setAccessToken(response.accessToken);
+          this.authSessionService.setDeviceId(response.deviceId);
 
           return new TokenResponseModel(response.userId);
         }),
@@ -58,12 +49,10 @@ export class AuthService {
 
   externalSignin(provider: string, returnUrl: string) {
     const url = '/api/authenticationexternal/login';
-    const deviceId = this.generateDeviceId();
 
     var redirectUrl = `${window.location.origin}/external-callback?returnUrl=${returnUrl}`;
     const params = new HttpParams()
       .append('provider', provider)
-      .append('deviceid', deviceId)
       .append('redirecturl', redirectUrl);
 
     const fullUrl = `${this.baseUrl}${url}?${params.toString()}`;
@@ -71,19 +60,19 @@ export class AuthService {
     window.location.href = fullUrl;
   }
 
-  externalSigninCallback(accessToken: string) {
+  externalSigninCallback(accessToken: string, deviceId: string) {
     this.authSessionService.setAccessToken(accessToken);
+    this.authSessionService.setDeviceId(deviceId);
   }
 
   signup(credentials: SignupRequestModel): Observable<TokenResponseModel> {
     const url = '/api/authentication/register';
 
-    credentials.DeviceId = this.generateDeviceId();
-
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials)
       .pipe(
         map((response: any) => {
           this.authSessionService.setAccessToken(response.accessToken);
+          this.authSessionService.setDeviceId(response.deviceId);
 
           return new TokenResponseModel(response.userId);
         }),

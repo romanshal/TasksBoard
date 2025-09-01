@@ -12,6 +12,7 @@ import { ManageBoardAccessRequestService } from '../../services/manage-board-acc
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user/user.service';
 import { map, Observable, shareReplay } from 'rxjs';
+import { ManageBoardInviteRequestService } from '../../services/manage-board-invite-request/manage-board-invite-request.service';
 
 @Component({
   selector: 'app-board-members',
@@ -35,6 +36,7 @@ export class BoardMembersModal {
     private boardMemberAuthService: BoardMemberAuthService,
     private boardMemberService: BoardMemberService,
     private accessRequestsService: ManageBoardAccessRequestService,
+    private inviteRequestsService: ManageBoardInviteRequestService,
     private router: Router,
     private userService: UserService,
     @Inject(MAT_DIALOG_DATA) private data:
@@ -121,13 +123,27 @@ export class BoardMembersModal {
   }
 
   getAccessRequests(decision: boolean) {
-    this.accessRequestsService.getBoardAccessRequestByBoardId(this.boardId).subscribe(result => {
-      if (result) {
-        this.accessRequests = result;
+    this.accessRequestsService.getBoardAccessRequestByBoardId(this.boardId).subscribe({
+      next: (result) => {
+        if (result) {
+          this.accessRequests = result;
 
-        if (decision) {
-          this.getBoardMembers();
+          if (decision) {
+            this.getBoardMembers();
+          }
         }
+      }, error: (err) => {
+
+      }
+    });
+  }
+
+  getInviteRequests(){
+    this.inviteRequestsService.getBoardInviteRequestByBoardId(this.boardId).subscribe({
+      next: (result) => {
+        this.inviteRequests = result;
+      },error: (err) => {
+
       }
     });
   }
@@ -143,6 +159,20 @@ export class BoardMembersModal {
         this.getAccessRequests(decision);
       },
       error: (error) => {
+
+      }
+    });
+  }
+
+  cancelInviteRequest(request: BoardInviteRequestModel) {
+    let cancel = {
+      requestId: request.Id
+    };
+
+    this.inviteRequestsService.cancelInviteRequest(this.boardId, cancel).subscribe({
+      next: (result) => {
+        this.getInviteRequests();
+      }, error: (err) => {
 
       }
     });

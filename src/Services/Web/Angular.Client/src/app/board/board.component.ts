@@ -107,17 +107,14 @@ export class BoardComponent implements OnInit, OnDestroy {
       tap(board => this.board = board),
       switchMap(board =>
         forkJoin({
-          members: this.boardMemberService.getBoardMembersByBoardId(board.Id).pipe(defaultIfEmpty([])),
-          accessRequests: this.boardAccessRequestService.getBoardAccessRequestByBoardId(board.Id).pipe(defaultIfEmpty([])),
-          inviteRequests: this.boardInviteReqquestService.getBoardInviteRequestByBoardId(board.Id).pipe(defaultIfEmpty([])),
           notices: this.boardNoticeService.getBoardNoticesByBoardId(board.Id, this.pageIndex, this.pageSize)
         })
       ),
-      tap(({ members, accessRequests, inviteRequests, notices }) => {
-        this.accessRequests = accessRequests;
-        this.inviteRequests = inviteRequests;
+      tap(({ notices }) => {
+        this.accessRequests = this.board.AccessRequests!;
+        this.inviteRequests = this.board.InviteRequests!;
         this.handleNotices(notices);
-        this.handleMembers(members);
+        this.handleMembers(this.board.Members);
       }),
       finalize(() => {
         if (this.route.snapshot.queryParamMap.has('boardnotice')) {
@@ -127,11 +124,13 @@ export class BoardComponent implements OnInit, OnDestroy {
         if (this.route.snapshot.queryParamMap.has('boardmembers')) {
           this.openMembersModal();
         }
-        
-        this.spinner.hide();
-        this.isLoading = true;
+
       })
     ).subscribe({
+      next: () => {
+        this.spinner.hide();
+        this.isLoading = true;
+      },
       error: err => {
         console.error('Ошибка при загрузке данных:', err);
       }

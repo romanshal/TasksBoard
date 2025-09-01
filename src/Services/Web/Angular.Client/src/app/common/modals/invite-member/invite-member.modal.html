@@ -24,7 +24,7 @@
             <ng-container *ngIf="searchResult.length; else noResults">
               <div class="dropdown-item item-result" *ngFor="let item of searchResult" (click)="selectItem(item)">
                 <div class="dropdown-item__image">
-                  <img [src]="getBoardMemberAvatar(item.Id) | async">
+                  <img [src]="getBoardMemberAvatar(item.UserId) | async">
                 </div>
 
                 <div class="dropdown-item__name">
@@ -44,12 +44,11 @@
       <div class="invite-user" *ngIf="selectedUser">
         <div class="invite-user__wrapper">
           <div class="invite-user__wrapper-image">
-            <img [src]="getBoardMemberAvatar(selectedUser.Id) | async">
+            <img [src]="getBoardMemberAvatar(selectedUser.UserId) | async">
           </div>
 
           <div class="invite-user__wrapper-description">
             <span>{{selectedUser.Username}}</span>
-            <span>({{selectedUser.Email}})</span>
           </div>
 
           <div class="invite-user__wrapper-actions">

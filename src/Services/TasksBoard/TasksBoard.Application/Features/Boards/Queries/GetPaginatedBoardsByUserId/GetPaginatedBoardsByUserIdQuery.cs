@@ -1,4 +1,4 @@
-﻿using TasksBoard.Application.DTOs;
+﻿using TasksBoard.Application.DTOs.Boards;
 using TasksBoard.Application.Models;
 
 namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUserId

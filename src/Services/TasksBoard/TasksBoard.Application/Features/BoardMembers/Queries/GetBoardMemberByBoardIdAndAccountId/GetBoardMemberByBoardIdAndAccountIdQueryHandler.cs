@@ -47,7 +47,7 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
             await _profileHandler.Handle(
                 boardMemberDto,
                 x => x.AccountId,
-                (x, username) => x.Nickname = username,
+                (x, username, _) => x.Nickname = username,
                 cancellationToken);
 
             return Result.Success(boardMemberDto);

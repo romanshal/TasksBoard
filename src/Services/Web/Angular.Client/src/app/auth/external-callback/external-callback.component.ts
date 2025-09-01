@@ -25,9 +25,10 @@ export class ExternalCallbackComponent implements OnInit {
     const accessToken = this.route.snapshot.queryParamMap.get('accessToken');
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
     const userId = this.route.snapshot.queryParamMap.get('userId')!;
+    const deviceId = this.route.snapshot.queryParamMap.get('deviceId')!;
 
     if (accessToken) {
-      this.authService.externalSigninCallback(accessToken);
+      this.authService.externalSigninCallback(accessToken, deviceId);
       this.userService.getUserInfo(userId).subscribe({
         next: (user) => {
           this.authSessionService.setCurrentUser(user);

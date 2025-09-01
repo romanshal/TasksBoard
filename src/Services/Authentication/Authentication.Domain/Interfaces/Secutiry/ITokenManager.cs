@@ -5,13 +5,14 @@ namespace Authentication.Domain.Interfaces.Secutiry
 {
     public interface ITokenManager
     {
-        Task<TokenPairModel> IssueAsync(
+        Task<(TokenPairModel tokens, string deviceId)> IssueAsync(
             GenerateTokensModel model,
             CancellationToken cancellationToken = default);
 
-        Task<TokenPairModel> RotateAsync(
+        Task<(TokenPairModel tokens, string deviceId)> RotateAsync(
             GenerateTokensModel model,
             string oldRefreshToken,
+            string deviceId,
             CancellationToken cancellationToken = default);
 
         Task RevokeAsync(

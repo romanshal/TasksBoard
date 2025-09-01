@@ -31,17 +31,13 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
                 var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, token);
                 if (inviteRequest is null)
                 {
-                    _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
-                    return Result.Failure<Guid>(BoardAccessErrors.NotFound);
-
-                    //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
+                    _logger.LogWarning("Board invite request with id '{requestId}' was not found.", request.RequestId);
+                    return Result.Failure<Guid>(BoardInviteErrors.NotFound);
                 }
 
                 inviteRequest.Status = request.Decision ? (int)BoardInviteRequestStatuses.Accepted : (int)BoardInviteRequestStatuses.Rejected;
@@ -60,8 +56,6 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                     {
                         _logger.LogError("Can't add new board member.");
                         return Result.Failure<Guid>(BoardMemberErrors.CantCreate);
-
-                        //throw new ArgumentException(nameof(inviteRequest));
                     }
 
                     await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent

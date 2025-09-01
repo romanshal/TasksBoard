@@ -25,10 +25,9 @@ namespace Authentication.API.Controllers
         public async Task<IActionResult> ExternalLoginAsync(
             [FromServices] LinkGenerator linkGenerator, 
             [FromQuery] string provider,
-            [FromQuery] string deviceId,
             [FromQuery] string? redirectUrl = "/")
         {
-            var retrunUrl = linkGenerator.GetPathByAction(HttpContext, "ExternalLoginCallback") + $"?returnUrl={redirectUrl}&deviceId={deviceId}";
+            var retrunUrl = linkGenerator.GetPathByAction(HttpContext, "ExternalLoginCallback") + $"?returnUrl={redirectUrl}";
 
             var result = await _mediator.Send(new ExternalLoginCommand 
             { 
@@ -41,7 +40,6 @@ namespace Authentication.API.Controllers
 
         [HttpGet("login-callback")]
         public async Task<IActionResult> ExternalLoginCallback(
-            [FromQuery] string deviceId, 
             [FromQuery] string returnUrl, 
             [FromQuery] string? remoteError = null)
         {
@@ -57,8 +55,7 @@ namespace Authentication.API.Controllers
             var result = await _mediator.Send(new ExternalLoginCallbackCommand 
             {
                 UserIp = userIp,
-                UserAgent = userAgent,
-                DeviceId = deviceId
+                UserAgent = userAgent
             });
 
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -76,7 +73,8 @@ namespace Authentication.API.Controllers
             {
                 new("accessToken", result.Value.AccessToken),
                 new("accessTokenExpiredAt", result.Value.AccessTokenExpiredAt.ToString()),
-                new("userId", result.Value.UserId.ToString())
+                new("userId", result.Value.UserId.ToString()),
+                new("deviceId", result.Value.DeviceId)
             };
 
             var url = QueryHelpers.AddQueryString(returnUrl, returnParams);

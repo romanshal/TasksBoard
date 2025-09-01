@@ -38,7 +38,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
             await _profileHandler.Handle(
                 boardNoticesDto,
                 x => x.AuthorId,
-                (x, username) => x.AuthorName = username,
+                (x, username, _) => x.AuthorName = username,
                 cancellationToken);
 
             return Result.Success(boardNoticesDto.ToPaginatedList(request.PageIndex, request.PageSize, count));

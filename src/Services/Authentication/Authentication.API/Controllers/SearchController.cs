@@ -1,4 +1,6 @@
-﻿using Authentication.Application.Features.Search.Queries.SearchUsersByQuery;
+﻿using Authentication.API.Models.Responses;
+using Authentication.Application.Features.Search.Queries.SearchUsersByQuery;
+using AutoMapper;
 using Common.Blocks.Models.ApiResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,9 +11,12 @@ namespace Authentication.API.Controllers
     [ApiController]
     [Authorize]
     [Route("api/search")]
-    public class SearchController(IMediator mediator) : ControllerBase
+    public class SearchController(
+        IMediator mediator,
+        IMapper mapper) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
+        private readonly IMapper _mapper = mapper;
 
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,7 +29,9 @@ namespace Authentication.API.Controllers
         {
             var result = await _mediator.Send(new SearchUsersByQueryQuery { Query = search });
 
-            var response = ApiResponse.Success(result);
+            var responseModel = _mapper.Map<IEnumerable<SearchResponse>>(result);
+
+            var response = ApiResponse.Success(responseModel);
 
             return Ok(response);
         }

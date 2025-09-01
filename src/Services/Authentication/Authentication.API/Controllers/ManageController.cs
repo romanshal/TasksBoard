@@ -1,4 +1,5 @@
-﻿using Authentication.API.Models.Requests.Manage;
+﻿using Authentication.API.Attributes;
+using Authentication.API.Models.Requests.Manage;
 using Authentication.Application.Features.Manage.Commands.ChangeUserPassword;
 using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
 using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
@@ -50,6 +51,7 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost("info/{userId:guid}")]
+        [CurrentUserOnly]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -71,6 +73,7 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost("password/{userId:guid}")]
+        [CurrentUserOnly]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -90,6 +93,7 @@ namespace Authentication.API.Controllers
         }
 
         [HttpPost("image/{userId:guid}")]
+        [CurrentUserOnly]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

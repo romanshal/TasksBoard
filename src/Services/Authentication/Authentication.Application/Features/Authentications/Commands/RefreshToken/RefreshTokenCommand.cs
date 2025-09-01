@@ -8,5 +8,6 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
     {
         public required Guid UserId { get; set; }
         public required string RefreshToken { get; set; }
+        public required string DeviceId { get; set; }
     }
 }

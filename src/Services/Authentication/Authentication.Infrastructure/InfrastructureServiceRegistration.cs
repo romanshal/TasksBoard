@@ -1,7 +1,9 @@
-﻿using Authentication.Domain.Interfaces.Repositories;
+﻿using Authentication.Domain.Interfaces.Factories;
+using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Infrastructure.Data.Contexts;
+using Authentication.Infrastructure.Factories;
 using Authentication.Infrastructure.Repositories;
 using Authentication.Infrastructure.Security;
 using Authentication.Infrastructure.UnitOfWorks;
@@ -30,6 +32,8 @@ namespace Authentication.Infrastructure
             services.AddScoped<ITokenManager, TokenManager>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IUserClaimsService, UserClaimsService>();
+
+            services.AddSingleton<IDeviceFactory, DeviceFactory>();
 
             return services;
         }

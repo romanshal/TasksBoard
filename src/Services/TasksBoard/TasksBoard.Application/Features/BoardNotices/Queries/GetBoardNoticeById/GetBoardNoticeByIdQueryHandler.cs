@@ -37,7 +37,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
             await _profileHandler.Handle(
                 boardNoticeDto,
                 x => x.AuthorId,
-                (x, username) => x.AuthorName = username,
+                (x, username, _) => x.AuthorName = username,
                 cancellationToken);
 
             return Result.Success(boardNoticeDto);

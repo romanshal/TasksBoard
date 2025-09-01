@@ -32,8 +32,7 @@ namespace Authentication.API.Controllers
                 Username = request.Username,
                 Password = request.Password,
                 UserIp = userIp,
-                UserAgent = userAgent,
-                DeviceId = request.DeviceId
+                UserAgent = userAgent
             });
 
             this.SetRefreshTokenCookies(result.RefreshToken);
@@ -42,7 +41,8 @@ namespace Authentication.API.Controllers
             {
                 UserId = result.UserId,
                 AccessToken = result.AccessToken,
-                ExpiredAt = result.AccessTokenExpiredAt
+                ExpiredAt = result.AccessTokenExpiredAt,
+                DeviceId = result.DeviceId
             });
         }
 
@@ -69,8 +69,7 @@ namespace Authentication.API.Controllers
                 Email = request.Email,
                 Password = request.Password,
                 UserIp = userIp,
-                UserAgent = userAgent,
-                DeviceId = request.DeviceId
+                UserAgent = userAgent
             });
 
             this.SetRefreshTokenCookies(result.RefreshToken);
@@ -79,7 +78,8 @@ namespace Authentication.API.Controllers
             {
                 UserId = result.UserId,
                 AccessToken = result.AccessToken,
-                ExpiredAt = result.AccessTokenExpiredAt
+                ExpiredAt = result.AccessTokenExpiredAt,
+                DeviceId = result.DeviceId
             });
         }
 
@@ -109,7 +109,8 @@ namespace Authentication.API.Controllers
             {
                 UserId = result.UserId,
                 AccessToken = result.AccessToken,
-                ExpiredAt = result.AccessTokenExpiredAt
+                ExpiredAt = result.AccessTokenExpiredAt,
+                DeviceId = result.DeviceId
             });
         }
 

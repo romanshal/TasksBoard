@@ -44,7 +44,6 @@ export class BoardNoticeModal implements OnInit {
   form!: FormGroup;
   authorId: string;
   authorName: string;
-  author?: UserInfoModel;
   private closeStatus = 'close';
   private successStatus = 'success';
 
@@ -59,7 +58,6 @@ export class BoardNoticeModal implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<BoardNoticeModal>,
     private noticeService: BoardNoticeService,
-    private userService: UserService,
     private authSessionService: AuthSessionService,
     private boardMemberAuthService: BoardMemberAuthService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string, note?: BoardNoticeModel }
@@ -75,10 +73,6 @@ export class BoardNoticeModal implements OnInit {
       this.rotation = this.data.note?.Rotation;
       this.authorId = this.data.note?.AuthorId!;
       this.authorName = this.data.note?.AuthorName!;
-
-      this.userService.getUserInfo(this.authorId).subscribe((result) => {
-        this.author = result;
-      })
     } else {
       this.backgroundColor = this.getRandomColor();
       this.rotation = this.getRandomRotation();

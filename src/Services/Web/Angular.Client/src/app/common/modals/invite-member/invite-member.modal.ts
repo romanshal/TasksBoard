@@ -12,6 +12,7 @@ import { SessionStorageService } from '../../services/session-storage/session-st
 import { BoardInviteRequestModel } from '../../models/board-invite-request/board-invite-request.model';
 import { BoardAccessRequestModel } from '../../models/board-access-request/board-access-request.model';
 import { UserService } from '../../services/user/user.service';
+import { SearchModel } from '../../models/user/search-info.model';
 
 @Component({
   selector: 'app-invite-member',
@@ -25,9 +26,9 @@ export class InviteMemberModal {
   currentUser!: UserInfoModel;
 
   searchControl = new FormControl('');
-  searchResult: UserInfoModel[] = [];
+  searchResult: SearchModel[] = [];
 
-  selectedUser?: UserInfoModel | null;
+  selectedUser?: SearchModel | null;
 
   isLoading = false;
   showDropdown = false;
@@ -97,7 +98,7 @@ export class InviteMemberModal {
     })
   }
 
-  selectItem(option: UserInfoModel) {
+  selectItem(option: SearchModel) {
     // this.searchControl.setValue(option.Username, { emitEvent: false });
     this.searchControl.reset();
     this.selectedUser = option;
@@ -115,10 +116,10 @@ export class InviteMemberModal {
     this.selectedUser = null;
   }
 
-  private getDifference(searchResult: UserInfoModel[]) {
+  private getDifference(searchResult: SearchModel[]) {
     // Фильтруем первый массив, исключая объекты, id которых присутствует во втором массиве
     return searchResult
-      .filter(result => !this.memberIds.has(result.Id) && !this.inviteAccountIds.has(result.Id) && !this.accessRequestIds.has(result.Id));
+      .filter(result => !this.memberIds.has(result.UserId) && !this.inviteAccountIds.has(result.UserId) && !this.accessRequestIds.has(result.UserId));
   }
 
   copyLink() {
@@ -137,10 +138,7 @@ export class InviteMemberModal {
 
     let invite = {
       fromAccountId: this.currentUser.Id,
-      fromAccountNAme: this.currentUser.Username,
-      toAccountId: this.selectedUser.Id,
-      toAccountName: this.selectedUser.Username,
-      toAccountEmail: this.selectedUser.Email
+      toAccountId: this.selectedUser.UserId,
     }
 
     this.inviteRequestService.createInviteRequest(this.boardId, invite).subscribe(result => {

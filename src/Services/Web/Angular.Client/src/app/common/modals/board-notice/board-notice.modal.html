@@ -12,7 +12,7 @@
 
     <div *ngIf="note !== undefined" class="notice-info">
       <div class="notice-info__author">
-        <label>Author: {{ author?.Username }}</label>
+        <label>Author: {{ authorName }}</label>
       </div>
       <div class="notice-info__time">
         <label>Created: {{note!.CreatedAt | date: "MMM dd, yyyy 'at' HH:mm" }}</label>

@@ -4,6 +4,7 @@ using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.DTOs.Boards;
 using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 
@@ -26,20 +27,11 @@ namespace TasksBoard.Application.Features.BoardInvites.Queries.GetBoardInviteReq
 
             var inviteRequestsDto = _mapper.Map<IEnumerable<BoardInviteRequestDto>>(inviteRequests);
 
-            await _profileHandler.Handle(
-                inviteRequestsDto,
-                x => x.ToAccountId,
-                (x, username, email) => { 
-                    x.ToAccountName = username;
-                    x.ToAccountEmail = email;
-                },
-                cancellationToken);
-
-            await _profileHandler.Handle(
-                inviteRequestsDto,
-                x => x.FromAccountId,
-                (x, username) => x.FromAccountName = username,
-                cancellationToken);
+            await _profileHandler.HandleMany(
+            [
+                MappingFactory.Create(inviteRequestsDto, x => x.ToAccountId, (x, u, e) => { x.ToAccountName = u; x.ToAccountEmail = e!; }),
+                MappingFactory.Create(inviteRequestsDto, x => x.FromAccountId, (x, u, _) => { x.FromAccountName = u; }),
+            ], cancellationToken);
 
             return Result.Success(inviteRequestsDto);
         }

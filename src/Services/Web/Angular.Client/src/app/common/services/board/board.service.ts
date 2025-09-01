@@ -7,6 +7,10 @@ import { HttpOptionService } from '../http-option/http-options.service';
 import { ResultResponse } from '../../models/response/response.model';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
 import { BoardForViewModel } from '../../models/board/board-for-view.model';
+import { BoardAccessRequestModel } from '../../models/board-access-request/board-access-request.model';
+import { BoardInviteRequestModel } from '../../models/board-invite-request/board-invite-request.model';
+import { BoardMemberModel } from '../../models/board-member/board-member.model';
+import { BoardMemberPermission } from '../../models/board-member-permission/board-member-permission.model';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +76,54 @@ export class BoardService {
           board.Public = response.result.public;
           board.Image = response.result.image;
           board.ImageExtension = response.result.imageExtension;
+          board.AccessRequests = response.result.accessRequests.map((item: any) => {
+            let request = new BoardAccessRequestModel(
+              item.id,
+              item.boardId,
+              item.boardName,
+              item.accountId,
+              item.accountName,
+              item.accountEmail,
+              item.createdAt
+            );
+
+            return request;
+          });
+          board.InviteRequests = response.result.inviteRequests.map((item: any) => {
+            let request = new BoardInviteRequestModel(
+              item.id,
+              item.boardId,
+              item.boardName,
+              item.fromAccountId,
+              item.fromAccountName,
+              item.toAccountId,
+              item.toAccountName,
+              item.toAccountEmail,
+              item.createdAt
+            );
+
+            return request;
+          });
+          board.Members = response.result.members.map((item: any) => {
+            let member = new BoardMemberModel();
+            member.Id = item.id;
+            member.AccountId = item.accountId;
+            member.BoardId = item.boardId;
+            member.IsOwner = item.isOwner;
+            member.Nickname = item.nickname;
+            member.CreatedAt = item.createdAt;
+            member.Permissions = item.permissions.map((perm: any) => {
+              let permission = new BoardMemberPermission();
+              permission.BoardMemberId = perm.boardMemberId;
+              permission.BoardPermissionId = perm.boardPermissionId;
+              permission.BoardPermissionName = perm.boardPermissionName;
+              permission.BoardPermissionDescription = perm.boardPermissionDescription;
+
+              return permission;
+            })
+
+            return member;
+          });
 
           return board;
         }),
@@ -83,43 +135,43 @@ export class BoardService {
       );
   }
 
-  getPublicBoards(pageIndex: number, pageSize: number) : Observable<PaginatedList<BoardForViewModel>> {
+  getPublicBoards(pageIndex: number, pageSize: number): Observable<PaginatedList<BoardForViewModel>> {
     const url = '/api/boards/public';
-    return this.http.get(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize)})
-    .pipe(
-      map((response: any) => {
-        const paginatedList = new PaginatedList<BoardForViewModel>();
-        if (response.result?.items) {
-          paginatedList.Items = response.result.items.map((item: any) => {
-            let board = new BoardForViewModel(
-              item.id,
-              item.name,
-              item.description,
-              item.tags,
-              item.memberCount,
-              item.isMember,
-              item.public,
-              item.image,
-              item.imageExtension
-            );
+    return this.http.get(this.BOARD_URL + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize) })
+      .pipe(
+        map((response: any) => {
+          const paginatedList = new PaginatedList<BoardForViewModel>();
+          if (response.result?.items) {
+            paginatedList.Items = response.result.items.map((item: any) => {
+              let board = new BoardForViewModel(
+                item.id,
+                item.name,
+                item.description,
+                item.tags,
+                item.memberCount,
+                item.isMember,
+                item.public,
+                item.image,
+                item.imageExtension
+              );
 
-            return board;
-          });
-        }
+              return board;
+            });
+          }
 
-        paginatedList.TotalCount = response.result.totalCount;
-        paginatedList.PageIndex = response.result.pageIndex;
-        paginatedList.PageSize = response.result.pageSize;
-        paginatedList.PagesCount = response.result.pagesCount
+          paginatedList.TotalCount = response.result.totalCount;
+          paginatedList.PageIndex = response.result.pageIndex;
+          paginatedList.PageSize = response.result.pageSize;
+          paginatedList.PagesCount = response.result.pagesCount
 
-        return paginatedList;
-      }),
-      catchError((error) => {
-        // Handle the error here
-        console.error("Get board by user id failed", error);
-        return throwError(() => new Error("Get board by user id, please try again later."));
-      })
-    );
+          return paginatedList;
+        }),
+        catchError((error) => {
+          // Handle the error here
+          console.error("Get board by user id failed", error);
+          return throwError(() => new Error("Get board by user id, please try again later."));
+        })
+      );
   }
 
   createBoard(form: any): Observable<string> {

@@ -111,10 +111,10 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                 }
             }
 
-            var generateModel = new GenerateTokensModel(user, request.DeviceId, request.UserAgent, request.UserIp);
+            var generateModel = new GenerateTokensModel(user, request.UserAgent, request.UserIp);
 
-            var token = await _tokenService.IssueAsync(generateModel, cancellationToken);
-            if (token is null || string.IsNullOrEmpty(token?.AccessToken) || string.IsNullOrEmpty(token?.RefreshToken))
+            var (tokens, devoceId) = await _tokenService.IssueAsync(generateModel, cancellationToken);
+            if (tokens is null || string.IsNullOrEmpty(tokens?.AccessToken) || string.IsNullOrEmpty(tokens?.RefreshToken))
             {
                 _logger.LogCritical("Can't create access or refresh tokens for user with id '{id}'.", user.Id);
                 return Result.Failure<AuthenticationDto>(ExternalAuthenticationErrors.CantCreate);
@@ -124,11 +124,12 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
 
             return new AuthenticationDto
             {
-                AccessToken = token.AccessToken,
-                AccessTokenExpiredAt = token.AccessTokenExpiredAt,
-                RefreshToken = token.RefreshToken,
-                RefreshTokenExpiredAt = token.RefreshTokenExpiredAt,
-                UserId = user.Id
+                AccessToken = tokens.AccessToken,
+                AccessTokenExpiredAt = tokens.AccessTokenExpiredAt,
+                RefreshToken = tokens.RefreshToken,
+                RefreshTokenExpiredAt = tokens.RefreshTokenExpiredAt,
+                UserId = user.Id,
+                DeviceId = devoceId
             };
         }
     }

@@ -4,6 +4,7 @@ namespace Authentication.Application.Dtos
 {
     public record AuthenticationDto : TokenPairModel
     {
-        public Guid UserId { get; set; }
+        public required Guid UserId { get; set; }
+        public required string DeviceId { get; set; }
     }
 }

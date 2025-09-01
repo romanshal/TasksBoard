@@ -47,4 +47,9 @@ export class ManageBoardInviteRequestService {
         })
       );
   }
+
+  cancelInviteRequest(boardId: string, invite: any){
+    const url = '/api/manageinviterequests/board/' + boardId;
+    return this.http.put(this.BOARD_INVITE_URL + url, invite);
+  }
 }

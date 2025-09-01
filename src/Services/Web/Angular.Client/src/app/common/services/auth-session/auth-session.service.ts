@@ -62,6 +62,14 @@ export class AuthSessionService {
     return this.currentUserSubject$.value ?? this.sessionStorageService.getUserInfo();
   }
 
+  setDeviceId(deviceId: string){
+    this.sessionStorageService.setDeviceId(deviceId);
+  }
+
+  getDeviceId(): string | null{
+    return this.sessionStorageService.getDeviceId();
+  }
+
   logout() {
     this.sessionStorageService.logout();
     this.accessTokenSubject$.next(null);

@@ -49,7 +49,7 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoard
             await _profileHandler.Handle(
                 boardMembersDto,
                 x => x.AccountId,
-                (x, username) => x.Nickname = username,
+                (x, username, _) => x.Nickname = username,
                 cancellationToken);
 
             return Result.Success(boardMembersDto.ToPaginatedList(request.PageIndex, request.PageSize, count));
