@@ -35,14 +35,14 @@ export class BoardMemberPermissionsModal implements OnInit {
     private manageBoardMemberService: ManageBoardMemberService,
     private userService: UserService,
     @Inject(MAT_DIALOG_DATA) private data: { boardId: string, member: BoardMemberModel, permissions: BoardPermission[], userAvatar: Observable<string> }
-  ) { 
+  ) {
     this.boardId = data.boardId;
     this.member = data.member;
     this.userAvatar = data.userAvatar;
     this.permissions = data.permissions;
 
-    this.userService.getUserInfo(this.member.AccountId).subscribe(result => {
-      if(result){
+    this.userService.getUserInfo(this.member.accountId).subscribe(result => {
+      if (result) {
         this.user = result;
       }
     });
@@ -54,8 +54,8 @@ export class BoardMemberPermissionsModal implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      memberId: [this.member.Id, [Validators.required]],
-      permissions: this.fb.array(this.member.Permissions.map(t => this.fb.control(t.BoardPermissionId)))
+      memberId: [this.member.id, [Validators.required]],
+      permissions: this.fb.array(this.member.permissions.map(t => this.fb.control(t.boardPermissionId)))
     });
   }
 
@@ -73,7 +73,7 @@ export class BoardMemberPermissionsModal implements OnInit {
   }
 
   isPermissionsChecked(permissionId: string) {
-    if (this.member.Permissions.findIndex(p => p.BoardPermissionId === permissionId) !== -1) {
+    if (this.member.permissions.findIndex(p => p.boardPermissionId === permissionId) !== -1) {
       return true;
     } else {
       return false;
@@ -82,26 +82,32 @@ export class BoardMemberPermissionsModal implements OnInit {
 
   savePermissions() {
     if (this.form.valid) {
-      this.manageBoardMemberService.updateMemberPermissions(this.boardId, this.form.value).subscribe(result => {
-        if(result){
+      this.manageBoardMemberService.updateMemberPermissions(this.boardId, this.form.value).subscribe({
+        next: () => {
           this.closeModal(this.updatedStatus);
+        },
+        error: () => {
+          
         }
       });
     }
   }
 
-  openDeleteMember(){
+  openDeleteMember() {
     this.dialog.open(DeleteConfirmationModal, {
       data: {
         element: 'member',
-        elementName: this.member.Nickname,
+        elementName: this.member.nickname,
         secondConfirme: false
       }
     }).afterClosed().subscribe(result => {
-      if(result === 'confirmed'){
-        this.manageBoardMemberService.deleteMember(this.boardId, this.member.Id).subscribe(result => {
-          if(result){
+      if (result === 'confirmed') {
+        this.manageBoardMemberService.deleteMember(this.boardId, this.member.id).subscribe({
+          next: () => {
             this.closeModal(this.updatedStatus)
+          },
+          error: err => {
+
           }
         })
       }

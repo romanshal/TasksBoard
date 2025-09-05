@@ -130,8 +130,8 @@ export class ProfileAvatarModal implements OnInit {
     const formData = new FormData();
     formData.append('image', this.selectedFile as File);
 
-    this.userService.updateUserAvatar(this.userId, formData).subscribe(result => {
-      if (result) {
+    this.userService.updateUserAvatar(this.userId, formData).subscribe({
+      next: () => {
         this.closeModal(this.selectedAvatarSrc);
       }
     });

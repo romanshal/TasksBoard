@@ -34,23 +34,20 @@ export class BoardMemberRequestModal {
   }
 
   requestAccess() {
-    if (this.currentUser === null || this.currentUser?.Username === null || this.currentUser?.Email === null || this.currentUser?.Id === null) {
+    if (this.currentUser === null || this.currentUser?.username === null || this.currentUser?.email === null || this.currentUser?.id === null) {
       return;
     }
 
     let request = {
-      accountId: this.currentUser?.Id,
+      accountId: this.currentUser?.id,
     };
 
     this.boardAccessService.requestBoardAccess(this.boardId, request).subscribe({
-      next: result => {
-        if (!result.IsError) {
-          this.success = true;
-        }
+      next: () => {
+        this.success = true;
       },
       error: error => {
         this.errorMessage = error.error.Description;
-        console.log(this.errorMessage);
       }
     });
   }

@@ -41,7 +41,10 @@ namespace Common.Blocks.Extensions
                 ErrorCodes.Forbidden => controller.Forbid(),
                 ErrorCodes.AlreadyExist => controller.BadRequest(ApiResponse.Error(error.Description)),
                 ErrorCodes.NoEntities => controller.NotFound(ApiResponse.Error(error.Description)),
-                ErrorCodes.CantCreate or ErrorCodes.CantUpdate or ErrorCodes.CantDelete or ErrorCodes.CantCancel => controller.Problem(detail: error.Description, statusCode: StatusCodes.Status503ServiceUnavailable),
+                ErrorCodes.CantCreate or 
+                ErrorCodes.CantUpdate or 
+                ErrorCodes.CantDelete or 
+                ErrorCodes.CantCancel => controller.Problem(detail: error.Description, statusCode: StatusCodes.Status503ServiceUnavailable),
                 _ => controller.Problem(detail: error.Description, statusCode: StatusCodes.Status500InternalServerError)
             };
     }

@@ -7,7 +7,7 @@
     </div>
 
     <div class="note-status" *ngIf="note !== undefined && disabledActions">
-      <i *ngIf="note.Completed" class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
+      <i *ngIf="note.completed" class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
     </div>
 
     <div *ngIf="note !== undefined" class="notice-info">
@@ -15,7 +15,7 @@
         <label>Author: {{ authorName }}</label>
       </div>
       <div class="notice-info__time">
-        <label>Created: {{note!.CreatedAt | date: "MMM dd, yyyy 'at' HH:mm" }}</label>
+        <label>Created: {{note!.createdAt | date: "MMM dd, yyyy 'at' HH:mm" }}</label>
       </div>
 
     </div>
@@ -51,22 +51,22 @@
           <i class="fa-solid fa-floppy-disk fa-2xl"></i>
           <div class="tooltip">Save</div>
         </button>
-        <button autofocus="false" *ngIf="disabledActions && !note?.Completed" (click)="showActions()">
+        <button autofocus="false" *ngIf="disabledActions && !note?.completed" (click)="showActions()">
           <i class="fa-solid fa-pen fa-xl"></i>
           <div class="tooltip">Edit</div>
         </button>
 
-        <button *ngIf="note && !note?.Completed" (click)="updateStatus(true)" autofocus="false">
+        <button *ngIf="note && !note?.completed" (click)="updateStatus(true)" autofocus="false">
           <i class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
           <div class="tooltip">Complete</div>
         </button>
 
-        <button *ngIf="note && note?.Completed" (click)="updateStatus(false)" autofocus="false">
+        <button *ngIf="note && note?.completed" (click)="updateStatus(false)" autofocus="false">
           <i class="fa-solid fa-ban fa-flip-both fa-2xl" style="color: #ff0000;"></i>
           <div class="tooltip">Dismiss</div>
         </button>
 
-        <button *ngIf="note && !note?.Completed" (click)="delete()">
+        <button *ngIf="note && !note?.completed" (click)="delete()">
           <i class="fa-solid fa-trash fa-xl"></i>
           <div class="tooltip">Delete</div>
         </button>

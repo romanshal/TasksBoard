@@ -4,11 +4,26 @@ using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using TasksBoard.Application;
 using TasksBoard.Infrastructure;
 using TasksBoard.Infrastructure.Data.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(80, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+        listenOptions.UseHttps("/app/localhost-dev.pfx", "P@ssw0rd!");
+    });
+    options.ListenAnyIP(443, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http2;
+        listenOptions.UseHttps("/app/localhost-dev.pfx", "P@ssw0rd!");
+    });
+});
 
 builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards.API")
@@ -65,8 +80,10 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
-
-//app.UseHttpsRedirection();
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowSpecificOrigin");
 

@@ -7,8 +7,7 @@ namespace Common.gRPC.Services
 {
     public class UserProfileService(
         IUserProfileCacheRepository cache,
-        UserProfiles.UserProfilesClient grpcClient
-        ) : IUserProfileService
+        UserProfiles.UserProfilesClient grpcClient) : IUserProfileService
     {
         public async Task<UserProfile?> ResolveAsync(
             Guid id,

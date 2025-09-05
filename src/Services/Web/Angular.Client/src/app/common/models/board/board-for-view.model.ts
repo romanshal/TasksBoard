@@ -1,13 +1,13 @@
 export class BoardForViewModel {
     constructor(
-        public Id: string,
-        public Name: string,
-        public Description: string,
-        public Tags: string[],
-        public MemberCount: number,
-        public IsMember: boolean,
-        public Public : boolean,
-        public Image: string,
-        public ImageExtension: string
+        public id: string,
+        public name: string,
+        public description: string,
+        public tags: string[],
+        public memberCount: number,
+        public isMember: boolean,
+        public isPublic : boolean,
+        public image: string,
+        public imageExtension: string
     ){}
 }

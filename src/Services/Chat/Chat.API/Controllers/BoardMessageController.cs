@@ -30,14 +30,14 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardMessagesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetBoardMessagesByBoardIdAsync([FromRoute] Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardMessagesByBoardIdQuery
             {
                 BoardId = boardId,
                 PageIndex = pageIndex,
                 PageSize = pageSize
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -49,7 +49,7 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBoardMessageAsync([FromRoute] Guid boardId, [FromBody] CreateBoardMessageRequest request)
+        public async Task<IActionResult> CreateBoardMessageAsync([FromRoute] Guid boardId, [FromBody] CreateBoardMessageRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new CreateBoardMessageCommand
             {
@@ -57,7 +57,7 @@ namespace Chat.API.Controllers
                 MemberId = request.MemberId,
                 AccountId = request.AccountId,
                 Message = request.Message
-            });
+            }, cancellationToken);
 
             await hubContext.Clients.Group(boardId.ToString()).SendAsync("ReceiveMessage", result);
 
@@ -71,16 +71,16 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardMessageAsync([FromRoute] Guid boardId, [FromBody] UpdateBoardMessageRequest request)
+        public async Task<IActionResult> UpdateBoardMessageAsync([FromRoute] Guid boardId, [FromBody] UpdateBoardMessageRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new UpdateBoardMessageCommand
             {
                 BoardId = boardId,
                 BoardMessageId = request.BoardMessageId,
                 Message = request.Message
-            });
+            }, cancellationToken);
 
-            await hubContext.Clients.Group(boardId.ToString()).SendAsync("EditMessage", result);
+            await hubContext.Clients.Group(boardId.ToString()).SendAsync("EditMessage", result, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -92,13 +92,13 @@ namespace Chat.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBoardMessageAsync([FromRoute] Guid boardId, [FromRoute] Guid messageId)
+        public async Task<IActionResult> DeleteBoardMessageAsync([FromRoute] Guid boardId, [FromRoute] Guid messageId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new DeleteBoardMessageCommand
             {
                 BoardId = boardId,
                 BoardMessageId = messageId,
-            });
+            }, cancellationToken);
 
             await hubContext.Clients.Group(boardId.ToString()).SendAsync("DeleteMessage", messageId);
 

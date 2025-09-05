@@ -25,7 +25,8 @@ namespace Authentication.API.Controllers
         public async Task<IActionResult> ExternalLoginAsync(
             [FromServices] LinkGenerator linkGenerator, 
             [FromQuery] string provider,
-            [FromQuery] string? redirectUrl = "/")
+            [FromQuery] string? redirectUrl = "/", 
+            CancellationToken cancellationToken = default)
         {
             var retrunUrl = linkGenerator.GetPathByAction(HttpContext, "ExternalLoginCallback") + $"?returnUrl={redirectUrl}";
 
@@ -33,7 +34,7 @@ namespace Authentication.API.Controllers
             { 
                 Provider = provider, 
                 RedirectUrl = retrunUrl
-            });
+            }, cancellationToken);
 
             return Challenge(result, ["Google"]);
         }
@@ -41,7 +42,8 @@ namespace Authentication.API.Controllers
         [HttpGet("login-callback")]
         public async Task<IActionResult> ExternalLoginCallback(
             [FromQuery] string returnUrl, 
-            [FromQuery] string? remoteError = null)
+            [FromQuery] string? remoteError = null, 
+            CancellationToken cancellationToken = default)
         {
             if (!string.IsNullOrEmpty(remoteError))
             {
@@ -56,7 +58,7 @@ namespace Authentication.API.Controllers
             {
                 UserIp = userIp,
                 UserAgent = userAgent
-            });
+            }, cancellationToken);
 
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 

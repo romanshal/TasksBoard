@@ -1,9 +1,9 @@
 export class NotificationModel {
     constructor(
-        public Id: string,
-        public Type: string,
-        public Payload: Map<string, string>,
-        public Read: boolean,
-        public CreatedAt: Date
+        public id: string,
+        public type: string,
+        public payload: Map<string, string>,
+        public read: boolean,
+        public createdAt: Date
     ){}
 }

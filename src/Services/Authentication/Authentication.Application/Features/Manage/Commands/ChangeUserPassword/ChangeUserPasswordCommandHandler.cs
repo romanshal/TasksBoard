@@ -1,6 +1,8 @@
-﻿using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Constants.ManageErrors;
+using Authentication.Domain.Entities;
 using AutoMapper;
 using Common.Blocks.Exceptions;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -9,39 +11,37 @@ namespace Authentication.Application.Features.Manage.Commands.ChangeUserPassword
 {
     public class ChangeUserPasswordCommandHandler(
         UserManager<ApplicationUser> userManager,
-         IMapper mapper,
-         ILogger<ChangeUserPasswordCommandHandler> logger) : IRequestHandler<ChangeUserPasswordCommand, Guid>
+         ILogger<ChangeUserPasswordCommandHandler> logger) : IRequestHandler<ChangeUserPasswordCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly IMapper _mapper = mapper;
         private readonly ILogger<ChangeUserPasswordCommandHandler> _logger = logger;
 
-        public async Task<Guid> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
                 _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
-                throw new NotFoundException($"User with id '{request.UserId}' not found.");
+                return Result.Failure(ManageErrors.UserNotFound);
             }
 
             var validPassword = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
             if (!validPassword)
             {
                 _logger.LogWarning("Invalid password for user: {userId}.", request.UserId);
-                throw new InvalidPasswordException($"Invalid password for user");
+                return Result.Failure(ManageErrors.InvalidPassword);
             }
 
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
             {
                 _logger.LogCritical("Can't update user password with id: {id}. Errors: {errors}.", user.Id, string.Join("; ", result.Errors));
-                throw new Exception($"Can't update user password with id: {user.Id}. Errors: {string.Join("; ", result.Errors)}.");
+                return Result.Failure(ManageErrors.CantUpdatePassword);
             }
 
-            _logger.LogInformation($"Password for user with id '{user.Id}' was successfully updated.");
+            _logger.LogInformation("Password for user with id '{Id}' was successfully updated.", user.Id);
 
-            return user.Id;
+            return Result.Success();
         }
     }
 }

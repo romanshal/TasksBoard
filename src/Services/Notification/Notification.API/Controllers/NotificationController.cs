@@ -24,14 +24,14 @@ namespace Notification.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPaginatedNotificationsByAccountIdAsync([FromRoute] Guid accountId, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaginatedNotificationsByAccountIdAsync([FromRoute] Guid accountId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetAllPaginatedNotificationsByAccountIdQuery
             {
                 AccountId = accountId,
                 PageIndex = pageIndex,
                 PageSize = pageSize
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -41,14 +41,14 @@ namespace Notification.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNewPaginatedNotificationsByAccountIdAsync([FromRoute] Guid accountId, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetNewPaginatedNotificationsByAccountIdAsync([FromRoute] Guid accountId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetNewPaginatedNotificationsByAccountIdQuery
             {
                 AccountId = accountId,
                 PageIndex = pageIndex,
                 PageSize = pageSize
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -58,12 +58,12 @@ namespace Notification.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNewNotificationsByAccountIdAsync([FromRoute] Guid accountId)
+        public async Task<IActionResult> GetNewNotificationsByAccountIdAsync([FromRoute] Guid accountId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetNewNotificationsByAccountIdQuery
             {
                 AccountId = accountId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -73,13 +73,13 @@ namespace Notification.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SetNotificationsReadAsync([FromRoute] Guid accountId, [FromBody] Guid[] notificationIds)
+        public async Task<IActionResult> SetNotificationsReadAsync([FromRoute] Guid accountId, [FromBody] Guid[] notificationIds, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new SetNotificationsReadCommand
             {
                 AccountId = accountId,
                 NotificationIds = notificationIds
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

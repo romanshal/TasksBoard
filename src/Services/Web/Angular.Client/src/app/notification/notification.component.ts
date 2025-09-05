@@ -40,7 +40,7 @@ export class NotificationComponent {
 
 
     this.authSessionService.currentUser$.subscribe(user => {
-      this.userId = user?.Id!;
+      this.userId = user?.id!;
     })
     
     this.getNotifications();
@@ -58,12 +58,12 @@ export class NotificationComponent {
   private getAllPaginatedNotifications() {
     this.notificationService.getAllPaginatedByAccountId(this.userId, this.pageIndex, this.pageSize).subscribe(result => {
       if (result) {
-        this.notifications = result.Items;
+        this.notifications = result.items;
 
-        this.pageIndex = result.PageIndex;
-        this.pageSize = result.PageSize;
-        this.totalPages = result.PagesCount;
-        this.totalCount = result.TotalCount;
+        this.pageIndex = result.pageIndex;
+        this.pageSize = result.pageSize;
+        this.totalPages = result.pagesCount;
+        this.totalCount = result.totalCount;
 
         this.spinner.hide();
         this.isLoading = true;
@@ -74,12 +74,12 @@ export class NotificationComponent {
   private getNewPaginatedNotifications() {
     this.notificationService.getNewPaginatedByAccountId(this.userId, this.pageIndex, this.pageSize).subscribe(result => {
       if (result) {
-        this.notifications = result.Items;
+        this.notifications = result.items;
 
-        this.pageIndex = result.PageIndex;
-        this.pageSize = result.PageSize;
-        this.totalPages = result.PagesCount;
-        this.totalCount = result.TotalCount;
+        this.pageIndex = result.pageIndex;
+        this.pageSize = result.pageSize;
+        this.totalPages = result.pagesCount;
+        this.totalCount = result.totalCount;
 
         this.spinner.hide();
         this.isLoading = true;
@@ -111,20 +111,18 @@ export class NotificationComponent {
   }
 
   setAllRead() {
-    if (this.notifications.length === 0 || this.notifications.filter(n => n.Read).length === 0) {
+    if (this.notifications.length === 0 || this.notifications.filter(n => n.read).length === 0) {
       return;
     }
 
-    let ids = this.notifications.map(notification => notification.Id);
+    let ids = this.notifications.map(notification => notification.id);
 
     this.notificationService.setRead(this.userId, ids)
       .add(this.getNotifications());
-
-    this.getNotifications();
   }
 
   hasUnreadNotifications(): boolean {
-    return this.notifications.length !== 0 && this.notifications.some(n => !n.Read);
+    return this.notifications.length !== 0 && this.notifications.some(n => !n.read);
   }
 
   getCreatedAtDifference(createdAt: Date): string {

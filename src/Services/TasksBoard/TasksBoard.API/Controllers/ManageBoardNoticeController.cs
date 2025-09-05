@@ -32,7 +32,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeRequest request)
+        public async Task<IActionResult> CreateBoardNoticeAsync([FromRoute] Guid boardId, CreateBoardNoticeRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new CreateBoardNoticeCommand
             {
@@ -42,7 +42,7 @@ namespace TasksBoard.API.Controllers
                 Definition = request.Definition,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
-            });
+            }, cancellationToken);
 
             var locationUrl = Url.Action(
                 action: nameof(BoardController.GetBoardByIdAsync),
@@ -77,7 +77,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request)
+        public async Task<IActionResult> UpdateBoardNoticeAsync([FromRoute] Guid boardId, UpdateBoardNoticeRequest request, CancellationToken cancellationToken = default)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
 
@@ -89,7 +89,7 @@ namespace TasksBoard.API.Controllers
                 Definition = request.Definition,
                 BackgroundColor = request.BackgroundColor,
                 Rotation = request.Rotation
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -101,7 +101,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardNoticeStatusAsync([FromRoute] Guid boardId, UpdateBoardNoticeStatusRequest request)
+        public async Task<IActionResult> UpdateBoardNoticeStatusAsync([FromRoute] Guid boardId, UpdateBoardNoticeStatusRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new UpdateBoardNoticeStatusCommand
             {
@@ -110,7 +110,7 @@ namespace TasksBoard.API.Controllers
                 AccountName = request.AccountName,
                 NoticeId = request.NoticeId,
                 Complete = request.Complete
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -122,13 +122,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId)
+        public async Task<IActionResult> DeleteBoardNoticeAsync([FromRoute] Guid boardId, [FromRoute] Guid noticeId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new DeleteBoardNoticeCommand
             {
                 BoardId = boardId,
                 NoticeId = noticeId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

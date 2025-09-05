@@ -5,8 +5,9 @@ export const environment = {
   // chatUrl: 'https://localhost:7275',
   // notificationUrl: 'https://localhost:7183'
 
-  apiUrl: 'https://localhost:9001',
-  authUrl: 'https://localhost:9000',
-  chatUrl: 'https://localhost:9002',
-  notificationUrl: 'https://localhost:9003'
+  // apiUrl: 'https://localhost:9001',
+  // authUrl: 'https://localhost:9000',
+  // chatUrl: 'https://localhost:9002',
+  // notificationUrl: 'https://localhost:9003',
+  gatewayUrl: 'https://localhost:9005'
 };

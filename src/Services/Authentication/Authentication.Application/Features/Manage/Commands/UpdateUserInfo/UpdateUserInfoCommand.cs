@@ -1,9 +1,10 @@
 ﻿using Authentication.Application.Dtos;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 
 namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
 {
-    public class UpdateUserInfoCommand : IRequest<UserInfoDto>
+    public class UpdateUserInfoCommand : IRequest<Result<UserInfoDto>>
     {
         public required Guid UserId { get; set; }
         public required string Username { get; set; }

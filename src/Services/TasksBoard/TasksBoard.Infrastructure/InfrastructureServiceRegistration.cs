@@ -8,9 +8,12 @@ using Common.gRPC.Interfaces.Services;
 using Common.gRPC.Repositories;
 using Common.gRPC.Services;
 using EventBus.Messages.Extensions;
+using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Reflection;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -26,7 +29,16 @@ namespace TasksBoard.Infrastructure
             services.AddGrpcClient<UserProfilesClient>(option =>
             {
                 option.Address = new Uri(configuration["gRPC:Address"]!);
-            });
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new SocketsHttpHandler
+                {
+                    EnableMultipleHttp2Connections = true
+                };
+            }).ConfigureChannel(options =>
+            {
+                options.Credentials = ChannelCredentials.Insecure;
+            }); ;
 
             var connectionString = configuration.GetConnectionString("TasksBoardDbConnection") ?? throw new InvalidOperationException("Connection string 'TasksBoardDbConnection' not found");
             services.AddDbContext<TasksBoardDbContext>(options =>

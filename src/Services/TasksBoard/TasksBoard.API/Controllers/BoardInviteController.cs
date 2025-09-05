@@ -25,12 +25,12 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardInviteRequestByToAccountIdAsync([FromRoute] Guid accountId)
+        public async Task<IActionResult> GetBoardInviteRequestByToAccountIdAsync([FromRoute] Guid accountId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardInviteRequestByToAccountIdQuery
             {
                 AccountId = accountId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -42,14 +42,14 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ResolveBoardInviteRequestAsync([FromRoute] Guid boardId, ResolveInviteRequestRequest request)
+        public async Task<IActionResult> ResolveBoardInviteRequestAsync([FromRoute] Guid boardId, ResolveInviteRequestRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new ResolveInviteRequestCommand
             {
                 BoardId = boardId,
                 RequestId = request.RequestId,
                 Decision = request.Decision
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

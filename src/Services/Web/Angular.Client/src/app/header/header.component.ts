@@ -33,8 +33,8 @@ export class HeaderComponent implements OnInit {
 
     this.authSessionService.currentUser$.subscribe(user => {
       if (user && this.isAuthenticated) {
-        this.username = user?.Username;
-        this.userId = user?.Id;
+        this.username = user?.username;
+        this.userId = user?.id;
       }
     });
   }

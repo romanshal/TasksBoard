@@ -1,7 +1,6 @@
 ﻿using Authentication.API.Extensions;
 using Authentication.API.Models.Requests.Authentication;
 using Authentication.API.Models.Responses;
-using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
 using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Application.Features.Authentications.Commands.Logout;
 using Authentication.Application.Features.Authentications.Commands.RefreshToken;
@@ -22,7 +21,7 @@ namespace Authentication.API.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> LoginAsync(LoginRequest request)
+        public async Task<IActionResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
         {
             var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var userAgent = Request.Headers.UserAgent.ToString();
@@ -33,7 +32,7 @@ namespace Authentication.API.Controllers
                 Password = request.Password,
                 UserIp = userIp,
                 UserAgent = userAgent
-            });
+            }, cancellationToken);
 
             this.SetRefreshTokenCookies(result.RefreshToken);
 
@@ -48,17 +47,8 @@ namespace Authentication.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("external")]
-        public async Task<IActionResult> ExternalLoginAsync(ExternalLoginCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
         [Route("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterRequest request)
+        public async Task<IActionResult> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
         {
             var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var userAgent = Request.Headers.UserAgent.ToString();
@@ -70,7 +60,7 @@ namespace Authentication.API.Controllers
                 Password = request.Password,
                 UserIp = userIp,
                 UserAgent = userAgent
-            });
+            }, cancellationToken);
 
             this.SetRefreshTokenCookies(result.RefreshToken);
 
@@ -86,7 +76,7 @@ namespace Authentication.API.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("refresh")]
-        public async Task<IActionResult> RefreshAsync(RefreshTokenRequest request)
+        public async Task<IActionResult> RefreshAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
             var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var userAgent = Request.Headers.UserAgent.ToString();
@@ -101,7 +91,7 @@ namespace Authentication.API.Controllers
                 UserIp = userIp,
                 UserAgent = userAgent,
                 DeviceId = request.DeviceId
-            });
+            }, cancellationToken);
 
             this.SetRefreshTokenCookies(result.RefreshToken);
 
@@ -117,7 +107,7 @@ namespace Authentication.API.Controllers
         [HttpDelete]
         [Authorize]
         [Route("logout")]
-        public async Task<IActionResult> LogoutAsync()
+        public async Task<IActionResult> LogoutAsync(CancellationToken cancellationToken = default)
         {
             if (!Guid.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value, out Guid userId))
             {
@@ -127,7 +117,7 @@ namespace Authentication.API.Controllers
             var result = await _mediator.Send(new LogoutCommand
             {
                 UserId = userId
-            });
+            }, cancellationToken);
 
             Response.Cookies.Delete("refresh_token");
 

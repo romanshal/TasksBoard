@@ -1,6 +1,6 @@
 export class BoardMemberPermission {
-    public BoardMemberId!: string;
-    public BoardPermissionId!: string;
-    public BoardPermissionName!: string;
-    public BoardPermissionDescription!: string;
+    public boardMemberId!: string;
+    public boardPermissionId!: string;
+    public boardPermissionName!: string;
+    public boardPermissionDescription!: string;
 }

@@ -75,16 +75,16 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
 
   initForm() {
     this.form = this.fb.group({
-      ownerId: [this.currentUser?.Id],
-      ownerNickname: [this.currentUser?.Username],
-      name: [{ value: this.board?.Name ?? '', disabled: this.disabledActions }, Validators.required],
-      description: [{ value: this.board?.Description ?? '', disabled: this.disabledActions }, Validators.required],
-      tags: this.fb.array(this.board?.Tags?.map(t => this.fb.control(t)) ?? []),
-      public: [{ value: this.board?.Public ?? false, disabled: this.disabledActions }, Validators.required],
+      ownerId: [this.currentUser?.id],
+      ownerNickname: [this.currentUser?.username],
+      name: [{ value: this.board?.name ?? '', disabled: this.disabledActions }, Validators.required],
+      description: [{ value: this.board?.description ?? '', disabled: this.disabledActions }, Validators.required],
+      tags: this.fb.array(this.board?.tags?.map(t => this.fb.control(t)) ?? []),
+      public: [{ value: this.board?.isPublic ?? false, disabled: this.disabledActions }, Validators.required],
       image: []
     });
 
-    if (this.newBoard || !this.board!.Image) {
+    if (this.newBoard || !this.board!.image) {
       return;
     }
 
@@ -95,15 +95,15 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
       '.gif': 'image/gif'
     };
 
-    const mimeType = mimeTypeMap[this.board!.ImageExtension!] || 'application/octet-stream';
-    let base64Image = this.board!.Image;
+    const mimeType = mimeTypeMap[this.board!.imageExtension!] || 'application/octet-stream';
+    let base64Image = this.board!.image;
 
     if (!base64Image.startsWith('data:')) {
       base64Image = `data:${mimeType};base64,${base64Image}`;
     }
 
     this.previewUrl = base64Image;
-    const file = this.base64ToFile(base64Image, `loaded_image${this.board!.ImageExtension}`, mimeType);
+    const file = this.base64ToFile(base64Image, `loaded_image${this.board!.imageExtension}`, mimeType);
     this.form.patchValue({ image: file });
 
   }
@@ -292,7 +292,7 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
       formData.append('image', imageFile);
     }
 
-    this.manageBoardService.updateBoard(this.board!.Id, formData).subscribe(result => {
+    this.manageBoardService.updateBoard(this.board!.id, formData).subscribe(result => {
       this.closeModal('updated')
     });
   }
@@ -305,15 +305,18 @@ export class BoardInfoModal implements OnInit, AfterViewInit {
     this.dialog.open(DeleteConfirmationModal, {
       data: {
         element: 'board',
-        elementName: this.board?.Name,
+        elementName: this.board?.name,
         secondConfirme: true
       }
     }).afterClosed().subscribe(result => {
       if (result === 'confirmed') {
-        this.manageBoardService.deleteBoard(this.board!.Id).subscribe(result => {
-          if (result) {
+        this.manageBoardService.deleteBoard(this.board!.id).subscribe({
+          next: () => {
             this.closeModal();
             this.router.navigate(['/boards']);
+          },
+          error: err => {
+
           }
         })
       }

@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Common.Blocks.Models.DomainResults;
+using MediatR;
 
 namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
 {
-    public class UpdateUserImageCommand : IRequest<Guid>
+    public class UpdateUserImageCommand : IRequest<Result>
     {
         public required Guid UserId { get; set; }
         public required byte[] Image { get; set; }

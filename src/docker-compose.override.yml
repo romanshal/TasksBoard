@@ -11,8 +11,8 @@ x-default-env: &default-env
   # "Grafana:Url": ""
   "Jaeger:Url": http://jaeger:4317
   "Authentication:Jwt:Secret": Hg4EtbzOqvc5pRBJ2KGkz4aPD38D1Sgr
-  "Authentication:Jwt:Issuer": https://authentication.api:443
-  "Authentication:Jwt:Audience": https://tasksboard.api:443
+  "Authentication:Jwt:Issuer": http://authentication.api:443
+  "Authentication:Jwt:Audience": http://tasksboard.api:443
   "Authentication:Jwt:AccessTokenExpirationMinutes": 15
   "Authentication:Jwt:RefreshTokenExpirationDays": 7
 
@@ -203,12 +203,20 @@ services:
     ports:
       - "8000:80"
       - "9000:443"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    # volumes:
+    #   - ./authentication-api.pfx:/app/cert/authentication-api.pfx:ro
 
   tasksboard.api:
     container_name: tasksboard.api
     environment:
       <<: *default-env
-      "gRPC:Address": "http://authentication.api"
+      "gRPC:Address": "https://authentication.api"
       "ConnectionStrings:TasksBoardDbConnection": "Server=tasksboarddb;Port=5432;Database=tasks-board-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "tasksboard.api-index-{0:yyyy.MM.dd}"
       "MessageBroker:Host": amqp://rabbitmq:5672
@@ -228,12 +236,14 @@ services:
     ports:
       - "8001:80"
       - "9001:443"
+    # volumes:
+    #   - ./tasksboard-api.pfx:/https/tasksboard-api.pfx:ro
 
   chat.api:
     container_name: chat.api
     environment:
       <<: *default-env
-      "gRPC:Address": "http://authentication.api"
+      "gRPC:Address": "https://authentication.api"
       "ConnectionStrings:ChatDbConnection": "Server=chatdb;Port=5432;Database=tasks-board-chat-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "chat.api-index-{0:yyyy.MM.dd}"
       "Cache:Redis:Host": redis
@@ -252,7 +262,7 @@ services:
     container_name: notification.api
     environment:      
       <<: *default-env
-      "gRPC:Address": "http://authentication.api"
+      "gRPC:Address": "https://authentication.api"
       "ConnectionStrings:NotificationDbConnection": "Server=notificationdb;Port=5432;Database=tasks-board-notification-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "notification.api-index-{0:yyyy.MM.dd}"
       "Cache:Redis:Host": redis
@@ -284,5 +294,16 @@ services:
     ports:
       - "8004:80"
       - "9004:443" 
-
     
+  ocelotapigateway:
+    container_name: ocelotapigateway
+    environment:
+      <<: *default-env
+    depends_on:
+      - authentication.api
+      - tasksboard.api
+      - chat.api
+      - notification.api
+    ports:
+      - "8005:80"
+      - "9005:443" 

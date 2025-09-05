@@ -4,6 +4,13 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
+
+# Копируем сертификат внутрь контейнера
+#COPY tasksboard-api.pfx /https/tasksboard-api.pfx
+
+# Настраиваем права (чтобы Kestrel мог читать)
+#RUN chmod 644 /https/tasksboard-api.pfx
+
 EXPOSE 8080
 EXPOSE 8081
 

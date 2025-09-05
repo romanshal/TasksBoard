@@ -7,13 +7,14 @@ import { NotificationModel } from '../../models/notification/notification.model'
 import * as signalR from '@microsoft/signalr';
 import { PaginatedList } from '../../models/paginated-list/paginated-list.model';
 import { AuthSessionService } from '../auth-session/auth-session.service';
+import { Response, ResultResponse, unwrapResponse } from '../../models/response/response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  private baseUrl: string = environment.notificationUrl;
-  private NOTIFICATION_HUB_URL = environment.notificationUrl + '/notification';
+  private baseUrl: string = environment.gatewayUrl;
+  private NOTIFICATION_HUB_URL = environment.gatewayUrl + '/notification';
 
   private hubConnection?: signalR.HubConnection;
   private notificationsSubject = new BehaviorSubject<NotificationModel[]>([]);
@@ -30,7 +31,7 @@ export class NotificationService {
       this.isAuthenticated = status;
     })
     if (this.isAuthenticated) {
-      let userId = this.authSessionService.getCurrentUser()?.Id;
+      let userId = this.authSessionService.getCurrentUser()?.id;
       this.getNewByAccountId(userId!).subscribe(result => {
         if (result) {
           this.notificationsSubject.next(result);
@@ -43,8 +44,8 @@ export class NotificationService {
             return this.authSessionService.getAccessToken()!;
           }
         })
-        .withAutomaticReconnect({ 
-          nextRetryDelayInMilliseconds: ctx => Math.min(1000 * (ctx.previousRetryCount + 1), 10000) 
+        .withAutomaticReconnect({
+          nextRetryDelayInMilliseconds: ctx => Math.min(1000 * (ctx.previousRetryCount + 1), 10000)
         })
         .build();
 
@@ -54,6 +55,8 @@ export class NotificationService {
 
   async startConnection(): Promise<any> {
     this.hubConnection!.on('ReceiveNotification', (data) => {
+      console.log('DATA');
+      console.log(data);
       let notification = new NotificationModel(
         data.id,
         data.type,
@@ -61,6 +64,9 @@ export class NotificationService {
         data.read,
         data.createdAt
       )
+
+      console.log('NOTIFICATION');
+      console.log(notification);
 
       const currentNotifications = this.notificationsSubject.value;
       this.notificationsSubject.next([notification, ...currentNotifications]);
@@ -75,97 +81,42 @@ export class NotificationService {
   }
 
   getAllPaginatedByAccountId(accountId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<NotificationModel>> {
-    const url = '/api/notifications/all/paginated/' + accountId;
-    return this.http.get(this.baseUrl + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize) })
-      .pipe(
-        map((response: any) => {
-          const paginatedList = new PaginatedList<NotificationModel>();
-          if (response.result?.items) {
-            paginatedList.Items = response.result.items.map((item: any) => {
-              let notification = new NotificationModel(
-                item.id,
-                item.type,
-                new Map(Object.keys(item.payload).map(x => [x, item.payload[x]])),
-                item.read,
-                item.createdAt
-              );
-
-              return notification;
-            });
-          }
-
-          paginatedList.TotalCount = response.result.totalCount;
-          paginatedList.PageIndex = response.result.pageIndex;
-          paginatedList.PageSize = response.result.pageSize;
-          paginatedList.PagesCount = response.result.pagesCount
-
-          return paginatedList;
-        }));
+    const url = '/notifications/all/p/' + accountId;
+    return this.http
+      .get<ResultResponse<PaginatedList<NotificationModel>>>(this.baseUrl + url, {
+        params: this.httpOption.getPaginationOptions(pageIndex, pageSize)
+      })
+      .pipe(unwrapResponse<PaginatedList<NotificationModel>>()) as Observable<PaginatedList<NotificationModel>>;
   }
 
   getNewPaginatedByAccountId(accountId: string, pageIndex: number, pageSize: number): Observable<PaginatedList<NotificationModel>> {
-    const url = '/api/notifications/new/paginated/' + accountId;
-    return this.http.get(this.baseUrl + url, { params: this.httpOption.getPaginationOptions(pageIndex, pageSize) })
-      .pipe(
-        map((response: any) => {
-          const paginatedList = new PaginatedList<NotificationModel>();
-          if (response.result?.items) {
-            paginatedList.Items = response.result.items.map((item: any) => {
-              let notification = new NotificationModel(
-                item.id,
-                item.type,
-                new Map(Object.keys(item.payload).map(x => [x, item.payload[x]])),
-                item.read,
-                item.createdAt
-              );
-
-              return notification;
-            });
-          }
-
-          paginatedList.TotalCount = response.result.totalCount;
-          paginatedList.PageIndex = response.result.pageIndex;
-          paginatedList.PageSize = response.result.pageSize;
-          paginatedList.PagesCount = response.result.pagesCount
-
-          return paginatedList;
-        }));
+    const url = '/notifications/new/p/' + accountId;
+    return this.http
+      .get<ResultResponse<PaginatedList<NotificationModel>>>(this.baseUrl + url, {
+        params: this.httpOption.getPaginationOptions(pageIndex, pageSize)
+      })
+      .pipe(unwrapResponse<PaginatedList<NotificationModel>>()) as Observable<PaginatedList<NotificationModel>>;
   }
 
   setRead(accountId: string, ids: string[]) {
-    const url = '/api/notifications/' + accountId;
-    return this.http.post(this.baseUrl + url, ids).subscribe(result => {
-      if (result) {
-        let currentNotifications = this.notificationsSubject.value;
-        currentNotifications = currentNotifications.filter(notify => !ids.includes(notify.Id))
+    const url = '/notifications/' + accountId;
+    return this.http
+      .post<Response>(this.baseUrl + url, ids)
+      .pipe(unwrapResponse<void>())
+      .subscribe({
+        next: () => {
+          let currentNotifications = this.notificationsSubject.value;
+          currentNotifications = currentNotifications.filter(notify => !ids.includes(notify.id))
 
-        this.notificationsSubject.next(currentNotifications);
-      }
-    });
+          this.notificationsSubject.next(currentNotifications);
+        }
+      });
   }
 
   private getNewByAccountId(accountId: string): Observable<NotificationModel[]> {
-    const url = '/api/notifications/new/' + accountId;
-    return this.http.get(this.baseUrl + url)
-      .pipe(
-        map((response: any) => {
-          let list: NotificationModel[] = [];
-          if (response.result) {
-            list = response.result.map((item: any) => {
-              let notification = new NotificationModel(
-                item.id,
-                item.type,
-                new Map(Object.keys(item.payload).map(x => [x, item.payload[x]])),
-                item.read,
-                item.createdAt
-              );
-
-              return notification;
-            })
-          }
-
-          return list;
-        })
-      );
+    const url = '/notifications/new/' + accountId;
+    return this.http
+      .get<ResultResponse<NotificationModel[]>>(this.baseUrl + url)
+      .pipe(unwrapResponse<NotificationModel[]>()) as Observable<NotificationModel[]>;
   }
 }

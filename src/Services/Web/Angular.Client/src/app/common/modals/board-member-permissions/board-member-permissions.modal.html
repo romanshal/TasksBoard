@@ -11,10 +11,10 @@
                 </div>
 
                 <div class="member-info__name">
-                    {{user?.Username}}
+                    {{user?.username}}
                 </div>
                 <div class="member-info__email">
-                    ({{user?.Email}})
+                    ({{user?.email}})
                 </div>
             </div>
 
@@ -26,15 +26,15 @@
                         <label>{{permission.Name}}</label> -->
 
                         <div class="permissions-list__item-checkbox">
-                            <input type="checkbox" id="permission-{{permission.Id}}"
-                                [checked]="isPermissionsChecked(permission.Id)"
-                                (change)="checkPermission(permission.Id)" />
+                            <input type="checkbox" id="permission-{{permission.id}}"
+                                [checked]="isPermissionsChecked(permission.id)"
+                                (change)="checkPermission(permission.id)" />
                                 
-                            <label for="permission-{{permission.Id}}"></label>
+                            <label for="permission-{{permission.id}}"></label>
                         </div>
 
                         <div class="permissions-list__item-label">
-                            <label>{{permission.Name}}</label>
+                            <label>{{permission.name}}</label>
                         </div>
                     </div>
                 </div>

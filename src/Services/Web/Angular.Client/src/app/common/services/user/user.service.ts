@@ -2,88 +2,69 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { UserInfoModel } from '../../models/user/user-info.model';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
+import { Response, ResultResponse, unwrapResponse } from '../../models/response/response.model';
+import { UserImageModel } from '../../models/user/user-image.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl: string = environment.authUrl;
+  private baseUrl: string = environment.gatewayUrl;
+
+  private static readonly MIME_TYPE_MAP: Record<string, string> = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg'
+  };
 
   constructor(
     private http: HttpClient
   ) { }
 
   getUserInfo(userId: string): Observable<UserInfoModel> {
-    const url = '/api/manage/' + userId;
-    return this.http.get<UserInfoModel>(this.baseUrl + url)
-      .pipe(
-        map((response: any) => {
-          var user = new UserInfoModel(
-            response.id,
-            response.username,
-            response.email,
-            response.firstname,
-            response.surname
-          );
-
-          return user;
-        })
-      );
+    const url = '/user/' + userId;
+    return this.http
+      .get<ResultResponse<UserInfoModel>>(this.baseUrl + url)
+      .pipe(unwrapResponse<UserInfoModel>()) as Observable<UserInfoModel>;
   }
 
   getUserAvatar(userId: string): Observable<string> {
-    const url = '/api/manage/image/' + userId;
-    return this.http.get(this.baseUrl + url)
+    const url = '/image/' + userId;
+    return this.http
+      .get<ResultResponse<UserImageModel>>(this.baseUrl + url)
       .pipe(
-        map((response: any) => {
-          let base64Image = '';
-          if (response !== null && response?.image !== null) {
-            const mimeTypeMap: Record<string, string> = {
-              '.png': 'image/png',
-              '.jpg': 'image/jpeg',
-              '.jpeg': 'image/jpeg'
-            };
-
-            const mimeType = mimeTypeMap[response.imageExtension!] || 'application/octet-stream';
-            base64Image = response.image!;
-
-            if (!base64Image.startsWith('data:')) {
-              base64Image = `data:${mimeType};base64,${base64Image}`;
-            }
+        unwrapResponse<UserImageModel>(),
+        map(response => {
+          if (!response?.image) {
+            return '';
           }
 
-          return base64Image;
+          const mimeType = UserService.MIME_TYPE_MAP[response.imageExtension ?? ''] || 'application/octet-stream';
+
+          return response.image.startsWith('data:') ? response.image : `data:${mimeType};base64,${response.image}`;
         })
       );
   }
 
   updateUserInfo(userId: string, form: any): Observable<UserInfoModel> {
-    const url = '/api/manage/info/' + userId;
-    return this.http.post<string>(this.baseUrl + url, form)
-      .pipe(
-        map((response: any) => {
-
-          var user = new UserInfoModel(
-            response.id,
-            response.username,
-            response.email,
-            response.firstname,
-            response.surname
-          );
-          
-          return user;
-        })
-      );;
+    const url = '/user/' + userId;
+    return this.http
+      .put<ResultResponse<UserInfoModel>>(this.baseUrl + url, form)
+      .pipe(unwrapResponse<UserInfoModel>()) as Observable<UserInfoModel>;
   }
 
-  changeUserPassword(userId: string, form: any) {
-    const url = '/api/manage/password/' + userId;
-    return this.http.post<string>(this.baseUrl + url, form);
+  changeUserPassword(userId: string, form: any): Observable<void> {
+    const url = '/password/' + userId;
+    return this.http
+      .put<Response>(this.baseUrl + url, form)
+      .pipe(unwrapResponse<void>());
   }
 
-  updateUserAvatar(userId: string, image: any) {
-    const url = '/api/manage/image/' + userId;
-    return this.http.post(this.baseUrl + url, image);
+  updateUserAvatar(userId: string, image: any): Observable<void> {
+    const url = '/image/' + userId;
+    return this.http
+      .put<Response>(this.baseUrl + url, image)
+      .pipe(unwrapResponse<void>());
   };
 }

@@ -33,7 +33,7 @@ export class InviteMemberModal {
   isLoading = false;
   showDropdown = false;
 
-  inviteLink = environment.apiUrl;
+  inviteLink = environment.gatewayUrl;
 
   coppied = false;
 
@@ -61,10 +61,10 @@ export class InviteMemberModal {
   ) {
     this.boardId = data.boardId;
 
-    this.memberIds = new Set(data.members.map(member => member.AccountId));
-    this.accessRequestIds = new Set(data.accessRequests.map(request => request.AccountId))
+    this.memberIds = new Set(data.members.map(member => member.accountId));
+    this.accessRequestIds = new Set(data.accessRequests.map(request => request.accountId))
     this.invites = data.inviteRequests;
-    this.inviteAccountIds = new Set(this.invites.map(request => request.ToAccountId));
+    this.inviteAccountIds = new Set(this.invites.map(request => request.toAccountId));
 
     this.currentUser = this.sessionService.getUserInfo()!;
 
@@ -93,7 +93,7 @@ export class InviteMemberModal {
     this.inviteRequestService.getBoardInviteRequestByBoardId(this.boardId).subscribe(result => {
       if (result) {
         this.invites = result;
-        this.inviteAccountIds = new Set(result.map(request => request.ToAccountId));
+        this.inviteAccountIds = new Set(result.map(request => request.toAccountId));
       }
     })
   }
@@ -137,7 +137,7 @@ export class InviteMemberModal {
     }
 
     let invite = {
-      fromAccountId: this.currentUser.Id,
+      fromAccountId: this.currentUser.id,
       toAccountId: this.selectedUser.UserId,
     }
 

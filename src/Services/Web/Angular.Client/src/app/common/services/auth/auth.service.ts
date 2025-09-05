@@ -14,7 +14,8 @@ import { AuthEventService } from '../auth-event/auth-event.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl: string = environment.authUrl;
+  // private baseUrl: string = environment.authUrl;
+  private baseUrl: string = environment.gatewayUrl;
 
   constructor(
     private http: HttpClient,
@@ -28,7 +29,7 @@ export class AuthService {
   }
 
   signin(credentials: SigninRequestModel): Observable<TokenResponseModel> {
-    const url = '/api/authentication/login';
+    const url = '/login';
 
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials, { withCredentials: true })
       .pipe(
@@ -48,7 +49,7 @@ export class AuthService {
   }
 
   externalSignin(provider: string, returnUrl: string) {
-    const url = '/api/authenticationexternal/login';
+    const url = '/external';
 
     var redirectUrl = `${window.location.origin}/external-callback?returnUrl=${returnUrl}`;
     const params = new HttpParams()
@@ -66,7 +67,7 @@ export class AuthService {
   }
 
   signup(credentials: SignupRequestModel): Observable<TokenResponseModel> {
-    const url = '/api/authentication/register';
+    const url = '/register';
 
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials)
       .pipe(
@@ -87,10 +88,10 @@ export class AuthService {
   }
 
   refresh(): Observable<TokenResponseModel> {
-    const url = '/api/authentication/refresh';
+    const url = '/refresh';
 
     let body = {
-      userId: this.sessionStorageService.getUserInfo()!.Id,
+      userId: this.sessionStorageService.getUserInfo()!.id,
       deviceId: this.sessionStorageService.getDeviceId()
     };
 
@@ -107,7 +108,7 @@ export class AuthService {
   }
 
   signout() {
-    const url = '/api/authentication/logout';
+    const url = '/logout';
 
     return this.http.delete<void>(this.baseUrl + url)
       .pipe(

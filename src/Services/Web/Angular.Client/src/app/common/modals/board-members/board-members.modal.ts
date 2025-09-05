@@ -88,7 +88,7 @@ export class BoardMembersModal {
         boardId: this.boardId,
         member: member,
         permissions: this.permissions,
-        userAvatar: this.avatarMap[member.AccountId]
+        userAvatar: this.avatarMap[member.accountId]
       }
     }).afterClosed().subscribe((result) => {
       if (result === 'updated') {
@@ -150,7 +150,7 @@ export class BoardMembersModal {
 
   resolveAccessRequest(request: BoardAccessRequestModel, decision: boolean) {
     let resolve = {
-      requestId: request.Id,
+      requestId: request.id,
       decision: decision
     }
 
@@ -166,7 +166,7 @@ export class BoardMembersModal {
 
   cancelInviteRequest(request: BoardInviteRequestModel) {
     let cancel = {
-      requestId: request.Id
+      requestId: request.id
     };
 
     this.inviteRequestsService.cancelInviteRequest(this.boardId, cancel).subscribe({

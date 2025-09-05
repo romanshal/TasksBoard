@@ -24,18 +24,18 @@
 
         <div class="note-board" [@listAnimation]="notesForView.length" *ngIf="isLoading">
             <div class="note-wrapper" *ngFor="let note of notesForView; let i = index"
-                [ngStyle]="{'transform': 'rotate(' + note.Rotation + ')' }" (click)="openNoticeModal(note)">
+                [ngStyle]="{'transform': 'rotate(' + note.rotation + ')' }" (click)="openNoticeModal(note)">
                 <img class="note-pin" src="pin.png">
 
                 <div class="note-pin-shadow"></div>
 
-                <div class="note" [ngStyle]="{'background-color': note.BackgroundColor }">
-                    <div *ngIf="note.Completed" class="note-status">
+                <div class="note" [ngStyle]="{'background-color': note.backgroundColor }">
+                    <div *ngIf="note.completed" class="note-status">
                         <i class="fa-regular fa-circle-check fa-2xl" style="color: #28b351;"></i>
                     </div>
 
                     <p>
-                        {{ note.Definition }}
+                        {{ note.definition }}
                     </p>
                 </div>
             </div>

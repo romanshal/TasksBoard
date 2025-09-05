@@ -15,7 +15,7 @@ export class BoardMemberAuthService {
   initialize(currentBoard: BoardModel, currentMember: BoardMemberModel) {
     this.currentBoard = currentBoard;
     this.currentMember = currentMember;
-    this.currentMemberPermission = this.currentMember.Permissions.map(perm => perm.BoardPermissionName);
+    this.currentMemberPermission = this.currentMember.permissions.map(perm => perm.boardPermissionName);
   }
 
   havePermission(permission: string){

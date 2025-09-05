@@ -29,13 +29,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardMemberPermissionsAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
+        public async Task<IActionResult> GetBoardMemberPermissionsAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardMemberPermissionsQuery
             {
                 BoardId = boardId,
                 MemberId = memberId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -68,7 +68,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddBoardPermissionsToBoardMemberAsync([FromRoute] Guid boardId, AddBoardMemberPermissionsRequest request)
+        public async Task<IActionResult> AddBoardPermissionsToBoardMemberAsync([FromRoute] Guid boardId, AddBoardMemberPermissionsRequest request, CancellationToken cancellationToken = default)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
 
@@ -78,7 +78,7 @@ namespace TasksBoard.API.Controllers
                 MemberId = request.MemberId,
                 AccountId = Guid.Parse(userId),
                 Permissions = request.Permissions
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -89,7 +89,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId)
+        public async Task<IActionResult> DeleteBoardMemberAsync([FromRoute] Guid boardId, [FromRoute] Guid memberId, CancellationToken cancellationToken = default)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -98,7 +98,7 @@ namespace TasksBoard.API.Controllers
                 BoardId = boardId,
                 MemberId = memberId,
                 RemoveByUserId = Guid.Parse(userId!)
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

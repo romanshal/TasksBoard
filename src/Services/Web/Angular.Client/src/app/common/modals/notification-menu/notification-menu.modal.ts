@@ -38,7 +38,7 @@ export class NotificationMenuModal {
       this.notifications = notifications;
     })
     this.authSessionService.currentUser$.subscribe(user => {
-      this.userId = user?.Id!;
+      this.userId = user?.id!;
     });
 
     this.isLoading = true;
@@ -145,7 +145,7 @@ export class NotificationMenuModal {
       return;
     }
 
-    let ids = this.notifications.map(notification => notification.Id);
+    let ids = this.notifications.map(notification => notification.id);
 
     this.notificationService.setRead(this.userId, ids);
   }

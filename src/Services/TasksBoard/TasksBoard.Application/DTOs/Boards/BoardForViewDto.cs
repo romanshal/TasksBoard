@@ -7,7 +7,7 @@
         public string[] Tags { get; set; }
         public int MemberCount { get; set; }
         public bool IsMember { get; set; }
-        public bool Public { get; set; }
+        public bool IsPublic { get; set; }
         public byte[]? Image { get; set; }
         public string? ImageExtension { get; set; }
     }

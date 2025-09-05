@@ -12,23 +12,23 @@
         <div class="boards-list" [@listAnimation]="boards.length">
             <!-- <div class="boards-list"> -->
             <div class="boards-list__item" *ngFor="let board of boards; let i = index">
-                <img *ngIf="!board.Image" src="default-board.png" />
-                <img *ngIf="board.Image" [src]="getImageUrl(board)" />
+                <img *ngIf="!board.image" src="default-board.png" />
+                <img *ngIf="board.image" [src]="getImageUrl(board)" />
 
                 <div class="boards-list__item-definition">
                     <div class="boards-list__item-description">
-                        <h3>{{ board.Name }}</h3>
+                        <h3>{{ board.name }}</h3>
 
-                        <p>{{ board.Description }}</p>
+                        <p>{{ board.description }}</p>
                     </div>
 
                     <div class="boards-list__item-members">
                         <i class="fa-solid fa-users"></i>
-                        <h4>{{board.MemberCount}}</h4>
+                        <h4>{{board.memberCount}}</h4>
                     </div>
 
                     <div class="tags-list">
-                        <div class="tags-list__item" *ngFor="let tag of board.Tags">
+                        <div class="tags-list__item" *ngFor="let tag of board.tags">
                             {{tag}}
                         </div>
                     </div>

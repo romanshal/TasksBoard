@@ -5,6 +5,7 @@ using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
 using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
 using Authentication.Application.Features.Manage.Queries.GetUserImage;
 using Authentication.Application.Features.Manage.Queries.GetUserInfo;
+using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,15 +26,11 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserInfoAsync([FromRoute] Guid userId)
+        public async Task<IActionResult> GetUserInfoAsync([FromRoute] Guid userId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetUserInfoQuery { UserId = userId });
-            if (result is null)
-            {
-                return NotFound();
-            }
+            var result = await _mediator.Send(new GetUserInfoQuery { UserId = userId }, cancellationToken);
 
-            return Ok(result);
+            return this.HandleResponse(result);
         }
 
         [HttpGet("image/{userId:guid}")]
@@ -43,14 +40,14 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserImageAsync([FromRoute] Guid userId)
+        public async Task<IActionResult> GetUserImageAsync([FromRoute] Guid userId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetUserImageQuery { UserId = userId });
+            var result = await _mediator.Send(new GetUserImageQuery { UserId = userId }, cancellationToken);
 
-            return Ok(result);
+            return this.HandleResponse(result);
         }
 
-        [HttpPost("info/{userId:guid}")]
+        [HttpPut("info/{userId:guid}")]
         [CurrentUserOnly]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,7 +55,7 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateUserInfoAsync([FromRoute] Guid userId, UpdateUserInfoRequest request)
+        public async Task<IActionResult> UpdateUserInfoAsync([FromRoute] Guid userId, UpdateUserInfoRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new UpdateUserInfoCommand
             {
@@ -67,12 +64,12 @@ namespace Authentication.API.Controllers
                 Email = request.Email,
                 Firstname = request.Firstname,
                 Surname = request.Surname
-            });
+            }, cancellationToken);
 
-            return Ok(result);
+            return this.HandleResponse(result);
         }
 
-        [HttpPost("password/{userId:guid}")]
+        [HttpPut("password/{userId:guid}")]
         [CurrentUserOnly]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -80,19 +77,19 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ChangeUserPasswordAsync([FromRoute] Guid userId, ChangeUserPasswordRequest request)
+        public async Task<IActionResult> ChangeUserPasswordAsync([FromRoute] Guid userId, ChangeUserPasswordRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new ChangeUserPasswordCommand
             {
                 UserId = userId,
                 CurrentPassword = request.CurrentPassword,
                 NewPassword = request.NewPassword
-            });
+            }, cancellationToken);
 
-            return Ok(result);
+            return this.HandleResponse(result);
         }
 
-        [HttpPost("image/{userId:guid}")]
+        [HttpPut("image/{userId:guid}")]
         [CurrentUserOnly]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -100,15 +97,10 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateUserImageAsync([FromRoute] Guid userId, [FromForm] UpdateUserImageRequest request)
+        public async Task<IActionResult> UpdateUserImageAsync([FromRoute] Guid userId, [FromForm] UpdateUserImageRequest request, CancellationToken cancellationToken = default)
         {
-            if (request.Image == null && request.Image?.Length == 0)
-            {
-                return BadRequest();
-            }
-
             using var ms = new MemoryStream();
-            await request.Image!.CopyToAsync(ms);
+            await request.Image.CopyToAsync(ms, cancellationToken);
             byte[]? imageData = ms.ToArray();
 
             string? imageExtension = string.Empty;
@@ -119,14 +111,9 @@ namespace Authentication.API.Controllers
                 UserId = userId,
                 Image = imageData,
                 ImageExtension = imageExtension
-            });
+            }, cancellationToken);
 
-            if (result == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            return Ok(result);
+            return this.HandleResponse(result);
         }
     }
 }

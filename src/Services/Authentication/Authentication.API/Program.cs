@@ -8,10 +8,25 @@ using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Reflection;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(80, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+        listenOptions.UseHttps("/app/localhost-dev.pfx", "P@ssw0rd!");
+    });
+    options.ListenAnyIP(443, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http2;
+        listenOptions.UseHttps("/app/localhost-dev.pfx", "P@ssw0rd!");
+    });
+});
 
 // Add services to the container.
 builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Authentication.API");
@@ -24,7 +39,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-        .WithOrigins("http://localhost:4200")
+        .WithOrigins(
+            "http://localhost:4200", 
+            "https://localhost:9005", 
+            "https://ocelotapigateway:443", 
+            "http://ocelotapigateway:80", 
+            "http://ocelotapigateway", 
+            "https://ocelotapigateway",
+            "http://localhost",
+            "https://localhost")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials());
@@ -137,6 +160,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers().RequireAuthorization();
+
 app.MapGrpcService<UserProfilesGrpñController>();
 //app.MapGrpcReflectionService();
 

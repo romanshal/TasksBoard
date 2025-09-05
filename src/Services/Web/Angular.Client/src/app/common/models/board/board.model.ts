@@ -3,15 +3,15 @@ import { BoardInviteRequestModel } from "../board-invite-request/board-invite-re
 import { BoardMemberModel } from "../board-member/board-member.model";
 
 export class BoardModel {
-        public Id!: string;
-        public OwnerId!: string;
-        public Name!: string;
-        public Description?: string;
-        public Tags?: string[];
-        public Public!: boolean;
-        public Image?: string;
-        public ImageExtension?: string;
-        public Members!: BoardMemberModel[];
-        public AccessRequests?: BoardAccessRequestModel[]
-        public InviteRequests?: BoardInviteRequestModel[]
+        public id!: string;
+        public ownerId!: string;
+        public name!: string;
+        public description?: string;
+        public tags?: string[];
+        public isPublic!: boolean;
+        public image?: string;
+        public imageExtension?: string;
+        public members!: BoardMemberModel[];
+        public accessRequests?: BoardAccessRequestModel[]
+        public inviteRequests?: BoardInviteRequestModel[]
 }

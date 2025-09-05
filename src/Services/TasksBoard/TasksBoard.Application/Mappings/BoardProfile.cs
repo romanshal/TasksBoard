@@ -17,13 +17,15 @@ namespace TasksBoard.Application.Mappings
                 //.ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
                 //.ForMember(dest => dest.InviteRequests, opt => opt.MapFrom(src => src.InviteRequests.Where(request => request.Status == (int)BoardInviteRequestStatuses.Pending)))
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))
-                .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension));
+                .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension))
+                .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Public));
 
             CreateMap<Board, BoardForViewDto>()
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
                 .ForMember(dest => dest.MemberCount, opt => opt.MapFrom(src => src.BoardMembers.Count))
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))
                 .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension))
+                .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Public))
                 .ForMember(dest => dest.IsMember, opt => opt.Ignore());
 
             CreateMap<Board, BoardFullDto>()

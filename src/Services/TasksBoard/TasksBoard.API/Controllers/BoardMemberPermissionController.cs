@@ -19,9 +19,9 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardPermissionsAsync()
+        public async Task<IActionResult> GetBoardPermissionsAsync(CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetBoardPermissionsQuery());
+            var result = await _mediator.Send(new GetBoardPermissionsQuery(), cancellationToken);
 
             return this.HandleResponse(result);
         }

@@ -60,12 +60,12 @@ export class ProfileComponent implements OnInit {
   private resolveUserContext(): void {
     const routeUserId = this.route.snapshot.paramMap.get('userid');
     const currentUser = this.authSessionService.getCurrentUser()!;
-    this.isCurrentUser = !routeUserId || routeUserId === currentUser.Id;
+    this.isCurrentUser = !routeUserId || routeUserId === currentUser.id;
 
-    const userIdToLoad = this.isCurrentUser ? currentUser.Id : routeUserId!;
+    const userIdToLoad = this.isCurrentUser ? currentUser.id : routeUserId!;
 
     if (this.isCurrentUser) {
-      this.loadBoardRequests(currentUser.Id);
+      this.loadBoardRequests(currentUser.id);
     }
 
     this.loadUserData(userIdToLoad);
@@ -94,17 +94,17 @@ export class ProfileComponent implements OnInit {
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ invites, access }) => {
-        this.boardInviteRequests = invites || [];
-        this.boardAccessRequests = access || [];
+        this.boardInviteRequests = invites;
+        this.boardAccessRequests = access;
       });
   }
 
   private initGeneralSettingsForm(): void {
     this.generalSettingsForm = this.fb.group({
-      username: [{ value: this.user.Username, disabled: !this.isCurrentUser }, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      email: [{ value: this.user.Email, disabled: !this.isCurrentUser }, [Validators.required, Validators.email]],
-      firstName: [{ value: this.user.Firstname, disabled: !this.isCurrentUser }],
-      surname: [{ value: this.user.Surname, disabled: !this.isCurrentUser }],
+      username: [{ value: this.user.username, disabled: !this.isCurrentUser }, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      email: [{ value: this.user.email, disabled: !this.isCurrentUser }, [Validators.required, Validators.email]],
+      firstName: [{ value: this.user.firstname, disabled: !this.isCurrentUser }],
+      surname: [{ value: this.user.surname, disabled: !this.isCurrentUser }],
     });
   }
 
@@ -118,7 +118,7 @@ export class ProfileComponent implements OnInit {
   openProfileAvater() {
     this.dialog.open(ProfileAvatarModal, {
       data: {
-        userId: this.user.Id,
+        userId: this.user.id,
         avatar: this.userAvatarSrc
       }
     })
@@ -148,7 +148,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    this.userService.updateUserInfo(this.user!.Id, this.generalSettingsForm.value).subscribe(result => {
+    this.userService.updateUserInfo(this.user!.id, this.generalSettingsForm.value).subscribe(result => {
       if (result) {
         this.user = result;
 
@@ -175,8 +175,8 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    this.userService.changeUserPassword(this.user!.Id, this.passwordSettingsForm.value).subscribe(result => {
-      if (result) {
+    this.userService.changeUserPassword(this.user!.id, this.passwordSettingsForm.value).subscribe({
+      next: () => {
         this.passwordSettingsForm.reset();
 
         this.dialog.open(OperationResultMessageModal, {
@@ -185,9 +185,10 @@ export class ProfileComponent implements OnInit {
             message: 'Password was successfully changed'
           }
         })
+      },
+      error: err => {
+        this.changeUserPasswordErrorMessage = err.error.Description;
       }
-    }, error => {
-      this.changeUserPasswordErrorMessage = error.error.Description;
     })
   }
 
@@ -213,13 +214,13 @@ export class ProfileComponent implements OnInit {
     }
 
     let resolve = {
-      requestId: request.Id,
+      requestId: request.id,
       decision: decision
     }
 
-    this.boardInviteRequestService.resolveBoardInviteRequest(request.BoardId, resolve).subscribe(result => {
+    this.boardInviteRequestService.resolveBoardInviteRequest(request.boardId, resolve).subscribe(result => {
       if (result) {
-        this.boardInviteRequests = this.boardInviteRequests.filter(req => req.Id !== request.Id);
+        this.boardInviteRequests = this.boardInviteRequests.filter(req => req.id !== request.id);
       }
     })
   }
@@ -230,12 +231,15 @@ export class ProfileComponent implements OnInit {
     }
 
     let body = {
-      requestId: request.Id
+      requestId: request.id
     };
 
-    this.boardAccessRequestService.cancelAccessRequest(body).subscribe(result => {
-      if (result) {
-        this.boardAccessRequests = this.boardAccessRequests.filter(req => req.Id !== request.Id);
+    this.boardAccessRequestService.cancelAccessRequest(body).subscribe({
+      next: () => {
+        this.boardAccessRequests = this.boardAccessRequests.filter(req => req.id !== request.id);
+      },
+      error: err => {
+
       }
     });
   }

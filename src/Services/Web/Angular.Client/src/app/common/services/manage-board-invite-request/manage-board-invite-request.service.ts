@@ -1,55 +1,38 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { BoardInviteRequestModel } from '../../models/board-invite-request/board-invite-request.model';
+import { Response, ResultResponse, unwrapResponse } from '../../models/response/response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ManageBoardInviteRequestService {
-  private BOARD_INVITE_URL: string = environment.apiUrl;
+  private BOARD_INVITE_URL: string = environment.gatewayUrl;
 
   constructor(
     private http: HttpClient
   ) { }
 
-  createInviteRequest(boardId: string, invite: any) {
-    const url = '/api/manageinviterequests/board/' + boardId;
-    return this.http.post(this.BOARD_INVITE_URL + url, invite);
+  createInviteRequest(boardId: string, invite: any): Observable<string> {
+    const url = '/inviterequests/board/' + boardId;
+    return this.http
+      .post<ResultResponse<string>>(this.BOARD_INVITE_URL + url, invite)
+      .pipe(unwrapResponse<string>()) as Observable<string>;
   }
 
   getBoardInviteRequestByBoardId(boardId: string): Observable<BoardInviteRequestModel[]> {
-    const url = '/api/manageinviterequests/board/' + boardId;
-    return this.http.get(this.BOARD_INVITE_URL + url)
-      .pipe(
-        map((response: any) => {
-          let list: BoardInviteRequestModel[] = [];
-          if (response.result) {
-            list = response.result.map((item: any) => {
-              let request = new BoardInviteRequestModel(
-                item.id,
-                item.boardId,
-                item.boardName,
-                item.fromAccountId,
-                item.fromAccountName,
-                item.toAccountId,
-                item.toAccountName,
-                item.toAccountEmail,
-                item.createdAt
-              );
-
-              return request;
-            });
-          }
-
-          return list;
-        })
-      );
+    const url = '/inviterequests/board/' + boardId;
+    return this.http
+      .get<ResultResponse<BoardInviteRequestModel[]>>(this.BOARD_INVITE_URL + url)
+      .pipe(unwrapResponse<BoardInviteRequestModel[]>()) as Observable<BoardInviteRequestModel[]>;
   }
 
-  cancelInviteRequest(boardId: string, invite: any){
-    const url = '/api/manageinviterequests/board/' + boardId;
-    return this.http.put(this.BOARD_INVITE_URL + url, invite);
+  cancelInviteRequest(boardId: string, invite: any): Observable<void> {
+    const url = '/inviterequests/board/' + boardId;
+    return this.http
+      .put<Response>(this.BOARD_INVITE_URL + url, invite)
+      .pipe(unwrapResponse<void>());
   }
 }

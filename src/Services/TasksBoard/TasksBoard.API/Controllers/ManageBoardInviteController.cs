@@ -27,14 +27,14 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBoardInviteRequestAsync([FromRoute] Guid boardId, [FromBody] CreateInviteRequestRequest request)
+        public async Task<IActionResult> CreateBoardInviteRequestAsync([FromRoute] Guid boardId, [FromBody] CreateInviteRequestRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new CreateBoardInviteRequestCommand
             {
                 BoardId = boardId,
                 FromAccountId = request.FromAccountId,
                 ToAccountId = request.ToAccountId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -46,12 +46,12 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardInviteRequestsByBoarIdAsync([FromRoute] Guid boardId)
+        public async Task<IActionResult> GetBoardInviteRequestsByBoarIdAsync([FromRoute] Guid boardId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardInviteRequestsByBoardIdQuery
             {
                 BoardId = boardId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -64,13 +64,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CancelBoardInviteRequestAsync([FromRoute] Guid boardId, [FromBody] CancelInviteRequestRequest request)
+        public async Task<IActionResult> CancelBoardInviteRequestAsync([FromRoute] Guid boardId, [FromBody] CancelInviteRequestRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new CancelInviteRequestCommand
             {
                 RequestId = request.RequestId,
                 BoardId = boardId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

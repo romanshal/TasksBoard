@@ -47,7 +47,7 @@ export class ChatComponent implements OnInit {
     private chatService: ChatService
   ) {
     this.authSessionService.currentUser$.subscribe(user => {
-      this.userId = user?.Id;
+      this.userId = user?.id;
     });
   }
 
@@ -74,7 +74,7 @@ export class ChatComponent implements OnInit {
         }
       }),
       this.chatService.onEdit().subscribe(msg => {
-        const idx = this.messages.findIndex(m => m.Id === msg.Id);
+        const idx = this.messages.findIndex(m => m.id === msg.id);
         if (idx === -1) return;
 
         const edited = {
@@ -89,10 +89,10 @@ export class ChatComponent implements OnInit {
         this.messages = [...this.messages];
       }),
       this.chatService.onDelete().subscribe(id => {
-        const idx = this.messages.findIndex(m => m.Id === id);
+        const idx = this.messages.findIndex(m => m.id === id);
         if (idx === -1) return;
 
-        this.messages[idx].IsDeleted = true;
+        this.messages[idx].isDeleted = true;
       }),
       this.chatService.connectionState().subscribe(s => (this.state = s))
     );
@@ -136,15 +136,15 @@ export class ChatComponent implements OnInit {
     if (this.messageForUpdate) {
       // edit message
       let editMessage = {
-        boardMessageId: this.messageForUpdate.Id,
+        boardMessageId: this.messageForUpdate.id,
         message: this.message
       };
 
       this.boardMessageService.editMessage(this.boardId, editMessage).subscribe(result => {
         if (result) {
-          let mes = this.messages.find(message => message.Id === this.messageForUpdate?.Id)!;
-          mes.Message = this.message;
-          mes.ModifiedAt = new Date();
+          let mes = this.messages.find(message => message.id === this.messageForUpdate?.id)!;
+          mes.message = this.message;
+          mes.modifiedAt = new Date();
 
           this.isEmojiOpen = false;
           this.removeMessageForUpdate();
@@ -153,8 +153,8 @@ export class ChatComponent implements OnInit {
     } else {
       // new message
       let message = {
-        memberId: this.currentMember.Id,
-        accountId: this.currentMember.AccountId,
+        memberId: this.currentMember.id,
+        accountId: this.currentMember.accountId,
         message: this.message
       };
 
@@ -209,7 +209,7 @@ export class ChatComponent implements OnInit {
 
   editMessage(message: BoardMessageModel) {
     this.messageForUpdate = message;
-    this.message = message.Message;
+    this.message = message.message;
     this.openedContentActionsMenuId = '';
   }
 
@@ -219,10 +219,10 @@ export class ChatComponent implements OnInit {
   }
 
   deleteMessage(message: BoardMessageModel) {
-    this.boardMessageService.deleteMessage(this.boardId, message.Id).subscribe(result => {
+    this.boardMessageService.deleteMessage(this.boardId, message.id).subscribe(result => {
       if (result) {
         this.openedContentActionsMenuId = '';
-        message.IsDeleted = true;
+        message.isDeleted = true;
       }
     });
   }

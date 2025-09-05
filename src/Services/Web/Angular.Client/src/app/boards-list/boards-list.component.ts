@@ -57,7 +57,7 @@ export class BoardsListComponent implements OnInit {
     this.spinner.show();
 
     this.authSessionService.currentUser$.subscribe(user => {
-      this.userId = user?.Id;
+      this.userId = user?.id;
     });
 
     this.publicBoards = this.router.url.includes('public');
@@ -91,16 +91,16 @@ export class BoardsListComponent implements OnInit {
         next: (result) => {
           if (delay) {
             setTimeout(() => {
-              this.boards = result.Items;
+              this.boards = result.items;
             }, 300)
           } else {
-            this.boards = result.Items;
+            this.boards = result.items;
           }
 
-          this.pageIndex = result.PageIndex;
-          this.pageSize = result.PageSize;
-          this.totalPages = result.PagesCount;
-          this.totalCount = result.TotalCount
+          this.pageIndex = result.pageIndex;
+          this.pageSize = result.pageSize;
+          this.totalPages = result.pagesCount;
+          this.totalCount = result.totalCount
         },
         error: Response => {
 
@@ -115,16 +115,16 @@ export class BoardsListComponent implements OnInit {
         next: (result) => {
           if (delay) {
             setTimeout(() => {
-              this.boards = result.Items;
+              this.boards = result.items;
             }, 300)
           } else {
-            this.boards = result.Items;
+            this.boards = result.items;
           }
 
-          this.pageIndex = result.PageIndex;
-          this.pageSize = result.PageSize;
-          this.totalPages = result.PagesCount;
-          this.totalCount = result.TotalCount
+          this.pageIndex = result.pageIndex;
+          this.pageSize = result.pageSize;
+          this.totalPages = result.pagesCount;
+          this.totalCount = result.totalCount
         },
         error: Response => {
 
@@ -138,7 +138,7 @@ export class BoardsListComponent implements OnInit {
   }
 
   getImageUrl(board: BoardForViewModel): string | null {
-    if (!board.Image) {
+    if (!board.image) {
       return null;
     }
 
@@ -149,8 +149,8 @@ export class BoardsListComponent implements OnInit {
       '.gif': 'image/gif'
     };
 
-    const mimeType = mimeTypeMap[board.ImageExtension] || 'application/octet-stream';
-    let base64Image = board.Image;
+    const mimeType = mimeTypeMap[board.imageExtension] || 'application/octet-stream';
+    let base64Image = board.image;
 
     if (!base64Image.startsWith('data:')) {
       base64Image = `data:${mimeType};base64,${base64Image}`;
@@ -173,15 +173,15 @@ export class BoardsListComponent implements OnInit {
   }
 
   openBoard(board: BoardForViewModel) {
-    if (board.IsMember) {
-      this.router.navigate(['/board/' + board.Id]);
+    if (board.isMember) {
+      this.router.navigate(['/board/' + board.id]);
 
       return;
     }
 
     this.dialog.open(BoardMemberRequestModal, {
       data: {
-        boardId: board.Id
+        boardId: board.id
       }
     });
   }

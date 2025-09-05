@@ -1,5 +1,5 @@
 export class BoardPermission {
-    public Id!: string;
-    public Name!: string;
-    public AccessLevel!: number;
+    public id!: string;
+    public name!: string;
+    public accessLevel!: number;
 }

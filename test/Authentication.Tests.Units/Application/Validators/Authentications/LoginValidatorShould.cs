@@ -16,8 +16,7 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
                 Username = "Test username",
                 Password = "Test password",
                 UserIp = "",
-                UserAgent = "",
-                DeviceId = ""
+                UserAgent = ""
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();
@@ -37,8 +36,7 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
                 Username = "Test username",
                 Password = "Test password",
                 UserIp = "",
-                UserAgent = "",
-                DeviceId = ""
+                UserAgent = ""
             };
             yield return new object[] { validCommand with { Username = null } };
             yield return new object[] { validCommand with { Username = string.Empty } };

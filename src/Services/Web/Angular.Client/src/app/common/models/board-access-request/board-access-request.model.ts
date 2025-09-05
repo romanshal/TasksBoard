@@ -1,11 +1,11 @@
 export class BoardAccessRequestModel {
     constructor(
-        public Id: string,
-        public BoardId: string,
-        public BoardName: string,
-        public AccountId: string,
-        public AccountName: string,
-        public AccountEmail: string,
-        public CreatedAt: Date
+        public id: string,
+        public boardId: string,
+        public boardName: string,
+        public accountId: string,
+        public accountName: string,
+        public accountEmail: string,
+        public createdAt: Date
     ) { }
 }

@@ -1,7 +1,8 @@
-﻿using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Constants.ManageErrors;
+using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
-using AutoMapper;
 using Common.Blocks.Exceptions;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -11,21 +12,19 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
     public class UpdateUserImageCommandHandler(
         UserManager<ApplicationUser> userManager,
         IUnitOfWork unitOfWork,
-        IMapper mapper,
-        ILogger<UpdateUserImageCommandHandler> logger) : IRequestHandler<UpdateUserImageCommand, Guid>
+        ILogger<UpdateUserImageCommandHandler> logger) : IRequestHandler<UpdateUserImageCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IMapper _mapper = mapper;
         private readonly ILogger<UpdateUserImageCommandHandler> _logger = logger;
 
-        public async Task<Guid> Handle(UpdateUserImageCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUserImageCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
                 _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
-                throw new NotFoundException($"User with id '{request.UserId}' not found.");
+                return Result.Failure(ManageErrors.UserNotFound);
             }
 
             var image = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.UserId, cancellationToken);
@@ -52,12 +51,12 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
             if (affectedRows == 0 || image.Id == Guid.Empty)
             {
                 _logger.LogError("Can't update user image with id '{id}'.", user.Id);
-                throw new ArgumentException(nameof(image));
+                return Result.Failure(ManageErrors.CantUpdatePassword);
             }
 
             _logger.LogInformation("User image with user id '{id}' was successfully updated.", user.Id);
 
-            return user.Image.Id;
+            return Result.Success();
         }
     }
 }

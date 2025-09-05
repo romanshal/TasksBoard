@@ -22,12 +22,12 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardMembersByBoardIdAsync([FromRoute] Guid boardId)
+        public async Task<IActionResult> GetBoardMembersByBoardIdAsync([FromRoute] Guid boardId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardMembersByBoardIdQuery
             {
                 BoardId = boardId,
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -38,13 +38,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardMemberByBoardIdAndAccountIdAsync(Guid boardId, Guid accountId)
+        public async Task<IActionResult> GetBoardMemberByBoardIdAndAccountIdAsync(Guid boardId, Guid accountId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardMemberByBoardIdAndAccountIdQuery
             {
                 BoardId = boardId,
                 AccountId = accountId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

@@ -12,8 +12,8 @@
         </div>
 
         <div class="name-section">
-            <h2 *ngIf="user">{{user.Username}}</h2>
-            <span *ngIf="user">{{user.Email}}</span>
+            <h2 *ngIf="user">{{user.username}}</h2>
+            <span *ngIf="user">{{user.email}}</span>
         </div>
 
         <div class="actions-section">
@@ -30,7 +30,7 @@
         <div class="second-wrapper__header">
             <h1>Profile</h1>
         </div>
-        
+
         <div class="profile-info-block general-block">
             <div class="br">
                 <span>General</span>
@@ -193,11 +193,11 @@
                     <div class="request-list">
                         <div class="request-list__item" *ngFor="let request of boardInviteRequests">
                             <div class="request-list__item-avatar">
-                                <img [src]="getAccountAvatar(request.FromAccountId) | async">
+                                <img [src]="getAccountAvatar(request.fromAccountId) | async">
                             </div>
                             <div class="request-list__item-description">
-                                <b>{{request.FromAccountName }}</b> invite you to the board
-                                <b>'{{request.BoardName}}'</b>
+                                <b>{{request.fromAccountName}}</b> invite you to the board
+                                <b>'{{request.boardName}}'</b>
                             </div>
 
                             <div class="request-list__item-actions">
@@ -235,7 +235,7 @@
                     <div class="request-list">
                         <div class="request-list__item" *ngFor="let request of boardAccessRequests">
                             <div class="request-list__item-description">
-                                Access request to the board '<b>{{request.BoardName}}</b>'
+                                Access request to the board '<b>{{request.boardName}}</b>'
                             </div>
 
                             <div class="request-list__item-actions">

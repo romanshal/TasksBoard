@@ -1,12 +1,12 @@
 export class BoardMessageModel {
     constructor(
-        public Id: string,
-        public MemberId: string,
-        public AccountId: string,
-        public MemberNickname: string,
-        public Message: string,
-        public CreatedAt: Date,
-        public ModifiedAt: Date,
-        public IsDeleted: boolean
+        public id: string,
+        public memberId: string,
+        public accountId: string,
+        public memberNickname: string,
+        public message: string,
+        public createdAt: Date,
+        public modifiedAt: Date,
+        public isDeleted: boolean
     ) {}
 }

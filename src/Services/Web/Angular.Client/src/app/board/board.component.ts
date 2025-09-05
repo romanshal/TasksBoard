@@ -15,13 +15,10 @@ import { BoardPermissionService } from '../common/services/board-permission/boar
 import { BoardMemberAuthService } from '../common/services/board-member-auth/board-member-auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChatService } from '../common/services/chat/chat.service';
-import { BoardMemberService } from '../common/services/board-member/board-member.service';
-import { ManageBoardAccessRequestService } from '../common/services/manage-board-access-request/manage-board-access-request.service';
 import { BoardAccessRequestModel } from '../common/models/board-access-request/board-access-request.model';
 import { BoardInviteRequestModel } from '../common/models/board-invite-request/board-invite-request.model';
-import { ManageBoardInviteRequestService } from '../common/services/manage-board-invite-request/manage-board-invite-request.service';
 import { AuthSessionService } from '../common/services/auth-session/auth-session.service';
-import { defaultIfEmpty, filter, finalize, forkJoin, switchMap, tap } from 'rxjs';
+import { filter, finalize, forkJoin, switchMap, tap } from 'rxjs';
 import { PaginatedList } from '../common/models/paginated-list/paginated-list.model';
 
 const listAnimation = trigger('listAnimation', [
@@ -75,9 +72,6 @@ export class BoardComponent implements OnInit, OnDestroy {
     private boardPermissionService: BoardPermissionService,
     private authSessionService: AuthSessionService,
     private boardMemberAuthService: BoardMemberAuthService,
-    private boardAccessRequestService: ManageBoardAccessRequestService,
-    private boardInviteReqquestService: ManageBoardInviteRequestService,
-    private boardMemberService: BoardMemberService,
     private chatService: ChatService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -86,7 +80,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.spinner.show();
 
     this.authSessionService.currentUser$.subscribe(user => {
-      this.userId = user?.Id;
+      this.userId = user?.id;
     })
 
     this.boardId = this.route.snapshot.paramMap.get('boardid')!;
@@ -107,14 +101,14 @@ export class BoardComponent implements OnInit, OnDestroy {
       tap(board => this.board = board),
       switchMap(board =>
         forkJoin({
-          notices: this.boardNoticeService.getBoardNoticesByBoardId(board.Id, this.pageIndex, this.pageSize)
+          notices: this.boardNoticeService.getBoardNoticesByBoardId(board.id, this.pageIndex, this.pageSize)
         })
       ),
       tap(({ notices }) => {
-        this.accessRequests = this.board.AccessRequests!;
-        this.inviteRequests = this.board.InviteRequests!;
+        this.accessRequests = this.board.accessRequests!;
+        this.inviteRequests = this.board.inviteRequests!;
         this.handleNotices(notices);
-        this.handleMembers(this.board.Members);
+        this.handleMembers(this.board.members);
       }),
       finalize(() => {
         if (this.route.snapshot.queryParamMap.has('boardnotice')) {
@@ -147,18 +141,18 @@ export class BoardComponent implements OnInit, OnDestroy {
     if (!result) return;
 
     setTimeout(() => {
-      this.notesForView = result.Items;
+      this.notesForView = result.items;
     }, 500);
 
-    this.pageIndex = result.PageIndex;
-    this.pageSize = result.PageSize;
-    this.totalPages = result.PagesCount;
-    this.totalCount = result.TotalCount;
+    this.pageIndex = result.pageIndex;
+    this.pageSize = result.pageSize;
+    this.totalPages = result.pagesCount;
+    this.totalCount = result.totalCount;
   }
 
   private handleMembers(members: BoardMemberModel[]): void {
     this.boardMembers = members;
-    this.currentMember = members.find(m => m.AccountId === this.userId)!;
+    this.currentMember = members.find(m => m.accountId === this.userId)!;
     this.boardMemberAuthService.initialize(this.board, this.currentMember);
     this.canAddNotices = this.boardMemberAuthService.havePermission('manage_notice');
   }
@@ -228,7 +222,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.dialog.open(BoardInfoModal, {
       data: {
         board: this.board,
-        isOwner: this.board.OwnerId === this.userId,
+        isOwner: this.board.ownerId === this.userId,
       }
     })
       .afterClosed().subscribe((result) => {

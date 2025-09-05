@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   authenticationdb:
     image: postgres
@@ -68,6 +70,12 @@ services:
       context: .
       dockerfile: Services/Notification/Notification.Consumer/Dockerfile
 
+  ocelotapigateway:
+    image: ${DOCKER_REGISTRY-}ocelotapigateway
+    build:
+      context: .
+      dockerfile: ApiGateways/OcelotApiGateway/Dockerfile
+
 volumes:
   postgres_authentication:
   postgres_tasksboard:
@@ -78,4 +86,3 @@ volumes:
   opensearch-data2:
   prometheus:
   grafana:
-

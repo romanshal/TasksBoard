@@ -64,20 +64,20 @@ export class BoardNoticeModal implements OnInit {
   ) {
     this.note = data.note;
     this.authSessionService.currentUser$.subscribe(user => {
-        this.currentUser = user;
+      this.currentUser = user;
     })
 
     if (data.note !== undefined) {
       this.disabledActions = true;
-      this.backgroundColor = this.colors.find(color => color.value === this.note?.BackgroundColor)!;
-      this.rotation = this.data.note?.Rotation;
-      this.authorId = this.data.note?.AuthorId!;
-      this.authorName = this.data.note?.AuthorName!;
+      this.backgroundColor = this.colors.find(color => color.value === this.note?.backgroundColor)!;
+      this.rotation = this.data.note?.rotation;
+      this.authorId = this.data.note?.authorId!;
+      this.authorName = this.data.note?.authorName!;
     } else {
       this.backgroundColor = this.getRandomColor();
       this.rotation = this.getRandomRotation();
-      this.authorId = this.currentUser!.Id;
-      this.authorName = this.currentUser!.Username;
+      this.authorId = this.currentUser!.id;
+      this.authorName = this.currentUser!.username;
     }
   }
 
@@ -89,14 +89,14 @@ export class BoardNoticeModal implements OnInit {
     this.form = this.fb.group({
       authorId: [this.authorId, [Validators.required]],
       authorName: [this.authorName, [Validators.required]],
-      noticeId: [this.note?.Id],
-      definition: [{ value: this.note?.Definition, disabled: this.disabledActions }, Validators.required],
+      noticeId: [this.note?.id],
+      definition: [{ value: this.note?.definition, disabled: this.disabledActions }, Validators.required],
       backgroundColor: [this.backgroundColor.value, Validators.required],
       rotation: [this.rotation, Validators.required]
     });
   }
 
-  havePermission(permission: string){
+  havePermission(permission: string) {
     return this.boardMemberAuthService.havePermission(permission);
   }
 
@@ -118,18 +118,19 @@ export class BoardNoticeModal implements OnInit {
     }
 
     let body = {
-      accountId: this.currentUser!.Id,
-      accountName: this.currentUser!.Username,
-      noticeId: this.note.Id,
+      accountId: this.currentUser!.id,
+      accountName: this.currentUser!.username,
+      noticeId: this.note.id,
       complete: comlete
     }
 
-    this.noticeService.updateBoardNoticeStatus(this.data.boardId, body).subscribe(result => {
-      if (result.IsError || result.Description !== undefined) {
-        return;
-      }
+    this.noticeService.updateBoardNoticeStatus(this.data.boardId, body).subscribe({
+      next: () => {
+        this.closeModal(this.successStatus);
+      },
+      error: (err) => {
 
-      this.closeModal(this.successStatus);
+      }
     });
   }
 
@@ -138,34 +139,34 @@ export class BoardNoticeModal implements OnInit {
       return;
     }
 
-    this.noticeService.deleteBoardNotice(this.data.boardId, this.note.Id).subscribe(result => {
-      if (result.IsError || result.Description !== undefined) {
-        return;
-      }
+    this.noticeService.deleteBoardNotice(this.data.boardId, this.note.id).subscribe({
+      next: () => {
+        this.closeModal(this.successStatus);
+      },
+      error: err => {
 
-      this.closeModal(this.successStatus);
+      }
     })
   }
 
   private createNotice() {
-    this.noticeService.createBoardNotice(this.data.boardId, this.form.value).subscribe((result) => {
-      console.log(result);
-      if (result.IsError || result.Description !== undefined) {
-        return;
-      }
+    this.noticeService.createBoardNotice(this.data.boardId, this.form.value).subscribe({
+      next: () => {
+        this.closeModal(this.successStatus);
+      }, error: err => {
 
-      this.closeModal(this.successStatus);
+      }
     });
   }
 
   private updateNotice() {
-    this.noticeService.updateBoardNotice(this.data.boardId, this.form.value).subscribe((result) => {
-      console.log(result);
-      if (result.IsError || result.Description !== undefined) {
-        return;
-      }
+    this.noticeService.updateBoardNotice(this.data.boardId, this.form.value).subscribe({
+      next: () => {
+        this.closeModal(this.successStatus);
+      },
+      error: err => {
 
-      this.closeModal(this.successStatus);
+      }
     });
   }
 
@@ -212,8 +213,8 @@ export class BoardNoticeModal implements OnInit {
     { value: '#ffd8d5', name: 'Pink' }, // Розово-красный
     { value: '#c8eeff', name: 'Blue' }, // Голубой
     { value: '#e4fcc7', name: 'Green' },  // Светло-зеленый
-    { value: '#e8dff7', name: 'Lavender'}, //  Лавандовый
-    { value: '#fff4d4', name: 'Cream'}, // Кремовый
+    { value: '#e8dff7', name: 'Lavender' }, //  Лавандовый
+    { value: '#fff4d4', name: 'Cream' }, // Кремовый
   ];
 
   isOpenColors = false;

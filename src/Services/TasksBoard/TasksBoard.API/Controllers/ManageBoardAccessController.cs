@@ -26,7 +26,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ResolveAccessRequestAsync([FromRoute] Guid boardId, [FromBody] ResolveAccessRequestRequest request)
+        public async Task<IActionResult> ResolveAccessRequestAsync([FromRoute] Guid boardId, [FromBody] ResolveAccessRequestRequest request, CancellationToken cancellationToken = default)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -36,7 +36,7 @@ namespace TasksBoard.API.Controllers
                 RequestId = request.RequestId,
                 ResolveUserId = Guid.Parse(userId!),
                 Decision = request.Decision
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -48,12 +48,12 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardAccessRequestsByBoarIdAsync([FromRoute] Guid boardId)
+        public async Task<IActionResult> GetBoardAccessRequestsByBoarIdAsync([FromRoute] Guid boardId, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetBoardAccessRequestsByBoardIdQuery
             {
                 BoardId = boardId
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

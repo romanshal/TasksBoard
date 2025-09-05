@@ -28,7 +28,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBoardAsync([FromRoute] Guid boardId, [FromForm] UpdateBoardRequest request)
+        public async Task<IActionResult> UpdateBoardAsync([FromRoute] Guid boardId, [FromForm] UpdateBoardRequest request, CancellationToken cancellationToken = default)
         {
             byte[]? imageData = null;
             string? imageExtension = string.Empty;
@@ -52,7 +52,7 @@ namespace TasksBoard.API.Controllers
                 ImageExtension = imageExtension
             };
 
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -64,14 +64,14 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid boardId)
+        public async Task<IActionResult> DeleteBoardAsync([FromRoute] Guid boardId, CancellationToken cancellationToken = default)
         {
             var userId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value!;
             var result = await _mediator.Send(new DeleteBoardCommand
             {
                 Id = boardId,
                 AccountId = Guid.Parse(userId)
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }

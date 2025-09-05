@@ -19,20 +19,20 @@
             </div>
 
             <ul class="messages-list">
-                <li class="messages-list__item" *ngFor="let message of messages" [class.ismine]="message.AccountId === userId">
+                <li class="messages-list__item" *ngFor="let message of messages" [class.ismine]="message.accountId === userId">
 
                     <div class="message-wrapper">
-                        <div class="edited-message" *ngIf="message.ModifiedAt && !message.IsDeleted">
+                        <div class="edited-message" *ngIf="message.modifiedAt && !message.isDeleted">
                             Edited
                         </div>
 
                         <div class="main-content">
-                            <div class="message-content" *ngIf="!message.IsDeleted; else deleted">
+                            <div class="message-content" *ngIf="!message.isDeleted; else deleted">
                                 <div class="message-info">
-                                    <span class="author">{{message.MemberNickname}}</span>
-                                    <span class="timestamp">{{message.CreatedAt | date}}</span>
+                                    <span class="author">{{message.memberNickname}}</span>
+                                    <span class="timestamp">{{message.createdAt | date}}</span>
                                 </div>
-                                <div class="content">{{message.Message}}</div>
+                                <div class="content">{{message.message}}</div>
                             </div>
 
                             <ng-template #deleted>
@@ -43,13 +43,13 @@
                             </ng-template>
 
                             <div class="message-content-actions"
-                                *ngIf="message.AccountId === userId && !message.IsDeleted">
+                                *ngIf="message.accountId === userId && !message.isDeleted">
                                 <i class="fa-solid fa-ellipsis-vertical"
-                                    (click)="showContentActionsMenu(message.Id)"></i>
+                                    (click)="showContentActionsMenu(message.id)"></i>
                             </div>
 
-                            <div id="{{message.Id}}" class="message-content-actions__menu"
-                                *ngIf="message.AccountId === userId && openedContentActionsMenuId === message.Id">
+                            <div id="{{message.id}}" class="message-content-actions__menu"
+                                *ngIf="message.accountId === userId && openedContentActionsMenuId === message.id">
                                 <span (click)="editMessage(message)">Edit message</span>
                                 <span (click)="deleteMessage(message)">Delete message</span>
                             </div>

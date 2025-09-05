@@ -1,9 +1,9 @@
 export class UserInfoModel {
     constructor(
-        public Id: string,
-        public Username: string,
-        public Email: string,
-        public Firstname: string,
-        public Surname: string
+        public id: string,
+        public username: string,
+        public email: string,
+        public firstname: string,
+        public surname: string
     ) {}
 }

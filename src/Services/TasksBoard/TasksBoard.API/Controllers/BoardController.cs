@@ -31,13 +31,13 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPaginatedBoardsAsync(int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaginatedBoardsAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetPaginatedBoardsQuery
             {
                 PageIndex = pageIndex,
                 PageSize = pageSize
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -50,9 +50,9 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBoardByIdAsync([FromRoute] Guid boardId)
+        public async Task<IActionResult> GetBoardByIdAsync([FromRoute] Guid boardId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetBoardByIdQuery { Id = boardId });
+            var result = await _mediator.Send(new GetBoardByIdQuery { Id = boardId }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -65,7 +65,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPaginatedBoardsByUserIdAsync([FromRoute] Guid userId, string? query, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaginatedBoardsByUserIdAsync([FromRoute] Guid userId, string? query, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetPaginatedBoardsByUserIdQuery
             {
@@ -73,7 +73,7 @@ namespace TasksBoard.API.Controllers
                 PageIndex = pageIndex,
                 PageSize = pageSize,
                 Query = query
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -85,16 +85,20 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPaginatedPublicBoardsAsync(int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaginatedPublicBoardsAsync(int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var userId = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _mediator.Send(new GetPaginatedPublicBoardsQuery
             {
                 PageIndex = pageIndex,
                 PageSize = pageSize,
                 AccountId = Guid.Parse(userId)
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -104,7 +108,7 @@ namespace TasksBoard.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBoardAsync([FromForm] CreateBoardRequest request)
+        public async Task<IActionResult> CreateBoardAsync([FromForm] CreateBoardRequest request, CancellationToken cancellationToken = default)
         {
             byte[]? imageData = null;
             string? imageExtension = string.Empty;
@@ -127,7 +131,7 @@ namespace TasksBoard.API.Controllers
                 Public = request.Public,
                 Image = imageData,
                 ImageExtension = imageExtension
-            });
+            }, cancellationToken);
 
             return this.HandleResponse(result, () => Created(Url.Action(nameof(GetBoardByIdAsync), new { id = result.Value }), ApiResponse.Success(result.Value)));
 

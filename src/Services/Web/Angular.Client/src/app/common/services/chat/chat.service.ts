@@ -9,7 +9,7 @@ import { BoardMessageModel } from '../../models/board-message/board-message.mode
   providedIn: 'root'
 })
 export class ChatService {
-  private CHAT_HUB_URL: string = environment.chatUrl + '/chat';
+  private CHAT_HUB_URL: string = environment.gatewayUrl + '/chat';
 
   private connection?: signalR.HubConnection;
   // private messageSubject = new BehaviorSubject<BoardMessageModel[]>([]);
@@ -69,7 +69,7 @@ export class ChatService {
           data.value.message,
           data.value.createdAt,
           data.value.modifiedAt,
-          data.value.IsDeleted
+          data.value.isDeleted
         )
 
         this.ngZone.run(() => this.newMessagesSub.next(message));
@@ -84,7 +84,7 @@ export class ChatService {
           data.value.message,
           data.value.createdAt,
           data.value.modifiedAt,
-          data.value.IsDeleted
+          data.value.isDeleted
         );
 
         this.ngZone.run(() => this.editMessageSub.next(message));

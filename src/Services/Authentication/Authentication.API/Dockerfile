@@ -2,11 +2,16 @@
 
 # Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
 WORKDIR /app
+
+#RUN mkdir -p /app/cert
+#COPY Services/Authentication/Authentication.API/authentication-api.pfx /app/cert/
+#RUN chmod 644 /app/cert/authentication-api.pfx
+
+USER $APP_UID
+
 EXPOSE 8080
 EXPOSE 8081
-
 
 # Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build

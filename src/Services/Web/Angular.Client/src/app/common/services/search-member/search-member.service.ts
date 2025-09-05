@@ -11,7 +11,7 @@ import { SearchModel } from '../../models/user/search-info.model';
   providedIn: 'root'
 })
 export class SearchMemberService {
-  private SEARCH_URL: string = environment.authUrl;
+  private SEARCH_URL: string = environment.gatewayUrl;
 
   constructor(
     private http: HttpClient,
@@ -19,7 +19,7 @@ export class SearchMemberService {
   ) { }
 
   seacrhMember(query: string): Observable<SearchModel[]> {
-    const url = '/api/search';
+    const url = '/earch';
     return this.http.get<ResultResponse<SearchModel>>(this.SEARCH_URL + url, { params: this.httpOptionService.getOptions('search', query) })
       .pipe(
         map((response: any) => {
