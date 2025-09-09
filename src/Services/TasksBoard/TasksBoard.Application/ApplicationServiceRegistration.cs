@@ -1,6 +1,6 @@
 ﻿using Common.Blocks.Behaviours;
-using Common.Blocks.Interfaces.Services;
-using Common.Blocks.Services;
+using Common.Outbox.Interfaces.Services;
+using Common.Outbox.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

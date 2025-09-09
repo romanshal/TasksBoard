@@ -1,10 +1,11 @@
 ﻿using Common.Blocks.Constants;
-using Common.Blocks.Entities;
-using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.Repositories;
+using Common.Outbox.Entities;
+using Common.Outbox.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Blocks.Repositories
+namespace Common.Outbox.Repositories
 {
     public class OutboxEventRepository(
         DbContext context,

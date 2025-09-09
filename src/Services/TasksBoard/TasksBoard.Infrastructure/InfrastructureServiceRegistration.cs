@@ -18,6 +18,7 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.UnitOfWorks;
 using static Common.gRPC.Protos.UserProfiles;
+using Grpc.Net.Client;
 
 namespace TasksBoard.Infrastructure
 {
@@ -28,12 +29,6 @@ namespace TasksBoard.Infrastructure
             services.AddGrpcClient<UserProfilesClient>(option =>
             {
                 option.Address = new Uri(configuration["gRPC:Address"]!);
-            }).ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                return new SocketsHttpHandler
-                {
-                    EnableMultipleHttp2Connections = true
-                };
             }).ConfigureChannel(options =>
             {
                 options.Credentials = ChannelCredentials.Insecure;

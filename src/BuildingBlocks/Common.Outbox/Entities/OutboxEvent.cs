@@ -1,4 +1,6 @@
-﻿namespace Common.Blocks.Entities
+﻿using Common.Blocks.Entities;
+
+namespace Common.Outbox.Entities
 {
     public class OutboxEvent : BaseEntity
     {

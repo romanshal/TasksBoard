@@ -28,11 +28,11 @@
       "UpstreamPathTemplate": "/login",
       "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/api/authentication/login",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "authentication.api",
-          "Port": 443
+          "Port": 80
         }
       ]
     },

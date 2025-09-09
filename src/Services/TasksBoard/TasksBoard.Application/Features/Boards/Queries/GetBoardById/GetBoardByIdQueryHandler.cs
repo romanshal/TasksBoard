@@ -38,23 +38,23 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
             await _profileHandler.HandleMany(
             [
                 UserProfileMappingFactory.Create(
-                    boardDto.InviteRequests, 
-                    x => x.ToAccountId, 
+                    boardDto.InviteRequests,
+                    x => x.ToAccountId,
                     (x, u, e) => { x.ToAccountName = u; x.ToAccountEmail = e!; }),
 
                 UserProfileMappingFactory.Create(
-                    boardDto.InviteRequests, 
-                    x => x.FromAccountId, 
+                    boardDto.InviteRequests,
+                    x => x.FromAccountId,
                     (x, u, _) => { x.FromAccountName = u; }),
 
                 UserProfileMappingFactory.Create(
-                    boardDto.AccessRequests, 
-                    x => x.AccountId, 
+                    boardDto.AccessRequests,
+                    x => x.AccountId,
                     (x, u, e) => { x.AccountName = u; x.AccountEmail = e!; }),
 
                 UserProfileMappingFactory.Create(
-                    boardDto.Members, 
-                    x => x.AccountId, 
+                    boardDto.Members,
+                    x => x.AccountId,
                     (x, u, _) => { x.Nickname = u; }),
             ], cancellationToken);
 

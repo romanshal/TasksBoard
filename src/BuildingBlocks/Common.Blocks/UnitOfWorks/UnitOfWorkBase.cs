@@ -31,20 +31,16 @@ namespace Common.Blocks.UnitOfWorks
             return (IRepository<T>)value;
         }
 
-        public IOutboxEventRepository GetOutboxEventRepository()
+        public TRepository GetCustomRepository<TRepository>() where TRepository : class
         {
-            var type = typeof(OutboxEvent);
-
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<OutboxEvent>))
+            var type = typeof(TRepository);
+            if (!_repositories.TryGetValue(type, out var value))
             {
-                var repositoryInstance = new OutboxEventRepository(_context, _loggerFactory);
-
-                value = repositoryInstance;
-
-                _repositories[type] = repositoryInstance;
+                value = Activator.CreateInstance(typeof(TRepository), _context, _loggerFactory) ?? throw new InvalidOperationException($"Cannot create instance of {type.Name}");
+                _repositories[type] = value;
             }
 
-            return (IOutboxEventRepository)value;
+            return (TRepository)value;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

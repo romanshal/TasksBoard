@@ -1,8 +1,8 @@
-﻿using Common.Blocks.Entities;
+﻿using Common.Outbox.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Common.Blocks.EntityConfigurations
+namespace Common.Outbox.EntityConfigurations
 {
     public class OutboxEventConfiguration : IEntityTypeConfiguration<OutboxEvent>
     {

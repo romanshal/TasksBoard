@@ -211,7 +211,7 @@ services:
     container_name: tasksboard.api
     environment:
       <<: *default-env
-      "gRPC:Address": "https://authentication.api"
+      "gRPC:Address": "http://authentication.api"
       "ConnectionStrings:TasksBoardDbConnection": "Server=tasksboarddb;Port=5432;Database=tasks-board-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "tasksboard.api-index-{0:yyyy.MM.dd}"
       "MessageBroker:Host": amqp://rabbitmq:5672
@@ -238,7 +238,7 @@ services:
     container_name: chat.api
     environment:
       <<: *default-env
-      "gRPC:Address": "https://authentication.api"
+      "gRPC:Address": "http://authentication.api"
       "ConnectionStrings:ChatDbConnection": "Server=chatdb;Port=5432;Database=tasks-board-chat-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "chat.api-index-{0:yyyy.MM.dd}"
       "Cache:Redis:Host": redis
@@ -257,7 +257,7 @@ services:
     container_name: notification.api
     environment:      
       <<: *default-env
-      "gRPC:Address": "https://authentication.api"
+      "gRPC:Address": "http://authentication.api"
       "ConnectionStrings:NotificationDbConnection": "Server=notificationdb;Port=5432;Database=tasks-board-notification-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "notification.api-index-{0:yyyy.MM.dd}"
       "Cache:Redis:Host": redis

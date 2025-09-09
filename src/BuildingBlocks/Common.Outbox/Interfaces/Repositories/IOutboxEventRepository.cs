@@ -1,6 +1,7 @@
-﻿using Common.Blocks.Entities;
+﻿using Common.Blocks.Interfaces.Repositories;
+using Common.Outbox.Entities;
 
-namespace Common.Blocks.Interfaces.Repositories
+namespace Common.Outbox.Interfaces.Repositories
 {
     public interface IOutboxEventRepository : IRepository<OutboxEvent>
     {

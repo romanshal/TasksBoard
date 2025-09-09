@@ -1,6 +1,6 @@
 ﻿using EventBus.Messages.Events;
 
-namespace Common.Blocks.Interfaces.Services
+namespace Common.Outbox.Interfaces.Services
 {
     public interface IOutboxService
     {

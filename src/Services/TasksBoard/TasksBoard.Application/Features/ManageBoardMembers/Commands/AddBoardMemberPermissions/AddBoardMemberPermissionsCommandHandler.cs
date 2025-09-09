@@ -1,5 +1,5 @@
-﻿using Common.Blocks.Interfaces.Services;
-using Common.Blocks.Models.DomainResults;
+﻿using Common.Blocks.Models.DomainResults;
+using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;

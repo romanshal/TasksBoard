@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Entities;
+using Common.Outbox.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using TasksBoard.Domain.Entities;

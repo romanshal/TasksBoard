@@ -1,12 +1,12 @@
 ﻿using Common.Blocks.Constants;
-using Common.Blocks.Entities;
-using Common.Blocks.Interfaces.Services;
 using Common.Blocks.Interfaces.UnitOfWorks;
+using Common.Outbox.Entities;
+using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-namespace Common.Blocks.Services
+namespace Common.Outbox.Services
 {
     public class OutboxService(
         IUnitOfWorkBase unitOfWork,

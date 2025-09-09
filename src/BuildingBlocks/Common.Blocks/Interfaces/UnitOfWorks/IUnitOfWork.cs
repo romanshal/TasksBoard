@@ -6,7 +6,7 @@ namespace Common.Blocks.Interfaces.UnitOfWorks
     public interface IUnitOfWorkBase
     {
         IRepository<T> GetRepository<T>() where T : BaseEntity;
-        IOutboxEventRepository GetOutboxEventRepository();
+        TRepository GetCustomRepository<TRepository>() where TRepository : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
