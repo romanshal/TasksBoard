@@ -1,9 +1,11 @@
-﻿using Common.Blocks.Configurations;
+﻿using Common.Cache.Configurations;
+using Common.Cache.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
-namespace Common.Blocks.Extensions
+
+namespace Common.Cache.Extensions
 {
     public static class StackExchengeCacheExtensions
     {
@@ -34,6 +36,10 @@ namespace Common.Blocks.Extensions
             });
 
             services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
+            services
+                .AddHealthChecks()
+                .AddRedis($"{cacheSettings.Redis.Host}:{cacheSettings.Redis.Port}");
 
             return services;
         }

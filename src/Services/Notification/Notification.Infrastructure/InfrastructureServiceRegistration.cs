@@ -1,5 +1,6 @@
-﻿using Common.Blocks.Extensions;
-using Common.Blocks.Interfaces.Caches;
+﻿using Common.Cache.Extensions;
+using Common.Cache.Interfaces;
+using Common.Cache.Repositories;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
 using Common.gRPC.Interfaces.Caches;
@@ -43,6 +44,10 @@ namespace Notification.Infrastructure
             services.AddSingleton<IUserProfileCacheRepository, UserProfileCacheRepository>();
 
             services.AddScoped<IUserProfileService, UserProfileService>();
+
+            services
+                .AddHealthChecks()
+                .AddNpgSql(connectionString);
 
             return services;
         }

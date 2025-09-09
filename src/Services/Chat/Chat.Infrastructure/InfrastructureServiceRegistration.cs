@@ -1,8 +1,9 @@
 ﻿using Chat.Domain.Interfaces.UnitOfWorks;
 using Chat.Infrastructure.Data.Contexts;
 using Chat.Infrastructure.UnitOfWorks;
-using Common.Blocks.Extensions;
-using Common.Blocks.Interfaces.Caches;
+using Common.Cache.Extensions;
+using Common.Cache.Interfaces;
+using Common.Cache.Repositories;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
 using Common.gRPC.Interfaces.Caches;
@@ -43,6 +44,10 @@ namespace Chat.Infrastructure
 
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services
+                .AddHealthChecks()
+                .AddNpgSql(connectionString);
 
             return services;
         }

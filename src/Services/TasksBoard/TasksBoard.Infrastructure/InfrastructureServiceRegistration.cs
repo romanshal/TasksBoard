@@ -1,5 +1,6 @@
-﻿using Common.Blocks.Extensions;
-using Common.Blocks.Interfaces.Caches;
+﻿using Common.Cache.Extensions;
+using Common.Cache.Interfaces;
+using Common.Cache.Repositories;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
@@ -9,11 +10,9 @@ using Common.gRPC.Repositories;
 using Common.gRPC.Services;
 using EventBus.Messages.Extensions;
 using Grpc.Core;
-using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
 using System.Reflection;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -38,7 +37,7 @@ namespace TasksBoard.Infrastructure
             }).ConfigureChannel(options =>
             {
                 options.Credentials = ChannelCredentials.Insecure;
-            }); ;
+            });
 
             var connectionString = configuration.GetConnectionString("TasksBoardDbConnection") ?? throw new InvalidOperationException("Connection string 'TasksBoardDbConnection' not found");
             services.AddDbContext<TasksBoardDbContext>(options =>
@@ -62,9 +61,9 @@ namespace TasksBoard.Infrastructure
 
             services.AddScoped<IUserProfileService, UserProfileService>();
 
-            services.AddHealthChecks()
-                .AddNpgSql(connectionString)
-                .AddRabbitMQ();
+            services
+                .AddHealthChecks()
+                .AddNpgSql(connectionString);
 
             return services;
         }

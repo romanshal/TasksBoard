@@ -24,7 +24,7 @@ namespace Common.Blocks.Middlewares
             }
         }
 
-        private Task HandleExeptionAsync(HttpContext httpContext, Exception ex)
+        private static Task HandleExeptionAsync(HttpContext httpContext, Exception ex)
         {
             httpContext.Response.StatusCode = (int)GetErrorCode(ex);
             var responseDate = GetResponseDate(ex);

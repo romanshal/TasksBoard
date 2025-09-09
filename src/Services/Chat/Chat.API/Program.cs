@@ -6,11 +6,15 @@ using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Chat.API");
+builder.Services
+    .AddApiLogging(builder.Configuration, builder.Environment, "Chat.API")
+    .AddApiMetrics(builder.Configuration, "Chat.API");
 
 builder.Services.AddCors(options =>
 {
@@ -74,5 +78,11 @@ app.MapHub<BoardChatHub>("/chat");
 
 app.MapControllers()
     .RequireAuthorization();
+
+app.UseHealthChecks("/hc", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();

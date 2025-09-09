@@ -1,4 +1,4 @@
-﻿namespace Common.Blocks.Configurations
+﻿namespace Common.Cache.Configurations
 {
     public record CacheConfiguration
     {

@@ -35,6 +35,10 @@ namespace Authentication.Infrastructure
 
             services.AddSingleton<IDeviceFactory, DeviceFactory>();
 
+            services
+                .AddHealthChecks()
+                .AddNpgSql(connectionString);
+
             return services;
         }
     }

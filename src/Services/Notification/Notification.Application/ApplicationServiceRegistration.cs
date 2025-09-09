@@ -16,7 +16,7 @@ namespace Notification.Application
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
             });
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
             services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 

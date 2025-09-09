@@ -2,6 +2,8 @@ using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Notification.API.Controllers;
 using Notification.API.Hubs;
 using Notification.API.HubServices;
@@ -13,7 +15,9 @@ using Notification.Infrastructure.Data.Contexts;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Notification.API");
+builder.Services
+    .AddApiLogging(builder.Configuration, builder.Environment, "Notification.API")
+    .AddApiMetrics(builder.Configuration, "Notification.API");
 
 builder.Services.AddControllers();
 
@@ -81,5 +85,11 @@ app.MapHub<NotificationHub>("/notification");
 
 app.MapControllers().RequireAuthorization();
 app.MapGrpcService<NotificationGrpcController>();
+
+app.UseHealthChecks("/hc", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.Blocks\Common.Blocks.csproj" />
+    <ProjectReference Include="..\Common.Cache\Common.Cache.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

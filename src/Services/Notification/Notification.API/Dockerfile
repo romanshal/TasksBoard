@@ -17,6 +17,7 @@ COPY ["Services/Notification/Notification.Application/Notification.Application.c
 COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
 COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
 COPY ["BuildingBlocks/Common.gRPC/Common.gRPC.csproj", "BuildingBlocks/Common.gRPC/"]
+COPY ["BuildingBlocks/Common.Cache/Common.Cache.csproj", "BuildingBlocks/Common.Cache/"]
 COPY ["Services/Notification/Notification.Domain/Notification.Domain.csproj", "Services/Notification/Notification.Domain/"]
 COPY ["Services/Notification/Notification.Infrastructure/Notification.Infrastructure.csproj", "Services/Notification/Notification.Infrastructure/"]
 RUN dotnet restore "./Services/Notification/Notification.API/Notification.API.csproj"

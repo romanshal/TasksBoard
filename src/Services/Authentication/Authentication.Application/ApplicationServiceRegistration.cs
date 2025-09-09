@@ -1,6 +1,5 @@
 ﻿using Common.Blocks.Behaviours;
 using Common.Blocks.Configurations;
-using EventBus.Messages.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -22,13 +21,9 @@ namespace Authentication.Application
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
-
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-
-            //services.AddHostedService<OutboxPublisherService>();
 
             return services;
         }

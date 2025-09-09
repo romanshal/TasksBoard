@@ -11,7 +11,7 @@ namespace TasksBoard.API.Attributes
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var user = context.HttpContext.User;
-            if (user == null || !user.Identity.IsAuthenticated)
+            if (user == null || !user.Identity!.IsAuthenticated)
             {
                 context.Result = new UnauthorizedResult();
                 return;

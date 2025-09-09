@@ -18,7 +18,7 @@ namespace TasksBoard.Application
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
             });
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
             services.AddTransient<IOutboxService, OutboxService>();
 

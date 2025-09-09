@@ -6,7 +6,9 @@ using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Reflection;
@@ -29,7 +31,9 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 // Add services to the container.
-builder.Services.AddApiLogging(builder.Configuration, builder.Environment, "Authentication.API");
+builder.Services
+    .AddApiLogging(builder.Configuration, builder.Environment, "Authentication.API")
+    .AddApiMetrics(builder.Configuration, "Authentication.API");
 
 builder.Services.AddControllers();
 
@@ -163,5 +167,11 @@ app.MapControllers().RequireAuthorization();
 
 app.MapGrpcService<UserProfilesGrpñController>();
 //app.MapGrpcReflectionService();
+
+app.MapHealthChecks("/hc", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();

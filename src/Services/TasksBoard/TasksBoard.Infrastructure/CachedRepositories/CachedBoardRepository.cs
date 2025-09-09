@@ -1,4 +1,4 @@
-﻿using Common.Blocks.Interfaces.Caches;
+﻿using Common.Cache.Interfaces;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 

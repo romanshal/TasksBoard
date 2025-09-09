@@ -26,7 +26,7 @@ namespace TasksBoard.Infrastructure.Data.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(TasksBoardDbContext))!);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(OutboxEvent))!);
         }
 

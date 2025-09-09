@@ -1,10 +1,10 @@
-﻿using Common.Blocks.Configurations;
-using Common.Blocks.Interfaces.Caches;
+﻿using Common.Cache.Configurations;
+using Common.Cache.Interfaces;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace Common.Blocks.Repositories
+namespace Common.Cache.Repositories
 {
     public class RedisCacheRepository(
         IConnectionMultiplexer multiplexer,

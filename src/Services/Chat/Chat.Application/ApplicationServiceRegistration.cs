@@ -15,7 +15,7 @@ namespace Chat.Application
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
             });
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 

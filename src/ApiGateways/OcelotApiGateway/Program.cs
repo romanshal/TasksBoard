@@ -46,10 +46,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services
-    .AddHealthChecks()
-    .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
-
-builder.Services
     .AddOcelot(builder.Configuration)
     .AddPolly()
     .AddCacheManager(cache =>
@@ -71,17 +67,6 @@ app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapHealthChecks("/hc", new HealthCheckOptions()
-{
-    Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
-});
-
-app.MapHealthChecks("/liveness", new HealthCheckOptions
-{
-    Predicate = r => r.Name.Contains("self")
-});
 
 await app.UseOcelot();
 

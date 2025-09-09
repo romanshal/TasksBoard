@@ -192,11 +192,6 @@ services:
       <<: *default-env
       "ConnectionStrings:AuthenticationDbConnection": "Server=authenticationdb;Port=5432;Database=tasks-board-authentication-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "authentication.api-index-{0:yyyy.MM.dd}"
-      "MessageBroker:Host": amqp://rabbitmq:5672
-      "MessageBroker:UserName": guest
-      "MessageBroker:Password": guest
-      "MessageBroker:StartTimeout": 30
-      "MessageBroker:StopTimeout": 1
     depends_on:
       - rabbitmq
       - authenticationdb

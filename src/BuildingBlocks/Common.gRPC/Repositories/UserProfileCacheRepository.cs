@@ -1,4 +1,4 @@
-﻿using Common.Blocks.Interfaces.Caches;
+﻿using Common.Cache.Interfaces;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Models;
 

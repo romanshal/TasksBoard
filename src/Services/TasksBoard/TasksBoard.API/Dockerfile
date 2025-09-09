@@ -4,13 +4,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
-
-# Копируем сертификат внутрь контейнера
-#COPY tasksboard-api.pfx /https/tasksboard-api.pfx
-
-# Настраиваем права (чтобы Kestrel мог читать)
-#RUN chmod 644 /https/tasksboard-api.pfx
-
 EXPOSE 8080
 EXPOSE 8081
 
@@ -22,9 +15,10 @@ WORKDIR /src
 COPY ["Services/TasksBoard/TasksBoard.API/TasksBoard.API.csproj", "Services/TasksBoard/TasksBoard.API/"]
 COPY ["Services/TasksBoard/TasksBoard.Application/TasksBoard.Application.csproj", "Services/TasksBoard/TasksBoard.Application/"]
 COPY ["BuildingBlocks/Common.gRPC/Common.gRPC.csproj", "BuildingBlocks/Common.gRPC/"]
-COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
+COPY ["BuildingBlocks/Common.Cache/Common.Cache.csproj", "BuildingBlocks/Common.Cache/"]
 COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
 COPY ["Services/TasksBoard/TasksBoard.Domain/TasksBoard.Domain.csproj", "Services/TasksBoard/TasksBoard.Domain/"]
+COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
 COPY ["Services/TasksBoard/TasksBoard.Infrastructure/TasksBoard.Infrastructure.csproj", "Services/TasksBoard/TasksBoard.Infrastructure/"]
 RUN dotnet restore "./Services/TasksBoard/TasksBoard.API/TasksBoard.API.csproj"
 COPY . .

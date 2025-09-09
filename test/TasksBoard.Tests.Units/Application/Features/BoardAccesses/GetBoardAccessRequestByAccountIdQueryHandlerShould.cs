@@ -32,7 +32,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             logger = new Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>>();
 
-            mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>()));
+            //mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>()));
 
 
             //sut = new GetBoardAccessRequestByAccountIdQueryHandler(unitOfWork.Object, logger.Object, mapper);
