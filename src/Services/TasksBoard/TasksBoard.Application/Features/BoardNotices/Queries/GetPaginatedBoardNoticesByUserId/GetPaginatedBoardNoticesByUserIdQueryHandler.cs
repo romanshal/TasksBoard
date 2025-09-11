@@ -27,7 +27,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
             if (count == 0)
             {
                 _logger.LogInformation("No board notices entities in database.");
-                return Result.Success(new PaginatedList<BoardNoticeDto>([], request.PageIndex, request.PageSize));
+                return Result.Success(PaginatedList<BoardNoticeDto>.Empty(request.PageIndex, request.PageSize));
             }
 
             var boardNotice = await _unitOfWork.GetBoardNoticeRepository().GetPaginatedByUserIdAsync(request.UserId, request.PageIndex, request.PageSize, cancellationToken);

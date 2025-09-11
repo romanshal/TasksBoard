@@ -27,7 +27,7 @@ namespace Notification.Application.Features.Notifications.Queries.GetNewPaginate
             if (count == 0)
             {
                 _logger.LogInformation("No new notfication entities in database for user '{accountId}'.", request.AccountId);
-                return Result.Success(new PaginatedList<NotificationDto>([], request.PageIndex, request.PageSize));
+                return Result.Success(PaginatedList<NotificationDto>.Empty(request.PageIndex, request.PageSize));
             }
 
             var notifications = await _unitOfWork.GetApplicationEventRepository().GetNewPaginatedByAccountIdAsync(request.AccountId, request.PageIndex, request.PageSize, cancellationToken);

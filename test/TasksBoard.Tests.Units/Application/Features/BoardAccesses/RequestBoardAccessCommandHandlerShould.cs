@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -118,11 +119,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            //await sut
-            //    .Invoking(s => s.Handle(command, CancellationToken.None))
-            //    .Should()
-            //    .ThrowAsync<NotFoundException>();
-
             var actual = await sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();
@@ -148,11 +144,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     Public = false,
                     BoardMembers = []
                 });
-
-            //await sut
-            //    .Invoking(s => s.Handle(command, CancellationToken.None))
-            //    .Should()
-            //    .ThrowAsync<ForbiddenException>();
 
             var actual = await sut.Handle(command, CancellationToken.None);
 
@@ -186,11 +177,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                         }
                     ]
                 });
-
-            //await sut
-            //    .Invoking(s => s.Handle(command, CancellationToken.None))
-            //    .Should()
-            //    .ThrowAsync<AlreadyExistException>();
 
             var actual = await sut.Handle(command, CancellationToken.None);
 
@@ -227,11 +213,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     AccountId = accountId,
                     Status = 0
                 });
-
-            //await sut
-            //    .Invoking(s => s.Handle(command, CancellationToken.None))
-            //    .Should()
-            //    .ThrowAsync<AlreadyExistException>();
 
             var actual = await sut.Handle(command, CancellationToken.None);
 
@@ -273,11 +254,6 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     ToAccountId = Guid.Empty,
                     Status = 0
                 });
-
-            //await sut
-            //    .Invoking(s => s.Handle(command, CancellationToken.None))
-            //    .Should()
-            //    .ThrowAsync<AlreadyExistException>();
 
             var actual = await sut.Handle(command, CancellationToken.None);
 

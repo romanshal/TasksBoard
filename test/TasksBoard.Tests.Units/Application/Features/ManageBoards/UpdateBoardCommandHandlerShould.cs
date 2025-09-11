@@ -90,12 +90,6 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                 .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            //await sut
-            //    .Invoking(s => s.Handle(command, CancellationToken.None))
-            //    .Should()
-            //    .ThrowAsync<NotFoundException>()
-            //    .WithMessage($"Board with id '{boardId}' not found.");
-
             var actual = await sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();

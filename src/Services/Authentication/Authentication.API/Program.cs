@@ -53,23 +53,6 @@ builder.Services
     .AddInfrastructureServices(conntectionString)
     .AddApplicationServices();
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
-{
-    config.Password.RequiredLength = 8;
-    config.Password.RequireDigit = false;
-    config.Password.RequireNonAlphanumeric = false;
-    config.Password.RequireUppercase = false;
-    config.Password.RequireLowercase = false;
-
-    config.User.RequireUniqueEmail = true;
-
-    config.Lockout.AllowedForNewUsers = true;
-    config.Lockout.MaxFailedAccessAttempts = 5;
-    config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
-})
-.AddEntityFrameworkStores<AuthenticationDbContext>()
-.AddDefaultTokenProviders();
-
 builder.Services.AddJwtAuthentication(builder.Configuration)
     .AddCookie()
     .AddGoogle("Google", config =>

@@ -45,6 +45,7 @@ namespace TasksBoard.Tests.E2E.Controllers
             getCreatedBoardResponse.Content.Should().NotBeNull();
             getResponse.Should().NotBeNull();
             getResponse.IsError.Should().BeFalse();
+            getResponse.Result.Should().NotBeNull();
             getResponse.Result.Id.Should().Be(response.Result);
             getResponse.Result.Name.Should().Be(boardName);
         }

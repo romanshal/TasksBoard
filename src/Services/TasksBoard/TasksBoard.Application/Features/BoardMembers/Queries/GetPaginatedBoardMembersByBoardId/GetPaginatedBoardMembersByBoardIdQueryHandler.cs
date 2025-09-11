@@ -30,15 +30,13 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoard
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 return Result.Failure<PaginatedList<BoardMemberDto>>(BoardErrors.NotFound);
-
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
             var count = await _unitOfWork.GetBoardMemberRepository().CountByBoardIdAsync(request.BoardId, cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No board membres entities in database.");
-                return Result.Success(new PaginatedList<BoardMemberDto>([], request.PageIndex, request.PageSize));
+                return Result.Success(PaginatedList<BoardMemberDto>.Empty(request.PageIndex, request.PageSize));
             }
 
             var boardMembers = await _unitOfWork.GetBoardMemberRepository().GetPaginatedByBoardIdAsync(request.BoardId, request.PageIndex, request.PageSize, cancellationToken);

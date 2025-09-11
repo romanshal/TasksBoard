@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
 using Common.gRPC.Interfaces.Services;
+using Common.gRPC.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRequestByAccountId;
+using TasksBoard.Application.Handlers;
+using TasksBoard.Application.Mappings;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -15,7 +19,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
     {
         private readonly Mock<IUnitOfWork> unitOfWork;
         private readonly Mapper mapper;
-        private readonly Mock<IUserProfileService> profileServie;
+        private readonly Mock<IUserProfileHandler> userProfile;
         private readonly Mock<IBoardAccessRequestRepository> accessRepository;
         private readonly Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>> logger;
         private readonly GetBoardAccessRequestByAccountIdQueryHandler sut;
@@ -25,18 +29,27 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             accessRepository = new Mock<IBoardAccessRequestRepository>();
 
             unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(s => s.GetBoardAccessRequestRepository())
+            unitOfWork
+                .Setup(s => s.GetBoardAccessRequestRepository())
                 .Returns(accessRepository.Object);
 
             logger = new Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>>();
 
-            //mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>()));
+            mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>(), new NullLoggerFactory()));
 
+            userProfile = new Mock<IUserProfileHandler>();
+            userProfile
+                .Setup(h => h.Handle(
+                    It.IsAny<IEnumerable<BaseDto>>(),
+                    It.IsAny<Func<BaseDto, Guid>>(),
+                    It.IsAny<Action<BaseDto, string, string?>>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
 
-            //sut = new GetBoardAccessRequestByAccountIdQueryHandler(unitOfWork.Object, logger.Object, mapper);
+            sut = new GetBoardAccessRequestByAccountIdQueryHandler(unitOfWork.Object, logger.Object, mapper, userProfile.Object);
         }
 
-        //[Fact]
+        [Fact]
         public async Task RetunListOfAccessRequests_WhenAccessRequestsExist()
         {
             var command = new GetBoardAccessRequestByAccountIdQuery
@@ -65,7 +78,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             actual.Value.Should().NotBeNullOrEmpty().And.BeEquivalentTo(listDto);
         }
 
-        //[Fact]
+        [Fact]
         public async Task ReturnEmptyList_WhenAccessRequestsDoesntExist()
         {
             var command = new GetBoardAccessRequestByAccountIdQuery

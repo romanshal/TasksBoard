@@ -25,7 +25,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards
             if (count == 0)
             {
                 _logger.LogInformation("No boards entities in database.");
-                return Result.Success(new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize));
+                return Result.Success(PaginatedList<BoardForViewDto>.Empty(request.PageIndex, request.PageSize));
 
                 //return new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize);
             }

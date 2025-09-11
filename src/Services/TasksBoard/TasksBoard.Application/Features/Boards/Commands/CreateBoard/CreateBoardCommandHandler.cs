@@ -30,8 +30,6 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             {
                 _logger.LogError("Can't create new board. No rows were affected.");
                 return Result.Failure<Guid>(BoardErrors.CantCreate);
-
-                //throw new InvalidOperationException("Can't create new board. No rows were affected.");
             }
 
             _logger.LogInformation("Created new board with id '{id}'.", board.Id);

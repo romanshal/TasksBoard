@@ -8,15 +8,15 @@ namespace Common.Blocks.Extensions
         {
             if (list == null || !list.Any())
             {
-                return new PaginatedList<T>([], pageIndex, pageSize, 0);
+                return PaginatedList<T>.Empty(pageIndex, pageSize);
             }
 
             if (list.Any() && totalCount == default)
             {
-                return new PaginatedList<T>(list, pageIndex, pageSize, list.Count());
+                return PaginatedList<T>.Create(list, pageIndex, pageSize, list.Count());
             }
 
-            return new PaginatedList<T>(list, pageIndex, pageSize, totalCount);
+            return PaginatedList<T>.Create(list, pageIndex, pageSize, totalCount);
         }
     }
 }

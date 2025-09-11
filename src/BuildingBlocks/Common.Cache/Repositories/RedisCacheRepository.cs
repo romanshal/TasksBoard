@@ -21,6 +21,21 @@ namespace Common.Cache.Repositories
             return _db.StringSetAsync(key, payload, optionsTtl);
         }
 
+        public async Task<T?> GetOrCreateAsync<T>(string key, Func<Task<T>> func)
+        {
+            var cached = await _db.StringGetAsync(key);
+            if (cached.HasValue)
+                return JsonConvert.DeserializeObject<T>(cached!);
+
+            var value = await func();
+
+            var payload = JsonConvert.SerializeObject(value);
+            var optionsTtl = TimeSpan.FromSeconds(_conf.ExpirationTimeSeconds);
+            await _db.StringSetAsync(key, payload, optionsTtl);
+
+            return value;
+        }
+
         public async Task<T?> GetAsync<T>(string key)
         {
             var cached = await _db.StringGetAsync(key);
@@ -54,6 +69,11 @@ namespace Common.Cache.Repositories
             }
 
             return result;
+        }
+
+        public async Task<bool> RemoveAsync(string key)
+        {
+            return await _db.KeyDeleteAsync(key);
         }
     }
 }

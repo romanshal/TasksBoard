@@ -30,9 +30,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 if (count == 0)
                 {
                     _logger.LogInformation("No boards entities in database.");
-                    return Result.Success(new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize));
-
-                    //return new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize);
+                    return Result.Success(PaginatedList<BoardForViewDto>.Empty(request.PageIndex, request.PageSize));
                 }
 
                 boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAsync(request.UserId, request.PageIndex, request.PageSize, cancellationToken);
@@ -43,9 +41,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 if (count == 0)
                 {
                     _logger.LogInformation("No boards entities in database.");
-                    return Result.Success(new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize));
-
-                    //return new PaginatedList<BoardForViewDto>([], request.PageIndex, request.PageSize);
+                    return Result.Success(PaginatedList<BoardForViewDto>.Empty(request.PageIndex, request.PageSize));
                 }
 
                 boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAndQueryAsync(request.UserId, request.Query, request.PageIndex, request.PageSize, cancellationToken);
