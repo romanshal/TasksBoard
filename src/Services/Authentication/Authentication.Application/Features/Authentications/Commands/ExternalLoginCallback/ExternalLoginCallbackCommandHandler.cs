@@ -33,8 +33,8 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
             var provider = info.LoginProvider;
             var providerKey = info.ProviderKey;
 
-            var name = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? 
-                info.Principal.FindFirstValue(ClaimTypes.Surname) ?? 
+            var name = info.Principal.FindFirstValue(ClaimTypes.GivenName) ??
+                info.Principal.FindFirstValue(ClaimTypes.Surname) ??
                 info.Principal.FindFirstValue(ClaimTypes.Name)?.Trim();
 
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);

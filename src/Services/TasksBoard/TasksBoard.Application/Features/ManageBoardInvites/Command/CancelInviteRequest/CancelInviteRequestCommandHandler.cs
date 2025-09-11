@@ -37,7 +37,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CancelInvit
                 _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if(affectedRows == 0)
+                if (affectedRows == 0)
                 {
                     _logger.LogError("Can't cancel board invite request to board with id '{boardId}'.", request.BoardId);
                     return Result.Failure(BoardInviteErrors.CantCancel(board.Name));

@@ -3,6 +3,7 @@ using Authentication.Application;
 using Authentication.Domain.Entities;
 using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
+using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
 using Common.Blocks.Extensions.Monitoring;
 using Common.Blocks.Middlewares;
@@ -20,6 +21,8 @@ builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment, "Authentication.API")
     .AddApiMetrics(builder.Configuration, "Authentication.API");
 
+builder.Services.Configure<JwtCofiguration>(builder.Configuration.GetRequiredSection("Authentication:Jwt"));
+
 builder.Services.AddControllers();
 
 builder.Services.AddGrpc();
@@ -29,11 +32,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
         .WithOrigins(
-            "http://localhost:4200", 
-            "https://localhost:9005", 
-            "https://ocelotapigateway:443", 
-            "http://ocelotapigateway:80", 
-            "http://ocelotapigateway", 
+            "http://localhost:4200",
+            "https://localhost:9005",
+            "https://ocelotapigateway:443",
+            "http://ocelotapigateway:80",
+            "http://ocelotapigateway",
             "https://ocelotapigateway",
             "http://localhost",
             "https://localhost")
@@ -48,7 +51,7 @@ var conntectionString = builder.Configuration.GetConnectionString("Authenticatio
 
 builder.Services
     .AddInfrastructureServices(conntectionString)
-    .AddApplicationServices(builder.Configuration);
+    .AddApplicationServices();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
 {
@@ -79,14 +82,14 @@ builder.Services.AddJwtAuthentication(builder.Configuration)
         config.Scope.Add("profile");
         config.ClaimActions.MapJsonKey("email_verified", "email_verified");
     });
-    //.AddFacebook("Facebook", fb =>
-    //{
-    //    fb.SignInScheme = IdentityConstants.ExternalScheme;
-    //    fb.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
-    //    fb.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
-    //    fb.Fields.Add("email");
-    //    fb.Fields.Add("name");
-    //});
+//.AddFacebook("Facebook", fb =>
+//{
+//    fb.SignInScheme = IdentityConstants.ExternalScheme;
+//    fb.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
+//    fb.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
+//    fb.Fields.Add("email");
+//    fb.Fields.Add("name");
+//});
 
 builder.Services.ConfigureExternalCookie(o =>
 {

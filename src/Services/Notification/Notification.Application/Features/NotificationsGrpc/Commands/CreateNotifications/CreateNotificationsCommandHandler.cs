@@ -13,7 +13,7 @@ namespace Notification.Application.Features.NotificationsGrpc.Commands.CreateNot
     {
         public async Task<Result> Handle(CreateNotificationsCommand request, CancellationToken cancellationToken)
         {
-            foreach(var accontId in request.AccountIds)
+            foreach (var accontId in request.AccountIds)
             {
                 var applicationEvent = new ApplicationEvent
                 {

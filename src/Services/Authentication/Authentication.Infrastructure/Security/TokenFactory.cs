@@ -44,10 +44,10 @@ namespace Authentication.Infrastructure.Security
             var handler = new JsonWebTokenHandler();
             var accessToken = handler.CreateToken(tokenDescriptor);
 
-            return new TokenModel 
-            { 
-                Token = accessToken, 
-                ExpiresAtUtc = exp 
+            return new TokenModel
+            {
+                Token = accessToken,
+                ExpiresAtUtc = exp
             };
         }
 

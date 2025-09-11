@@ -5,7 +5,7 @@ namespace Authentication.Domain.Interfaces.Repositories
     public interface IApplicationUserSessionRepository
     {
         Task<IEnumerable<ApplicationUserSession>> GetByUserIdAsync(
-            Guid userId, 
+            Guid userId,
             CancellationToken cancellationToken = default);
 
         Task<ApplicationUserSession?> GetByUserIdAndDeviceId(

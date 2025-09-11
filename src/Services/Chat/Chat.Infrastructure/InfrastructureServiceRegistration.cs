@@ -1,11 +1,11 @@
 ﻿using Chat.Domain.Interfaces.UnitOfWorks;
 using Chat.Infrastructure.Data.Contexts;
 using Chat.Infrastructure.UnitOfWorks;
+using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.Repositories;
 using Common.Cache.Extensions;
 using Common.Cache.Interfaces;
 using Common.Cache.Repositories;
-using Common.Blocks.Interfaces.Repositories;
-using Common.Blocks.Repositories;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
 using Common.gRPC.Repositories;

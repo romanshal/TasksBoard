@@ -1,5 +1,4 @@
 ﻿using Authentication.Application.Dtos;
-using Authentication.Application.Models;
 using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Models;

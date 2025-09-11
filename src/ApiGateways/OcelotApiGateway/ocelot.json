@@ -39,7 +39,7 @@
     {
       "UpstreamPathTemplate": "/refresh",
       "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/api/authentication/token",
+      "DownstreamPathTemplate": "/api/authentication/refresh",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -207,7 +207,7 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/accessrequests/{boardId}",
+      "UpstreamPathTemplate": "/accessrequests/board/{boardId}",
       "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/api/boardaccessrequests/board/{boardId}",
       "DownstreamScheme": "http",
@@ -453,9 +453,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/accessrequests/{boardId}",
+      "UpstreamPathTemplate": "/accessrequests/board/{boardId}",
       "UpstreamHttpMethod": [ "GET" ],
-      "DownstreamPathTemplate": "/api/manageaccessrequests/{boardId}",
+      "DownstreamPathTemplate": "/api/manageaccessrequests/board/{boardId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

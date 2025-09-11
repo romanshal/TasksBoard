@@ -1,15 +1,14 @@
-﻿using Common.Cache.Extensions;
-using Common.Cache.Interfaces;
-using Common.Cache.Repositories;
-using Common.Blocks.Interfaces.Repositories;
+﻿using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
+using Common.Cache.Extensions;
+using Common.Cache.Interfaces;
+using Common.Cache.Repositories;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
 using Common.gRPC.Repositories;
 using Common.gRPC.Services;
 using EventBus.Messages.Extensions;
-using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +17,6 @@ using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.UnitOfWorks;
 using static Common.gRPC.Protos.UserProfiles;
-using Grpc.Net.Client;
 
 namespace TasksBoard.Infrastructure
 {
@@ -29,9 +27,15 @@ namespace TasksBoard.Infrastructure
             services.AddGrpcClient<UserProfilesClient>(option =>
             {
                 option.Address = new Uri(configuration["gRPC:Address"]!);
-            }).ConfigureChannel(options =>
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
             {
-                options.Credentials = ChannelCredentials.Insecure;
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+
+                return handler;
             });
 
             var connectionString = configuration.GetConnectionString("TasksBoardDbConnection") ?? throw new InvalidOperationException("Connection string 'TasksBoardDbConnection' not found");

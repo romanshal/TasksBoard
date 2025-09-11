@@ -9,7 +9,7 @@ namespace Notification.Application.Handlers
     {
 
         public async Task Handle(
-            NotificationDto notification, 
+            NotificationDto notification,
             CancellationToken cancellationToken = default)
         {
             await Handle([notification], cancellationToken);

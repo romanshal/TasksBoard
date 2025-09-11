@@ -12,6 +12,16 @@ builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAs
 builder.Services.AddGrpcClient<NotificationGrpcClient>(option =>
 {
     option.Address = new Uri(builder.Configuration["gRPC:Address"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+
+    return handler;
 });
 
 builder.Services.AddScoped<IGrpcService, GrpcService>();

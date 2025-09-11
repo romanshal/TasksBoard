@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Common.Blocks.Behaviours;
+using FluentValidation;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Application.BackgroundServices;
 using Notification.Application.Handlers;
@@ -14,7 +16,10 @@ namespace Notification.Application
             services.AddMediatR(conf =>
             {
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+                conf.AddOpenBehavior(typeof(ValidationBehaviour<,>));
             });
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 

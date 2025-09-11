@@ -24,7 +24,7 @@ export class AuthRequestInterceptor implements HttpInterceptor {
       authReq = this.addToken(req, token);
     }
 
-    const isRefreshRequest = req.url.includes('/api/authentication/refresh');
+    const isRefreshRequest = req.url.includes('/refresh');
 
     return next.handle(authReq).pipe(
       catchError(error => {

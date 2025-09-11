@@ -2,10 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using TasksBoard.Application.DTOs;
-using TasksBoard.Application.DTOs.Boards;
 using TasksBoard.Application.Features.Boards.Queries.GetBoardById;
-using TasksBoard.Application.Mappings;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;

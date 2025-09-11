@@ -28,7 +28,8 @@ namespace TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRe
             await _profileHandler.Handle(
                 accessRequestsDto,
                 x => x.AccountId,
-                (x, username, email) => {
+                (x, username, email) =>
+                {
                     x.AccountName = username;
                     x.AccountEmail = email;
                 },

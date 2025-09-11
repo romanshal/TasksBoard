@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Notification.Consumer.Builders
 {
-    public class GrpcRequestBuilder<TEvent> : IGrpcRequestBuilder<TEvent> where TEvent: BaseEvent
+    public class GrpcRequestBuilder<TEvent> : IGrpcRequestBuilder<TEvent> where TEvent : BaseEvent
     {
         private readonly CreateNotificationRequest _req = new();
 

@@ -48,7 +48,6 @@ namespace Common.Blocks.UnitOfWorks
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-
         public void Dispose()
         {
             _context.Dispose();

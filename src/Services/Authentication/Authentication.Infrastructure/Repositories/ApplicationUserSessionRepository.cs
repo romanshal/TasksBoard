@@ -10,7 +10,7 @@ namespace Authentication.Infrastructure.Repositories
         private readonly AuthenticationDbContext _context = context;
 
         public async Task<IEnumerable<ApplicationUserSession>> GetByUserIdAsync(
-            Guid userId, 
+            Guid userId,
             CancellationToken cancellationToken = default)
         {
             return await _context.Sessions

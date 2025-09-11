@@ -23,16 +23,16 @@ namespace Authentication.API.Controllers
 
         [HttpGet("login")]
         public async Task<IActionResult> ExternalLoginAsync(
-            [FromServices] LinkGenerator linkGenerator, 
+            [FromServices] LinkGenerator linkGenerator,
             [FromQuery] string provider,
-            [FromQuery] string? redirectUrl = "/", 
+            [FromQuery] string? redirectUrl = "/",
             CancellationToken cancellationToken = default)
         {
             var retrunUrl = linkGenerator.GetPathByAction(HttpContext, "ExternalLoginCallback") + $"?returnUrl={redirectUrl}";
 
-            var result = await _mediator.Send(new ExternalLoginCommand 
-            { 
-                Provider = provider, 
+            var result = await _mediator.Send(new ExternalLoginCommand
+            {
+                Provider = provider,
                 RedirectUrl = retrunUrl
             }, cancellationToken);
 
@@ -41,8 +41,8 @@ namespace Authentication.API.Controllers
 
         [HttpGet("login-callback")]
         public async Task<IActionResult> ExternalLoginCallback(
-            [FromQuery] string returnUrl, 
-            [FromQuery] string? remoteError = null, 
+            [FromQuery] string returnUrl,
+            [FromQuery] string? remoteError = null,
             CancellationToken cancellationToken = default)
         {
             if (!string.IsNullOrEmpty(remoteError))
@@ -54,7 +54,7 @@ namespace Authentication.API.Controllers
             var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var userAgent = Request.Headers.UserAgent.ToString();
 
-            var result = await _mediator.Send(new ExternalLoginCallbackCommand 
+            var result = await _mediator.Send(new ExternalLoginCallbackCommand
             {
                 UserIp = userIp,
                 UserAgent = userAgent

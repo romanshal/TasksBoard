@@ -1,7 +1,5 @@
-﻿using Authentication.Domain.Constants.AuthenticationErrors;
-using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Entities;
 using Common.Blocks.Exceptions;
-using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -26,8 +24,8 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                 throw new NotFoundException("Provider is required.");
             }
 
-            var provider  = providers.FirstOrDefault(p => string.Equals(p.Name, request.Provider, StringComparison.OrdinalIgnoreCase));
-            if(provider is null)
+            var provider = providers.FirstOrDefault(p => string.Equals(p.Name, request.Provider, StringComparison.OrdinalIgnoreCase));
+            if (provider is null)
             {
                 _logger.LogWarning("Unsupported provider: {povider}", request.Provider);
                 throw new NotFoundException($"Unsupported provider: {request.Provider}");

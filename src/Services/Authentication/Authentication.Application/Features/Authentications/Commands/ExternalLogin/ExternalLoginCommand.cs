@@ -1,5 +1,4 @@
-﻿using Authentication.Application.Dtos;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Authentication.Application.Features.Authentications.Commands.ExternalLogin

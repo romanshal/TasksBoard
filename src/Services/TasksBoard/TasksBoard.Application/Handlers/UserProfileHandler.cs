@@ -78,7 +78,7 @@ namespace TasksBoard.Application.Handlers
             }
         }
 
-        private static IEnumerable<Guid> MappId(IUserProfileMapping map) => 
+        private static IEnumerable<Guid> MappId(IUserProfileMapping map) =>
             map.Items
             .Select(m => map.IdSelector(m))
             .Where(id => id != Guid.Empty);

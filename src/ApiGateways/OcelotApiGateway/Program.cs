@@ -1,30 +1,12 @@
+using Common.Blocks.Extensions;
 using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
 using OcelotApiGateway.Configurations;
 using Polly;
-using Common.Blocks.Extensions;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using HealthChecks.UI.Client;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(80, listenOptions =>
-    {
-        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-        listenOptions.UseHttps("/app/localhost-dev.pfx", "P@ssw0rd!");
-    });
-    options.ListenAnyIP(443, listenOptions =>
-    {
-        listenOptions.Protocols = HttpProtocols.Http2;
-        listenOptions.UseHttps("/app/localhost-dev.pfx", "P@ssw0rd!");
-    });
-});
 
 var retryPolicy = builder.Configuration
     .GetSection("RetryPolicy")

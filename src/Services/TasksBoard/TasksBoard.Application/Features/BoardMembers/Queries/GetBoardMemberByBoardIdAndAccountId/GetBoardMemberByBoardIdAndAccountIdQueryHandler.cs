@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
-using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;

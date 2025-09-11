@@ -2,7 +2,6 @@
 using Common.Outbox.Interfaces.Services;
 using Common.Outbox.Services;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TasksBoard.Application.Handlers;
@@ -16,6 +15,7 @@ namespace TasksBoard.Application
             services.AddMediatR(conf =>
             {
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+                conf.AddOpenBehavior(typeof(ValidationBehaviour<,>));
             });
 
             services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
@@ -25,8 +25,6 @@ namespace TasksBoard.Application
             services.AddHostedService<OutboxPublisherService>();
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             services.AddScoped<IUserProfileHandler, UserProfileHandler>();
 

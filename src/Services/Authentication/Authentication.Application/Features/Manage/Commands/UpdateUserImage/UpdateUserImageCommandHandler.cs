@@ -1,7 +1,6 @@
 ﻿using Authentication.Domain.Constants.ManageErrors;
 using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.UnitOfWorks;
-using Common.Blocks.Exceptions;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using Common.gRPC.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Notification.Application.Dtos;
 using Notification.Application.Handlers;
 using Notification.Application.Interfaces.HubServices;
-using Notification.Domain.Constants;
 using Notification.Domain.Interfaces.UnitOfWorks;
 
 namespace Notification.Application.BackgroundServices

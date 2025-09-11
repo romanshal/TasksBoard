@@ -81,10 +81,10 @@ namespace Authentication.API.Controllers
             var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var userAgent = Request.Headers.UserAgent.ToString();
 
-            if (!Request.Cookies.TryGetValue("refresh_token", out var refreshToken)) 
+            if (!Request.Cookies.TryGetValue("refresh_token", out var refreshToken))
                 return Unauthorized();
 
-            var result = await _mediator.Send(new RefreshTokenCommand 
+            var result = await _mediator.Send(new RefreshTokenCommand
             {
                 UserId = request.UserId,
                 RefreshToken = refreshToken,

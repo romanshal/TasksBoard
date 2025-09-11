@@ -1,5 +1,4 @@
-﻿using Common.Blocks.Interfaces.Services;
-using Common.Blocks.Models.DomainResults;
+﻿using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
