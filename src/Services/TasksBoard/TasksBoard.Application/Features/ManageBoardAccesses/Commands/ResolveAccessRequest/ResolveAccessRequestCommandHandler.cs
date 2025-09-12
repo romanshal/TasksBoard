@@ -8,6 +8,7 @@ using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAccessRequest
 {
@@ -26,7 +27,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetRepository<Board,BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
@@ -35,7 +36,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                     //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                var accessRequest = await _unitOfWork.GetRepository<BoardAccessRequest>().GetAsync(request.RequestId, token);
+                var accessRequest = await _unitOfWork.GetRepository<BoardAccessRequest, BoardAccessId>().GetAsync(BoardAccessId.Of(request.RequestId), token);
                 if (accessRequest is null)
                 {
                     _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
@@ -46,13 +47,13 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
 
                 accessRequest.Status = request.Decision ? (int)BoardAccessRequestStatuses.Accepted : (int)BoardAccessRequestStatuses.Rejected;
 
-                _unitOfWork.GetRepository<BoardAccessRequest>().Update(accessRequest);
+                _unitOfWork.GetRepository<BoardAccessRequest, BoardAccessId>().Update(accessRequest);
 
                 if (request.Decision)
                 {
                     var result = await _mediator.Send(new AddBoardMemberCommand
                     {
-                        BoardId = accessRequest.BoardId,
+                        BoardId = accessRequest.BoardId.Value,
                         AccountId = accessRequest.AccountId
                     }, cancellationToken);
 
@@ -66,7 +67,7 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
 
                     await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
                     {
-                        BoardId = board.Id,
+                        BoardId = board.Id.Value,
                         BoardName = board.Name,
                         AccountId = accessRequest.AccountId,
                         BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != accessRequest.AccountId).Select(member => member.AccountId)]
@@ -79,21 +80,19 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                     {
                         _logger.LogError("Can't resolve access request.");
                         return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
-
-                        //throw new ArgumentException("Can't save new access request.");
                     }
                 }
 
                 await _outboxService.CreateNewOutboxEvent(new ResolveAccessRequestEvent
                 {
-                    BoardId = board.Id,
+                    BoardId = board.Id.Value,
                     BoardName = board.Name,
                     AccountId = accessRequest.AccountId,
                     SourceAccountId = request.ResolveUserId,
                     Status = request.Decision
                 }, token);
 
-                return Result.Success(accessRequest.Id);
+                return Result.Success(accessRequest.Id.Value);
             }, cancellationToken);
         }
     }

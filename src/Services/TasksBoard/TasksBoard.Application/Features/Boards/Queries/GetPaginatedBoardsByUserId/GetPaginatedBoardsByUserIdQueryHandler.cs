@@ -52,7 +52,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 {
                     foreach (var item in dest)
                     {
-                        item.IsMember = src.First(board => board.Id == item.Id).BoardMembers.Any(member => member.AccountId == request.UserId);
+                        item.IsMember = src.First(board => board.Id.Value == item.Id).BoardMembers.Any(member => member.AccountId == request.UserId);
                     }
                 }));
 

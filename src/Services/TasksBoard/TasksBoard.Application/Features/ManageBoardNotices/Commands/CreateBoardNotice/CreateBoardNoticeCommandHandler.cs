@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice
 {
@@ -25,33 +26,29 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
                 var notice = _mapper.Map<BoardNotice>(request);
 
-                _unitOfWork.GetRepository<BoardNotice>().Add(notice);
+                _unitOfWork.GetRepository<BoardNotice, BoardNoticeId>().Add(notice);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || notice.Id == Guid.Empty)
+                if (affectedRows == 0 || notice.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't create new board notice to board with id '{boardId}'.", request.BoardId);
                     return Result.Failure<Guid>(BoardNoticeErrors.CantCreate);
-
-                    //throw new ArgumentException(nameof(notice));
                 }
 
                 await _outboxService.CreateNewOutboxEvent(new NewNoticeEvent
                 {
-                    BoardId = board.Id,
+                    BoardId = board.Id.Value,
                     BoardName = board.Name,
-                    NoticeId = notice.Id,
+                    NoticeId = notice.Id.Value,
                     NoticeDefinition = notice.Definition,
                     AccountId = notice.AuthorId,
                     BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AuthorId).Select(member => member.AccountId)]
@@ -59,7 +56,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
 
                 _logger.LogInformation("Board notice with id '{id}' added to board with id '{boardId}'.", notice.Id, request.BoardId);
 
-                return Result.Success(notice.Id);
+                return Result.Success(notice.Id.Value);
             }, cancellationToken);
         }
     }

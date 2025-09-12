@@ -2,6 +2,7 @@
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Outbox.Entities;
 using Common.Outbox.Interfaces.Services;
+using Common.Outbox.ValueObjects;
 using EventBus.Messages.Events;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
@@ -24,16 +25,16 @@ namespace Common.Outbox.Services
                 Status = OutboxEventStatuses.Created
             };
 
-            _unitOfWork.GetRepository<OutboxEvent>().Add(outboxEvent);
+            _unitOfWork.GetRepository<OutboxEvent, OutboxId>().Add(outboxEvent);
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || outboxEvent.Id == Guid.Empty)
+            if (affectedRows == 0 || outboxEvent.Id.Value == Guid.Empty)
             {
                 _logger.LogError("Can't create new outbox event.");
                 throw new ArgumentException(nameof(outboxEvent));
             }
 
-            return outboxEvent.Id;
+            return outboxEvent.Id.Value;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Chat.Domain.Entities;
 using Chat.Domain.Interfaces.Repositories;
+using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Data.Contexts;
 using Common.Blocks.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace Chat.Infrastructure.Repositories
 {
     public class BoardMessageRepository(
         ChatDbContext context,
-        ILoggerFactory loggerFactory) : Repository<BoardMessage>(context, loggerFactory), IBoardMessageRepository
+        ILoggerFactory loggerFactory) : Repository<BoardMessage, MessageId>(context, loggerFactory), IBoardMessageRepository
     {
         public async Task<IEnumerable<BoardMessage>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {

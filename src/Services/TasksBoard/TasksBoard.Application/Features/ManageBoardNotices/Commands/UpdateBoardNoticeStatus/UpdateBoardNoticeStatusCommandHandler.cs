@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoardNoticeStatus
 {
@@ -22,42 +23,36 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.NoticeId, token);
+                var boardNotice = await _unitOfWork.GetBoardNoticeRepository().GetAsync(BoardNoticeId.Of(request.NoticeId), token);
                 if (boardNotice is null)
                 {
                     _logger.LogWarning("Board notice with id '{noticeId}' was not found.", request.NoticeId);
                     return Result.Failure<Guid>(BoardNoticeErrors.NotFound);
-
-                    //throw new NotFoundException($"Board notice with id '{request.NoticeId}' not found.");
                 }
 
                 boardNotice.Completed = request.Complete;
 
-                _unitOfWork.GetRepository<BoardNotice>().Update(boardNotice);
+                _unitOfWork.GetBoardNoticeRepository().Update(boardNotice);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || boardNotice.Id == Guid.Empty)
+                if (affectedRows == 0 || boardNotice.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't update board notice status with id '{boardNoticeId}'.", boardNotice.Id);
                     return Result.Failure<Guid>(BoardNoticeErrors.CantUpdate);
-
-                    //throw new ArgumentException(nameof(boardNotice));
                 }
 
                 await _outboxService.CreateNewOutboxEvent(new UpdateNoticeStatusEvent
                 {
-                    BoardId = board.Id,
+                    BoardId = board.Id.Value,
                     BoardName = board.Name,
-                    NoticeId = boardNotice.Id,
+                    NoticeId = boardNotice.Id.Value,
                     AccountId = request.AccountId,
                     Completed = request.Complete,
                     BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AccountId).Select(member => member.AccountId)]
@@ -65,7 +60,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 
                 _logger.LogInformation("Board notice with id '{id}' updated in board with id '{boardId}'.", boardNotice.Id, request.BoardId);
 
-                return Result.Success(boardNotice.Id);
+                return Result.Success(boardNotice.Id.Value);
             }, cancellationToken);
         }
     }

@@ -1,4 +1,4 @@
-﻿using Common.Blocks.Entities;
+﻿using Common.Blocks.Contexts;
 using Common.Outbox.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -6,7 +6,8 @@ using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Infrastructure.Data.Contexts
 {
-    public class TasksBoardDbContext(DbContextOptions<TasksBoardDbContext> options) : DbContext(options)
+    public class TasksBoardDbContext(
+        DbContextOptions<TasksBoardDbContext> options) : CommonDbContext<TasksBoardDbContext>(options)
     {
         public DbSet<Board> Boards { get; set; }
         public DbSet<BoardNotice> BoardNotices { get; set; }
@@ -29,24 +30,6 @@ namespace TasksBoard.Infrastructure.Data.Contexts
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(TasksBoardDbContext))!);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(OutboxEvent))!);
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.Now;
-                        break;
-                    case EntityState.Modified:
-                        entry.Entity.LastModifiedAt = DateTime.Now;
-                        break;
-                }
-            }
-
-            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

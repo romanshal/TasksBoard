@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.API.Attributes
 {
@@ -34,7 +35,7 @@ namespace TasksBoard.API.Attributes
             using var scope = context.HttpContext.RequestServices.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-            var board = await unitOfWork.GetBoardRepository().GetAsync((Guid)entityIdObj!);
+            var board = await unitOfWork.GetBoardRepository().GetAsync(BoardId.Of((Guid)entityIdObj!));
             if (board is null)
             {
                 context.Result = new NotFoundResult();

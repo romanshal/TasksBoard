@@ -30,7 +30,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.CreateBoardMessage
             _unitOfWork.GetBoardMessagesRepository().Add(boardMessage);
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || boardMessage.Id == Guid.Empty)
+            if (affectedRows == 0 || boardMessage.Id.Value == Guid.Empty)
             {
                 _logger.LogError("Can't create new board message to board with id '{boardId}'.", request.BoardId);
                 return Result.Failure<BoardMessageDto>(BoardMessageErrors.CantCreate);

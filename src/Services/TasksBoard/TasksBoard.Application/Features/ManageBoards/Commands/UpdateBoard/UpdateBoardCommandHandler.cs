@@ -3,28 +3,36 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
-    public class UpdateBoardCommandHandler(
-        ILogger<UpdateBoardCommandHandler> logger,
-        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Result<Guid>>
+    public class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Result<Guid>>
     {
-        private readonly ILogger<UpdateBoardCommandHandler> _logger = logger;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<UpdateBoardCommandHandler> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IBoardRepository _boardRepository;
+
+        public UpdateBoardCommandHandler(
+            ILogger<UpdateBoardCommandHandler> logger,
+            IUnitOfWork unitOfWork)
+        {
+            this._logger = logger;
+            this._unitOfWork = unitOfWork;
+            this._boardRepository = _unitOfWork.GetBoardRepository();
+        }
 
         public async Task<Result<Guid>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _boardRepository.GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
                 board.Name = request.Name;
@@ -37,6 +45,7 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
                     {
                         board.BoardImage = new BoardImage
                         {
+                            BoardId = board.Id,
                             Image = request.Image,
                             Extension = request.ImageExtension!
                         };
@@ -56,23 +65,24 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
                 }
 
                 board.Tags.Clear();
-                board.Tags = [.. request.Tags.Select(tag => new BoardTag { Tag = tag })];
+                board.Tags = [.. request.Tags.Select(tag => new BoardTag 
+                { 
+                    BoardId = board.Id,
+                    Tag = tag 
+                })];
 
-                _unitOfWork.GetRepository<Board>().Update(board);
+                _boardRepository.Update(board);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || board.Id == Guid.Empty)
+                if (affectedRows == 0 || board.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't update board with id '{id}'.", board.Id);
                     return Result.Failure<Guid>(BoardErrors.CantUpdate);
-
-                    //throw new ArgumentException(nameof(board));
                 }
 
                 _logger.LogInformation("Board with id '{id}' updated'.", board.Id);
 
-                return Result.Success(board.Id);
-                //return board.Id;
+                return Result.Success(board.Id.Value);
             }, cancellationToken);
         }
     }

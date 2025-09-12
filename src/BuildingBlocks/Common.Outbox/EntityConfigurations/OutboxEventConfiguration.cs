@@ -1,4 +1,5 @@
 ﻿using Common.Outbox.Entities;
+using Common.Outbox.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,12 +9,20 @@ namespace Common.Outbox.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<OutboxEvent> builder)
         {
-            builder.ToTable("outboxevents")
+            builder.
+                ToTable("outboxevents")
                .HasKey(k => k.Id);
 
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder
+                .Property(p => p.Id)
+                .HasConversion(outboxId => outboxId.Value, dbId => OutboxId.Of(dbId))
+                .ValueGeneratedOnAdd()
+                .HasColumnName("Id");
 
-            builder.Property(p => p.Payload).IsRequired().HasColumnType("jsonb");
+            builder
+                .Property(p => p.Payload)
+                .IsRequired()
+                .HasColumnType("jsonb");
         }
     }
 }

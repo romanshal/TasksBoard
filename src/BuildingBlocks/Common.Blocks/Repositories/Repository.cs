@@ -1,15 +1,16 @@
 ﻿using Common.Blocks.Entities;
 using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Blocks.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class Repository<T, TId> : IRepository<T, TId> where T : class, IEntity<TId> where TId : ValueObject
     {
         private bool _disposed;
 
-        private readonly ILogger<Repository<T>> _logger;
+        private readonly ILogger<Repository<T, TId>> _logger;
 
         protected readonly DbContext Context;
 
@@ -18,7 +19,7 @@ namespace Common.Blocks.Repositories
         public Repository(DbContext context, ILoggerFactory loggerFactory)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = loggerFactory.CreateLogger<Repository<T>>();
+            _logger = loggerFactory.CreateLogger<Repository<T, TId>>();
             DbSet = Context.Set<T>();
         }
 
@@ -29,13 +30,8 @@ namespace Common.Blocks.Repositories
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task<T?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+        public virtual async Task<T?> GetAsync(TId id, CancellationToken cancellationToken = default)
         {
-            if (id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id), $"Param 'id' is not valid.");
-            }
-
             return await DbSet.SingleOrDefaultAsync(entity => entity.Id == id, cancellationToken);
         }
 
@@ -120,7 +116,7 @@ namespace Common.Blocks.Repositories
         /// <param name="id">Entity id.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
-        public virtual async Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> ExistAsync(TId id, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()

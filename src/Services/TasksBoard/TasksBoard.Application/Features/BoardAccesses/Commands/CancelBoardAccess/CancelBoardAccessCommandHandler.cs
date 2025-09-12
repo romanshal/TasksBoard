@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAccess
 {
@@ -18,7 +19,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetAsync(request.RequestId, token);
+                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetAsync(BoardAccessId.Of(request.RequestId), token);
                 if (accessRequest is null)
                 {
                     _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
@@ -32,7 +33,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
                 _unitOfWork.GetBoardAccessRequestRepository().Update(accessRequest);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || accessRequest.Id == Guid.Empty)
+                if (affectedRows == 0 || accessRequest.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't cancel board access request with id '{id}'.", accessRequest.Id);
                     return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
@@ -44,7 +45,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
 
                 _logger.LogInformation("Board access request with id '{id}' canceled.", accessRequest.Id);
 
-                return Result.Success(accessRequest.Id);
+                return Result.Success(accessRequest.Id.Value);
             }, cancellationToken);
         }
     }

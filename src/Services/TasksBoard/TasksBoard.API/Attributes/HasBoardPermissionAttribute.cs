@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.API.Attributes
 {
@@ -33,14 +34,14 @@ namespace TasksBoard.API.Attributes
             using var scope = context.HttpContext.RequestServices.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-            var permissions = await unitOfWork.GetRepository<BoardPermission>().GetAllAsync();
+            var permissions = await unitOfWork.GetRepository<BoardPermission, BoardPermissionId>().GetAllAsync();
             if (!permissions.Any(permission => permission.Name == _permission))
             {
                 context.Result = new UnprocessableEntityObjectResult($"Permission with name '{_permission}' was not found");
                 return;
             }
 
-            var boardMember = await unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync((Guid)entityIdObj!, Guid.Parse(userId));
+            var boardMember = await unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(BoardId.Of((Guid)entityIdObj!), Guid.Parse(userId));
             if (boardMember is null)
             {
                 context.Result = new ForbidResult();

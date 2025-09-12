@@ -1,11 +1,12 @@
-﻿using Common.Blocks.Entities;
+﻿using Common.Blocks.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Notification.Domain.Entities;
 using System.Reflection;
 
 namespace Notification.Infrastructure.Data.Contexts
 {
-    public class NotificationDbContext(DbContextOptions<NotificationDbContext> options) : DbContext(options)
+    public class NotificationDbContext(
+        DbContextOptions<NotificationDbContext> options) : CommonDbContext<NotificationDbContext>(options)
     {
         public DbSet<ApplicationEvent> ApplicationEvents { get; set; }
 
@@ -19,24 +20,6 @@ namespace Notification.Infrastructure.Data.Contexts
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.Now;
-                        break;
-                    case EntityState.Modified:
-                        entry.Entity.LastModifiedAt = DateTime.Now;
-                        break;
-                }
-            }
-
-            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

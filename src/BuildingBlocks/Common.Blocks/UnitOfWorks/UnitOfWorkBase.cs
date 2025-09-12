@@ -2,6 +2,7 @@
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
+using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -15,20 +16,20 @@ namespace Common.Blocks.UnitOfWorks
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
         protected readonly Dictionary<Type, object> _repositories = [];
 
-        public IRepository<T> GetRepository<T>() where T : BaseEntity
+        public IRepository<T, TId> GetRepository<T, TId>() where T : class, IEntity<TId> where TId : ValueObject
         {
             var type = typeof(T);
 
             if (!_repositories.TryGetValue(type, out object? value))
             {
-                var repositoryInstance = new Repository<T>(_context, _loggerFactory);
+                var repositoryInstance = new Repository<T, TId>(_context, _loggerFactory);
 
                 value = repositoryInstance;
 
                 _repositories[type] = value;
             }
 
-            return (IRepository<T>)value;
+            return (IRepository<T, TId>)value;
         }
 
         public TRepository GetCustomRepository<TRepository>() where TRepository : class

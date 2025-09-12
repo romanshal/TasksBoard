@@ -1,6 +1,7 @@
 ﻿using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.UnitOfWorks;
+using Authentication.Domain.ValueObjects;
 using Authentication.Infrastructure.Data.Contexts;
 using Authentication.Infrastructure.Repositories;
 using Common.Blocks.Repositories;
@@ -20,7 +21,7 @@ namespace Authentication.Infrastructure.UnitOfWorks
         {
             var type = typeof(ApplicationUserImage);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationUserImage>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationUserImage, ImageId>))
             {
                 var repositoryInstance = new ApplicationUserImageRepository(_context, _loggerFactory);
 

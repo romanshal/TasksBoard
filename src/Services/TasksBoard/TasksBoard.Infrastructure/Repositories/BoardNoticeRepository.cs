@@ -3,15 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.Data.Contexts;
 
 namespace TasksBoard.Infrastructure.Repositories
 {
     public class BoardNoticeRepository(
         TasksBoardDbContext context,
-        ILoggerFactory loggerFactory) : Repository<BoardNotice>(context, loggerFactory), IBoardNoticeRepository
+        ILoggerFactory loggerFactory) : Repository<BoardNotice, BoardNoticeId>(context, loggerFactory), IBoardNoticeRepository
     {
-        public async Task<IEnumerable<BoardNotice>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BoardNotice>> GetPaginatedByBoardIdAsync(
+            BoardId boardId, 
+            int pageIndex = 1, 
+            int pageSize = 10, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -22,7 +27,11 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAsync(
+            Guid userId, 
+            int pageIndex = 1, 
+            int pageSize = 10, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -32,8 +41,12 @@ namespace TasksBoard.Infrastructure.Repositories
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
         }
-
-        public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAndBoardIdAsync(Guid userId, Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAndBoardIdAsync(
+            Guid userId, 
+            BoardId boardId, 
+            int pageIndex = 1, 
+            int pageSize = 10, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -44,21 +57,28 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+        public async Task<int> CountByBoardIdAsync(
+            BoardId boardId, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
                 .CountAsync(notice => notice.BoardId == boardId, cancellationToken);
         }
 
-        public async Task<int> CountByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<int> CountByUserIdAsync(
+            Guid userId, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
                 .CountAsync(notice => notice.AuthorId == userId, cancellationToken);
         }
 
-        public async Task<int> CountByBoardIdAndUserIdAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+        public async Task<int> CountByBoardIdAndUserIdAsync(
+            BoardId boardId, 
+            Guid userId, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()

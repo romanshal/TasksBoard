@@ -11,6 +11,7 @@ using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 {
@@ -32,10 +33,10 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board>())
+                .Setup(s => s.GetRepository<Board, BoardId>())
                 .Returns(boardRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardNotice>())
+                .Setup(s => s.GetRepository<BoardNotice, BoardNoticeId>())
                 .Returns(boardNoticeRepository.Object);
             unitOfWork
                 .Setup(u => u.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(), It.IsAny<CancellationToken>()))
@@ -69,7 +70,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             var noticeId = Guid.Parse("5b887771-030f-469d-9986-eeb6218ec0f8");
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
                     OwnerId = Guid.Empty,
@@ -79,9 +80,9 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 
             mapperSetup.Returns(new BoardNotice
             {
-                Id = noticeId,
+                Id = BoardNoticeId.Of(noticeId),
                 AuthorId = Guid.Empty,
-                BoardId = Guid.Empty,
+                BoardId = BoardId.New(),
                 Definition = string.Empty,
                 BackgroundColor = string.Empty,
                 Rotation = string.Empty
@@ -115,7 +116,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             var actual = await sut.Handle(command, CancellationToken.None);

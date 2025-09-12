@@ -7,6 +7,7 @@ using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 {
@@ -22,7 +23,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
         {
             repository = new Mock<IBoardAccessRequestRepository>();
             repositoryGetSetup = repository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()));
+                .Setup(s => s.GetAsync(It.IsAny<BoardAccessId>(), It.IsAny<CancellationToken>()));
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(s => s.GetBoardAccessRequestRepository())
@@ -48,8 +49,8 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             repositoryGetSetup.ReturnsAsync(new BoardAccessRequest
             {
-                Id = requestId,
-                BoardId = Guid.Empty,
+                Id = BoardAccessId.Of(requestId),
+                BoardId = BoardId.New(),
                 AccountId = Guid.Empty,
                 Status = 1
             });
@@ -66,7 +67,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeEmpty().And.Be(requestId);
 
-            repository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+            repository.Verify(s => s.GetAsync(It.IsAny<BoardAccessId>(), It.IsAny<CancellationToken>()), Times.Once);
             repository.Verify(s => s.Update(It.IsAny<BoardAccessRequest>()), Times.Once);
             repository.VerifyNoOtherCalls();
         }
@@ -88,7 +89,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             actual.IsFailure.Should().BeTrue();
             actual.Error.Should().Be(BoardAccessErrors.NotFound);
 
-            repository.Verify(r => r.GetAsync(requestId, It.IsAny<CancellationToken>()), Times.Once);
+            repository.Verify(r => r.GetAsync(BoardAccessId.Of(requestId), It.IsAny<CancellationToken>()), Times.Once);
             repository.Verify(r => r.Update(It.IsAny<BoardAccessRequest>()), Times.Never);
             unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }

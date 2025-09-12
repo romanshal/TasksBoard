@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Infrastructure.Data.Configurations
 {
@@ -8,17 +9,36 @@ namespace TasksBoard.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<BoardMemberPermission> builder)
         {
-            builder.ToTable("boardmemberspermissions")
+            builder
+                .ToTable("boardmemberspermissions")
                 .HasKey(k => k.Id);
 
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder
+                .Property(p => p.Id)
+                .HasConversion(mpId => mpId.Value, dbId => MemberPermissionId.Of(dbId))
+                .ValueGeneratedOnAdd()
+                .HasColumnName("Id");
 
-            builder.HasOne(o => o.BoardMember)
+            builder
+                .Property(p => p.BoardPermissionId)
+                .HasConversion(id => id.Value, value => BoardPermissionId.Of(value))
+                .HasColumnName("BoardPermissionId")
+                .IsRequired();
+
+            builder
+                .Property(p => p.BoardMemberId)
+                .HasConversion(id => id.Value, value => BoardMemberId.Of(value))
+                .HasColumnName("BoardMemberId")
+                .IsRequired();
+
+            builder
+                .HasOne(o => o.BoardMember)
                 .WithMany(m => m.BoardMemberPermissions)
                 .HasForeignKey(k => k.BoardMemberId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(o => o.BoardPermission)
+            builder
+                .HasOne(o => o.BoardPermission)
                 .WithMany(m => m.BoardMemberPermissions)
                 .HasForeignKey(k => k.BoardPermissionId)
                 .OnDelete(DeleteBehavior.Cascade);

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CancelInviteRequest
 {
@@ -18,14 +19,14 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CancelInvit
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                     return Result.Failure(BoardErrors.NotFound);
                 }
 
-                var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, token);
+                var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest, BoardInviteId>().GetAsync(BoardInviteId.Of(request.RequestId), token);
                 if (inviteRequest is null)
                 {
                     _logger.LogWarning("Board invite request with id '{requestId}' was not found.", request.RequestId);
@@ -34,7 +35,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CancelInvit
 
                 inviteRequest.Status = (int)BoardInviteRequestStatuses.Canceled;
 
-                _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest);
+                _unitOfWork.GetRepository<BoardInviteRequest, BoardInviteId>().Update(inviteRequest);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0)

@@ -9,6 +9,7 @@ using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
 {
@@ -28,7 +29,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board>())
+                .Setup(s => s.GetRepository<Board, BoardId>())
                 .Returns(boardRepository.Object);
             unitOfWork
                 .Setup(s => s.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result>>>(), It.IsAny<CancellationToken>()))
@@ -52,18 +53,26 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Board
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() =>
                 {
-                    OwnerId = Guid.Empty,
-                    Name = string.Empty,
-                    BoardMembers =
+                    var board = new Board
+                    {
+                        Id = BoardId.New(),
+                        OwnerId = Guid.Empty,
+                        Name = string.Empty,
+                    };
+
+                    board.BoardMembers =
                     [
                         new BoardMember
                         {
+                            BoardId = board.Id,
                             AccountId = Guid.Empty
                         }
-                    ]
+                    ];
+
+                    return board;
                 });
 
             boardRepository
@@ -89,7 +98,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             var actual = await sut.Handle(command, CancellationToken.None);

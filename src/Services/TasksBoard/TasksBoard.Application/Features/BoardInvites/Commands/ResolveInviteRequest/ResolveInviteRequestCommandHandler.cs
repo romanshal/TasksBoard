@@ -8,6 +8,7 @@ using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteRequest
 {
@@ -26,14 +27,14 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
                 }
 
-                var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest>().GetAsync(request.RequestId, token);
+                var inviteRequest = await _unitOfWork.GetRepository<BoardInviteRequest, BoardInviteId>().GetAsync(BoardInviteId.Of(request.RequestId), token);
                 if (inviteRequest is null)
                 {
                     _logger.LogWarning("Board invite request with id '{requestId}' was not found.", request.RequestId);
@@ -42,13 +43,13 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
 
                 inviteRequest.Status = request.Decision ? (int)BoardInviteRequestStatuses.Accepted : (int)BoardInviteRequestStatuses.Rejected;
 
-                _unitOfWork.GetRepository<BoardInviteRequest>().Update(inviteRequest);
+                _unitOfWork.GetRepository<BoardInviteRequest, BoardInviteId>().Update(inviteRequest);
 
                 if (request.Decision)
                 {
                     var result = await _mediator.Send(new AddBoardMemberCommand
                     {
-                        BoardId = inviteRequest.BoardId,
+                        BoardId = inviteRequest.BoardId.Value,
                         AccountId = inviteRequest.ToAccountId
                     }, token);
 
@@ -60,7 +61,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
 
                     await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
                     {
-                        BoardId = board.Id,
+                        BoardId = board.Id.Value,
                         BoardName = board.Name,
                         AccountId = inviteRequest.ToAccountId,
                         BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId)]
@@ -71,7 +72,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                     await _unitOfWork.SaveChangesAsync(token);
                 }
 
-                return Result.Success(inviteRequest.Id);
+                return Result.Success(inviteRequest.Id.Value);
             }, cancellationToken);
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember
 {
@@ -18,13 +19,11 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
                 var member = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.AccountId);
@@ -32,50 +31,46 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 {
                     _logger.LogInformation("User with id '{accountId} is already exist in board '{boardId}'.", request.AccountId, request.BoardId);
                     return Result.Failure<Guid>(BoardMemberErrors.AlreadyExist(board.Name));
-
-                    //throw new AlreadyExistException($"Member is already exist in board '{board.Name}'.");
                 }
 
-                var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission>().GetAllAsync(token);
+                var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission, BoardPermissionId>().GetAllAsync(token);
                 if (!permissions.Any())
                 {
                     _logger.LogError("No permissions available.");
                     return Result.Failure<Guid>(BoardPermissionErrors.NoPermissions);
-
-                    //throw new NotFoundException("No permissions available.");
                 }
 
                 var minLevelPermission = permissions.OrderBy(permission => permission.AccessLevel).FirstOrDefault()!;
 
                 member = new BoardMember
                 {
-                    BoardId = request.BoardId,
+                    BoardId = BoardId.Of(request.BoardId),
                     AccountId = request.AccountId,
                     BoardMemberPermissions =
                     [
                         new BoardMemberPermission
-                    {
-                        BoardPermissionId = minLevelPermission.Id
-                    }
+                        {
+                            //TODO: check this
+                            BoardMemberId = BoardMemberId.Of(member.Id.Value),
+                            BoardPermissionId = BoardPermissionId.Of(minLevelPermission.Id.Value)
+                        }
                     ]
                 };
 
                 _unitOfWork.GetBoardMemberRepository().Add(member);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || member.Id == Guid.Empty)
+                if (affectedRows == 0 || member.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't add new board member.");
                     return Result.Failure<Guid>(BoardMemberErrors.CantCreate);
-
-                    //throw new ArgumentException(nameof(member));
                 }
 
                 //TODO: add event message
 
                 _logger.LogInformation("Board member with account id '{accountId}' added to board with id '{boardId}'.", member.AccountId, request.BoardId);
 
-                return Result.Success(member.Id);
+                return Result.Success(member.Id.Value);
             }, cancellationToken);
         }
     }

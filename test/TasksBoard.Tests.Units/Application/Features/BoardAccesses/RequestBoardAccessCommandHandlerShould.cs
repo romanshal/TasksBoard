@@ -10,6 +10,7 @@ using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 {
@@ -67,10 +68,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
-                    Id = Guid.Parse("5d0aa8f4-3a54-4037-be6b-940a523c834d"),
+                    Id = BoardId.Of(Guid.Parse("5d0aa8f4-3a54-4037-be6b-940a523c834d")),
                     OwnerId = Guid.Parse("f47a5973-aa9a-4365-bbe7-3d55b5de8f13"),
                     Name = "Test board name",
                     Public = true,
@@ -78,11 +79,11 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 });
 
             accessRepository
-                .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<BoardId>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             inviteRepository
-                .Setup(s => s.GetByBoardIdAndToAccountIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByBoardIdAndToAccountIdAsync(It.IsAny<BoardId>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             accessRepository.Setup(s => s.Add(It.IsAny<BoardAccessRequest>()));
@@ -90,8 +91,8 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             mapper.Setup(s => s.Map<BoardAccessRequest>(command))
                 .Returns(new BoardAccessRequest
                 {
-                    Id = requestId,
-                    BoardId = boardId,
+                    Id = BoardAccessId.Of(requestId),
+                    BoardId = BoardId.Of(boardId),
                     AccountId = accountId,
                     Status = 1
                 });
@@ -116,7 +117,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             var actual = await sut.Handle(command, CancellationToken.None);
@@ -135,10 +136,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
-                    Id = Guid.Empty,
+                    Id = BoardId.New(),
                     OwnerId = Guid.Empty,
                     Name = "Test board name",
                     Public = false,
@@ -162,20 +163,27 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Board
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() =>
                 {
-                    Id = Guid.Empty,
-                    OwnerId = Guid.Empty,
-                    Name = "Test board name",
-                    Public = true,
-                    BoardMembers =
+                    var board = new Board
+                    {
+                        Id = BoardId.New(),
+                        OwnerId = Guid.Empty,
+                        Name = "Test board name",
+                        Public = true
+                    };
+
+                    board.BoardMembers =
                     [
                         new BoardMember
                         {
+                            BoardId = board.Id,
                             AccountId = accountId
                         }
-                    ]
+                    ];
+
+                    return board;
                 });
 
             var actual = await sut.Handle(command, CancellationToken.None);
@@ -195,10 +203,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
-                    Id = Guid.Empty,
+                    Id = BoardId.New(),
                     OwnerId = Guid.Empty,
                     Name = "Test board name",
                     Public = true,
@@ -206,10 +214,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 });
 
             accessRepository
-                .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<BoardId>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new BoardAccessRequest
                 {
-                    BoardId = Guid.Empty,
+                    BoardId = BoardId.New(),
                     AccountId = accountId,
                     Status = 0
                 });
@@ -231,10 +239,10 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
-                    Id = Guid.Empty,
+                    Id = BoardId.New(),
                     OwnerId = Guid.Empty,
                     Name = "Test board name",
                     Public = true,
@@ -242,14 +250,14 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 });
 
             accessRepository
-                .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByBoardIdAndAccountId(It.IsAny<BoardId>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             inviteRepository
-                .Setup(s => s.GetByBoardIdAndToAccountIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByBoardIdAndToAccountIdAsync(It.IsAny<BoardId>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new BoardInviteRequest
                 {
-                    BoardId = Guid.Empty,
+                    BoardId = BoardId.New(),
                     FromAccountId = Guid.Empty,
                     ToAccountId = Guid.Empty,
                     Status = 0

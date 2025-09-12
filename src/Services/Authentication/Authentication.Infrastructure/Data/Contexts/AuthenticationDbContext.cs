@@ -46,15 +46,15 @@ namespace Authentication.Infrastructure.Data.Contexts
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            foreach (var entry in ChangeTracker.Entries<IEntity>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.Now;
+                        entry.Entity.CreatedAt = DateTime.UtcNow;
                         break;
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedAt = DateTime.Now;
+                        entry.Entity.LastModifiedAt = DateTime.UtcNow;
                         break;
                 }
             }

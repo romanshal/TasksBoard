@@ -1,13 +1,14 @@
 ﻿using Common.Blocks.Entities;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Domain.Entities
 {
-    public class BoardMemberPermission : BaseEntity
+    public class BoardMemberPermission : BaseEntity<MemberPermissionId>
     {
-        public Guid BoardMemberId { get; set; }
-        public required Guid BoardPermissionId { get; set; }
+        public BoardMemberId BoardMemberId { get; set; } = default!;
+        public required BoardPermissionId BoardPermissionId { get; set; }
 
-        public virtual BoardMember BoardMember { get; set; }
-        public virtual BoardPermission BoardPermission { get; set; }
+        public virtual BoardMember BoardMember { get; set; } = default!;
+        public virtual BoardPermission BoardPermission { get; set; } = default!;
     }
 }

@@ -35,7 +35,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoard
                 {
                     foreach (var item in dest)
                     {
-                        item.IsMember = src.First(board => board.Id == item.Id).BoardMembers.Any(member => member.AccountId == request.AccountId);
+                        item.IsMember = src.First(board => board.Id.Value == item.Id).BoardMembers.Any(member => member.AccountId == request.AccountId);
                     }
                 }));
 

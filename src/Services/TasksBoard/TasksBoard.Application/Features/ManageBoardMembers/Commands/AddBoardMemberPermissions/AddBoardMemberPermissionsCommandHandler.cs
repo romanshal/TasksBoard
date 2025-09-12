@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMemberPermissions
 {
@@ -22,30 +23,26 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                     return Result.Failure(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                var member = board.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
+                var member = board.BoardMembers.FirstOrDefault(member => member.Id.Value == request.MemberId);
                 if (member is null)
                 {
                     _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
                     return Result.Failure(BoardMemberErrors.NotFound);
-
-                    //throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
                 }
 
                 member.BoardMemberPermissions.Clear();
 
                 member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
             {
-                BoardMemberId = request.MemberId,
-                BoardPermissionId = permission
+                BoardMemberId = BoardMemberId.Of(request.MemberId),
+                BoardPermissionId = BoardPermissionId.Of(permission)
             })];
 
                 _unitOfWork.GetBoardMemberRepository().Update(member);
@@ -55,13 +52,11 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 {
                     _logger.LogError("Can't save new board member permissions with id '{memberId}' to board with id '{boardId}'.", request.MemberId, request.BoardId);
                     return Result.Failure(BoardMemberPermissionErrors.CantCreate);
-
-                    //throw new ArgumentException($"Can't save new board member permissions with id '{request.MemberId}' to board with id '{request.BoardId}'.");
                 }
 
                 await _outboxService.CreateNewOutboxEvent(new NewBoardMemberPermissionsEvent
                 {
-                    BoardId = board.Id,
+                    BoardId = board.Id.Value,
                     BoardName = board.Name,
                     AccountId = member.AccountId,
                     SourceAccountId = request.AccountId,

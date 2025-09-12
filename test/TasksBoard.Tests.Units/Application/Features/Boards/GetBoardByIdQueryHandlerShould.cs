@@ -11,6 +11,7 @@ using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.Boards
 {
@@ -31,7 +32,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board>())
+                .Setup(s => s.GetRepository<Board, BoardId>())
                 .Returns(boardRepository.Object);
 
             userProfile = new Mock<IUserProfileHandler>();
@@ -52,13 +53,13 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             var board = new Board
             {
-                Id = boardId,
+                Id = BoardId.Of(boardId),
                 OwnerId = Guid.Empty,
                 Name = string.Empty
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(boardId, It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(board.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(board);
 
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardProfile>(), new NullLoggerFactory()));
@@ -69,7 +70,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeNull().And.BeEquivalentTo(boardDto);
 
-            boardRepository.Verify(s => s.GetAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+            boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()), Times.Once);
             boardRepository.VerifyNoOtherCalls();
         }
 
@@ -83,7 +84,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(boardId, It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(BoardId.Of(boardId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             var actual = await sut.Handle(query, CancellationToken.None);

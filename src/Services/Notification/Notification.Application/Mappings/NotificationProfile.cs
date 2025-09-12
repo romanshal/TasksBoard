@@ -12,6 +12,7 @@ namespace Notification.Application.Mappings
         public NotificationProfile()
         {
             CreateMap<ApplicationEvent, NotificationDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => GetNotificationType(src.EventType)))
                 .ForMember(dest => dest.Payload, opt => opt.MapFrom(src => GetNotificationPayload(src.EventType, src.Payload)));
         }

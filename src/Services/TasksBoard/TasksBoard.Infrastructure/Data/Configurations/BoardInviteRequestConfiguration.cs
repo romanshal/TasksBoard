@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Infrastructure.Data.Configurations
 {
@@ -8,16 +9,21 @@ namespace TasksBoard.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<BoardInviteRequest> builder)
         {
-            builder.ToTable("boardinviterequests")
+            builder
+                .ToTable("boardinviterequests")
                 .HasKey(k => k.Id);
 
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder
+                .Property(p => p.Id)
+                .HasConversion(inviteId => inviteId.Value, dbId => BoardInviteId.Of(dbId))
+                .ValueGeneratedOnAdd()
+                .HasColumnName("Id");
 
-
-            builder.HasOne(o => o.Board)
-                .WithMany(m => m.InviteRequests)
-                .HasForeignKey(k => k.BoardId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .Property(p => p.BoardId)
+                .HasConversion(id => id.Value, value => BoardId.Of(value))
+                .HasColumnName("BoardId")
+                .IsRequired();
         }
     }
 }

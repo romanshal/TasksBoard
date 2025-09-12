@@ -1,5 +1,6 @@
 ﻿using Chat.Domain.Constants.Errors.DomainErrors;
 using Chat.Domain.Interfaces.UnitOfWorks;
+using Chat.Domain.ValueObjects;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ namespace Chat.Application.Features.BoardMessages.Commands.DeleteBoardMessage
         {
             //TODO: check board exist
 
-            var boardMessage = await _unitOfWork.GetBoardMessagesRepository().GetAsync(request.BoardMessageId, cancellationToken);
+            var boardMessage = await _unitOfWork.GetBoardMessagesRepository().GetAsync(MessageId.Of(request.BoardMessageId), cancellationToken);
             if (boardMessage is null)
             {
                 _logger.LogWarning("Board message with id '{boardMessageId}' was not found.", request.BoardMessageId);

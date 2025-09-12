@@ -7,6 +7,7 @@ using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeById
 {
@@ -23,13 +24,11 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
 
         public async Task<Result<BoardNoticeDto>> Handle(GetBoardNoticeByIdQuery request, CancellationToken cancellationToken)
         {
-            var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetAsync(request.Id, cancellationToken);
+            var boardNotice = await _unitOfWork.GetRepository<BoardNotice, BoardNoticeId>().GetAsync(BoardNoticeId.Of(request.Id), cancellationToken);
             if (boardNotice is null)
             {
                 _logger.LogWarning("Board notice with id '{id}' was not found.", request.Id);
                 return Result.Failure<BoardNoticeDto>(BoardErrors.NotFound);
-
-                //throw new NotFoundException($"Board notice with id '{request.Id}' was not found.");
             }
             var boardNoticeDto = _mapper.Map<BoardNoticeDto>(boardNotice);
 

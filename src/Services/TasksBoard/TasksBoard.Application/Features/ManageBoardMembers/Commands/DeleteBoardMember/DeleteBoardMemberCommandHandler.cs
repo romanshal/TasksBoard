@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoardMember
 {
@@ -22,22 +23,18 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                     return Result.Failure(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                var member = board.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
+                var member = board.BoardMembers.FirstOrDefault(member => member.Id.Value == request.MemberId);
                 if (member is null)
                 {
                     _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
                     return Result.Failure(BoardMemberErrors.NotFound);
-
-                    //throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
                 }
 
                 _unitOfWork.GetBoardMemberRepository().Delete(member);
@@ -47,13 +44,11 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
                 {
                     _logger.LogError("Can't delete board member with id '{memberId}' from board with id '{boardId}'.", request.MemberId, request.BoardId);
                     return Result.Failure(BoardMemberErrors.CantDelete);
-
-                    //throw new ArgumentException($"Can't delete board member with id '{request.MemberId}' from board with id '{request.BoardId}'.");
                 }
 
                 var removeEvent = new RemoveBoardMemberEvent
                 {
-                    BoardId = board.Id,
+                    BoardId = board.Id.Value,
                     BoardName = board.Name,
                     RemovedAccountId = member.AccountId,
                     RemoveByAccountId = request.RemoveByUserId,

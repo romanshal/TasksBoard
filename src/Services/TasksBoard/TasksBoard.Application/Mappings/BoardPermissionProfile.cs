@@ -8,7 +8,8 @@ namespace TasksBoard.Application.Mappings
     {
         public BoardPermissionProfile()
         {
-            CreateMap<BoardPermission, BoardPermissionDto>();
+            CreateMap<BoardPermission, BoardPermissionDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value));
         }
     }
 }

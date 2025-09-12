@@ -12,6 +12,7 @@ using TasksBoard.Application.Mappings;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 {
@@ -60,7 +61,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             var list = new List<BoardAccessRequest>
             {
                 new() {
-                    BoardId = Guid.Empty,
+                    BoardId = BoardId.New(),
                     AccountId = Guid.Empty,
                     Status = 0
                 }

@@ -11,6 +11,7 @@ namespace TasksBoard.Application.Mappings
         public BoardProfile()
         {
             CreateMap<Board, BoardDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
                 //.ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers.OrderByDescending(member => src.OwnerId == member.AccountId)))
                 //.ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
@@ -20,6 +21,7 @@ namespace TasksBoard.Application.Mappings
                 .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Public));
 
             CreateMap<Board, BoardForViewDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
                 .ForMember(dest => dest.MemberCount, opt => opt.MapFrom(src => src.BoardMembers.Count))
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))

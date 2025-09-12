@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.BoardPermission.Queries.GetBoardPermissions
 {
@@ -18,7 +19,7 @@ namespace TasksBoard.Application.Features.BoardPermission.Queries.GetBoardPermis
 
         public async Task<Result<IEnumerable<BoardPermissionDto>>> Handle(GetBoardPermissionsQuery request, CancellationToken cancellationToken)
         {
-            var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission>().GetAllAsync(cancellationToken);
+            var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission, BoardPermissionId>().GetAllAsync(cancellationToken);
 
             var permissionsDto = _mapper.Map<IEnumerable<BoardPermissionDto>>(permissions.OrderBy(permission => permission.AccessLevel));
 

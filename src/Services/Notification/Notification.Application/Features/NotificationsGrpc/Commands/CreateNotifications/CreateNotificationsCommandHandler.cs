@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Notification.Domain.Constants;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.UnitOfWorks;
+using Notification.Domain.ValueObjects;
 
 namespace Notification.Application.Features.NotificationsGrpc.Commands.CreateNotifications
 {
@@ -23,7 +24,7 @@ namespace Notification.Application.Features.NotificationsGrpc.Commands.CreateNot
                     Payload = request.Payload
                 };
 
-                unitOfWork.GetRepository<ApplicationEvent>().Add(applicationEvent);
+                unitOfWork.GetRepository<ApplicationEvent, ApplicationEventId>().Add(applicationEvent);
             }
 
             var affectedRows = await unitOfWork.SaveChangesAsync(cancellationToken);

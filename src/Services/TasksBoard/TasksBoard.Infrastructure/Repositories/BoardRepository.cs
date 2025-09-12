@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.Data.Contexts;
 
 namespace TasksBoard.Infrastructure.Repositories
 {
     public class BoardRepository(
         TasksBoardDbContext context,
-        ILoggerFactory loggerFactory) : Repository<Board>(context, loggerFactory), IBoardRepository
+        ILoggerFactory loggerFactory) : Repository<Board, BoardId>(context, loggerFactory), IBoardRepository
     {
         public async Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
@@ -44,7 +45,7 @@ namespace TasksBoard.Infrastructure.Repositories
             .ToListAsync(cancellationToken);
         }
 
-        public async Task<bool> HasAccessAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+        public async Task<bool> HasAccessAsync(BoardId boardId, Guid userId, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()

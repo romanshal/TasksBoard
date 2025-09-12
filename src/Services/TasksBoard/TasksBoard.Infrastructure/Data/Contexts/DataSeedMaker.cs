@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Infrastructure.Data.Contexts
 {
@@ -21,35 +22,35 @@ namespace TasksBoard.Infrastructure.Data.Contexts
                 [
                     new BoardPermission
                     {
-                        Id = Guid.NewGuid(),
+                        Id = BoardPermissionId.New(),
                         Name = "read",
                         Description = "Read only access",
                         AccessLevel = 0
                     },
                     new BoardPermission
                     {
-                        Id = Guid.NewGuid(),
+                        Id = BoardPermissionId.New(),
                         Name = "manage_notice",
                         Description = "Create, update and delete board notices",
                         AccessLevel = 1
                     },
                     new BoardPermission
                     {
-                        Id = Guid.NewGuid(),
+                        Id = BoardPermissionId.New(),
                         Name = "manage_chat",
                         Description = "Chat administration access",
                         AccessLevel = 2
                     },
                     new BoardPermission
                     {
-                        Id = Guid.NewGuid(),
+                        Id = BoardPermissionId.New(),
                         Name = "manage_member",
                         Description = "Invite, manage and delete members",
                         AccessLevel = 3
                     },
                     new BoardPermission
                     {
-                        Id = Guid.NewGuid(),
+                        Id = BoardPermissionId.New(),
                         Name = "manage_board",
                         Description = "Update board info",
                         AccessLevel = 4

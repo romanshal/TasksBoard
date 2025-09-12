@@ -47,7 +47,7 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
             }
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || image.Id == Guid.Empty)
+            if (affectedRows == 0 || image.Id.Value == Guid.Empty)
             {
                 _logger.LogError("Can't update user image with id '{id}'.", user.Id);
                 return Result.Failure(ManageErrors.CantUpdatePassword);

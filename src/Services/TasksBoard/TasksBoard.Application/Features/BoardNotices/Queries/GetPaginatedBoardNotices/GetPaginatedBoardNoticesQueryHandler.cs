@@ -9,6 +9,7 @@ using TasksBoard.Application.Handlers;
 using TasksBoard.Application.Models;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNotices
 {
@@ -25,14 +26,14 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoard
 
         public async Task<Result<PaginatedList<BoardNoticeDto>>> Handle(GetPaginatedListQuery<BoardNoticeDto> request, CancellationToken cancellationToken)
         {
-            var count = await _unitOfWork.GetRepository<BoardNotice>().CountAsync(cancellationToken);
+            var count = await _unitOfWork.GetRepository<BoardNotice, BoardNoticeId>().CountAsync(cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No board notices entities in database.");
                 return Result.Success(PaginatedList<BoardNoticeDto>.Empty(request.PageIndex, request.PageSize));
             }
 
-            var boardNotice = await _unitOfWork.GetRepository<BoardNotice>().GetPaginatedAsync(request.PageIndex, request.PageSize, cancellationToken);
+            var boardNotice = await _unitOfWork.GetRepository<BoardNotice, BoardNoticeId>().GetPaginatedAsync(request.PageIndex, request.PageSize, cancellationToken);
 
             var boardNoticesDto = _mapper.Map<IEnumerable<BoardNoticeDto>>(boardNotice);
 

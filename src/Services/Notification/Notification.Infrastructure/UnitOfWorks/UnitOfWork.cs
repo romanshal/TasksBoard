@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.Repositories;
 using Notification.Domain.Interfaces.UnitOfWorks;
+using Notification.Domain.ValueObjects;
 using Notification.Infrastructure.Data.Contexts;
 using Notification.Infrastructure.Repositories;
 
@@ -20,7 +21,7 @@ namespace Notification.Infrastructure.UnitOfWorks
         {
             var type = typeof(ApplicationEvent);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationEvent>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationEvent, ApplicationEventId>))
             {
                 var repositoryInstance = new ApplicationEventRepository(_context, _loggerFactory);
 

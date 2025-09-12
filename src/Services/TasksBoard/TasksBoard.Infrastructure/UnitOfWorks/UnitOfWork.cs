@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.CacheBuffers;
 using TasksBoard.Infrastructure.CachedRepositories;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -25,7 +26,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
         {
             var type = typeof(BoardNotice);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardNotice>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardNotice, BoardNoticeId>))
             {
                 var repositoryInstance = new BoardNoticeRepository(_context, _loggerFactory);
 
@@ -41,7 +42,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
         {
             var type = typeof(Board);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board, BoardId>))
             {
                 var repositoryInstance = new BoardRepository(_context, _loggerFactory);
 
@@ -57,7 +58,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
         {
             var type = typeof(BoardMember);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMember>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMember, BoardMemberId>))
             {
                 var repositoryInstance = new BoardMemberRepository(_context, _loggerFactory);
 
@@ -73,7 +74,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
         {
             var type = typeof(BoardAccessRequest);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardAccessRequest>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardAccessRequest, BoardAccessId>))
             {
                 var repositoryInstance = new BoardAccessRequestRepsitory(_context, _loggerFactory);
 
@@ -89,7 +90,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
         {
             var type = typeof(BoardInviteRequest);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardInviteRequest>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardInviteRequest, BoardInviteId>))
             {
                 var repositoryInstance = new BoardInviteRequestRepository(_context, _loggerFactory);
 

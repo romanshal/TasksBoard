@@ -6,6 +6,7 @@ using TasksBoard.Application.DTOs;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMemberPermissions
 {
@@ -20,22 +21,18 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMem
 
         public async Task<Result<IEnumerable<BoardMemberPermissionDto>>> Handle(GetBoardMemberPermissionsQuery request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.BoardId, cancellationToken);
+            var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 Result.Failure<IEnumerable<BoardMemberPermissionDto>>(BoardErrors.NotFound);
-
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
-            var member = board!.BoardMembers.FirstOrDefault(member => member.Id == request.MemberId);
+            var member = board!.BoardMembers.FirstOrDefault(member => member.Id.Value == request.MemberId);
             if (member is null)
             {
                 _logger.LogWarning("Board member with id '{memberId}' not found in board '{boardId}'.", request.MemberId, request.BoardId);
                 return Result.Failure<IEnumerable<BoardMemberPermissionDto>>(BoardMemberErrors.NotFound);
-
-                //throw new NotFoundException($"Board member with id '{request.MemberId}' not found in board '{request.BoardId}'.");
             }
 
             var permissions = member.BoardMemberPermissions.ToList();

@@ -1,8 +1,9 @@
 ﻿using Common.Blocks.Entities;
+using Common.Blocks.ValueObjects;
 
 namespace Common.Blocks.Interfaces.Repositories
 {
-    public interface IRepository<T> where T : BaseEntity
+    public interface IRepository<T, TId> where T : class,  IEntity<TId> where TId : ValueObject
     {
         /// <summary>
         /// Get entity by id.
@@ -11,7 +12,7 @@ namespace Common.Blocks.Interfaces.Repositories
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        Task<T?> GetAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<T?> GetAsync(TId id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get all entities from database.
@@ -65,6 +66,6 @@ namespace Common.Blocks.Interfaces.Repositories
         /// <param name="id">Entity id.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
-        Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<bool> ExistAsync(TId id, CancellationToken cancellationToken = default);
     }
 }

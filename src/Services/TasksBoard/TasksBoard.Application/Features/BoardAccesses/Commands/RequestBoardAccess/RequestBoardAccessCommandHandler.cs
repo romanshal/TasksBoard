@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAccess
 {
@@ -26,7 +27,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetBoardRepository().GetAsync(request.BoardId, token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
@@ -52,7 +53,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
                     //throw new AlreadyExistException($"Board member is already exist for board '{board.Name}'.");
                 }
 
-                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(request.BoardId, request.AccountId, token);
+                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(BoardId.Of(request.BoardId), request.AccountId, token);
                 if (accessRequest is not null && accessRequest.Status == (int)BoardAccessRequestStatuses.Pending)
                 {
                     _logger.LogInformation("Board access request with account id '{accountId} is already exist in board '{boardId}'.", request.AccountId, request.BoardId);
@@ -61,7 +62,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
                     //throw new AlreadyExistException($"Access request is already exist for board '{board.Name}'.");
                 }
 
-                var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(request.BoardId, request.AccountId, token);
+                var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(BoardId.Of(request.BoardId), request.AccountId, token);
                 if (inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
                 {
                     _logger.LogInformation("Board invite request to account id '{accountId} is already exist in board '{boardId}'.", request.AccountId, request.BoardId);
@@ -75,7 +76,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
                 _unitOfWork.GetBoardAccessRequestRepository().Add(accessRequest);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || accessRequest.Id == Guid.Empty)
+                if (affectedRows == 0 || accessRequest.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't create new board access request to board with id '{boardId}'.", request.BoardId);
                     return Result.Failure<Guid>(BoardInviteErrors.CantCreate(board.Name));
@@ -85,7 +86,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
 
                 await _outboxService.CreateNewOutboxEvent(new NewBoardAccessRequestEvent
                 {
-                    BoardId = board.Id,
+                    BoardId = board.Id.Value,
                     BoardName = board.Name,
                     AccountId = accessRequest.AccountId,
                     BoardMembersIds = [.. board.BoardMembers.Select(member => member.AccountId)]
@@ -93,7 +94,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
 
                 _logger.LogInformation("Board access request with id '{id}' added to board with id '{boardId}'.", accessRequest.Id, request.BoardId);
 
-                return Result.Success(accessRequest.Id);
+                return Result.Success(accessRequest.Id.Value);
             }, cancellationToken);
         }
     }

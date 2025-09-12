@@ -1,4 +1,5 @@
 ﻿using Authentication.Domain.Entities;
+using Authentication.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,9 @@ namespace Authentication.Infrastructure.Data.Configurations
 
             builder
                 .Property(p => p.Id)
-                .ValueGeneratedOnAdd();
+                .HasConversion(imageId => imageId.Value, dbId => ImageId.Of(dbId))
+                .ValueGeneratedOnAdd()
+                .HasColumnName("Id");
 
             builder
                 .HasOne(o => o.User)

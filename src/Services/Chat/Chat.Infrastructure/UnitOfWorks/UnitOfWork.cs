@@ -1,6 +1,7 @@
 ﻿using Chat.Domain.Entities;
 using Chat.Domain.Interfaces.Repositories;
 using Chat.Domain.Interfaces.UnitOfWorks;
+using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Data.Contexts;
 using Chat.Infrastructure.Repositories;
 using Common.Blocks.Repositories;
@@ -20,7 +21,7 @@ namespace Chat.Infrastructure.UnitOfWorks
         {
             var type = typeof(BoardMessage);
 
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMessage>))
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMessage, MessageId>))
             {
                 var repositoryInstance = new BoardMessageRepository(_context, _loggerFactory);
 

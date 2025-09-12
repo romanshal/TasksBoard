@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TasksBoard.Domain.Entities;
+using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.Data.Contexts;
 
 namespace TasksBoard.Tests.E2E
@@ -22,25 +23,30 @@ namespace TasksBoard.Tests.E2E
 
             var board = new Board
             {
+                Id = BoardId.New(),
                 Name = "Test board",
-                OwnerId = User.UserId,
-                BoardMembers =
+                OwnerId = User.UserId 
+            };
+
+            board.BoardMembers = 
                 [
-                    new() {
+                    new()
+                    {
+                        Id = BoardMemberId.New(),
+                        BoardId = board.Id,
                         AccountId = User.UserId,
                         BoardMemberPermissions = [.. permissions.Select(perm => new BoardMemberPermission
                         {
                             BoardPermissionId = perm.Id
                         })]
                     }
-                ]
-            };
+                ];
 
             dbContext.Boards.Add(board);
 
             await dbContext.SaveChangesAsync();
 
-            return board.Id;
+            return board.Id.Value;
         }
 
         public async Task<Guid> PreconfigureBoardNotice(Guid boardId)
@@ -49,7 +55,7 @@ namespace TasksBoard.Tests.E2E
 
             var notice = new BoardNotice
             {
-                BoardId = boardId,
+                BoardId = BoardId.Of(boardId),
                 AuthorId = User.UserId,
                 //AuthorName = User.Username,
                 Definition = "Test notice",
@@ -60,7 +66,7 @@ namespace TasksBoard.Tests.E2E
             dbContext.BoardNotices.Add(notice);
             await dbContext.SaveChangesAsync();
 
-            return notice.Id;
+            return notice.Id.Value;
         }
     }
 }

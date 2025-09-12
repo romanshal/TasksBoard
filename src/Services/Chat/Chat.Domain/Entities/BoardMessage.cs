@@ -1,8 +1,9 @@
-﻿using Common.Blocks.Entities;
+﻿using Chat.Domain.ValueObjects;
+using Common.Blocks.Entities;
 
 namespace Chat.Domain.Entities
 {
-    public class BoardMessage : BaseEntity
+    public class BoardMessage : BaseEntity<MessageId>
     {
         public Guid BoardId { get; set; }
         public Guid MemberId { get; set; }

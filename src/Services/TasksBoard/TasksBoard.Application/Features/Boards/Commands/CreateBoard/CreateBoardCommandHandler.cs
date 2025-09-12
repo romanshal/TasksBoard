@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 {
@@ -21,12 +22,12 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
         {
             var board = CreateBoard(request);
 
-            var boardMember = CreateBoardMember(board.OwnerId, board.Id, request.OwnerNickname);
+            var boardMember = CreateBoardMember(board.OwnerId, board.Id.Value, request.OwnerNickname);
 
-            await AddPermissionsAsync(boardMember.Id, cancellationToken);
+            await AddPermissionsAsync(boardMember.Id.Value, cancellationToken);
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || board.Id == Guid.Empty)
+            if (affectedRows == 0 || board.Id.Value == Guid.Empty)
             {
                 _logger.LogError("Can't create new board. No rows were affected.");
                 return Result.Failure<Guid>(BoardErrors.CantCreate);
@@ -34,14 +35,14 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 
             _logger.LogInformation("Created new board with id '{id}'.", board.Id);
 
-            return Result.Success(board.Id);
+            return Result.Success(board.Id.Value);
         }
 
         private Board CreateBoard(CreateBoardCommand request)
         {
             var board = _mapper.Map<Board>(request);
 
-            _unitOfWork.GetRepository<Board>().Add(board);
+            _unitOfWork.GetRepository<Board, BoardId>().Add(board);
 
             return board;
         }
@@ -51,26 +52,26 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             var boardMember = new BoardMember
             {
                 AccountId = userId,
-                BoardId = boardId
+                BoardId = BoardId.Of(boardId)
             };
 
-            _unitOfWork.GetRepository<BoardMember>().Add(boardMember);
+            _unitOfWork.GetRepository<BoardMember, BoardMemberId>().Add(boardMember);
 
             return boardMember;
         }
 
         private async Task AddPermissionsAsync(Guid boardMemberId, CancellationToken cancellationToken)
         {
-            var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission>().GetAllAsync(cancellationToken);
+            var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission, BoardPermissionId>().GetAllAsync(cancellationToken);
             foreach (var permission in permissions)
             {
                 var boardMemberPermission = new BoardMemberPermission
                 {
-                    BoardMemberId = boardMemberId,
+                    BoardMemberId = BoardMemberId.Of(boardMemberId),
                     BoardPermissionId = permission.Id
                 };
 
-                _unitOfWork.GetRepository<BoardMemberPermission>().Add(boardMemberPermission);
+                _unitOfWork.GetRepository<BoardMemberPermission, MemberPermissionId>().Add(boardMemberPermission);
             }
         }
     }

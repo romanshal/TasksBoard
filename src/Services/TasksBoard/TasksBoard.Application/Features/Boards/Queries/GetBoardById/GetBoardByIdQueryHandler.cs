@@ -8,6 +8,7 @@ using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
 {
@@ -24,7 +25,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
 
         public async Task<Result<BoardFullDto>> Handle(GetBoardByIdQuery request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board>().GetAsync(request.Id, cancellationToken);
+            var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.Id), cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{id}' was not found.", request.Id);

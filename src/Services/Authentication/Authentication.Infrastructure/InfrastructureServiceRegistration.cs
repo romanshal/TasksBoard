@@ -43,7 +43,7 @@ namespace Authentication.Infrastructure
             .AddEntityFrameworkStores<AuthenticationDbContext>()
             .AddDefaultTokenProviders();
 
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
             services.AddTransient<IApplicationUserSessionRepository, ApplicationUserSessionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUnitOfWorkBase>(sp => sp.GetRequiredService<IUnitOfWork>());

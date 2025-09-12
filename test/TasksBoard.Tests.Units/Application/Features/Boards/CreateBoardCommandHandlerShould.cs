@@ -7,6 +7,7 @@ using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
+using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Tests.Units.Application.Features.Boards
 {
@@ -14,8 +15,8 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
     {
         private readonly Mock<IBoardRepository> boardRepository;
         private readonly Mock<IBoardMemberRepository> boardMemberRepository;
-        private readonly Mock<IRepository<BoardPermission>> boardPermissionRepository;
-        private readonly Mock<IRepository<BoardMemberPermission>> boardMemberPermissionRepository;
+        private readonly Mock<IRepository<BoardPermission, BoardPermissionId>> boardPermissionRepository;
+        private readonly Mock<IRepository<BoardMemberPermission, MemberPermissionId>> boardMemberPermissionRepository;
         private readonly Mock<ILogger<CreateBoardCommandHandler>> logger;
         private readonly Mock<IMapper> mapper;
         private readonly Mock<IUnitOfWork> unitOfWork;
@@ -25,8 +26,8 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
         {
             boardRepository = new Mock<IBoardRepository>();
             boardMemberRepository = new Mock<IBoardMemberRepository>();
-            boardPermissionRepository = new Mock<IRepository<BoardPermission>>();
-            boardMemberPermissionRepository = new Mock<IRepository<BoardMemberPermission>>();
+            boardPermissionRepository = new Mock<IRepository<BoardPermission, BoardPermissionId>>();
+            boardMemberPermissionRepository = new Mock<IRepository<BoardMemberPermission, MemberPermissionId>>();
 
             logger = new Mock<ILogger<CreateBoardCommandHandler>>();
 
@@ -34,16 +35,16 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board>())
+                .Setup(s => s.GetRepository<Board, BoardId>())
                 .Returns(boardRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardMember>())
+                .Setup(s => s.GetRepository<BoardMember, BoardMemberId>())
                 .Returns(boardMemberRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardPermission>())
+                .Setup(s => s.GetRepository<BoardPermission, BoardPermissionId>())
                 .Returns(boardPermissionRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardMemberPermission>())
+                .Setup(s => s.GetRepository<BoardMemberPermission, MemberPermissionId>())
                 .Returns(boardMemberPermissionRepository.Object);
 
             sut = new CreateBoardCommandHandler(logger.Object, unitOfWork.Object, mapper.Object);
@@ -64,7 +65,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 .Setup(s => s.Map<Board>(command))
                 .Returns(new Board
                 {
-                    Id = boardId,
+                    Id = BoardId.Of(boardId),
                     OwnerId = Guid.Empty,
                     Name = string.Empty
                 });

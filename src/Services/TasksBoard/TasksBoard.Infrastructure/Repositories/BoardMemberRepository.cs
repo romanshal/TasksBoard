@@ -3,15 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.Data.Contexts;
 
 namespace TasksBoard.Infrastructure.Repositories
 {
     public class BoardMemberRepository(
         TasksBoardDbContext context,
-        ILoggerFactory loggerFactory) : Repository<BoardMember>(context, loggerFactory), IBoardMemberRepository
+        ILoggerFactory loggerFactory) : Repository<BoardMember, BoardMemberId>(context, loggerFactory), IBoardMemberRepository
     {
-        public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(BoardId boardId, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -20,7 +21,7 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(Guid boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(BoardId boardId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -32,7 +33,7 @@ namespace TasksBoard.Infrastructure.Repositories
 
         }
 
-        public async Task<BoardMember?> GetByBoardIdAndAccountIdAsync(Guid boardId, Guid accountId, CancellationToken cancellationToken = default)
+        public async Task<BoardMember?> GetByBoardIdAndAccountIdAsync(BoardId boardId, Guid accountId, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .FirstOrDefaultAsync(member => member.BoardId == boardId && member.AccountId == accountId, cancellationToken);
@@ -45,7 +46,7 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<int> CountByBoardIdAsync(Guid boardId, CancellationToken cancellationToken)
+        public async Task<int> CountByBoardIdAsync(BoardId boardId, CancellationToken cancellationToken)
         {
             return await DbSet
                 .AsNoTracking()

@@ -1,9 +1,10 @@
 ﻿using Common.Blocks.Interfaces.Repositories;
 using Notification.Domain.Entities;
+using Notification.Domain.ValueObjects;
 
 namespace Notification.Domain.Interfaces.Repositories
 {
-    public interface IApplicationEventRepository : IRepository<ApplicationEvent>
+    public interface IApplicationEventRepository : IRepository<ApplicationEvent, ApplicationEventId>
     {
         Task<IEnumerable<ApplicationEvent>> GetPaginatedByAccountIdAsync(Guid accountId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);
         Task<IEnumerable<ApplicationEvent>> GetNewPaginatedByAccountIdAsync(Guid accountId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default);

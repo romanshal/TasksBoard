@@ -1,6 +1,7 @@
 ﻿using Common.Cache.Interfaces;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
+using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.CacheBuffers;
 using TasksBoard.Infrastructure.Factories;
 
@@ -9,12 +10,12 @@ namespace TasksBoard.Infrastructure.CachedRepositories
     internal class CachedBoardRepository(
         IBoardRepository decorated, 
         ICacheRepository cache,
-        ICacheKeyFactory<Board> keyFactory,
+        ICacheKeyFactory<Board, BoardId> keyFactory,
         IAsyncCacheTransactionBuffer cacheBuffer) : IBoardRepository
     {
         private readonly IBoardRepository _decorated = decorated;
         private readonly ICacheRepository _cache = cache;
-        private readonly ICacheKeyFactory<Board> _keyFactory = keyFactory;
+        private readonly ICacheKeyFactory<Board, BoardId> _keyFactory = keyFactory;
         private readonly IAsyncCacheTransactionBuffer _cacheBuffer = cacheBuffer;
 
         public void Add(Board entity)
@@ -55,7 +56,7 @@ namespace TasksBoard.Infrastructure.CachedRepositories
             _cacheBuffer.AddPending(() => _cache.RemoveAsync(key));
         }
 
-        public async Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistAsync(BoardId id, CancellationToken cancellationToken = default)
         {
             return await _decorated.ExistAsync(id, cancellationToken);
         }
@@ -65,7 +66,7 @@ namespace TasksBoard.Infrastructure.CachedRepositories
             return await _decorated.GetAllAsync(cancellationToken);
         }
 
-        public async Task<Board?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Board?> GetAsync(BoardId id, CancellationToken cancellationToken = default)
         {
             string key = _keyFactory.Key(id);
             return await _cache.GetOrCreateAsync(key, () => _decorated.GetAsync(id, cancellationToken));
@@ -91,7 +92,7 @@ namespace TasksBoard.Infrastructure.CachedRepositories
             return await _decorated.GetPaginatedPublicAsync(pageIndex, pageSize, cancellationToken);
         }
 
-        public async Task<bool> HasAccessAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+        public async Task<bool> HasAccessAsync(BoardId boardId, Guid userId, CancellationToken cancellationToken = default)
         {
             return await _decorated.HasAccessAsync(boardId, userId, cancellationToken);
         }
