@@ -13,14 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
-using TasksBoard.Infrastructure.CacheBuffers;
-using TasksBoard.Infrastructure.CachedRepositories;
 using TasksBoard.Infrastructure.Data.Contexts;
-using TasksBoard.Infrastructure.Factories;
-using TasksBoard.Infrastructure.Repositories;
 using TasksBoard.Infrastructure.UnitOfWorks;
 using static Common.gRPC.Protos.UserProfiles;
 

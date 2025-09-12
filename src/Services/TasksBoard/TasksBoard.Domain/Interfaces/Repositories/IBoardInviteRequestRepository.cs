@@ -7,20 +7,20 @@ namespace TasksBoard.Domain.Interfaces.Repositories
     public interface IBoardInviteRequestRepository : IRepository<BoardInviteRequest, BoardInviteId>
     {
         Task<BoardInviteRequest?> GetByBoardIdAndToAccountIdAsync(
-            BoardId boardId, 
-            Guid toAccountId, 
+            BoardId boardId,
+            Guid toAccountId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardInviteRequest>> GetByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardInviteRequest>> GetByToAccountIdAsync(
-            Guid accountId, 
+            Guid accountId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardInviteRequest>> GetByFromAccountIdAsync(
-            Guid accountId, 
+            Guid accountId,
             CancellationToken cancellationToken = default);
     }
 }

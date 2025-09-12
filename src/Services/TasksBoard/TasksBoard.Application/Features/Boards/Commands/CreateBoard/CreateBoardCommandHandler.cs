@@ -22,9 +22,9 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
         {
             var board = CreateBoard(request);
 
-            var boardMember = CreateBoardMember(board.OwnerId, board.Id.Value, request.OwnerNickname);
+            var boardMember = CreateBoardMember(board.OwnerId, board.Id);
 
-            await AddPermissionsAsync(boardMember.Id.Value, cancellationToken);
+            await AddPermissionsAsync(boardMember.Id, cancellationToken);
 
             var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
             if (affectedRows == 0 || board.Id.Value == Guid.Empty)
@@ -42,32 +42,32 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
         {
             var board = _mapper.Map<Board>(request);
 
-            _unitOfWork.GetRepository<Board, BoardId>().Add(board);
+            _unitOfWork.GetBoardRepository().Add(board);
 
             return board;
         }
 
-        private BoardMember CreateBoardMember(Guid userId, Guid boardId, string ownerNickname)
+        private BoardMember CreateBoardMember(Guid userId, BoardId boardId)
         {
             var boardMember = new BoardMember
             {
                 AccountId = userId,
-                BoardId = BoardId.Of(boardId)
+                BoardId = boardId
             };
 
-            _unitOfWork.GetRepository<BoardMember, BoardMemberId>().Add(boardMember);
+            _unitOfWork.GetBoardMemberRepository().Add(boardMember);
 
             return boardMember;
         }
 
-        private async Task AddPermissionsAsync(Guid boardMemberId, CancellationToken cancellationToken)
+        private async Task AddPermissionsAsync(BoardMemberId boardMemberId, CancellationToken cancellationToken)
         {
             var permissions = await _unitOfWork.GetRepository<Domain.Entities.BoardPermission, BoardPermissionId>().GetAllAsync(cancellationToken);
             foreach (var permission in permissions)
             {
                 var boardMemberPermission = new BoardMemberPermission
                 {
-                    BoardMemberId = BoardMemberId.Of(boardMemberId),
+                    BoardMemberId = boardMemberId,
                     BoardPermissionId = permission.Id
                 };
 

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
@@ -24,7 +23,7 @@ namespace TasksBoard.Application.Features.BoardNotices.Queries.GetBoardNoticeByI
 
         public async Task<Result<BoardNoticeDto>> Handle(GetBoardNoticeByIdQuery request, CancellationToken cancellationToken)
         {
-            var boardNotice = await _unitOfWork.GetRepository<BoardNotice, BoardNoticeId>().GetAsync(BoardNoticeId.Of(request.Id), cancellationToken);
+            var boardNotice = await _unitOfWork.GetBoardNoticeRepository().GetAsync(BoardNoticeId.Of(request.Id), cancellationToken);
             if (boardNotice is null)
             {
                 _logger.LogWarning("Board notice with id '{id}' was not found.", request.Id);

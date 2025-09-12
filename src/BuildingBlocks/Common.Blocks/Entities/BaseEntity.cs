@@ -1,6 +1,4 @@
-﻿using Common.Blocks.ValueObjects;
-
-namespace Common.Blocks.Entities
+﻿namespace Common.Blocks.Entities
 {
     public abstract class BaseEntity<T> : IEntity<T>
     {

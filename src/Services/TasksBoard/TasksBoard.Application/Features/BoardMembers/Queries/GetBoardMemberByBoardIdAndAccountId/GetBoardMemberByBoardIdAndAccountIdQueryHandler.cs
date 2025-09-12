@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
@@ -24,14 +23,16 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
 
         public async Task<Result<BoardMemberDto>> Handle(GetBoardMemberByBoardIdAndAccountIdQuery request, CancellationToken cancellationToken)
         {
-            var boardExist = await _unitOfWork.GetRepository<Board, BoardId>().ExistAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var boardId = BoardId.Of(request.BoardId);
+
+            var boardExist = await _unitOfWork.GetBoardRepository().ExistAsync(boardId, cancellationToken);
             if (!boardExist)
             {
                 _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                 return Result.Failure<BoardMemberDto>(BoardErrors.NotFound);
             }
 
-            var boardMember = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(BoardId.Of(request.BoardId), request.AccountId, cancellationToken);
+            var boardMember = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(boardId, request.AccountId, cancellationToken);
             if (boardMember is null)
             {
                 _logger.LogWarning("Board member with account id '{accountId} in board with id '{boardId} was not found.", request.AccountId, request.BoardId);

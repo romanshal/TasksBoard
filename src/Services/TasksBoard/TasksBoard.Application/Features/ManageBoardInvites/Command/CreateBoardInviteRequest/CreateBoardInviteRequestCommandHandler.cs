@@ -27,7 +27,9 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
+                var boardId = BoardId.Of(request.BoardId);
+
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(boardId, token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
@@ -41,14 +43,14 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
                     return Result.Failure<Guid>(BoardMemberErrors.AlreadyExist(board.Name));
                 }
 
-                var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(BoardId.Of(request.BoardId), request.ToAccountId, token);
+                var inviteRequest = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAndToAccountIdAsync(boardId, request.ToAccountId, token);
                 if (inviteRequest is not null && inviteRequest.Status == (int)BoardInviteRequestStatuses.Pending)
                 {
                     _logger.LogInformation("Board invite request to account id '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
                     return Result.Failure<Guid>(BoardInviteErrors.AlreadyExist(board.Name));
                 }
 
-                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(BoardId.Of(request.BoardId), request.ToAccountId, token);
+                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetByBoardIdAndAccountId(boardId, request.ToAccountId, token);
                 if (accessRequest is not null && accessRequest.Status == (int)BoardAccessRequestStatuses.Pending)
                 {
                     _logger.LogInformation("Board access request to account from '{toAccountId} is already exist in board '{boardId}'.", request.ToAccountId, request.BoardId);
@@ -57,7 +59,7 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
 
                 inviteRequest = _mapper.Map<BoardInviteRequest>(request);
 
-                _unitOfWork.GetRepository<BoardInviteRequest, BoardInviteId>().Add(inviteRequest);
+                _unitOfWork.GetBoardInviteRequestRepository().Add(inviteRequest);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0 || inviteRequest.Id.Value == Guid.Empty)

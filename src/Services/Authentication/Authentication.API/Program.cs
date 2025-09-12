@@ -1,6 +1,5 @@
 using Authentication.API.Controllers;
 using Authentication.Application;
-using Authentication.Domain.Entities;
 using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Configurations;

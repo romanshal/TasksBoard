@@ -1,16 +1,11 @@
 ﻿using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Common.Cache.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
-using TasksBoard.Infrastructure.CacheBuffers;
-using TasksBoard.Infrastructure.CachedRepositories;
 using TasksBoard.Infrastructure.Data.Contexts;
-using TasksBoard.Infrastructure.Factories;
 using TasksBoard.Infrastructure.Repositories;
 
 namespace TasksBoard.Infrastructure.UnitOfWorks

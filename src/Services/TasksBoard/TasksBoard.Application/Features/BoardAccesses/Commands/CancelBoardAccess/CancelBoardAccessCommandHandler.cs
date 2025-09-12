@@ -24,8 +24,6 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
                 {
                     _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
                     return Result.Failure<Guid>(BoardAccessErrors.NotFound);
-
-                    //throw new NotFoundException($"Board access request not found.");
                 }
 
                 accessRequest.Status = (int)BoardAccessRequestStatuses.Canceled;
@@ -37,8 +35,6 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.CancelBoardAcce
                 {
                     _logger.LogError("Can't cancel board access request with id '{id}'.", accessRequest.Id);
                     return Result.Failure<Guid>(BoardAccessErrors.CantCancel);
-
-                    //throw new ArgumentException(nameof(accessRequest));
                 }
 
                 //TODO: add event

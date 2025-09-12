@@ -19,7 +19,9 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
+                var boardId = BoardId.Of(request.BoardId);
+
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(boardId, token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
@@ -44,14 +46,12 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
 
                 member = new BoardMember
                 {
-                    BoardId = BoardId.Of(request.BoardId),
+                    BoardId = boardId,
                     AccountId = request.AccountId,
                     BoardMemberPermissions =
                     [
                         new BoardMemberPermission
                         {
-                            //TODO: check this
-                            BoardMemberId = BoardMemberId.Of(member.Id.Value),
                             BoardPermissionId = BoardPermissionId.Of(minLevelPermission.Id.Value)
                         }
                     ]

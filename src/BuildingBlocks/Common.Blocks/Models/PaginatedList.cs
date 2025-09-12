@@ -34,7 +34,7 @@
 
 
         public static PaginatedList<T> Empty(
-            int pageIndex, 
+            int pageIndex,
             int pageSize) => new([], pageIndex, pageSize, 0);
     }
 }

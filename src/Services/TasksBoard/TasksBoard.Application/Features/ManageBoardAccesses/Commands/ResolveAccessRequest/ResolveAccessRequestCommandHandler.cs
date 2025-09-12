@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
@@ -27,27 +26,23 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board,BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
                     return Result.Failure<Guid>(BoardErrors.NotFound);
-
-                    //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
                 }
 
-                var accessRequest = await _unitOfWork.GetRepository<BoardAccessRequest, BoardAccessId>().GetAsync(BoardAccessId.Of(request.RequestId), token);
+                var accessRequest = await _unitOfWork.GetBoardAccessRequestRepository().GetAsync(BoardAccessId.Of(request.RequestId), token);
                 if (accessRequest is null)
                 {
                     _logger.LogWarning("Board access request with id '{requestId}' was not found.", request.RequestId);
                     return Result.Failure<Guid>(BoardAccessErrors.NotFound);
-
-                    //throw new NotFoundException($"Board access request with id '{request.RequestId}' not found.");
                 }
 
                 accessRequest.Status = request.Decision ? (int)BoardAccessRequestStatuses.Accepted : (int)BoardAccessRequestStatuses.Rejected;
 
-                _unitOfWork.GetRepository<BoardAccessRequest, BoardAccessId>().Update(accessRequest);
+                _unitOfWork.GetBoardAccessRequestRepository().Update(accessRequest);
 
                 if (request.Decision)
                 {
@@ -61,8 +56,6 @@ namespace TasksBoard.Application.Features.ManageBoardAccesses.Commands.ResolveAc
                     {
                         _logger.LogError("Can't add new board member.");
                         return Result.Failure<Guid>(result.Error);
-
-                        //throw new ArgumentException(nameof(accessRequest));
                     }
 
                     await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent

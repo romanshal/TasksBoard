@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
-using Common.gRPC.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
+using TasksBoard.Application.Factories;
+using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
@@ -15,49 +15,40 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Queries.GetBoardInv
         IUnitOfWork unitOfWork,
         IMapper mapper,
         ILogger<GetBoardInviteRequestsByBoardIdQueryHandler> logger,
-        IUserProfileService profileService) : IRequestHandler<GetBoardInviteRequestsByBoardIdQuery, Result<IEnumerable<BoardInviteRequestDto>>>
+        IUserProfileHandler profileHandler) : IRequestHandler<GetBoardInviteRequestsByBoardIdQuery, Result<IEnumerable<BoardInviteRequestDto>>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly ILogger<GetBoardInviteRequestsByBoardIdQueryHandler> _logger = logger;
-        private readonly IUserProfileService _profileService = profileService;
+        private readonly IUserProfileHandler _profileHandler = profileHandler;
 
         public async Task<Result<IEnumerable<BoardInviteRequestDto>>> Handle(GetBoardInviteRequestsByBoardIdQuery request, CancellationToken cancellationToken)
         {
-            var boardExist = await _unitOfWork.GetRepository<Board, BoardId>().ExistAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var boardId = BoardId.Of(request.BoardId);
+
+            var boardExist = await _unitOfWork.GetBoardRepository().ExistAsync(boardId, cancellationToken);
             if (!boardExist)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 return Result.Failure<IEnumerable<BoardInviteRequestDto>>(BoardErrors.NotFound);
             }
 
-            var boardInviteRequests = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var boardInviteRequests = await _unitOfWork.GetBoardInviteRequestRepository().GetByBoardIdAsync(boardId, cancellationToken);
 
             var boardInviteRequestsDto = _mapper.Map<IEnumerable<BoardInviteRequestDto>>(boardInviteRequests);
 
-            var userIds = boardInviteRequestsDto
-                .SelectMany(req => new[] { req.ToAccountId, req.FromAccountId })
-                .Where(id => id != Guid.Empty)
-                .ToHashSet();
+            await _profileHandler.HandleMany(
+                [
+                    UserProfileMappingFactory.Create(
+                    boardInviteRequestsDto,
+                    x => x.ToAccountId,
+                    (x, u, e) => { x.ToAccountName = u; x.ToAccountEmail = e!; }),
 
-            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
-
-            if (userProfiles.Count > 0)
-            {
-                foreach (var req in boardInviteRequestsDto)
-                {
-                    if (userProfiles.TryGetValue(req.ToAccountId, out var profileTo) && profileTo is not null)
-                    {
-                        req.ToAccountName = profileTo.Username;
-                        req.ToAccountEmail = profileTo.Email;
-                    }
-
-                    if (userProfiles.TryGetValue(req.FromAccountId, out var profileFrom) && profileFrom is not null)
-                    {
-                        req.FromAccountName = profileFrom.Username;
-                    }
-                }
-            }
+                    UserProfileMappingFactory.Create(
+                        boardInviteRequestsDto,
+                        x => x.FromAccountId,
+                        (x, u, _) => { x.FromAccountName = u; }),
+                ], cancellationToken);
 
             return Result.Success(boardInviteRequestsDto);
         }

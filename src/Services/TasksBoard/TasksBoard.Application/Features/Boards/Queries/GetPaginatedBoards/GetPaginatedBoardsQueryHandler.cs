@@ -5,9 +5,7 @@ using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs.Boards;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
-using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards
 {
@@ -22,14 +20,14 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoards
 
         public async Task<Result<PaginatedList<BoardForViewDto>>> Handle(GetPaginatedBoardsQuery request, CancellationToken cancellationToken)
         {
-            var count = await _unitOfWork.GetRepository<Board, BoardId>().CountAsync(cancellationToken);
+            var count = await _unitOfWork.GetBoardRepository().CountAsync(cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No boards entities in database.");
                 return Result.Success(PaginatedList<BoardForViewDto>.Empty(request.PageIndex, request.PageSize));
             }
 
-            var boards = await _unitOfWork.GetRepository<Board,BoardId>().GetPaginatedAsync(request.PageIndex, request.PageSize, cancellationToken);
+            var boards = await _unitOfWork.GetBoardRepository().GetPaginatedAsync(request.PageIndex, request.PageSize, cancellationToken);
 
             var boardsDto = _mapper.Map<IEnumerable<BoardForViewDto>>(boards);
 

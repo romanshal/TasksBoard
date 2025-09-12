@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Common.Cache.Interfaces
+﻿namespace Common.Cache.Interfaces
 {
     public interface ICacheRepository
     {

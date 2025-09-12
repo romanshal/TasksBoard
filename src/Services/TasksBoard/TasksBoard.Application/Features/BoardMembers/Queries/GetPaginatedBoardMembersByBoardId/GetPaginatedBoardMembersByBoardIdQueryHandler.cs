@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
@@ -26,21 +25,23 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetPaginatedBoard
 
         public async Task<Result<PaginatedList<BoardMemberDto>>> Handle(GetPaginatedBoardMembersByBoardIdQuery request, CancellationToken cancellationToken)
         {
-            var boardExist = await _unitOfWork.GetRepository<Board, BoardId>().ExistAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var boardId = BoardId.Of(request.BoardId);
+
+            var boardExist = await _unitOfWork.GetBoardRepository().ExistAsync(boardId, cancellationToken);
             if (!boardExist)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 return Result.Failure<PaginatedList<BoardMemberDto>>(BoardErrors.NotFound);
             }
 
-            var count = await _unitOfWork.GetBoardMemberRepository().CountByBoardIdAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var count = await _unitOfWork.GetBoardMemberRepository().CountByBoardIdAsync(boardId, cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No board membres entities in database.");
                 return Result.Success(PaginatedList<BoardMemberDto>.Empty(request.PageIndex, request.PageSize));
             }
 
-            var boardMembers = await _unitOfWork.GetBoardMemberRepository().GetPaginatedByBoardIdAsync(BoardId.Of(request.BoardId), request.PageIndex, request.PageSize, cancellationToken);
+            var boardMembers = await _unitOfWork.GetBoardMemberRepository().GetPaginatedByBoardIdAsync(boardId, request.PageIndex, request.PageSize, cancellationToken);
 
             var boardMembersDto = _mapper.Map<IEnumerable<BoardMemberDto>>(boardMembers);
 

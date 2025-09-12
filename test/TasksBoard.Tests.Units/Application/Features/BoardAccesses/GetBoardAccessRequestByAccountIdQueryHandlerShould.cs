@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Common.gRPC.Interfaces.Services;
-using Common.gRPC.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

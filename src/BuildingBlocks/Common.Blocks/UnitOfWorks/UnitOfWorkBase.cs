@@ -5,6 +5,7 @@ using Common.Blocks.Repositories;
 using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace Common.Blocks.UnitOfWorks
 {
@@ -14,7 +15,7 @@ namespace Common.Blocks.UnitOfWorks
     {
         private readonly DbContext _context = context;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
-        protected readonly Dictionary<Type, object> _repositories = [];
+        protected readonly ConcurrentDictionary<Type, object> _repositories = [];
 
         public IRepository<T, TId> GetRepository<T, TId>() where T : class, IEntity<TId> where TId : ValueObject
         {

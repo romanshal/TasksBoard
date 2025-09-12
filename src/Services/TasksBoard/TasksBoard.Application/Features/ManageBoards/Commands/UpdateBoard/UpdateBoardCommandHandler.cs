@@ -3,32 +3,23 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
 using TasksBoard.Domain.Entities;
-using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
-    public class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Result<Guid>>
+    public class UpdateBoardCommandHandler(
+        ILogger<UpdateBoardCommandHandler> logger,
+        IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardCommand, Result<Guid>>
     {
-        private readonly ILogger<UpdateBoardCommandHandler> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IBoardRepository _boardRepository;
-
-        public UpdateBoardCommandHandler(
-            ILogger<UpdateBoardCommandHandler> logger,
-            IUnitOfWork unitOfWork)
-        {
-            this._logger = logger;
-            this._unitOfWork = unitOfWork;
-            this._boardRepository = _unitOfWork.GetBoardRepository();
-        }
+        private readonly ILogger<UpdateBoardCommandHandler> _logger = logger;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result<Guid>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _boardRepository.GetAsync(BoardId.Of(request.BoardId), token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
@@ -65,13 +56,13 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
                 }
 
                 board.Tags.Clear();
-                board.Tags = [.. request.Tags.Select(tag => new BoardTag 
-                { 
+                board.Tags = [.. request.Tags.Select(tag => new BoardTag
+                {
                     BoardId = board.Id,
-                    Tag = tag 
+                    Tag = tag
                 })];
 
-                _boardRepository.Update(board);
+                _unitOfWork.GetBoardRepository().Update(board);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0 || board.Id.Value == Guid.Empty)

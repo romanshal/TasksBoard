@@ -13,9 +13,9 @@ namespace TasksBoard.Infrastructure.Repositories
         ILoggerFactory loggerFactory) : Repository<BoardNotice, BoardNoticeId>(context, loggerFactory), IBoardNoticeRepository
     {
         public async Task<IEnumerable<BoardNotice>> GetPaginatedByBoardIdAsync(
-            BoardId boardId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            BoardId boardId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -28,9 +28,9 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAsync(
-            Guid userId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            Guid userId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -42,10 +42,10 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
         public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAndBoardIdAsync(
-            Guid userId, 
-            BoardId boardId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            Guid userId,
+            BoardId boardId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -58,7 +58,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<int> CountByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -67,7 +67,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<int> CountByUserIdAsync(
-            Guid userId, 
+            Guid userId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -76,8 +76,8 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<int> CountByBoardIdAndUserIdAsync(
-            BoardId boardId, 
-            Guid userId, 
+            BoardId boardId,
+            Guid userId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet

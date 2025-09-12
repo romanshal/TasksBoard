@@ -35,7 +35,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
 
                 var notice = _mapper.Map<BoardNotice>(request);
 
-                _unitOfWork.GetRepository<BoardNotice, BoardNoticeId>().Add(notice);
+                _unitOfWork.GetBoardNoticeRepository().Add(notice);
 
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0 || notice.Id.Value == Guid.Empty)

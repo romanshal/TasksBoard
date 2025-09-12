@@ -8,7 +8,7 @@ using TasksBoard.Infrastructure.Factories;
 namespace TasksBoard.Infrastructure.CachedRepositories
 {
     internal class CachedBoardRepository(
-        IBoardRepository decorated, 
+        IBoardRepository decorated,
         ICacheRepository cache,
         ICacheKeyFactory<Board, BoardId> keyFactory,
         IAsyncCacheTransactionBuffer cacheBuffer) : IBoardRepository

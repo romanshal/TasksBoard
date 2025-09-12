@@ -25,10 +25,10 @@ namespace TasksBoard.Tests.E2E
             {
                 Id = BoardId.New(),
                 Name = "Test board",
-                OwnerId = User.UserId 
+                OwnerId = User.UserId
             };
 
-            board.BoardMembers = 
+            board.BoardMembers =
                 [
                     new()
                     {

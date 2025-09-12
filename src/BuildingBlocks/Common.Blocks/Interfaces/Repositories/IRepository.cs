@@ -3,7 +3,7 @@ using Common.Blocks.ValueObjects;
 
 namespace Common.Blocks.Interfaces.Repositories
 {
-    public interface IRepository<T, TId> where T : class,  IEntity<TId> where TId : ValueObject
+    public interface IRepository<T, TId> where T : class, IEntity<TId> where TId : ValueObject
     {
         /// <summary>
         /// Get entity by id.

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Handlers;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
-using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 
@@ -24,16 +23,16 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMembersBy
 
         public async Task<Result<IEnumerable<BoardMemberDto>>> Handle(GetBoardMembersByBoardIdQuery request, CancellationToken cancellationToken)
         {
-            var boardExist = await _unitOfWork.GetRepository<Board, BoardId>().ExistAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var boardId = BoardId.Of(request.BoardId);
+
+            var boardExist = await _unitOfWork.GetBoardRepository().ExistAsync(boardId, cancellationToken);
             if (!boardExist)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
                 return Result.Failure<IEnumerable<BoardMemberDto>>(BoardErrors.NotFound);
-
-                //throw new NotFoundException($"Board with id '{request.BoardId}' not found.");
             }
 
-            var boardMembers = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var boardMembers = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAsync(boardId, cancellationToken);
 
             var boardMembersDto = _mapper.Map<IEnumerable<BoardMemberDto>>(boardMembers);
 

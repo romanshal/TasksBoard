@@ -23,7 +23,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);
@@ -40,10 +40,10 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 member.BoardMemberPermissions.Clear();
 
                 member.BoardMemberPermissions = [.. request.Permissions.Select(permission => new BoardMemberPermission
-            {
-                BoardMemberId = BoardMemberId.Of(request.MemberId),
-                BoardPermissionId = BoardPermissionId.Of(permission)
-            })];
+                {
+                    BoardMemberId = member.Id,
+                    BoardPermissionId = BoardPermissionId.Of(permission)
+                })];
 
                 _unitOfWork.GetBoardMemberRepository().Update(member);
 

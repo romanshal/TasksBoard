@@ -14,6 +14,7 @@ namespace Common.Blocks.ValueObjects
 
             Value = value;
         }
+
         public static TSelf Of(Guid value) => ActivatorlessCtor<TSelf>.Create(value);
 
         public static TSelf New() => Of(Guid.NewGuid());
