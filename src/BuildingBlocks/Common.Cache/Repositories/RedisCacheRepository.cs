@@ -1,5 +1,5 @@
 ﻿using Common.Cache.Configurations;
-using Common.Cache.Interfaces;
+using Common.Cache.Interfaces.Repositories;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -29,7 +29,11 @@ namespace Common.Cache.Repositories
 
             var value = await func();
 
-            var payload = JsonConvert.SerializeObject(value);
+            var payload = JsonConvert.SerializeObject(value, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
             var optionsTtl = TimeSpan.FromSeconds(_conf.ExpirationTimeSeconds);
             await _db.StringSetAsync(key, payload, optionsTtl);
 

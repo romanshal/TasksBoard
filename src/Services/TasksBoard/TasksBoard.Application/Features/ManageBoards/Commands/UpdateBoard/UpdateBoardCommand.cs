@@ -1,9 +1,9 @@
-﻿using Common.Blocks.Models.DomainResults;
-using MediatR;
+﻿using Common.Blocks.CQRS;
+using Common.Blocks.Models.DomainResults;
 
 namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
 {
-    public record UpdateBoardCommand : IRequest<Result<Guid>>
+    public record UpdateBoardCommand : ICommand<Result<Guid>>
     {
         public required Guid BoardId { get; set; }
         public required string Name { get; set; }

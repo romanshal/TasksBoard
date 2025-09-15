@@ -25,9 +25,9 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SearchAsync([FromQuery] string search, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> SearchAsync([FromQuery] string query, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new SearchUsersByQueryQuery { Query = search }, cancellationToken);
+            var result = await _mediator.Send(new SearchUsersByQueryQuery { Query = query }, cancellationToken);
 
             var responseModel = _mapper.Map<IEnumerable<SearchResponse>>(result);
 

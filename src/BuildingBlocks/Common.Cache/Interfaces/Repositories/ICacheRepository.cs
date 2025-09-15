@@ -1,4 +1,4 @@
-﻿namespace Common.Cache.Interfaces
+﻿namespace Common.Cache.Interfaces.Repositories
 {
     public interface ICacheRepository
     {

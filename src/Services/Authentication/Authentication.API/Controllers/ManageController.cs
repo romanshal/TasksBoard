@@ -28,7 +28,7 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserInfoAsync([FromRoute] Guid userId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetUserInfoQuery { UserId = userId }, cancellationToken);
+            var result = await _mediator.Send(new GetUserInfoQuery { Id = userId }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -42,7 +42,7 @@ namespace Authentication.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserImageAsync([FromRoute] Guid userId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetUserImageQuery { UserId = userId }, cancellationToken);
+            var result = await _mediator.Send(new GetUserImageQuery { Id = userId }, cancellationToken);
 
             return this.HandleResponse(result);
         }
@@ -59,7 +59,7 @@ namespace Authentication.API.Controllers
         {
             var result = await _mediator.Send(new UpdateUserInfoCommand
             {
-                UserId = userId,
+                Id = userId,
                 Username = request.Username,
                 Email = request.Email,
                 Firstname = request.Firstname,
@@ -108,7 +108,7 @@ namespace Authentication.API.Controllers
 
             var result = await _mediator.Send(new UpdateUserImageCommand
             {
-                UserId = userId,
+                Id = userId,
                 Image = imageData,
                 ImageExtension = imageExtension
             }, cancellationToken);

@@ -192,6 +192,10 @@ services:
       <<: *default-env
       "ConnectionStrings:AuthenticationDbConnection": "Server=authenticationdb;Port=5432;Database=tasks-board-authentication-db;User Id=postgres;Password=postgres;"
       "OpenSearch:IndexFormat": "authentication.api-index-{0:yyyy.MM.dd}"
+      "Cache:Redis:Host": redis
+      "Cache:Redis:Port": 6379
+      "Cache:Redis:Password": redispassword
+      "Cache:ExpirationTimeSeconds": 300
     depends_on:
       - rabbitmq
       - authenticationdb

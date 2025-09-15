@@ -1,9 +1,9 @@
-﻿using Common.Blocks.Models.DomainResults;
-using MediatR;
+﻿using Common.Blocks.CQRS;
+using Common.Blocks.Models.DomainResults;
 
 namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice
 {
-    public record CreateBoardNoticeCommand : IRequest<Result<Guid>>
+    public record CreateBoardNoticeCommand : ICommand<Result<Guid>>
     {
         public required Guid AuthorId { get; set; }
         public required string AuthorName { get; set; }

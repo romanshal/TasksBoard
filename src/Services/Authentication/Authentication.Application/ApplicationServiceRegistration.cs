@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Behaviours;
+using Common.Cache.Behaviours;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -13,6 +14,8 @@ namespace Authentication.Application
             {
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
                 conf.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+                conf.AddOpenBehavior(typeof(CacheBehaviour<,>));
+                conf.AddOpenBehavior(typeof(UpdateCacheBehaviour<,>));
             });
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

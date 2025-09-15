@@ -18,7 +18,7 @@ namespace Authentication.Application.Features.Manage.Queries.GetUserImage
 
         public async Task<Result<UserImageDto>> Handle(GetUserImageQuery request, CancellationToken cancellationToken)
         {
-            var userImage = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.UserId, cancellationToken);
+            var userImage = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.Id, cancellationToken);
 
             var userImageDto = _mapper.Map<UserImageDto>(userImage);
 

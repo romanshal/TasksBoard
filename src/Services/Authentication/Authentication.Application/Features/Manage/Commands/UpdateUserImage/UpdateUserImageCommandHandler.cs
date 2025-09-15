@@ -19,19 +19,19 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
 
         public async Task<Result> Handle(UpdateUserImageCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(request.Id.ToString());
             if (user is null)
             {
-                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
+                _logger.LogWarning("User with id '{userId}' not found.", request.Id);
                 return Result.Failure(ManageErrors.UserNotFound);
             }
 
-            var image = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.UserId, cancellationToken);
+            var image = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.Id, cancellationToken);
             if (image is null)
             {
                 image = new ApplicationUserImage
                 {
-                    UserId = request.UserId,
+                    UserId = request.Id,
                     Image = request.Image,
                     Extension = request.ImageExtension
                 };

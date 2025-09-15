@@ -4,18 +4,25 @@ using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
 using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
 namespace Common.Blocks.UnitOfWorks
 {
-    public class UnitOfWorkBase(
-        DbContext context,
-        ILoggerFactory loggerFactory) : IUnitOfWorkBase
+    public class UnitOfWorkBase<TContext> : IUnitOfWorkBase where TContext : DbContext
     {
-        private readonly DbContext _context = context;
-        private readonly ILoggerFactory _loggerFactory = loggerFactory;
+        private readonly ILoggerFactory _loggerFactory;
+        protected readonly AsyncServiceScope _scope;
+        protected readonly DbContext _context;
         protected readonly ConcurrentDictionary<Type, object> _repositories = [];
+
+        public UnitOfWorkBase(IServiceProvider serviceProvider)
+        {
+            this._scope = serviceProvider.CreateAsyncScope();
+            this._loggerFactory = _scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            this._context = _scope.ServiceProvider.GetRequiredService<TContext>();
+        }
 
         public IRepository<T, TId> GetRepository<T, TId>() where T : class, IEntity<TId> where TId : ValueObject
         {
@@ -23,6 +30,7 @@ namespace Common.Blocks.UnitOfWorks
 
             if (!_repositories.TryGetValue(type, out object? value))
             {
+                //var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IRepository<T, TId>>();
                 var repositoryInstance = new Repository<T, TId>(_context, _loggerFactory);
 
                 value = repositoryInstance;
@@ -50,9 +58,23 @@ namespace Common.Blocks.UnitOfWorks
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public void Dispose()
+        public async virtual ValueTask DisposeAsync()
         {
-            _context.Dispose();
+            if (_scope is IAsyncDisposable scopeAsyncDisposable)
+            {
+                await scopeAsyncDisposable.DisposeAsync();
+                await _context.DisposeAsync();
+            }
+            else
+            {
+                _scope.Dispose();
+                _context.Dispose();
+            }
+        }
+
+        public virtual void Dispose()
+        {
+            DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
     }
 }

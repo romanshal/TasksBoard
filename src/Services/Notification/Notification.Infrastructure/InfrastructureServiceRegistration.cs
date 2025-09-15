@@ -1,7 +1,7 @@
 ﻿using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
 using Common.Cache.Extensions;
-using Common.Cache.Interfaces;
+using Common.Cache.Interfaces.Repositories;
 using Common.Cache.Repositories;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
@@ -10,8 +10,10 @@ using Common.gRPC.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Notification.Domain.Interfaces.Repositories;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using Notification.Infrastructure.Data.Contexts;
+using Notification.Infrastructure.Repositories;
 using Notification.Infrastructure.UnitOfWorks;
 using static Common.gRPC.Protos.UserProfiles;
 
@@ -38,6 +40,8 @@ namespace Notification.Infrastructure
             services.AddRedis(configuration);
 
             services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
+            services.AddTransient<IApplicationEventRepository, ApplicationEventRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddSingleton<ICacheRepository, RedisCacheRepository>();

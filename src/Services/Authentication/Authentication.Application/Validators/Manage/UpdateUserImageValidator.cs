@@ -8,7 +8,7 @@ namespace Authentication.Application.Validators.Manage
     {
         public UpdateUserImageValidator()
         {
-            RuleFor(p => p.UserId)
+            RuleFor(p => p.Id)
                 .NotEqual(Guid.Empty)
                 .WithMessage(ManageMessages.UserIdRequired);
 

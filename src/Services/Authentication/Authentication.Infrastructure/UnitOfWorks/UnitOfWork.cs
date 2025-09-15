@@ -3,27 +3,22 @@ using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Domain.ValueObjects;
 using Authentication.Infrastructure.Data.Contexts;
-using Authentication.Infrastructure.Repositories;
 using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Authentication.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
-        AuthenticationDbContext context,
-        ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
+        IServiceProvider serviceProvider) : UnitOfWorkBase<AuthenticationDbContext>(serviceProvider), IUnitOfWork
     {
-        private readonly AuthenticationDbContext _context = context;
-        private readonly ILoggerFactory _loggerFactory = loggerFactory;
-
         public IApplicationUserImageRepository GetApplicationUserImageRepository()
         {
             var type = typeof(ApplicationUserImage);
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationUserImage, ImageId>))
             {
-                var repositoryInstance = new ApplicationUserImageRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IApplicationUserImageRepository>();
 
                 value = repositoryInstance;
 

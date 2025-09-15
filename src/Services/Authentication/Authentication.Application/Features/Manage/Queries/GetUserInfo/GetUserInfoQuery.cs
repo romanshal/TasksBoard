@@ -1,11 +1,11 @@
 ﻿using Authentication.Application.Dtos;
 using Common.Blocks.Models.DomainResults;
-using MediatR;
+using Common.Cache.CQRS;
 
 namespace Authentication.Application.Features.Manage.Queries.GetUserInfo
 {
-    public class GetUserInfoQuery : IRequest<Result<UserInfoDto>>
+    public class GetUserInfoQuery : ICachebleQuery<UserInfoDto, Result<UserInfoDto>>
     {
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
     }
 }

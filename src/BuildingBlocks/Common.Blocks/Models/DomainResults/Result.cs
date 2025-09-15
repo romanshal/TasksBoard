@@ -1,4 +1,6 @@
-﻿namespace Common.Blocks.Models.DomainResults
+﻿using Newtonsoft.Json;
+
+namespace Common.Blocks.Models.DomainResults
 {
     public class Result
     {
@@ -8,6 +10,7 @@
 
         public Error Error { get; }
 
+        [JsonConstructor]
         protected Result(bool isSuccess, Error error)
         {
             if (isSuccess && error != Error.None || !isSuccess && error == Error.None)

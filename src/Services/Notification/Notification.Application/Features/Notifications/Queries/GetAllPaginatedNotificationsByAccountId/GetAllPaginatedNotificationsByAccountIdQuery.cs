@@ -1,11 +1,11 @@
-﻿using Common.Blocks.Models;
+﻿using Common.Blocks.CQRS;
+using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
-using MediatR;
 using Notification.Application.Dtos;
 
 namespace Notification.Application.Features.Notifications.Queries.GetPaginatedNotificationsByAccountId
 {
-    public class GetAllPaginatedNotificationsByAccountIdQuery : IRequest<Result<PaginatedList<NotificationDto>>>
+    public class GetAllPaginatedNotificationsByAccountIdQuery : IQuery<Result<PaginatedList<NotificationDto>>>
     {
         public required Guid AccountId { get; set; }
         public required int PageIndex { get; set; }

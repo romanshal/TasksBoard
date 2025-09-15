@@ -1,11 +1,11 @@
 ﻿using Authentication.Application.Dtos;
 using Common.Blocks.Models.DomainResults;
-using MediatR;
+using Common.Cache.CQRS;
 
 namespace Authentication.Application.Features.Manage.Queries.GetUserImage
 {
-    public class GetUserImageQuery : IRequest<Result<UserImageDto>>
+    public class GetUserImageQuery : ICachebleQuery<UserImageDto, Result<UserImageDto>>
     {
-        public required Guid UserId { get; set; }
+        public required Guid Id { get; set; }
     }
 }

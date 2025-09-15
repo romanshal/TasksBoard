@@ -20,10 +20,10 @@ namespace Authentication.Application.Features.Manage.Queries.GetUserInfo
 
         public async Task<Result<UserInfoDto>> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(request.Id.ToString());
             if (user is null)
             {
-                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
+                _logger.LogWarning("User with id '{userId}' not found.", request.Id);
                 return Result.Failure<UserInfoDto>(ManageErrors.UserNotFound);
             }
 

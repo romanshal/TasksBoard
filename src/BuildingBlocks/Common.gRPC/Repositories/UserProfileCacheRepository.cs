@@ -1,4 +1,4 @@
-﻿using Common.Cache.Interfaces;
+﻿using Common.Cache.Interfaces.Repositories;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Models;
 

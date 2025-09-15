@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Cache\Common.Cache.csproj" />
 		<ProjectReference Include="..\TasksBoard.Application\TasksBoard.Application.csproj" />
 	</ItemGroup>
 

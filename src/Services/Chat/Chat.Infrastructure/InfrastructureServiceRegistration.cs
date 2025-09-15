@@ -1,10 +1,12 @@
-﻿using Chat.Domain.Interfaces.UnitOfWorks;
+﻿using Chat.Domain.Interfaces.Repositories;
+using Chat.Domain.Interfaces.UnitOfWorks;
 using Chat.Infrastructure.Data.Contexts;
+using Chat.Infrastructure.Repositories;
 using Chat.Infrastructure.UnitOfWorks;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Repositories;
 using Common.Cache.Extensions;
-using Common.Cache.Interfaces;
+using Common.Cache.Interfaces.Repositories;
 using Common.Cache.Repositories;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
@@ -43,6 +45,8 @@ namespace Chat.Infrastructure
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
+            services.AddTransient<IBoardMessageRepository, BoardMessageRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services

@@ -1,9 +1,9 @@
-﻿using Common.Blocks.Models.DomainResults;
-using MediatR;
+﻿using Common.Blocks.CQRS;
+using Common.Blocks.Models.DomainResults;
 
 namespace Notification.Application.Features.NotificationsGrpc.Commands.CreateNotifications
 {
-    public class CreateNotificationsCommand : IRequest<Result>
+    public class CreateNotificationsCommand : ICommand<Result>
     {
         public required Guid EventId { get; set; }
         public required IEnumerable<Guid> AccountIds { get; set; }

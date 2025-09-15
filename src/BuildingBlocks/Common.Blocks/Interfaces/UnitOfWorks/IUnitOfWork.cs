@@ -4,7 +4,7 @@ using Common.Blocks.ValueObjects;
 
 namespace Common.Blocks.Interfaces.UnitOfWorks
 {
-    public interface IUnitOfWorkBase
+    public interface IUnitOfWorkBase : IAsyncDisposable, IDisposable
     {
         IRepository<T, TId> GetRepository<T, TId>() where T : class, IEntity<TId> where TId : ValueObject;
         TRepository GetCustomRepository<TRepository>() where TRepository : class;

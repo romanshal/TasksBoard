@@ -3,27 +3,22 @@ using Chat.Domain.Interfaces.Repositories;
 using Chat.Domain.Interfaces.UnitOfWorks;
 using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Data.Contexts;
-using Chat.Infrastructure.Repositories;
 using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Chat.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
-        ChatDbContext context,
-        ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
+        IServiceProvider serviceProvider) : UnitOfWorkBase<ChatDbContext>(serviceProvider), IUnitOfWork
     {
-        private readonly ChatDbContext _context = context;
-        private readonly ILoggerFactory _loggerFactory = loggerFactory;
-
         public IBoardMessageRepository GetBoardMessagesRepository()
         {
             var type = typeof(BoardMessage);
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMessage, MessageId>))
             {
-                var repositoryInstance = new BoardMessageRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IBoardMessageRepository>();
 
                 value = repositoryInstance;
 

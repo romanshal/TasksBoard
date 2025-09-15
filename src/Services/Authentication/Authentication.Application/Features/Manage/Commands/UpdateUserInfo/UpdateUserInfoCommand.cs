@@ -1,12 +1,12 @@
 ﻿using Authentication.Application.Dtos;
 using Common.Blocks.Models.DomainResults;
-using MediatR;
+using Common.Cache.CQRS;
 
 namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
 {
-    public class UpdateUserInfoCommand : IRequest<Result<UserInfoDto>>
+    public class UpdateUserInfoCommand : ICachebleCommand<UserInfoDto, Result<UserInfoDto>>
     {
-        public required Guid UserId { get; set; }
+        public required Guid Id { get; set; }
         public required string Username { get; set; }
         public required string Email { get; set; }
         public string? Firstname { get; set; }

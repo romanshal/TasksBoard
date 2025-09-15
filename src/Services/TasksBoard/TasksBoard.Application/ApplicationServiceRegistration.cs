@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Behaviours;
+using Common.Cache.Behaviours;
 using Common.Outbox.Interfaces.Services;
 using Common.Outbox.Services;
 using FluentValidation;
@@ -16,6 +17,7 @@ namespace TasksBoard.Application
             {
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
                 conf.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+                conf.AddOpenBehavior(typeof(CacheBehaviour<,>));
             });
 
             services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());

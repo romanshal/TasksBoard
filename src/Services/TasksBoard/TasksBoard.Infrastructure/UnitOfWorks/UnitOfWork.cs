@@ -1,29 +1,24 @@
 ﻿using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.Data.Contexts;
-using TasksBoard.Infrastructure.Repositories;
 
 namespace TasksBoard.Infrastructure.UnitOfWorks
 {
     internal class UnitOfWork(
-        TasksBoardDbContext context,
-        ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
+        IServiceProvider serviceProvider) : UnitOfWorkBase<TasksBoardDbContext>(serviceProvider), IUnitOfWork
     {
-        private readonly TasksBoardDbContext _context = context;
-        private readonly ILoggerFactory _loggerFactory = loggerFactory;
-
         public IBoardNoticeRepository GetBoardNoticeRepository()
         {
             var type = typeof(BoardNotice);
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardNotice, BoardNoticeId>))
             {
-                var repositoryInstance = new BoardNoticeRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IBoardNoticeRepository>();
 
                 value = repositoryInstance;
 
@@ -39,7 +34,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<Board, BoardId>))
             {
-                var repositoryInstance = new BoardRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IBoardRepository>();
 
                 value = repositoryInstance;
 
@@ -55,7 +50,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardMember, BoardMemberId>))
             {
-                var repositoryInstance = new BoardMemberRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IBoardMemberRepository>();
 
                 value = repositoryInstance;
 
@@ -71,7 +66,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardAccessRequest, BoardAccessId>))
             {
-                var repositoryInstance = new BoardAccessRequestRepsitory(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IBoardAccessRequestRepository>();
 
                 value = repositoryInstance;
 
@@ -87,7 +82,7 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<BoardInviteRequest, BoardInviteId>))
             {
-                var repositoryInstance = new BoardInviteRequestRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IBoardInviteRequestRepository>();
 
                 value = repositoryInstance;
 
@@ -139,7 +134,5 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
 
             return result;
         }
-
-        //public async ValueTask DisposeAsync() => await _context.DisposeAsync();
     }
 }

@@ -1,5 +1,9 @@
 ﻿using Common.Cache.Configurations;
 using Common.Cache.Extensions;
+using Common.Cache.Factories;
+using Common.Cache.Interfaces.Factories;
+using Common.Cache.Interfaces.Repositories;
+using Common.Cache.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -36,6 +40,10 @@ namespace Common.Cache.Extensions
             });
 
             services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
+            services
+                .AddSingleton<ICacheKeyFactory, CacheKeyFactory>()
+                .AddSingleton<ICacheRepository, RedisCacheRepository>();
 
             services
                 .AddHealthChecks()

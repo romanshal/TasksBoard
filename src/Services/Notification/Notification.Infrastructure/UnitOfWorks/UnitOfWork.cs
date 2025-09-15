@@ -1,29 +1,24 @@
 ﻿using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.Repositories;
 using Notification.Domain.Interfaces.UnitOfWorks;
 using Notification.Domain.ValueObjects;
 using Notification.Infrastructure.Data.Contexts;
-using Notification.Infrastructure.Repositories;
 
 namespace Notification.Infrastructure.UnitOfWorks
 {
     public class UnitOfWork(
-        NotificationDbContext context,
-        ILoggerFactory loggerFactory) : UnitOfWorkBase(context, loggerFactory), IUnitOfWork
+        IServiceProvider serviceProvider) : UnitOfWorkBase<NotificationDbContext>(serviceProvider), IUnitOfWork
     {
-        private readonly NotificationDbContext _context = context;
-        private readonly ILoggerFactory _loggerFactory = loggerFactory;
-
         public IApplicationEventRepository GetApplicationEventRepository()
         {
             var type = typeof(ApplicationEvent);
 
             if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationEvent, ApplicationEventId>))
             {
-                var repositoryInstance = new ApplicationEventRepository(_context, _loggerFactory);
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IApplicationEventRepository>();
 
                 value = repositoryInstance;
 

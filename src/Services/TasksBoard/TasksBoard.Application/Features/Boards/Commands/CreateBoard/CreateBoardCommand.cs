@@ -1,9 +1,9 @@
-﻿using Common.Blocks.Models.DomainResults;
-using MediatR;
+﻿using Common.Blocks.CQRS;
+using Common.Blocks.Models.DomainResults;
 
 namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
 {
-    public record CreateBoardCommand : IRequest<Result<Guid>>
+    public record CreateBoardCommand : ICommand<Result<Guid>>
     {
         public required Guid OwnerId { get; set; }
         public required string Name { get; set; }

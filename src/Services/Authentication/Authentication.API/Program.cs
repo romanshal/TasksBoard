@@ -46,10 +46,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSwaggerGetWithAuth("Authentication API");
 
-var conntectionString = builder.Configuration.GetConnectionString("AuthenticationDbConnection") ?? throw new InvalidOperationException("Connection string 'AuthenticationDbConnection' not found");
-
 builder.Services
-    .AddInfrastructureServices(conntectionString)
+    .AddInfrastructureServices(builder.Configuration)
     .AddApplicationServices();
 
 builder.Services.AddJwtAuthentication(builder.Configuration)

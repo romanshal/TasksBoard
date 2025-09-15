@@ -2,8 +2,6 @@
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
 using Common.Cache.Extensions;
-using Common.Cache.Interfaces;
-using Common.Cache.Repositories;
 using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
 using Common.gRPC.Repositories;
@@ -13,8 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using TasksBoard.Domain.Interfaces.Repositories;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Infrastructure.Data.Contexts;
+using TasksBoard.Infrastructure.Repositories;
 using TasksBoard.Infrastructure.UnitOfWorks;
 using static Common.gRPC.Protos.UserProfiles;
 
@@ -47,22 +47,27 @@ namespace TasksBoard.Infrastructure
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-            services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUnitOfWorkBase>(sp => sp.GetRequiredService<IUnitOfWork>());
-
             services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
             services.AddRedis(configuration);
 
-            services.AddSingleton<ICacheRepository, RedisCacheRepository>();
-            services.AddSingleton<IUserProfileCacheRepository, UserProfileCacheRepository>();
+            services
+                .AddSingleton<IUserProfileCacheRepository, UserProfileCacheRepository>();
 
             services.AddScoped<IUserProfileService, UserProfileService>();
 
-            //services.AddScoped<IAsyncCacheTransactionBuffer, AsyncCacheTransactionBuffer>();
+            services
+                .AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddScoped<IUnitOfWorkBase>(sp => sp.GetRequiredService<IUnitOfWork>());
 
-            //services.AddScoped(typeof(ICacheKeyFactory<>), typeof(CacheKeyFactory<>));
+            services
+                .AddTransient(typeof(IRepository<,>), typeof(Repository<,>))
+                .AddTransient<IBoardRepository, BoardRepository>()
+                .AddTransient<IBoardNoticeRepository, BoardNoticeRepository>()
+                .AddTransient<IBoardMemberRepository, BoardMemberRepository>()
+                .AddTransient<IBoardInviteRequestRepository, BoardInviteRequestRepository>()
+                .AddTransient<IBoardAccessRequestRepository, BoardAccessRequestRepsitory>();
+
 
             services
                 .AddHealthChecks()
