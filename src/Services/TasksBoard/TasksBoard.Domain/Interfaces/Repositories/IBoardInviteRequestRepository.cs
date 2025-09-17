@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.ValueObjects;
 
@@ -8,7 +9,7 @@ namespace TasksBoard.Domain.Interfaces.Repositories
     {
         Task<BoardInviteRequest?> GetByBoardIdAndToAccountIdAsync(
             BoardId boardId,
-            Guid toAccountId,
+            AccountId toAccountId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardInviteRequest>> GetByBoardIdAsync(
@@ -16,11 +17,11 @@ namespace TasksBoard.Domain.Interfaces.Repositories
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardInviteRequest>> GetByToAccountIdAsync(
-            Guid accountId,
+            AccountId accountId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardInviteRequest>> GetByFromAccountIdAsync(
-            Guid accountId,
+            AccountId accountId,
             CancellationToken cancellationToken = default);
     }
 }

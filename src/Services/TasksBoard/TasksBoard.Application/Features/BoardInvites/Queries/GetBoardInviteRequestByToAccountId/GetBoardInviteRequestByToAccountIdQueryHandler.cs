@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
@@ -22,7 +23,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Queries.GetBoardInviteReq
 
         public async Task<Result<IEnumerable<BoardInviteRequestDto>>> Handle(GetBoardInviteRequestByToAccountIdQuery request, CancellationToken cancellationToken)
         {
-            var inviteRequests = await _unitOfWork.GetBoardInviteRequestRepository().GetByToAccountIdAsync(request.AccountId, cancellationToken);
+            var inviteRequests = await _unitOfWork.GetBoardInviteRequestRepository().GetByToAccountIdAsync(AccountId.Of(request.AccountId), cancellationToken);
 
             var inviteRequestsDto = _mapper.Map<IEnumerable<BoardInviteRequestDto>>(inviteRequests);
 

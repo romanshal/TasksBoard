@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Notification.Domain.Constants;
@@ -20,7 +21,7 @@ namespace Notification.Application.Features.NotificationsGrpc.Commands.CreateNot
                 {
                     EventId = request.EventId,
                     EventType = request.EventType,
-                    AccountId = accontId,
+                    AccountId = AccountId.Of(accontId),
                     Payload = request.Payload
                 };
 

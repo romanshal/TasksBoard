@@ -13,6 +13,8 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<CreateBoardInviteRequestCommand, BoardInviteRequest>()
                 .ForMember(dest => dest.BoardId, opt => opt.MapFrom(src => BoardId.Of(src.BoardId)))
+                .ForMember(dest => dest.ToAccountId, opt => opt.MapFrom(src => BoardId.Of(src.ToAccountId)))
+                .ForMember(dest => dest.FromAccountId, opt => opt.MapFrom(src => BoardId.Of(src.FromAccountId)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)BoardInviteRequestStatuses.Pending))
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Board, opt => opt.Ignore())
@@ -22,6 +24,8 @@ namespace TasksBoard.Application.Mappings
             CreateMap<BoardInviteRequest, BoardInviteRequestDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
                 .ForMember(dest => dest.BoardId, opt => opt.MapFrom(src => src.BoardId.Value))
+                .ForMember(dest => dest.ToAccountId, opt => opt.MapFrom(src => src.ToAccountId.Value))
+                .ForMember(dest => dest.FromAccountId, opt => opt.MapFrom(src => src.FromAccountId.Value))
                 .ForMember(dest => dest.BoardName, opt => opt.MapFrom(src => src.Board.Name))
                 .ForMember(dest => dest.ToAccountName, opt => opt.Ignore())
                 .ForMember(dest => dest.ToAccountEmail, opt => opt.Ignore())

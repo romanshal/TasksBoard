@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
@@ -43,7 +44,7 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
                     BoardId = board.Id.Value,
                     BoardName = board.Name,
                     AccountId = request.AccountId,
-                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
+                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != AccountId.Of(request.AccountId)).Select(m => m.AccountId.Value)]
                 }, token);
 
                 _logger.LogInformation("Board with id '{id}' deleted'.", request.Id);

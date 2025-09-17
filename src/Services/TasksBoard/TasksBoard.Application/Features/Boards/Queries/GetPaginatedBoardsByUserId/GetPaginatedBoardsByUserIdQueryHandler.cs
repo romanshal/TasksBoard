@@ -2,6 +2,7 @@
 using Common.Blocks.Extensions;
 using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs.Boards;
@@ -24,27 +25,29 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
             IEnumerable<Board> boards;
             int count;
 
+            var accountId = AccountId.Of(request.UserId);
+
             if (string.IsNullOrEmpty(request.Query))
             {
-                count = await _unitOfWork.GetBoardRepository().CountByUserIdAsync(request.UserId, cancellationToken);
+                count = await _unitOfWork.GetBoardRepository().CountByUserIdAsync(accountId, cancellationToken);
                 if (count == 0)
                 {
                     _logger.LogInformation("No boards entities in database.");
                     return Result.Success(PaginatedList<BoardForViewDto>.Empty(request.PageIndex, request.PageSize));
                 }
 
-                boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAsync(request.UserId, request.PageIndex, request.PageSize, cancellationToken);
+                boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAsync(accountId, request.PageIndex, request.PageSize, cancellationToken);
             }
             else
             {
-                count = await _unitOfWork.GetBoardRepository().CountByUserIdAndQueryAsync(request.UserId, request.Query, cancellationToken);
+                count = await _unitOfWork.GetBoardRepository().CountByUserIdAndQueryAsync(accountId, request.Query, cancellationToken);
                 if (count == 0)
                 {
                     _logger.LogInformation("No boards entities in database.");
                     return Result.Success(PaginatedList<BoardForViewDto>.Empty(request.PageIndex, request.PageSize));
                 }
 
-                boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAndQueryAsync(request.UserId, request.Query, request.PageIndex, request.PageSize, cancellationToken);
+                boards = await _unitOfWork.GetBoardRepository().GetPaginatedByUserIdAndQueryAsync(accountId, request.Query, request.PageIndex, request.PageSize, cancellationToken);
             }
 
             var boardsDto = _mapper.Map<IEnumerable<Board>, IEnumerable<BoardForViewDto>>(boards,
@@ -52,7 +55,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedBoardsByUse
                 {
                     foreach (var item in dest)
                     {
-                        item.IsMember = src.First(board => board.Id.Value == item.Id).BoardMembers.Any(member => member.AccountId == request.UserId);
+                        item.IsMember = src.First(board => board.Id.Value == item.Id).BoardMembers.Any(member => member.AccountId == accountId);
                     }
                 }));
 

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Common.Blocks.ValueObjects;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -30,7 +31,7 @@ namespace TasksBoard.Tests.Units.Infrastructure.Repositories
         {
             var board = new Board
             {
-                OwnerId = Guid.Parse("fe6e93de-5599-4f32-a143-4a4da06e6cd3"),
+                OwnerId = AccountId.Of("fe6e93de-5599-4f32-a143-4a4da06e6cd3"),
                 Name = "Test name"
             };
 

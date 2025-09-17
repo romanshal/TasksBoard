@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Repositories;
+using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
@@ -28,7 +29,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAsync(
-            Guid userId,
+            AccountId userId,
             int pageIndex = 1,
             int pageSize = 10,
             CancellationToken cancellationToken = default)
@@ -42,7 +43,7 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
         public async Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAndBoardIdAsync(
-            Guid userId,
+            AccountId userId,
             BoardId boardId,
             int pageIndex = 1,
             int pageSize = 10,
@@ -67,7 +68,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<int> CountByUserIdAsync(
-            Guid userId,
+            AccountId userId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -77,7 +78,7 @@ namespace TasksBoard.Infrastructure.Repositories
 
         public async Task<int> CountByBoardIdAndUserIdAsync(
             BoardId boardId,
-            Guid userId,
+            AccountId userId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet

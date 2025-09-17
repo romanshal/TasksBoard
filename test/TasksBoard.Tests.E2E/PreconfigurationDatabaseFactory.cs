@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Blocks.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.ValueObjects;
 using TasksBoard.Infrastructure.Data.Contexts;
@@ -25,7 +26,7 @@ namespace TasksBoard.Tests.E2E
             {
                 Id = BoardId.New(),
                 Name = "Test board",
-                OwnerId = User.UserId
+                OwnerId = AccountId.Of(User.UserId)
             };
 
             board.BoardMembers =
@@ -34,7 +35,7 @@ namespace TasksBoard.Tests.E2E
                     {
                         Id = BoardMemberId.New(),
                         BoardId = board.Id,
-                        AccountId = User.UserId,
+                        AccountId = AccountId.Of(User.UserId),
                         BoardMemberPermissions = [.. permissions.Select(perm => new BoardMemberPermission
                         {
                             BoardPermissionId = perm.Id
@@ -56,7 +57,7 @@ namespace TasksBoard.Tests.E2E
             var notice = new BoardNotice
             {
                 BoardId = BoardId.Of(boardId),
-                AuthorId = User.UserId,
+                AuthorId = AccountId.Of(User.UserId),
                 //AuthorName = User.Username,
                 Definition = "Test notice",
                 BackgroundColor = "BackgroundColor",

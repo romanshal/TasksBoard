@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
@@ -49,12 +50,12 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
                 {
                     BoardId = board.Id.Value,
                     BoardName = board.Name,
-                    RemovedAccountId = member.AccountId,
+                    RemovedAccountId = member.AccountId.Value,
                     RemoveByAccountId = request.RemoveByUserId,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.RemoveByUserId).Select(member => member.AccountId)]
+                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != AccountId.Of(request.RemoveByUserId)).Select(member => member.AccountId.Value)]
                 };
 
-                removeEvent.BoardMembersIds.Add(member.AccountId);
+                removeEvent.BoardMembersIds.Add(member.AccountId.Value);
 
                 await _outboxService.CreateNewOutboxEvent(removeEvent, token);
 

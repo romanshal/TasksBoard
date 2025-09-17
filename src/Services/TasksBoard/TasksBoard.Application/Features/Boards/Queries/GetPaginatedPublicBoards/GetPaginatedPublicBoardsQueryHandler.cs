@@ -2,6 +2,7 @@
 using Common.Blocks.Extensions;
 using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs.Boards;
@@ -21,6 +22,8 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoard
 
         public async Task<Result<PaginatedList<BoardForViewDto>>> Handle(GetPaginatedPublicBoardsQuery request, CancellationToken cancellationToken)
         {
+            var accountId = AccountId.Of(request.AccountId);
+
             var count = await _unitOfWork.GetBoardRepository().CountPublicAsync(cancellationToken);
             if (count == 0)
             {
@@ -35,7 +38,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetPaginatedPublicBoard
                 {
                     foreach (var item in dest)
                     {
-                        item.IsMember = src.First(board => board.Id.Value == item.Id).BoardMembers.Any(member => member.AccountId == request.AccountId);
+                        item.IsMember = src.First(board => board.Id.Value == item.Id).BoardMembers.Any(member => member.AccountId == accountId);
                     }
                 }));
 

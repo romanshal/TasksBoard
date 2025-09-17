@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -60,13 +61,13 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 new() {
                     BoardId = BoardId.New(),
-                    AccountId = Guid.Empty,
+                    AccountId = AccountId.New(),
                     Status = 0
                 }
             };
 
             accessRepository
-                .Setup(s => s.GetByAccountIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByAccountIdAsync(It.IsAny<AccountId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(list);
 
             var listDto = mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
@@ -88,7 +89,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             var list = new List<BoardAccessRequest>();
 
             accessRepository
-                .Setup(s => s.GetByAccountIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByAccountIdAsync(It.IsAny<AccountId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(list);
 
             var listDto = mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);

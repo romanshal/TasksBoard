@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.ValueObjects;
 
@@ -13,13 +14,13 @@ namespace TasksBoard.Domain.Interfaces.Repositories
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(
-            Guid userId, 
+            AccountId userId, 
             int pageIndex = 1, 
             int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<Board>> GetPaginatedByUserIdAndQueryAsync(
-            Guid userId, 
+            AccountId userId, 
             string query, 
             int pageIndex = 1, 
             int pageSize = 10, 
@@ -31,16 +32,16 @@ namespace TasksBoard.Domain.Interfaces.Repositories
             CancellationToken cancellationToken = default);
 
         Task<bool> HasAccessAsync(
-            BoardId boardId, 
-            Guid userId, 
+            BoardId boardId,
+            AccountId userId, 
             CancellationToken cancellationToken = default);
 
         Task<int> CountByUserIdAsync(
-            Guid userId, 
+            AccountId userId, 
             CancellationToken cancellationToken = default);
 
         Task<int> CountByUserIdAndQueryAsync(
-            Guid userId, 
+            AccountId userId, 
             string query, 
             CancellationToken cancellationToken = default);
 

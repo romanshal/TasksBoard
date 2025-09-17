@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Repositories;
+using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Entities;
@@ -40,7 +41,7 @@ namespace TasksBoard.Infrastructure.Repositories
             return await query.SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(AccountId userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -54,7 +55,7 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Board>> GetPaginatedByUserIdAndQueryAsync(Guid userId, string query, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Board>> GetPaginatedByUserIdAndQueryAsync(AccountId userId, string query, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
@@ -82,21 +83,21 @@ namespace TasksBoard.Infrastructure.Repositories
             .ToListAsync(cancellationToken);
         }
 
-        public async Task<bool> HasAccessAsync(BoardId boardId, Guid userId, CancellationToken cancellationToken = default)
+        public async Task<bool> HasAccessAsync(BoardId boardId, AccountId userId, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
                 .AnyAsync(board => board.Id == boardId && board.BoardMembers.Any(member => member.AccountId == userId), cancellationToken);
         }
 
-        public async Task<int> CountByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<int> CountByUserIdAsync(AccountId userId, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
                 .CountAsync(board => board.BoardMembers.Any(member => member.AccountId == userId), cancellationToken);
         }
 
-        public async Task<int> CountByUserIdAndQueryAsync(Guid userId, string query, CancellationToken cancellationToken = default)
+        public async Task<int> CountByUserIdAndQueryAsync(AccountId userId, string query, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()

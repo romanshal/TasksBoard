@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -20,6 +21,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
             return await _unitOfWork.TransactionAsync(async token =>
             {
                 var boardId = BoardId.Of(request.BoardId);
+                var accountId = AccountId.Of(request.AccountId);
 
                 var board = await _unitOfWork.GetBoardRepository().GetAsync(boardId, noTracking: true, include: true, token);
                 if (board is null)
@@ -28,7 +30,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                     return Result.Failure<Guid>(BoardErrors.NotFound);
                 }
 
-                var member = board.BoardMembers.FirstOrDefault(member => member.AccountId == request.AccountId);
+                var member = board.BoardMembers.FirstOrDefault(member => member.AccountId == accountId);
                 if (member is not null)
                 {
                     _logger.LogInformation("User with id '{accountId} is already exist in board '{boardId}'.", request.AccountId, request.BoardId);
@@ -47,7 +49,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 member = new BoardMember
                 {
                     BoardId = boardId,
-                    AccountId = request.AccountId,
+                    AccountId = accountId,
                     BoardMemberPermissions =
                     [
                         new BoardMemberPermission

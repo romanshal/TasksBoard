@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
@@ -24,6 +25,7 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
         public async Task<Result<BoardMemberDto>> Handle(GetBoardMemberByBoardIdAndAccountIdQuery request, CancellationToken cancellationToken)
         {
             var boardId = BoardId.Of(request.BoardId);
+            var accountId = AccountId.Of(request.AccountId);
 
             var boardExist = await _unitOfWork.GetBoardRepository().ExistAsync(boardId, cancellationToken);
             if (!boardExist)
@@ -32,7 +34,7 @@ namespace TasksBoard.Application.Features.BoardMembers.Queries.GetBoardMemberByB
                 return Result.Failure<BoardMemberDto>(BoardErrors.NotFound);
             }
 
-            var boardMember = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(boardId, request.AccountId, cancellationToken);
+            var boardMember = await _unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(boardId, accountId, cancellationToken);
             if (boardMember is null)
             {
                 _logger.LogWarning("Board member with account id '{accountId} in board with id '{boardId} was not found.", request.AccountId, request.BoardId);

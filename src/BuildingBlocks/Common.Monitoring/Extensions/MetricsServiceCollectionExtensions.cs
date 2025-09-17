@@ -80,6 +80,7 @@ namespace Common.Monitoring.Extensions
                     })
                     .AddNpgsql()
                     .AddRedisInstrumentation()
+                    .AddGrpcClientInstrumentation()
                     .AddConsoleExporter()
                     .AddOtlpExporter(options =>
                     {

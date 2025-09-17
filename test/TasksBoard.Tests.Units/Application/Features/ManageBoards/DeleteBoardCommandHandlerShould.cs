@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using FluentAssertions;
@@ -59,7 +60,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                     var board = new Board
                     {
                         Id = BoardId.New(),
-                        OwnerId = Guid.Empty,
+                        OwnerId = AccountId.New(),
                         Name = string.Empty,
                     };
 
@@ -68,7 +69,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                         new BoardMember
                         {
                             BoardId = board.Id,
-                            AccountId = Guid.Empty
+                            AccountId = AccountId.New()
                         }
                     ];
 

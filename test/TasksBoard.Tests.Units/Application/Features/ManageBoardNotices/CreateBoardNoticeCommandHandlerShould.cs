@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using FluentAssertions;
@@ -73,7 +74,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
-                    OwnerId = Guid.Empty,
+                    OwnerId = AccountId.New(),
                     Name = string.Empty,
                     BoardMembers = []
                 });
@@ -81,7 +82,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             mapperSetup.Returns(new BoardNotice
             {
                 Id = BoardNoticeId.Of(noticeId),
-                AuthorId = Guid.Empty,
+                AuthorId = AccountId.New(),
                 BoardId = BoardId.New(),
                 Definition = string.Empty,
                 BackgroundColor = string.Empty,

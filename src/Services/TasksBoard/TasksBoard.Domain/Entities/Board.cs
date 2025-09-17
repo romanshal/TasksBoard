@@ -1,11 +1,12 @@
 ﻿using Common.Blocks.Entities;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Domain.ValueObjects;
 
 namespace TasksBoard.Domain.Entities
 {
     public class Board : BaseEntity<BoardId>
     {
-        public required Guid OwnerId { get; set; }
+        public required AccountId OwnerId { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
         public bool Public { get; set; }

@@ -2,6 +2,7 @@
 using Common.Blocks.Extensions;
 using Common.Blocks.Models;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Notification.Application.Dtos;
@@ -24,14 +25,16 @@ namespace Notification.Application.Features.Notifications.Queries.GetAllPaginate
 
         public async Task<Result<PaginatedList<NotificationDto>>> Handle(GetAllPaginatedNotificationsByAccountIdQuery request, CancellationToken cancellationToken)
         {
-            var count = await _unitOfWork.GetApplicationEventRepository().CountByAccountIdAsync(request.AccountId, cancellationToken);
+            var accountId = AccountId.Of(request.AccountId);
+
+            var count = await _unitOfWork.GetApplicationEventRepository().CountByAccountIdAsync(accountId, cancellationToken);
             if (count == 0)
             {
                 _logger.LogInformation("No notfication entities in database.");
                 return Result.Success(PaginatedList<NotificationDto>.Empty(request.PageIndex, request.PageSize));
             }
 
-            var notifications = await _unitOfWork.GetApplicationEventRepository().GetPaginatedByAccountIdAsync(request.AccountId, request.PageIndex, request.PageSize, cancellationToken);
+            var notifications = await _unitOfWork.GetApplicationEventRepository().GetPaginatedByAccountIdAsync(accountId, request.PageIndex, request.PageSize, cancellationToken);
 
             var notificationsDto = _mapper.Map<IEnumerable<NotificationDto>>(notifications);
 

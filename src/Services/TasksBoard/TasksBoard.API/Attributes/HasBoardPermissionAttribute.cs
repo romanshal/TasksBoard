@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Blocks.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using TasksBoard.Domain.Entities;
@@ -41,7 +42,7 @@ namespace TasksBoard.API.Attributes
                 return;
             }
 
-            var boardMember = await unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(BoardId.Of((Guid)entityIdObj!), Guid.Parse(userId));
+            var boardMember = await unitOfWork.GetBoardMemberRepository().GetByBoardIdAndAccountIdAsync(BoardId.Of((Guid)entityIdObj!), AccountId.Of(userId));
             if (boardMember is null)
             {
                 context.Result = new ForbidResult();

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Blocks.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Notification.Domain.Entities;
 using Notification.Domain.ValueObjects;
@@ -18,6 +19,12 @@ namespace Chat.Infrastructure.Data.Configurations
                 .HasConversion(eventId => eventId.Value, dbId => ApplicationEventId.Of(dbId))
                 .ValueGeneratedOnAdd()
                 .HasColumnName("Id");
+
+            builder
+                .Property(p => p.AccountId)
+                .HasConversion(id => id.Value, value => AccountId.Of(value))
+                .HasColumnName("AccountId")
+                .IsRequired();
 
             builder
                 .HasIndex(i => i.EventId);

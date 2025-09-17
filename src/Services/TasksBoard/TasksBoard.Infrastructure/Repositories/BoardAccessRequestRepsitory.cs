@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Repositories;
+using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Statuses;
@@ -13,7 +14,9 @@ namespace TasksBoard.Infrastructure.Repositories
         TasksBoardDbContext context,
         ILoggerFactory loggerFactory) : Repository<BoardAccessRequest, BoardAccessId>(context, loggerFactory), IBoardAccessRequestRepository
     {
-        public async Task<IEnumerable<BoardAccessRequest>> GetByBoardIdAsync(BoardId boardId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<BoardAccessRequest>> GetByBoardIdAsync(
+            BoardId boardId, 
+            CancellationToken cancellationToken)
         {
             return await DbSet
                 .AsNoTracking()
@@ -21,7 +24,10 @@ namespace TasksBoard.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<BoardAccessRequest?> GetByBoardIdAndAccountId(BoardId boardId, Guid accountId, CancellationToken cancellationToken)
+        public async Task<BoardAccessRequest?> GetByBoardIdAndAccountId(
+            BoardId boardId,
+            AccountId accountId, 
+            CancellationToken cancellationToken)
         {
             return await DbSet
                 .AsNoTracking()
@@ -29,7 +35,9 @@ namespace TasksBoard.Infrastructure.Repositories
                 .FirstOrDefaultAsync(request => request.BoardId == boardId && request.AccountId == accountId, cancellationToken);
         }
 
-        public async Task<IEnumerable<BoardAccessRequest>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<BoardAccessRequest>> GetByAccountIdAsync(
+            AccountId accountId, 
+            CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Where(request => request.AccountId == accountId && request.Status == (int)BoardAccessRequestStatuses.Pending)

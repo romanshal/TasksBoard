@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -52,9 +53,9 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                 .ReturnsAsync(new Board
                 {
                     Id = BoardId.Of(boardId),
-                    OwnerId = Guid.Empty,
+                    OwnerId = AccountId.New(),
                     Name = string.Empty,
-                    Tags = []
+                    BoardTags = []
                 });
 
             boardRepository.Setup(s => s.Update(It.IsAny<Board>()));

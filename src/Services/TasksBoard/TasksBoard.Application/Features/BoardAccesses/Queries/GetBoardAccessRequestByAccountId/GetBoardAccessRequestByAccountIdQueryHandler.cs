@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.DTOs;
@@ -21,7 +22,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Queries.GetBoardAccessRe
 
         public async Task<Result<IEnumerable<BoardAccessRequestDto>>> Handle(GetBoardAccessRequestByAccountIdQuery request, CancellationToken cancellationToken)
         {
-            var accessRequests = await _unitOfWork.GetBoardAccessRequestRepository().GetByAccountIdAsync(request.AccountId, cancellationToken);
+            var accessRequests = await _unitOfWork.GetBoardAccessRequestRepository().GetByAccountIdAsync(AccountId.Of(request.AccountId), cancellationToken);
 
             var accessRequestsDto = _mapper.Map<IEnumerable<BoardAccessRequestDto>>(accessRequests);
 

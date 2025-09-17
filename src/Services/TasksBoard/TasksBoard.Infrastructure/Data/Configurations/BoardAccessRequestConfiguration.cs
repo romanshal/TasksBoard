@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Blocks.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.ValueObjects;
@@ -23,6 +24,12 @@ namespace TasksBoard.Infrastructure.Data.Configurations
                 .Property(p => p.BoardId)
                 .HasConversion(id => id.Value, value => BoardId.Of(value))
                 .HasColumnName("BoardId")
+                .IsRequired();
+
+            builder
+                .Property(p => p.AccountId)
+                .HasConversion(id => id.Value, value => AccountId.Of(value))
+                .HasColumnName("AccountId")
                 .IsRequired();
         }
     }

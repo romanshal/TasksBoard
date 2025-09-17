@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -51,7 +52,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
             {
                 Id = BoardAccessId.Of(requestId),
                 BoardId = BoardId.New(),
-                AccountId = Guid.Empty,
+                AccountId = AccountId.New(),
                 Status = 1
             });
 

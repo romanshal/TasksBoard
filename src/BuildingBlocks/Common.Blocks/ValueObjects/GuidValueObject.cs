@@ -17,6 +17,16 @@ namespace Common.Blocks.ValueObjects
 
         public static TSelf Of(Guid value) => ActivatorlessCtor<TSelf>.Create(value);
 
+        public static TSelf Of(string value)
+        {
+            if(!Guid.TryParse(value, out var guid))
+            {
+                throw new ArgumentException($"{nameof(value)} cannot convert to Guid");
+            }
+
+            return ActivatorlessCtor<TSelf>.Create(guid);
+        }
+
         public static TSelf New() => Of(Guid.NewGuid());
 
         protected override IEnumerable<object?> GetEqualityComponents()

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
@@ -50,8 +51,8 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
                     BoardName = board.Name,
                     NoticeId = notice.Id.Value,
                     NoticeDefinition = notice.Definition,
-                    AccountId = notice.AuthorId,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AuthorId).Select(member => member.AccountId)]
+                    AccountId = notice.AuthorId.Value,
+                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != AccountId.Of(request.AuthorId)).Select(member => member.AccountId.Value)]
                 }, token);
 
                 _logger.LogInformation("Board notice with id '{id}' added to board with id '{boardId}'.", notice.Id, request.BoardId);

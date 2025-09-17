@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -54,7 +55,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             var board = new Board
             {
                 Id = BoardId.Of(boardId),
-                OwnerId = Guid.Empty,
+                OwnerId = AccountId.New(),
                 Name = string.Empty
             };
 

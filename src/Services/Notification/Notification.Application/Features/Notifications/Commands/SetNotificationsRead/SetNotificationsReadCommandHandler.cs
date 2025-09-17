@@ -1,6 +1,7 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Notification.Application.Extensions;
 using Notification.Domain.Constants;
 using Notification.Domain.Interfaces.UnitOfWorks;
 
@@ -15,7 +16,7 @@ namespace Notification.Application.Features.Notifications.Commands.SetNotificati
 
         public async Task<Result> Handle(SetNotificationsReadCommand request, CancellationToken cancellationToken)
         {
-            var notifications = await _unitOfWork.GetApplicationEventRepository().GetByIdsAsync(request.NotificationIds, cancellationToken);
+            var notifications = await _unitOfWork.GetApplicationEventRepository().GetByIdsAsync(request.NotificationIds.ToValueObjectList(), cancellationToken);
             if (!notifications.Any())
             {
                 return Result.Success();

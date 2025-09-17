@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Blocks.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -35,7 +36,7 @@ namespace TasksBoard.API.Attributes
             using var scope = context.HttpContext.RequestServices.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-            var hasAccess = await unitOfWork.GetBoardRepository().HasAccessAsync(BoardId.Of((Guid)entityIdObj!), Guid.Parse(userId));
+            var hasAccess = await unitOfWork.GetBoardRepository().HasAccessAsync(BoardId.Of((Guid)entityIdObj!), AccountId.Of(userId));
 
             if (!hasAccess)
             {

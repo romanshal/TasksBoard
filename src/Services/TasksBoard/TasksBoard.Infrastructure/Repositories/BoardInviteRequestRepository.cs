@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Repositories;
+using Common.Blocks.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Statuses;
@@ -15,7 +16,7 @@ namespace TasksBoard.Infrastructure.Repositories
     {
         public async Task<BoardInviteRequest?> GetByBoardIdAndToAccountIdAsync(
             BoardId boardId,
-            Guid toAccountId,
+            AccountId toAccountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -34,7 +35,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardInviteRequest>> GetByToAccountIdAsync(
-            Guid accountId,
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -43,7 +44,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardInviteRequest>> GetByFromAccountIdAsync(
-            Guid accountId,
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet

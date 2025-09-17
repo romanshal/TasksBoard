@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Common.Blocks.ValueObjects;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.DeleteBoardCommand;
@@ -54,7 +55,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .Setup(s => s.GetAsync(It.IsAny<BoardNoticeId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new BoardNotice
                 {
-                    AuthorId = Guid.Empty,
+                    AuthorId = AccountId.New(),
                     //AuthorName = string.Empty,
                     BoardId = BoardId.New(),
                     Definition = string.Empty,

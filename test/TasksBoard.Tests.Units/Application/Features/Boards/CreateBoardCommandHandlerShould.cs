@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -66,7 +67,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 .Returns(new Board
                 {
                     Id = BoardId.Of(boardId),
-                    OwnerId = Guid.Empty,
+                    OwnerId = AccountId.New(),
                     Name = string.Empty
                 });
 

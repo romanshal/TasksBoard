@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Notification.Application.Dtos;
@@ -21,7 +22,7 @@ namespace Notification.Application.Features.Notifications.Queries.GetNewNotifica
 
         public async Task<Result<IEnumerable<NotificationDto>>> Handle(GetNewNotificationsByAccountIdQuery request, CancellationToken cancellationToken)
         {
-            var notifications = await _unitOfWork.GetApplicationEventRepository().GetNewByAccountIdAsync(request.AccountId, cancellationToken);
+            var notifications = await _unitOfWork.GetApplicationEventRepository().GetNewByAccountIdAsync(AccountId.Of(request.AccountId), cancellationToken);
 
             var notificationsDto = _mapper.Map<IEnumerable<NotificationDto>>(notifications);
 

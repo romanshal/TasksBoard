@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
@@ -54,7 +55,7 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
                     NoticeId = boardNotice.Id.Value,
                     AccountId = request.AccountId,
                     Completed = request.Complete,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != request.AccountId).Select(member => member.AccountId)]
+                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != AccountId.Of(request.AccountId)).Select(member => member.AccountId.Value)]
                 }, token);
 
                 _logger.LogInformation("Board notice with id '{id}' updated in board with id '{boardId}'.", boardNotice.Id, request.BoardId);

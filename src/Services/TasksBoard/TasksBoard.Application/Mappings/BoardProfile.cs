@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Application.DTOs.Boards;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
 using TasksBoard.Domain.Constants.Statuses;
@@ -12,6 +13,7 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<Board, BoardDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
+                .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.OwnerId.Value))
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.BoardTags.Select(tag => tag.Tag)))
                 //.ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers.OrderByDescending(member => src.OwnerId == member.AccountId)))
                 //.ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
@@ -41,6 +43,7 @@ namespace TasksBoard.Application.Mappings
                     ? src.Tags.Select(tag => new BoardTag { Tag = tag }).ToList()
                     : new List<BoardTag>()))
                 .ForMember(dest => dest.BoardImage, opt => opt.MapFrom(src => src.Image != null ? new BoardImage { Extension = src.ImageExtension!, Image = src.Image } : null))
+                .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => AccountId.Of(src.OwnerId)))
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.BoardMembers, opt => opt.Ignore())
                 .ForMember(dest => dest.BoardNotices, opt => opt.Ignore())

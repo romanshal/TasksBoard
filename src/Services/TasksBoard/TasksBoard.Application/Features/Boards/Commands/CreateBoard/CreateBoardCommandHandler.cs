@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -47,7 +48,7 @@ namespace TasksBoard.Application.Features.Boards.Commands.CreateBoard
             return board;
         }
 
-        private BoardMember CreateBoardMember(Guid userId, BoardId boardId)
+        private BoardMember CreateBoardMember(AccountId userId, BoardId boardId)
         {
             var boardMember = new BoardMember
             {

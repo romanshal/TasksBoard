@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Models.DomainResults;
+using Common.Blocks.ValueObjects;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
@@ -58,9 +59,9 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
                 {
                     BoardId = board.Id.Value,
                     BoardName = board.Name,
-                    AccountId = member.AccountId,
+                    AccountId = member.AccountId.Value,
                     SourceAccountId = request.AccountId,
-                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != request.AccountId).Select(m => m.AccountId)]
+                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != AccountId.Of(request.AccountId)).Select(m => m.AccountId.Value)]
                 }, token);
 
                 _logger.LogInformation("Add new permissions for board member with account id '{accountId}' on board '{boardId}'.", member.AccountId, request.BoardId);

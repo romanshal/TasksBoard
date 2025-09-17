@@ -1,4 +1,5 @@
 ﻿using Common.Blocks.Interfaces.Repositories;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.ValueObjects;
 
@@ -13,13 +14,13 @@ namespace TasksBoard.Domain.Interfaces.Repositories
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAsync(
-            Guid userId,
+            AccountId userId,
             int pageIndex = 1,
             int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardNotice>> GetPaginatedByUserIdAndBoardIdAsync(
-            Guid userId,
+            AccountId userId,
             BoardId boardId,
             int pageIndex = 1,
             int pageSize = 10, CancellationToken cancellationToken = default);
@@ -28,13 +29,13 @@ namespace TasksBoard.Domain.Interfaces.Repositories
             BoardId boardId,
             CancellationToken cancellationToken = default);
 
-        Task<int> CountByUserIdAsync
-            (Guid userId,
+        Task<int> CountByUserIdAsync(
+            AccountId userId,
             CancellationToken cancellationToken = default);
 
         Task<int> CountByBoardIdAndUserIdAsync(
             BoardId boardId,
-            Guid userId,
+            AccountId userId,
             CancellationToken cancellationToken = default);
     }
 }

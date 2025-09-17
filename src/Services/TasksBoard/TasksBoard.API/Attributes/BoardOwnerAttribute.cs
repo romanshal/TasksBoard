@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Blocks.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
@@ -42,7 +43,7 @@ namespace TasksBoard.API.Attributes
                 return;
             }
 
-            if (board.OwnerId != Guid.Parse(userId))
+            if (board.OwnerId != AccountId.Of(userId))
             {
                 context.Result = new ForbidResult();
                 return;

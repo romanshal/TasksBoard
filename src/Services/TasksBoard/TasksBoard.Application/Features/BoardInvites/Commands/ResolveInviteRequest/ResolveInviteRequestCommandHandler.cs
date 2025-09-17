@@ -49,7 +49,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                     var result = await _mediator.Send(new AddBoardMemberCommand
                     {
                         BoardId = inviteRequest.BoardId.Value,
-                        AccountId = inviteRequest.ToAccountId
+                        AccountId = inviteRequest.ToAccountId.Value
                     }, token);
 
                     if (result.IsFailure)
@@ -62,8 +62,8 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                     {
                         BoardId = board.Id.Value,
                         BoardName = board.Name,
-                        AccountId = inviteRequest.ToAccountId,
-                        BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId)]
+                        AccountId = inviteRequest.ToAccountId.Value,
+                        BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId.Value)]
                     }, token);
                 }
                 else
