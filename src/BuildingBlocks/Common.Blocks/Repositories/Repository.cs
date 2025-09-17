@@ -6,7 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Blocks.Repositories
 {
-    public class Repository<T, TId> : IRepository<T, TId> where T : class, IEntity<TId> where TId : ValueObject
+    public class Repository<T, TId> : IRepository<T, TId>
+        where T : class, IEntity<TId>
+        where TId : ValueObject
     {
         private bool _disposed;
 

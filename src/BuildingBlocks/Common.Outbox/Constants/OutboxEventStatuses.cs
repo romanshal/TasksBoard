@@ -1,4 +1,4 @@
-﻿namespace Common.Blocks.Constants
+﻿namespace Common.Outbox.Constants
 {
     public static class OutboxEventStatuses
     {

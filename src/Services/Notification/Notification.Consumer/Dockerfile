@@ -14,8 +14,10 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Notification/Notification.Consumer/Notification.Consumer.csproj", "Services/Notification/Notification.Consumer/"]
 COPY ["BuildingBlocks/Common.gRPC/Common.gRPC.csproj", "BuildingBlocks/Common.gRPC/"]
+COPY ["BuildingBlocks/Common.Cache/Common.Cache.csproj", "BuildingBlocks/Common.Cache/"]
 COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
 COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
+COPY ["BuildingBlocks/Common.Monitoring/Common.Monitoring.csproj", "BuildingBlocks/Common.Monitoring/"]
 COPY ["Services/Notification/Notification.Domain/Notification.Domain.csproj", "Services/Notification/Notification.Domain/"]
 RUN dotnet restore "./Services/Notification/Notification.Consumer/Notification.Consumer.csproj"
 COPY . .

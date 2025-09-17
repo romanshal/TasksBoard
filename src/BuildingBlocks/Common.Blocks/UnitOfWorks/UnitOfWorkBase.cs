@@ -13,9 +13,9 @@ namespace Common.Blocks.UnitOfWorks
     public class UnitOfWorkBase<TContext> : IUnitOfWorkBase where TContext : DbContext
     {
         private readonly ILoggerFactory _loggerFactory;
-        protected readonly AsyncServiceScope _scope;
-        protected readonly DbContext _context;
-        protected readonly ConcurrentDictionary<Type, object> _repositories = [];
+        private readonly AsyncServiceScope _scope;
+        private readonly DbContext _context;
+        private readonly ConcurrentDictionary<Type, object> _repositories = [];
 
         public UnitOfWorkBase(IServiceProvider serviceProvider)
         {
@@ -58,23 +58,80 @@ namespace Common.Blocks.UnitOfWorks
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task TransactionAsync(
+            Func<CancellationToken, Task> action,
+            CancellationToken cancellationToken = default)
+        {
+            var hasActic = _context.Database.CurrentTransaction is not null;
+
+            if (hasActic)
+            {
+                await action(cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return;
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+            await action(cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        public async Task<TResult> TransactionAsync<TResult>(
+            Func<CancellationToken, Task<TResult>> action,
+            CancellationToken cancellationToken = default)
+        {
+            var hasActive = _context.Database.CurrentTransaction is not null;
+
+            if (hasActive)
+            {
+                return await action(cancellationToken);
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+            var result = await action(cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return result;
+        }
+
         public async virtual ValueTask DisposeAsync()
         {
-            if (_scope is IAsyncDisposable scopeAsyncDisposable)
-            {
-                await scopeAsyncDisposable.DisposeAsync();
-                await _context.DisposeAsync();
-            }
-            else
-            {
-                _scope.Dispose();
-                _context.Dispose();
-            }
+            if (_scope is IAsyncDisposable scopeAsyncDisposable) await scopeAsyncDisposable.DisposeAsync();
+            else _scope.Dispose();
+
+            if(_context is IAsyncDisposable contextAsyncDisposable) await contextAsyncDisposable.DisposeAsync();
+            else _context.Dispose();
         }
 
         public virtual void Dispose()
         {
             DisposeAsync().AsTask().GetAwaiter().GetResult();
+        }
+
+        protected TRepository Repository<TEntity, TId, TRepository>()
+            where TEntity : class, IEntity<TId>
+            where TId : ValueObject
+            where TRepository : notnull, IRepository<TEntity, TId>
+        {
+            var type = typeof(TEntity);
+
+            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<TEntity, TId>))
+            {
+                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<TRepository>();
+
+                value = repositoryInstance;
+
+                _repositories[type] = repositoryInstance;
+            }
+
+            return (TRepository)value;
         }
     }
 }

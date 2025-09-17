@@ -5,8 +5,13 @@ using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
 using OcelotApiGateway.Configurations;
 using Polly;
+using Common.Monitoring.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddApiLogging(builder.Configuration, "OcelotGateway.API",builder.Environment.EnvironmentName)
+    .AddApiMetrics(builder.Configuration, "OcelotGateway.API", "0.1.0", builder.Environment.EnvironmentName);
 
 var retryPolicy = builder.Configuration
     .GetSection("RetryPolicy")
@@ -49,6 +54,8 @@ app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapPrometheusScrapingEndpoint();
 
 await app.UseOcelot();
 

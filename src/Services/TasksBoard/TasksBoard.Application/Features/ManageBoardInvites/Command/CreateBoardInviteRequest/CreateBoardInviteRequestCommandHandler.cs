@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Common.Blocks.Constants;
 using Common.Blocks.Models.DomainResults;
 using Common.Outbox.Interfaces.Services;
 using EventBus.Messages.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
+using TasksBoard.Domain.Constants.Statuses;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.Interfaces.UnitOfWorks;
 using TasksBoard.Domain.ValueObjects;

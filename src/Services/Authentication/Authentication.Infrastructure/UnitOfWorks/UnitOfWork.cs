@@ -5,7 +5,6 @@ using Authentication.Domain.ValueObjects;
 using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Authentication.Infrastructure.UnitOfWorks
 {
@@ -14,18 +13,7 @@ namespace Authentication.Infrastructure.UnitOfWorks
     {
         public IApplicationUserImageRepository GetApplicationUserImageRepository()
         {
-            var type = typeof(ApplicationUserImage);
-
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationUserImage, ImageId>))
-            {
-                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IApplicationUserImageRepository>();
-
-                value = repositoryInstance;
-
-                _repositories[type] = repositoryInstance;
-            }
-
-            return (IApplicationUserImageRepository)value;
+            return base.Repository<ApplicationUserImage, ImageId, IApplicationUserImageRepository>();
         }
     }
 }

@@ -9,6 +9,7 @@ x-default-env: &default-env
   "OpenSearch:Login": "admin"
   "OpenSearch:Password": "A1X8t6ESr_Gpuph35"
   # "Grafana:Url": ""
+  # "Jaeger:Url": http://jaeger:4317
   "Jaeger:Url": http://jaeger:4317
   "Authentication:Jwt:Secret": Hg4EtbzOqvc5pRBJ2KGkz4aPD38D1Sgr
   "Authentication:Jwt:Issuer": http://authentication.api:443
@@ -309,6 +310,7 @@ services:
     container_name: ocelotapigateway
     environment:
       <<: *default-env
+      "OpenSearch:IndexFormat": "ocelotgateway.api-index-{0:yyyy.MM.dd}"
     depends_on:
       - authentication.api
       - tasksboard.api

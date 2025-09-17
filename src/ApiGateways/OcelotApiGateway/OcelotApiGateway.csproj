@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Common.Monitoring\Common.Monitoring.csproj" />
   </ItemGroup>
 
 </Project>

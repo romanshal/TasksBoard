@@ -19,43 +19,46 @@ namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
 
         public async Task<Result> Handle(UpdateUserImageCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            if (user is null)
+            return await _unitOfWork.TransactionAsync(async token =>
             {
-                _logger.LogWarning("User with id '{userId}' not found.", request.Id);
-                return Result.Failure(ManageErrors.UserNotFound);
-            }
-
-            var image = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.Id, cancellationToken);
-            if (image is null)
-            {
-                image = new ApplicationUserImage
+                var user = await _userManager.FindByIdAsync(request.Id.ToString());
+                if (user is null)
                 {
-                    UserId = request.Id,
-                    Image = request.Image,
-                    Extension = request.ImageExtension
-                };
+                    _logger.LogWarning("User with id '{userId}' not found.", request.Id);
+                    return Result.Failure(ManageErrors.UserNotFound);
+                }
 
-                _unitOfWork.GetApplicationUserImageRepository().Add(image);
-            }
-            else
-            {
-                image.Image = request.Image;
-                image.Extension = request.ImageExtension;
+                var image = await _unitOfWork.GetApplicationUserImageRepository().GetByUserIdAsync(request.Id, token);
+                if (image is null)
+                {
+                    image = new ApplicationUserImage
+                    {
+                        UserId = request.Id,
+                        Image = request.Image,
+                        Extension = request.ImageExtension
+                    };
 
-                _unitOfWork.GetApplicationUserImageRepository().Update(image);
-            }
+                    _unitOfWork.GetApplicationUserImageRepository().Add(image);
+                }
+                else
+                {
+                    image.Image = request.Image;
+                    image.Extension = request.ImageExtension;
 
-            var affectedRows = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (affectedRows == 0 || image.Id.Value == Guid.Empty)
-            {
-                _logger.LogError("Can't update user image with id '{id}'.", user.Id);
-                return Result.Failure(ManageErrors.CantUpdatePassword);
-            }
+                    _unitOfWork.GetApplicationUserImageRepository().Update(image);
+                }
 
-            _logger.LogInformation("User image with user id '{id}' was successfully updated.", user.Id);
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0 || image.Id.Value == Guid.Empty)
+                {
+                    _logger.LogError("Can't update user image with id '{id}'.", user.Id);
+                    return Result.Failure(ManageErrors.CantUpdatePassword);
+                }
 
-            return Result.Success();
+                _logger.LogInformation("User image with user id '{id}' was successfully updated.", user.Id);
+
+                return Result.Success();
+            });
         }
     }
 }

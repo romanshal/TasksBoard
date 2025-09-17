@@ -6,15 +6,15 @@ using OpenSearch.Net;
 using Serilog;
 using Serilog.Filters;
 using Serilog.Sinks.OpenSearch;
-namespace Common.Blocks.Extensions.Monitoring
+namespace Common.Monitoring.Extensions
 {
     public static class LoggingServiceCollectionExtensions
     {
         public static IServiceCollection AddApiLogging(
             this IServiceCollection services,
             IConfiguration configuration,
-            IWebHostEnvironment environment,
-            string applicationName)
+            string applicationName,
+            string environmentName)
         {
             //var grafanaSection = configuration.GetRequiredSection("Grafana");
             //var grafanaUrl = grafanaSection.GetRequiredSection("Url").Get<string>()!;
@@ -31,12 +31,13 @@ namespace Common.Blocks.Extensions.Monitoring
             var login = osSection["Login"]!;
             var password = osSection["Password"]!;
 
-            services.AddLogging(cfg => cfg
-            .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
-            .AddSerilog(new LoggerConfiguration()
+            services
+                .AddLogging(cfg => cfg
+                .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
+                .AddSerilog(new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .Enrich.WithProperty("Application", applicationName)
-                .Enrich.WithProperty("Environment", environment.EnvironmentName)
+                .Enrich.WithProperty("Environment", environmentName)
                 //.WriteTo.Logger(cfg => cfg
                 //    .Filter.ByExcluding(Matching.FromSource("Microsoft"))
                 //    .WriteTo.GrafanaLoki(

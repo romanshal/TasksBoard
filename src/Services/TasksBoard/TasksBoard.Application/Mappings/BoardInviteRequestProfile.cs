@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Common.Blocks.Constants;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoardInviteRequest;
+using TasksBoard.Domain.Constants.Statuses;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Domain.ValueObjects;
 

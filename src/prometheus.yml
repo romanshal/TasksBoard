@@ -8,6 +8,6 @@
       labels:
         app: tasksboard.local
     - targets:
-        - tasksboard.api:9001 
+        - tasksboard.api:80
       labels:
         app: tasksboard-docker

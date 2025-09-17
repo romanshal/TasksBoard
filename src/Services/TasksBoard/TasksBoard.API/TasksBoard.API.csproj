@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Common.Monitoring\Common.Monitoring.csproj" />
     <ProjectReference Include="..\TasksBoard.Application\TasksBoard.Application.csproj" />
     <ProjectReference Include="..\TasksBoard.Domain\TasksBoard.Domain.csproj" />
     <ProjectReference Include="..\TasksBoard.Infrastructure\TasksBoard.Infrastructure.csproj" />

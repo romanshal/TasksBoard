@@ -14,18 +14,7 @@ namespace Notification.Infrastructure.UnitOfWorks
     {
         public IApplicationEventRepository GetApplicationEventRepository()
         {
-            var type = typeof(ApplicationEvent);
-
-            if (!_repositories.TryGetValue(type, out object? value) || value.GetType() == typeof(Repository<ApplicationEvent, ApplicationEventId>))
-            {
-                var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IApplicationEventRepository>();
-
-                value = repositoryInstance;
-
-                _repositories[type] = repositoryInstance;
-            }
-
-            return (IApplicationEventRepository)value;
+            return base.Repository<ApplicationEvent, ApplicationEventId, IApplicationEventRepository>();
         }
     }
 }

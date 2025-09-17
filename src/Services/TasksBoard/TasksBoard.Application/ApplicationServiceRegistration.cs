@@ -24,7 +24,7 @@ namespace TasksBoard.Application
 
             services.AddTransient<IOutboxService, OutboxService>();
 
-            services.AddHostedService<OutboxPublisherService>();
+            //services.AddHostedService<OutboxPublisherService>();
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 

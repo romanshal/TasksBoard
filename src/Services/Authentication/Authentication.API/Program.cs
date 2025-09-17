@@ -4,7 +4,7 @@ using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Blocks.Extensions.Monitoring;
+using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication;
@@ -17,8 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddApiLogging(builder.Configuration, builder.Environment, "Authentication.API")
-    .AddApiMetrics(builder.Configuration, "Authentication.API");
+    .AddApiLogging(builder.Configuration, "Authentication.API", builder.Environment.EnvironmentName)
+    .AddApiMetrics(builder.Configuration, "Authentication.API", "0.1.0", builder.Environment.EnvironmentName);
 
 builder.Services.Configure<JwtCofiguration>(builder.Configuration.GetRequiredSection("Authentication:Jwt"));
 
@@ -135,6 +135,7 @@ app.MapControllers().RequireAuthorization();
 
 app.MapGrpcService<UserProfilesGrpñController>();
 //app.MapGrpcReflectionService();
+app.MapPrometheusScrapingEndpoint();
 
 app.MapHealthChecks("/hc", new HealthCheckOptions
 {

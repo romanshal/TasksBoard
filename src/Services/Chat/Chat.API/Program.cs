@@ -4,7 +4,7 @@ using Chat.Infrastructure;
 using Chat.Infrastructure.Data.Contexts;
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Blocks.Extensions.Monitoring;
+using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -13,8 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddApiLogging(builder.Configuration, builder.Environment, "Chat.API")
-    .AddApiMetrics(builder.Configuration, "Chat.API");
+    .AddApiLogging(builder.Configuration, "Chat.API", builder.Environment.EnvironmentName)
+    .AddApiMetrics(builder.Configuration, "Chat.API", "0.1.0", builder.Environment.EnvironmentName);
 
 builder.Services.AddCors(options =>
 {

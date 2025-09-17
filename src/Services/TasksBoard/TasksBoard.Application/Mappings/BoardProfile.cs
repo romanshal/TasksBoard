@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Common.Blocks.Constants;
 using TasksBoard.Application.DTOs.Boards;
 using TasksBoard.Application.Features.Boards.Commands.CreateBoard;
+using TasksBoard.Domain.Constants.Statuses;
 using TasksBoard.Domain.Entities;
 
 namespace TasksBoard.Application.Mappings

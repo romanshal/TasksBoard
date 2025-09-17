@@ -1,5 +1,5 @@
-﻿using Common.Blocks.Constants;
-using Common.Blocks.Repositories;
+﻿using Common.Blocks.Repositories;
+using Common.Outbox.Constants;
 using Common.Outbox.Entities;
 using Common.Outbox.Interfaces.Repositories;
 using Common.Outbox.ValueObjects;

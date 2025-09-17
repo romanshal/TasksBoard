@@ -1,4 +1,4 @@
-﻿namespace Common.Blocks.Constants
+﻿namespace TasksBoard.Domain.Constants.Statuses
 {
     public enum BoardAccessRequestStatuses
     {

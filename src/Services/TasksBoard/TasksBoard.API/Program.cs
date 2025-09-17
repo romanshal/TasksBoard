@@ -1,6 +1,6 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Blocks.Extensions.Monitoring;
+using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,8 +12,8 @@ using TasksBoard.Infrastructure.Data.Contexts;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddApiLogging(builder.Configuration, builder.Environment, "TasksBoards.API")
-    .AddApiMetrics(builder.Configuration, "TasksBoards.API");
+    .AddApiLogging(builder.Configuration, "TasksBoards.API", builder.Environment.EnvironmentName)
+    .AddApiMetrics(builder.Configuration, "TasksBoards.API", "0.1.0", builder.Environment.EnvironmentName);
 
 builder.Services.AddCors(options =>
 {

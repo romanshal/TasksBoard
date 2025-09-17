@@ -3,9 +3,14 @@ using EventBus.Messages.Extensions;
 using Notification.Consumer.Builders;
 using Notification.Consumer.Services;
 using System.Reflection;
+using Common.Monitoring.Extensions;
 using static Common.gRPC.Protos.NotificationGrpc;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddApiLogging(builder.Configuration, "Notification.Consumer", builder.Environment.EnvironmentName)
+    .AddApiMetrics(builder.Configuration, "Notification.Consumer", "0.1.0", builder.Environment.EnvironmentName);
 
 builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
 
@@ -32,5 +37,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseExeptionWrappingMiddleware();
+
+app.MapPrometheusScrapingEndpoint();
 
 app.Run();

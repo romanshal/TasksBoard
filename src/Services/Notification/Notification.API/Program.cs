@@ -1,6 +1,6 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Blocks.Extensions.Monitoring;
+using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -16,8 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddApiLogging(builder.Configuration, builder.Environment, "Notification.API")
-    .AddApiMetrics(builder.Configuration, "Notification.API");
+    .AddApiLogging(builder.Configuration, "Notification.API", builder.Environment.EnvironmentName)
+    .AddApiMetrics(builder.Configuration, "Notification.API", "0.1.0", builder.Environment.EnvironmentName);
 
 builder.Services.AddControllers();
 
@@ -85,6 +85,7 @@ app.MapHub<NotificationHub>("/notification");
 
 app.MapControllers().RequireAuthorization();
 app.MapGrpcService<NotificationGrpcController>();
+app.MapPrometheusScrapingEndpoint();
 
 app.UseHealthChecks("/hc", new HealthCheckOptions
 {
