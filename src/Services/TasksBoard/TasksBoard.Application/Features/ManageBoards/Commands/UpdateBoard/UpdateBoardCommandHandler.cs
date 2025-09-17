@@ -19,7 +19,7 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), noTracking: true, include: true, token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);
@@ -55,8 +55,8 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard
                     }
                 }
 
-                board.Tags.Clear();
-                board.Tags = [.. request.Tags.Select(tag => new BoardTag
+                board.BoardTags.Clear();
+                board.BoardTags = [.. request.Tags.Select(tag => new BoardTag
                 {
                     BoardId = board.Id,
                     Tag = tag

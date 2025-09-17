@@ -24,7 +24,7 @@ namespace TasksBoard.Application.Features.Boards.Queries.GetBoardById
 
         public async Task<Result<BoardFullDto>> Handle(GetBoardByIdQuery request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.Id), cancellationToken);
+            var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.Id), noTracking: true, include: true, cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{id}' was not found.", request.Id);

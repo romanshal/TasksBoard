@@ -12,10 +12,41 @@ namespace TasksBoard.Infrastructure.Repositories
         TasksBoardDbContext context,
         ILoggerFactory loggerFactory) : Repository<Board, BoardId>(context, loggerFactory), IBoardRepository
     {
+        public async Task<Board?> GetAsync(
+            BoardId id,
+            bool noTracking = true, 
+            bool include = true, 
+            CancellationToken cancellationToken = default)
+        {
+            var query = DbSet.Where(board => board.Id == id);
+
+            if (noTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            if (include)
+            {
+                query = query
+                    .Include(i => i.BoardMembers)
+                    .ThenInclude(i => i.BoardMemberPermissions)
+                    .ThenInclude(i => i.BoardPermission)
+                    .Include(i => i.BoardImage)
+                    .Include(i => i.BoardTags)
+                    .Include(i => i.BoardAccessRequests)
+                    .Include(i => i.BoardInviteRequests);
+            }
+
+            return await query.SingleOrDefaultAsync(cancellationToken);
+        }
+
         public async Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(Guid userId, int pageIndex = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
+                .Include(i => i.BoardMembers)
+                .Include(i => i.BoardImage)
+                .Include(i => i.BoardTags)
                 .Where(board => board.BoardMembers.Any(member => member.AccountId == userId))
                 .OrderBy(e => e.Name)
                 .Skip((pageIndex - 1) * pageSize)
@@ -27,6 +58,9 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
+                .Include(i => i.BoardMembers)
+                .Include(i => i.BoardImage)
+                .Include(i => i.BoardTags)
                 .Where(board => board.BoardMembers.Any(member => member.AccountId == userId) && board.Name.StartsWith(query.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 .OrderBy(e => e.Name)
                 .Skip((pageIndex - 1) * pageSize)
@@ -38,6 +72,9 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
             .AsNoTracking()
+            .Include(i => i.BoardMembers)
+            .Include(i => i.BoardImage)
+            .Include(i => i.BoardTags)
             .Where(board => board.Public)
             .OrderBy(e => e.Name)
             .Skip((pageIndex - 1) * pageSize)

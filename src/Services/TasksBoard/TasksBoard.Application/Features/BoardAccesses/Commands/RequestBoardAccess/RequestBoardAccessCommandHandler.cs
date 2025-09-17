@@ -29,7 +29,7 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
             {
                 var boardId = BoardId.Of(request.BoardId);
 
-                var board = await _unitOfWork.GetBoardRepository().GetAsync(boardId, token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(boardId, noTracking: true, include: true, token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);

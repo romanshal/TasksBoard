@@ -12,9 +12,9 @@ namespace TasksBoard.Domain.Entities
 
         public virtual BoardImage? BoardImage { get; set; } = default!;
         public virtual ICollection<BoardMember> BoardMembers { get; set; } = default!;
-        public virtual ICollection<BoardNotice> Notices { get; set; } = default!;
-        public virtual ICollection<BoardTag> Tags { get; set; } = default!;
-        public virtual ICollection<BoardAccessRequest> AccessRequests { get; set; } = default!;
-        public virtual ICollection<BoardInviteRequest> InviteRequests { get; set; } = default!;
+        public virtual ICollection<BoardNotice> BoardNotices { get; set; } = default!;
+        public virtual ICollection<BoardTag> BoardTags { get; set; } = default!;
+        public virtual ICollection<BoardAccessRequest> BoardAccessRequests { get; set; } = default!;
+        public virtual ICollection<BoardInviteRequest> BoardInviteRequests { get; set; } = default!;
     }
 }

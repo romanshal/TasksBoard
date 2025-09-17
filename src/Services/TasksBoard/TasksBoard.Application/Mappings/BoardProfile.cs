@@ -12,7 +12,7 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<Board, BoardDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
+                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.BoardTags.Select(tag => tag.Tag)))
                 //.ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers.OrderByDescending(member => src.OwnerId == member.AccountId)))
                 //.ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
                 //.ForMember(dest => dest.InviteRequests, opt => opt.MapFrom(src => src.InviteRequests.Where(request => request.Status == (int)BoardInviteRequestStatuses.Pending)))
@@ -22,7 +22,7 @@ namespace TasksBoard.Application.Mappings
 
             CreateMap<Board, BoardForViewDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(tag => tag.Tag)))
+                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.BoardTags.Select(tag => tag.Tag)))
                 .ForMember(dest => dest.MemberCount, opt => opt.MapFrom(src => src.BoardMembers.Count))
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.BoardImage.Image))
                 .ForMember(dest => dest.ImageExtension, opt => opt.MapFrom(src => src.BoardImage.Extension))
@@ -32,20 +32,20 @@ namespace TasksBoard.Application.Mappings
             CreateMap<Board, BoardFullDto>()
                 .IncludeBase<Board, BoardDto>()
                 .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.BoardMembers.OrderByDescending(member => src.OwnerId == member.AccountId)))
-                .ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.AccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
-                .ForMember(dest => dest.InviteRequests, opt => opt.MapFrom(src => src.InviteRequests.Where(request => request.Status == (int)BoardInviteRequestStatuses.Pending)));
+                .ForMember(dest => dest.AccessRequests, opt => opt.MapFrom(src => src.BoardAccessRequests.Where(request => request.Status == (int)BoardAccessRequestStatuses.Pending)))
+                .ForMember(dest => dest.InviteRequests, opt => opt.MapFrom(src => src.BoardInviteRequests.Where(request => request.Status == (int)BoardInviteRequestStatuses.Pending)));
 
             CreateMap<CreateBoardCommand, Board>()
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>
+                .ForMember(dest => dest.BoardTags, opt => opt.MapFrom(src =>
                 src.Tags != null
                     ? src.Tags.Select(tag => new BoardTag { Tag = tag }).ToList()
                     : new List<BoardTag>()))
                 .ForMember(dest => dest.BoardImage, opt => opt.MapFrom(src => src.Image != null ? new BoardImage { Extension = src.ImageExtension!, Image = src.Image } : null))
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.BoardMembers, opt => opt.Ignore())
-                .ForMember(dest => dest.Notices, opt => opt.Ignore())
-                .ForMember(dest => dest.AccessRequests, opt => opt.Ignore())
-                .ForMember(dest => dest.InviteRequests, opt => opt.Ignore())
+                .ForMember(dest => dest.BoardNotices, opt => opt.Ignore())
+                .ForMember(dest => dest.BoardAccessRequests, opt => opt.Ignore())
+                .ForMember(dest => dest.BoardInviteRequests, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore());
         }

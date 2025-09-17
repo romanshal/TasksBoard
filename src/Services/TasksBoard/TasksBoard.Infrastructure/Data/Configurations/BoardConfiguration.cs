@@ -20,7 +20,7 @@ namespace TasksBoard.Infrastructure.Data.Configurations
                 .HasColumnName("Id");
 
             builder
-                .HasMany(m => m.Notices)
+                .HasMany(m => m.BoardNotices)
                 .WithOne(o => o.Board)
                 .HasForeignKey(k => k.BoardId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -32,19 +32,19 @@ namespace TasksBoard.Infrastructure.Data.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
-                .HasMany(m => m.AccessRequests)
+                .HasMany(m => m.BoardAccessRequests)
                 .WithOne(o => o.Board)
                 .HasForeignKey(k => k.BoardId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
-                .HasMany(m => m.InviteRequests)
+                .HasMany(m => m.BoardInviteRequests)
                 .WithOne(o => o.Board)
                 .HasForeignKey(k => k.BoardId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
-                .HasMany(m => m.Tags)
+                .HasMany(m => m.BoardTags)
                 .WithOne(o => o.Board)
                 .HasForeignKey(k => k.BoardId)
                 .OnDelete(DeleteBehavior.Cascade);

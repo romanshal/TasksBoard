@@ -26,7 +26,7 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), noTracking: true, include: true, token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{boardId}' was not found.", request.BoardId);

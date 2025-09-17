@@ -39,7 +39,6 @@ namespace Chat.Infrastructure
             services.AddDbContext<ChatDbContext>(options =>
             {
                 options.UseNpgsql(connectionString);
-                options.UseLazyLoadingProxies();
             });
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

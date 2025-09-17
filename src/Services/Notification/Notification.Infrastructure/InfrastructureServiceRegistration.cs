@@ -32,7 +32,6 @@ namespace Notification.Infrastructure
             services.AddDbContext<NotificationDbContext>(options =>
             {
                 options.UseNpgsql(connectionString);
-                options.UseLazyLoadingProxies();
             });
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

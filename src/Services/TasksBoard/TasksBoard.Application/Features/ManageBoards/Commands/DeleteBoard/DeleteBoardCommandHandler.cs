@@ -22,7 +22,7 @@ namespace TasksBoard.Application.Features.ManageBoards.Commands.DeleteBoard
         {
             return await _unitOfWork.TransactionAsync(async token =>
             {
-                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.Id), token);
+                var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.Id), noTracking: true, include: true, token);
                 if (board is null)
                 {
                     _logger.LogWarning("Board with id '{id}' was not found.", request.Id);

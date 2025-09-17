@@ -21,7 +21,7 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Queries.GetBoardMem
 
         public async Task<Result<IEnumerable<BoardMemberPermissionDto>>> Handle(GetBoardMemberPermissionsQuery request, CancellationToken cancellationToken)
         {
-            var board = await _unitOfWork.GetRepository<Board, BoardId>().GetAsync(BoardId.Of(request.BoardId), cancellationToken);
+            var board = await _unitOfWork.GetBoardRepository().GetAsync(BoardId.Of(request.BoardId), noTracking: true, include: true, cancellationToken);
             if (board is null)
             {
                 _logger.LogWarning("Board with id '{boardId}' not found.", request.BoardId);

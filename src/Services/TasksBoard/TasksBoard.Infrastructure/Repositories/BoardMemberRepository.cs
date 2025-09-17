@@ -16,6 +16,8 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
+                .Include(i => i.BoardMemberPermissions)
+                .ThenInclude(i => i.BoardPermission)
                 .Where(member => member.BoardId == boardId)
                 .OrderByDescending(member => member.Board.OwnerId == member.AccountId)
                 .ToListAsync(cancellationToken);
@@ -25,6 +27,8 @@ namespace TasksBoard.Infrastructure.Repositories
         {
             return await DbSet
                 .AsNoTracking()
+                .Include(i => i.BoardMemberPermissions)
+                .ThenInclude(i => i.BoardPermission)
                 .Where(member => member.BoardId == boardId)
                 .OrderByDescending(member => member.Board.OwnerId == member.AccountId)
                 .Skip((pageIndex - 1) * pageSize)
@@ -36,12 +40,16 @@ namespace TasksBoard.Infrastructure.Repositories
         public async Task<BoardMember?> GetByBoardIdAndAccountIdAsync(BoardId boardId, Guid accountId, CancellationToken cancellationToken = default)
         {
             return await DbSet
+                .Include(i => i.BoardMemberPermissions)
+                .ThenInclude(i => i.BoardPermission)
                 .FirstOrDefaultAsync(member => member.BoardId == boardId && member.AccountId == accountId, cancellationToken);
         }
 
         public async Task<IEnumerable<BoardMember>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
         {
             return await DbSet
+                .Include(i => i.BoardMemberPermissions)
+                .ThenInclude(i => i.BoardPermission)
                 .Where(member => member.AccountId == accountId)
                 .ToListAsync(cancellationToken);
         }
