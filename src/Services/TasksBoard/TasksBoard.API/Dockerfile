@@ -18,8 +18,9 @@ COPY ["Services/TasksBoard/TasksBoard.Application/TasksBoard.Application.csproj"
 COPY ["BuildingBlocks/Common.gRPC/Common.gRPC.csproj", "BuildingBlocks/Common.gRPC/"]
 COPY ["BuildingBlocks/Common.Cache/Common.Cache.csproj", "BuildingBlocks/Common.Cache/"]
 COPY ["BuildingBlocks/Common.Blocks/Common.Blocks.csproj", "BuildingBlocks/Common.Blocks/"]
-COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
 COPY ["BuildingBlocks/Common.Outbox/Common.Outbox.csproj", "BuildingBlocks/Common.Outbox/"]
+COPY ["BuildingBlocks/EventBus.Messages.Abstraction/EventBus.Messages.Abstraction.csproj", "BuildingBlocks/EventBus.Messages.Abstraction/"]
+COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
 COPY ["Services/TasksBoard/TasksBoard.Domain/TasksBoard.Domain.csproj", "Services/TasksBoard/TasksBoard.Domain/"]
 COPY ["Services/TasksBoard/TasksBoard.Infrastructure/TasksBoard.Infrastructure.csproj", "Services/TasksBoard/TasksBoard.Infrastructure/"]
 RUN dotnet restore "./Services/TasksBoard/TasksBoard.API/TasksBoard.API.csproj"

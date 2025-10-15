@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EventBus.Messages.Events;
+using EventBus.Messages.Abstraction.Events;
 using Notification.Application.Dtos;
 using Notification.Domain.Constants;
 using Notification.Domain.Entities;

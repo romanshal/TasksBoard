@@ -1,6 +1,7 @@
 ﻿using Common.Blocks.Models.DomainResults;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Interfaces.Factories;
+using Common.Outbox.Extensions;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMember;
@@ -13,13 +14,13 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
 {
     public class ResolveInviteRequestCommandHandler(
         IUnitOfWork unitOfWork,
-        IOutboxService outboxService,
+        IOutboxEventFactory outboxFactory,
         IMediator mediator,
         ILogger<ResolveInviteRequestCommandHandler> logger) : IRequestHandler<ResolveInviteRequestCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMediator _mediator = mediator;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
         private readonly ILogger<ResolveInviteRequestCommandHandler> _logger = logger;
 
         public async Task<Result<Guid>> Handle(ResolveInviteRequestCommand request, CancellationToken cancellationToken)
@@ -58,17 +59,22 @@ namespace TasksBoard.Application.Features.BoardInvites.Commands.ResolveInviteReq
                         return Result.Failure<Guid>(BoardMemberErrors.CantCreate);
                     }
 
-                    await _outboxService.CreateNewOutboxEvent(new NewBoardMemberEvent
+                    var outboxEvent = _outboxFactory.Create(new NewBoardMemberEvent
                     {
                         BoardId = board.Id.Value,
                         BoardName = board.Name,
                         AccountId = inviteRequest.ToAccountId.Value,
-                        BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId.Value)]
-                    }, token);
+                        UsersInterested = [.. board.BoardMembers.Where(member => member.AccountId != inviteRequest.ToAccountId).Select(member => member.AccountId.Value)]
+                    });
+
+                    _unitOfWork.GetOutboxEventRepository().Add(outboxEvent);
                 }
-                else
+
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0)
                 {
-                    await _unitOfWork.SaveChangesAsync(token);
+                    _logger.LogError("Can't create new invite response to board with id '{boardId}'.", request.BoardId);
+                    return Result.Failure<Guid>(BoardInviteErrors.CantCreate(board.Name));
                 }
 
                 return Result.Success(inviteRequest.Id.Value);

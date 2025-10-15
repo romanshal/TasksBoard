@@ -1,7 +1,8 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -14,11 +15,11 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
     public class AddBoardMemberPermissionsCommandHandler(
         ILogger<AddBoardMemberPermissionsCommandHandler> logger,
         IUnitOfWork unitOfWork,
-        IOutboxService outboxService) : IRequestHandler<AddBoardMemberPermissionsCommand, Result>
+        IOutboxEventFactory outboxFactory) : IRequestHandler<AddBoardMemberPermissionsCommand, Result>
     {
         private readonly ILogger<AddBoardMemberPermissionsCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
 
         public async Task<Result> Handle(AddBoardMemberPermissionsCommand request, CancellationToken cancellationToken)
         {
@@ -48,21 +49,21 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.AddBoardMe
 
                 _unitOfWork.GetBoardMemberRepository().Update(member);
 
+                var outboxEvent = _outboxFactory.Create(new NewBoardMemberPermissionsEvent
+                {
+                    BoardId = board.Id.Value,
+                    BoardName = board.Name,
+                    AccountId = member.AccountId.Value,
+                    SourceAccountId = request.AccountId,
+                    UsersInterested = [.. board.BoardMembers.Where(m => m.AccountId != AccountId.Of(request.AccountId)).Select(m => m.AccountId.Value)]
+                });
+
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0)
                 {
                     _logger.LogError("Can't save new board member permissions with id '{memberId}' to board with id '{boardId}'.", request.MemberId, request.BoardId);
                     return Result.Failure(BoardMemberPermissionErrors.CantCreate);
                 }
-
-                await _outboxService.CreateNewOutboxEvent(new NewBoardMemberPermissionsEvent
-                {
-                    BoardId = board.Id.Value,
-                    BoardName = board.Name,
-                    AccountId = member.AccountId.Value,
-                    SourceAccountId = request.AccountId,
-                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != AccountId.Of(request.AccountId)).Select(m => m.AccountId.Value)]
-                }, token);
 
                 _logger.LogInformation("Add new permissions for board member with account id '{accountId}' on board '{boardId}'.", member.AccountId, request.BoardId);
 

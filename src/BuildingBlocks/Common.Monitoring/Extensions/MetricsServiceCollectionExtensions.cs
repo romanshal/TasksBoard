@@ -67,13 +67,14 @@ namespace Common.Monitoring.Extensions
                             }
                             else if (response.StatusCode >= 500)
                             {
-                                activity.AddTag("error", response.StatusCode >= 500);
                                 activity.SetStatus(ActivityStatusCode.Error);
                             }
                         };
-
                     })
-                    .AddEntityFrameworkCoreInstrumentation(optons => optons.SetDbStatementForText = true)
+                    .AddEntityFrameworkCoreInstrumentation(optons => 
+                    { 
+                        optons.SetDbStatementForText = true;
+                    })
                     .AddHttpClientInstrumentation(options =>
                     {
                         options.RecordException = true;
@@ -81,6 +82,7 @@ namespace Common.Monitoring.Extensions
                     .AddNpgsql()
                     .AddRedisInstrumentation()
                     .AddGrpcClientInstrumentation()
+                    .AddMassTransitInstrumentation()
                     .AddConsoleExporter()
                     .AddOtlpExporter(options =>
                     {

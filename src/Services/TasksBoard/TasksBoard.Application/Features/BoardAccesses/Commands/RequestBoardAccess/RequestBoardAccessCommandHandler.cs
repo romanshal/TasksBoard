@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Interfaces.Factories;
+using Common.Outbox.Extensions;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -16,12 +17,12 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
     public class RequestBoardAccessCommandHandler(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IOutboxService outboxService,
+        IOutboxEventFactory outboxFactory,
         ILogger<RequestBoardAccessCommandHandler> logger) : IRequestHandler<RequestBoardAccessCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
         private readonly ILogger<RequestBoardAccessCommandHandler> _logger = logger;
 
         public async Task<Result<Guid>> Handle(RequestBoardAccessCommand request, CancellationToken cancellationToken)
@@ -69,20 +70,22 @@ namespace TasksBoard.Application.Features.BoardAccesses.Commands.RequestBoardAcc
 
                 _unitOfWork.GetBoardAccessRequestRepository().Add(accessRequest);
 
+                var outboxEvent = _outboxFactory.Create(new NewBoardAccessRequestEvent
+                {
+                    BoardId = board.Id.Value,
+                    BoardName = board.Name,
+                    AccountId = accessRequest.AccountId.Value,
+                    UsersInterested = [.. board.BoardMembers.Select(member => member.AccountId.Value)]
+                });
+
+                _unitOfWork.GetOutboxEventRepository().Add(outboxEvent);
+
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0 || accessRequest.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't create new board access request to board with id '{boardId}'.", request.BoardId);
                     return Result.Failure<Guid>(BoardInviteErrors.CantCreate(board.Name));
                 }
-
-                await _outboxService.CreateNewOutboxEvent(new NewBoardAccessRequestEvent
-                {
-                    BoardId = board.Id.Value,
-                    BoardName = board.Name,
-                    AccountId = accessRequest.AccountId.Value,
-                    BoardMembersIds = [.. board.BoardMembers.Select(member => member.AccountId.Value)]
-                }, token);
 
                 _logger.LogInformation("Board access request with id '{id}' added to board with id '{boardId}'.", accessRequest.Id, request.BoardId);
 

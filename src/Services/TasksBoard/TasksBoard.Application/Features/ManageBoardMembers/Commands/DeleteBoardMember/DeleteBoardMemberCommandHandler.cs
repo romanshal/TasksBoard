@@ -1,7 +1,8 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -12,12 +13,12 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
 {
     public class DeleteBoardMemberCommandHandler(
         ILogger<DeleteBoardMemberCommandHandler> logger,
-        IOutboxService outboxService,
+        IOutboxEventFactory outboxFactory,
         IUnitOfWork unitOfWork) : IRequestHandler<DeleteBoardMemberCommand, Result>
     {
         private readonly ILogger<DeleteBoardMemberCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
 
         public async Task<Result> Handle(DeleteBoardMemberCommand request, CancellationToken cancellationToken)
         {
@@ -39,25 +40,26 @@ namespace TasksBoard.Application.Features.ManageBoardMembers.Commands.DeleteBoar
 
                 _unitOfWork.GetBoardMemberRepository().Delete(member);
 
+                var outboxEvent = _outboxFactory.Create(new RemoveBoardMemberEvent
+                {
+                    BoardId = board.Id.Value,
+                    BoardName = board.Name,
+                    RemovedAccountId = member.AccountId.Value,
+                    RemoveByAccountId = request.RemoveByUserId,
+                    UsersInterested = [.. board.BoardMembers
+                    .Where(member => member.AccountId != AccountId.Of(request.RemoveByUserId))
+                    .Select(member => member.AccountId.Value)
+                    .Concat([member.AccountId.Value])]
+                });
+
+                _unitOfWork.GetOutboxEventRepository().Add(outboxEvent);
+
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0)
                 {
                     _logger.LogError("Can't delete board member with id '{memberId}' from board with id '{boardId}'.", request.MemberId, request.BoardId);
                     return Result.Failure(BoardMemberErrors.CantDelete);
                 }
-
-                var removeEvent = new RemoveBoardMemberEvent
-                {
-                    BoardId = board.Id.Value,
-                    BoardName = board.Name,
-                    RemovedAccountId = member.AccountId.Value,
-                    RemoveByAccountId = request.RemoveByUserId,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != AccountId.Of(request.RemoveByUserId)).Select(member => member.AccountId.Value)]
-                };
-
-                removeEvent.BoardMembersIds.Add(member.AccountId.Value);
-
-                await _outboxService.CreateNewOutboxEvent(removeEvent, token);
 
                 _logger.LogInformation("Board member with account id '{accountId}' deleted from boar with id '{boardId}'.", member.AccountId, request.BoardId);
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoardNotice;
 using TasksBoard.Domain.Entities;
@@ -12,7 +13,7 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<CreateBoardNoticeCommand, BoardNotice>()
                 .ForMember(dest => dest.BoardId, opt => opt.MapFrom(src => BoardId.Of(src.BoardId)))
-                .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => BoardId.Of(src.AuthorId)))
+                .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => AccountId.Of(src.AuthorId)))
                 .ForMember(dest => dest.Completed, opt => opt.MapFrom(s => false))
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Board, opt => opt.Ignore())

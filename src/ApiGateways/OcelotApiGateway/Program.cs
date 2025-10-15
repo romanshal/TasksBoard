@@ -30,7 +30,9 @@ builder.Services.AddCors(options =>
         .AllowCredentials());
 });
 
-builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services
+    .AddJwtAuthentication(builder.Configuration)
+    .AddCookie();
 
 builder.Services
     .AddOcelot(builder.Configuration)

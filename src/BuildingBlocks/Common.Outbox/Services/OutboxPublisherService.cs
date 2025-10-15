@@ -2,7 +2,7 @@
 using Common.Outbox.Constants;
 using Common.Outbox.Entities;
 using Common.Outbox.Extensions;
-using EventBus.Messages.Events;
+using EventBus.Messages.Abstraction.Events;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

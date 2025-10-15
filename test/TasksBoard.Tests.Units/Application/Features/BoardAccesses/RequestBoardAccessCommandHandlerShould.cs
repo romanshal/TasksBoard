@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,7 +20,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
     {
         private readonly Mock<IUnitOfWork> unitOfWork;
         private readonly Mock<IMapper> mapper;
-        private readonly Mock<IOutboxService> outboxService;
+        private readonly Mock<IOutboxEventFactory> eventFactory;
         private readonly Mock<ILogger<RequestBoardAccessCommandHandler>> logger;
         private readonly Mock<IBoardAccessRequestRepository> accessRepository;
         private readonly Mock<IBoardRepository> boardRepository;
@@ -46,14 +47,13 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 
             mapper = new Mock<IMapper>();
 
-            outboxService = new Mock<IOutboxService>();
-            outboxService
-                .Setup(s => s.CreateNewOutboxEvent(It.IsAny<NewBoardAccessRequestEvent>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Guid.Parse("fa7a2f2d-5997-4f1d-9622-b197a870982d"));
+            eventFactory = new Mock<IOutboxEventFactory>();
+            eventFactory
+                .Setup(s => s.Create(It.IsAny<NewBoardAccessRequestEvent>()));
 
             logger = new Mock<ILogger<RequestBoardAccessCommandHandler>>();
 
-            sut = new RequestBoardAccessCommandHandler(unitOfWork.Object, mapper.Object, outboxService.Object, logger.Object);
+            sut = new RequestBoardAccessCommandHandler(unitOfWork.Object, mapper.Object, eventFactory.Object, logger.Object);
         }
 
         [Fact]

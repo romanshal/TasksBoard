@@ -23,6 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Hubs\Common.Hubs.csproj" />
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Monitoring\Common.Monitoring.csproj" />
 		<ProjectReference Include="..\Notification.Application\Notification.Application.csproj" />
 		<ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />

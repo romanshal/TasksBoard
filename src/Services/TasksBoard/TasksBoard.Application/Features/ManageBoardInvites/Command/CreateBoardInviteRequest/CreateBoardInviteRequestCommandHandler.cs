@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -16,12 +17,12 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
     public class CreateBoardInviteRequestCommandHandler(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IOutboxService outboxService,
+        IOutboxEventFactory outboxFactory,
         ILogger<CreateBoardInviteRequestCommandHandler> logger) : IRequestHandler<CreateBoardInviteRequestCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
         private readonly ILogger<CreateBoardInviteRequestCommandHandler> _logger = logger;
 
         public async Task<Result<Guid>> Handle(CreateBoardInviteRequestCommand request, CancellationToken cancellationToken)
@@ -63,20 +64,23 @@ namespace TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoard
 
                 _unitOfWork.GetBoardInviteRequestRepository().Add(inviteRequest);
 
+                var outboxEvent = _outboxFactory.Create(new NewBoardInviteRequestEvent
+                {
+                    BoardId = board.Id.Value,
+                    BoardName = board.Name,
+                    AccountId = inviteRequest.ToAccountId.Value,
+                    FromAccountId = inviteRequest.FromAccountId.Value,
+                    UsersInterested = [inviteRequest.ToAccountId.Value]
+                });
+
+                _unitOfWork.GetOutboxEventRepository().Add(outboxEvent);
+
                 var affectedRows = await _unitOfWork.SaveChangesAsync(token);
                 if (affectedRows == 0 || inviteRequest.Id.Value == Guid.Empty)
                 {
                     _logger.LogError("Can't create new board invite request to board with id '{boardId}'.", request.BoardId);
                     return Result.Failure<Guid>(BoardInviteErrors.CantCreate(board.Name));
                 }
-
-                await _outboxService.CreateNewOutboxEvent(new NewBoardInviteRequestEvent
-                {
-                    BoardId = board.Id.Value,
-                    BoardName = board.Name,
-                    AccountId = inviteRequest.ToAccountId.Value,
-                    FromAccountId = inviteRequest.FromAccountId.Value
-                }, token);
 
                 _logger.LogInformation("Board invite request with id '{id}' added to board with id '{boardId}'.", inviteRequest.Id, request.BoardId);
 

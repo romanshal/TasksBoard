@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -15,12 +16,12 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
     public class CreateBoardNoticeCommandHandler(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IOutboxService outboxService,
+        IOutboxEventFactory outboxFactory,
         ILogger<CreateBoardNoticeCommandHandler> logger) : IRequestHandler<CreateBoardNoticeCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
         private readonly ILogger<CreateBoardNoticeCommandHandler> _logger = logger;
 
         public async Task<Result<Guid>> Handle(CreateBoardNoticeCommand request, CancellationToken cancellationToken)
@@ -38,22 +39,24 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.CreateBoar
 
                 _unitOfWork.GetBoardNoticeRepository().Add(notice);
 
-                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || notice.Id.Value == Guid.Empty)
-                {
-                    _logger.LogError("Can't create new board notice to board with id '{boardId}'.", request.BoardId);
-                    return Result.Failure<Guid>(BoardNoticeErrors.CantCreate);
-                }
-
-                await _outboxService.CreateNewOutboxEvent(new NewNoticeEvent
+                var outboxEvent = _outboxFactory.Create(new NewNoticeEvent
                 {
                     BoardId = board.Id.Value,
                     BoardName = board.Name,
                     NoticeId = notice.Id.Value,
                     NoticeDefinition = notice.Definition,
                     AccountId = notice.AuthorId.Value,
-                    BoardMembersIds = [.. board.BoardMembers.Where(member => member.AccountId != AccountId.Of(request.AuthorId)).Select(member => member.AccountId.Value)]
-                }, token);
+                    UsersInterested = [.. board.BoardMembers.Where(member => member.AccountId != AccountId.Of(request.AuthorId)).Select(member => member.AccountId.Value)]
+                });
+
+                _unitOfWork.GetOutboxEventRepository().Add(outboxEvent);
+
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0 || notice.Id.Value == Guid.Empty)
+                {
+                    _logger.LogError("Can't create new board notice to board with id '{boardId}'.", request.BoardId);
+                    return Result.Failure<Guid>(BoardNoticeErrors.CantCreate);
+                }
 
                 _logger.LogInformation("Board notice with id '{id}' added to board with id '{boardId}'.", notice.Id, request.BoardId);
 

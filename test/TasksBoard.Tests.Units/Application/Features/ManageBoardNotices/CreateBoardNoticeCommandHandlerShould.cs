@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -23,7 +24,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
         private readonly Mock<IUnitOfWork> unitOfWork;
         private readonly Mock<IMapper> mapper;
         private readonly ISetup<IMapper, BoardNotice> mapperSetup;
-        private readonly Mock<IOutboxService> outboxService;
+        private readonly Mock<IOutboxEventFactory> eventFactory;
         private readonly Mock<ILogger<CreateBoardNoticeCommandHandler>> logger;
         private readonly CreateBoardNoticeCommandHandler sut;
 
@@ -46,14 +47,13 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             mapper = new Mock<IMapper>();
             mapperSetup = mapper.Setup(s => s.Map<BoardNotice>(It.IsAny<CreateBoardNoticeCommand>()));
 
-            outboxService = new Mock<IOutboxService>();
-            outboxService
-                .Setup(s => s.CreateNewOutboxEvent(It.IsAny<NewNoticeEvent>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Guid.Empty);
+            eventFactory = new Mock<IOutboxEventFactory>();
+            eventFactory
+                .Setup(s => s.Create(It.IsAny<NewNoticeEvent>()));
 
             logger = new Mock<ILogger<CreateBoardNoticeCommandHandler>>();
 
-            sut = new CreateBoardNoticeCommandHandler(unitOfWork.Object, mapper.Object, outboxService.Object, logger.Object);
+            sut = new CreateBoardNoticeCommandHandler(unitOfWork.Object, mapper.Object, eventFactory.Object, logger.Object);
         }
 
         [Fact]

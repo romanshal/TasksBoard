@@ -1,4 +1,4 @@
-﻿using EventBus.Messages.Events;
+﻿using EventBus.Messages.Abstraction.Events;
 using MassTransit;
 using Notification.Consumer.Builders;
 using Notification.Consumer.Services;

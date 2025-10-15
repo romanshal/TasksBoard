@@ -1,7 +1,8 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TasksBoard.Domain.Constants.Errors.DomainErrors;
@@ -12,12 +13,12 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 {
     public class UpdateBoardNoticeCommandHandler(
         ILogger<UpdateBoardNoticeCommandHandler> logger,
-        IOutboxService outboxService,
+        IOutboxEventFactory outboxFactory,
         IUnitOfWork unitOfWork) : IRequestHandler<UpdateBoardNoticeCommand, Result<Guid>>
     {
         private readonly ILogger<UpdateBoardNoticeCommandHandler> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IOutboxService _outboxService = outboxService;
+        private readonly IOutboxEventFactory _outboxFactory = outboxFactory;
 
         public async Task<Result<Guid>> Handle(UpdateBoardNoticeCommand request, CancellationToken cancellationToken)
         {
@@ -42,22 +43,24 @@ namespace TasksBoard.Application.Features.ManageBoardNotices.Commands.UpdateBoar
 
                 _unitOfWork.GetBoardNoticeRepository().Update(boardNotice);
 
-                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
-                if (affectedRows == 0 || boardNotice.Id.Value == Guid.Empty)
-                {
-                    _logger.LogError("Can't update board notice with id '{boardNoticeId}'.", boardNotice.Id);
-                    return Result.Failure<Guid>(BoardNoticeErrors.CantUpdate);
-                }
-
-                await _outboxService.CreateNewOutboxEvent(new UpdateNoticeEvent
+                var outboxEvent = _outboxFactory.Create(new UpdateNoticeEvent
                 {
                     BoardId = board.Id.Value,
                     BoardName = board.Name,
                     AccountId = request.AccountId,
                     NoticeId = boardNotice.Id.Value,
                     NoticeDefinition = boardNotice.Definition,
-                    BoardMembersIds = [.. board.BoardMembers.Where(m => m.AccountId != AccountId.Of(request.AccountId)).Select(m => m.AccountId.Value)]
-                }, token);
+                    UsersInterested = [.. board.BoardMembers.Where(m => m.AccountId != AccountId.Of(request.AccountId)).Select(m => m.AccountId.Value)]
+                });
+
+                _unitOfWork.GetOutboxEventRepository().Add(outboxEvent);
+
+                var affectedRows = await _unitOfWork.SaveChangesAsync(token);
+                if (affectedRows == 0 || boardNotice.Id.Value == Guid.Empty)
+                {
+                    _logger.LogError("Can't update board notice with id '{boardNoticeId}'.", boardNotice.Id);
+                    return Result.Failure<Guid>(BoardNoticeErrors.CantUpdate);
+                }
 
                 _logger.LogInformation("Board notice with id '{id}' updated in board with id '{boardId}'.", boardNotice.Id, request.BoardId);
 

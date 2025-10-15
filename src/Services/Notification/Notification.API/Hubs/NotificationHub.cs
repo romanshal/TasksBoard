@@ -1,27 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Common.Hubs.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Concurrent;
-using System.Security.Claims;
 
 namespace Notification.API.Hubs
 {
     [Authorize]
-    public class NotificationHub : Hub
+    public class NotificationHub(
+        IConnectionService connectionService) : Hub<INotificationHub>
     {
-        private static readonly ConcurrentDictionary<string, HashSet<string>> connectedUsers = new();
-
         public override Task OnConnectedAsync()
         {
-            var userId = ExtractUserId();
-            if (!string.IsNullOrWhiteSpace(userId))
+            if (TryExtractUserId(out var userId))
             {
-                connectedUsers.AddOrUpdate(userId,
-                    _ => [Context.ConnectionId],
-                    (_, connectionIds) =>
-                    {
-                        connectionIds.Add(Context.ConnectionId);
-                        return connectionIds;
-                    });
+                connectionService.Add(userId, Context.ConnectionId);
             }
 
             return base.OnConnectedAsync();
@@ -29,19 +20,24 @@ namespace Notification.API.Hubs
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            var userId = ExtractUserId();
-            if (!string.IsNullOrWhiteSpace(userId))
+            if(TryExtractUserId(out var userId))
             {
-                connectedUsers.TryGetValue(userId, out var connectionIds);
-                connectionIds?.Remove(Context.ConnectionId);
+                connectionService.Remove(userId, Context.ConnectionId);
             }
 
             return base.OnDisconnectedAsync(exception);
         }
 
-        private string? ExtractUserId()
+        private bool TryExtractUserId(out Guid userId)
         {
-            return Context?.User?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+            var identifier = Context?.UserIdentifier;
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                userId = Guid.Empty;
+                return false;
+            }
+
+            return Guid.TryParse(identifier, out userId);
         }
     }
 }

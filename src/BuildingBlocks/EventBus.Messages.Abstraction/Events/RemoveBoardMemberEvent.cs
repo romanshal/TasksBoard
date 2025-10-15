@@ -1,4 +1,4 @@
-﻿namespace EventBus.Messages.Events
+﻿namespace EventBus.Messages.Abstraction.Events
 {
     public class RemoveBoardMemberEvent : BaseEvent
     {
@@ -6,6 +6,5 @@
         public required string BoardName { get; set; }
         public required Guid RemovedAccountId { get; set; }
         public required Guid RemoveByAccountId { get; set; }
-        public required IList<Guid> BoardMembersIds { get; set; }
     }
 }

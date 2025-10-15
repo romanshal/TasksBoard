@@ -1,4 +1,4 @@
-﻿namespace EventBus.Messages.Events
+﻿namespace EventBus.Messages.Abstraction.Events
 {
     public class NewBoardMemberPermissionsEvent : BaseEvent
     {
@@ -6,6 +6,5 @@
         public required string BoardName { get; set; }
         public required Guid SourceAccountId { get; set; }
         public required Guid AccountId { get; set; }
-        public required IList<Guid> BoardMembersIds { get; set; }
     }
 }

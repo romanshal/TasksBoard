@@ -1,5 +1,5 @@
 ﻿using Common.gRPC.Protos;
-using EventBus.Messages.Events;
+using EventBus.Messages.Abstraction.Events;
 using MassTransit;
 using System.Text.Json;
 

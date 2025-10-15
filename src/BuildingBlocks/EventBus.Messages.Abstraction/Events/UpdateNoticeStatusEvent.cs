@@ -1,4 +1,4 @@
-﻿namespace EventBus.Messages.Events
+﻿namespace EventBus.Messages.Abstraction.Events
 {
     public class UpdateNoticeStatusEvent : BaseEvent
     {
@@ -7,6 +7,5 @@
         public required Guid NoticeId { get; set; }
         public required Guid AccountId { get; set; }
         public bool Completed { get; set; }
-        public required IList<Guid> BoardMembersIds { get; set; }
     }
 }

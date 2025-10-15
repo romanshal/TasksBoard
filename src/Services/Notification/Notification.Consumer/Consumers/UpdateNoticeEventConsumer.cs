@@ -1,4 +1,4 @@
-﻿using EventBus.Messages.Events;
+﻿using EventBus.Messages.Abstraction.Events;
 using MassTransit;
 using Notification.Consumer.Builders;
 using Notification.Consumer.Services;
@@ -17,7 +17,7 @@ namespace Notification.Consumer.Consumers
 
         public async Task Consume(ConsumeContext<UpdateNoticeEvent> context)
         {
-            if (!context.Message.BoardMembersIds.Any())
+            if (!context.Message.UsersInterested.Any())
             {
                 _logger.LogWarning(NotificationEventLogMessages.NoMemberIds, nameof(UpdateNoticeEvent));
                 return;
@@ -25,7 +25,7 @@ namespace Notification.Consumer.Consumers
 
             var notificationRequest = _notificationBuilder
                 .WithContext(context)
-                .WithAccounts(context.Message.BoardMembersIds.Select(id => id.ToString()))
+                .WithAccounts(context.Message.UsersInterested.Select(id => id.ToString()))
                 .Build();
 
             await _grpcService.Handle(notificationRequest);

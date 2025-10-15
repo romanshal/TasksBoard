@@ -1,7 +1,8 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Services;
-using EventBus.Messages.Events;
+using Common.Outbox.Extensions;
+using Common.Outbox.Interfaces.Factories;
+using EventBus.Messages.Abstraction.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,7 +20,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
         private readonly Mock<IBoardRepository> boardRepository;
         private readonly Mock<ILogger<DeleteBoardCommandHandler>> logger;
         private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly Mock<IOutboxService> outboxService;
+        private readonly Mock<IOutboxEventFactory> eventFactory;
         private readonly DeleteBoardCommandHandler sut;
 
         public DeleteBoardCommandHandlerShould()
@@ -36,12 +37,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                 .Setup(s => s.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result>>>(), It.IsAny<CancellationToken>()))
                 .Returns((Func<CancellationToken, Task<Result>> func, CancellationToken ct) => func(ct));
 
-            outboxService = new Mock<IOutboxService>();
-            outboxService
-                .Setup(s => s.CreateNewOutboxEvent(It.IsAny<BaseEvent>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Guid.NewGuid());
+            eventFactory = new Mock<IOutboxEventFactory>();
+            eventFactory
+                .Setup(s => s.Create(It.IsAny<BaseEvent>()));
 
-            sut = new DeleteBoardCommandHandler(logger.Object, unitOfWork.Object, outboxService.Object);
+            sut = new DeleteBoardCommandHandler(logger.Object, unitOfWork.Object, eventFactory.Object);
         }
 
         [Fact]

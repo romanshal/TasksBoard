@@ -67,7 +67,6 @@ namespace TasksBoard.Infrastructure
                 .AddTransient<IBoardInviteRequestRepository, BoardInviteRequestRepository>()
                 .AddTransient<IBoardAccessRequestRepository, BoardAccessRequestRepsitory>();
 
-
             services
                 .AddHealthChecks()
                 .AddNpgSql(connectionString);
