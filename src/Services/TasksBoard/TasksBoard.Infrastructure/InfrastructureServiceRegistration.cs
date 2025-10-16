@@ -6,6 +6,7 @@ using Common.gRPC.Interfaces.Caches;
 using Common.gRPC.Interfaces.Services;
 using Common.gRPC.Repositories;
 using Common.gRPC.Services;
+using Common.Outbox.Extensions;
 using EventBus.Messages.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -66,6 +67,8 @@ namespace TasksBoard.Infrastructure
                 .AddTransient<IBoardMemberRepository, BoardMemberRepository>()
                 .AddTransient<IBoardInviteRequestRepository, BoardInviteRequestRepository>()
                 .AddTransient<IBoardAccessRequestRepository, BoardAccessRequestRepsitory>();
+
+            services.AddOutbox(connectionString);
 
             services
                 .AddHealthChecks()

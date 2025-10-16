@@ -1,7 +1,6 @@
 ﻿using Common.Blocks.Behaviours;
 using Common.Cache.Behaviours;
 using Common.Outbox.Extensions;
-using Common.Outbox.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -22,9 +21,7 @@ namespace TasksBoard.Application
 
             services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
-            services.AddOutbox();
-
-            services.AddHostedService<OutboxPublisherService>();
+            //services.AddHostedService<OutboxPublisherService>();
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 

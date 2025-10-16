@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Common.Blocks\Common.Blocks.csproj" />
     <ProjectReference Include="..\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
   </ItemGroup>

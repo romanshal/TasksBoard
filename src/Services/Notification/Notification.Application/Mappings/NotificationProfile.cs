@@ -15,6 +15,33 @@ namespace Notification.Application.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => GetNotificationType(src.EventType)))
                 .ForMember(dest => dest.Payload, opt => opt.MapFrom(src => GetNotificationPayload(src.EventType, src.Payload)));
+
+            CreateMap<ApplicationEvent, NotificationGenericDto<BaseEvent>>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => GetNotificationType(src.EventType)))
+                .ForMember(dest => dest.Payload, opt => opt.MapFrom(src => Get(src.EventType, src.Payload)));
+        }
+
+        private BaseEvent Get(string type, string payload)
+        {
+            return type switch
+            {
+                nameof(NewNoticeEvent) => GetNotificationPay<NewNoticeEvent>(payload),
+                nameof(UpdateNoticeStatusEvent) => GetNotificationPay<UpdateNoticeStatusEvent>(payload)!,
+                nameof(NewBoardMemberEvent) => GetNotificationPay<NewBoardMemberEvent>(payload)!,
+                nameof(RemoveBoardMemberEvent) => GetNotificationPay<RemoveBoardMemberEvent>(payload)!,
+                nameof(ResolveAccessRequestEvent) => GetNotificationPay<ResolveAccessRequestEvent>(payload)!,
+                nameof(NewBoardInviteRequestEvent) => GetNotificationPay<NewBoardInviteRequestEvent>(payload)!,
+                nameof(NewBoardAccessRequestEvent) => GetNotificationPay<NewBoardAccessRequestEvent>(payload)!,
+                nameof(NewBoardMemberPermissionsEvent) => GetNotificationPay<NewBoardMemberPermissionsEvent>(payload)!,
+                nameof(UpdateNoticeEvent) => GetNotificationPay<UpdateNoticeEvent>(payload)!,
+                _ => default!
+            };
+        }
+
+        private T GetNotificationPay<T>(string paylaod) where T: BaseEvent
+        {
+            return JsonSerializer.Deserialize<T>(paylaod)!;
         }
 
         private static string GetNotificationType(string eventType)
