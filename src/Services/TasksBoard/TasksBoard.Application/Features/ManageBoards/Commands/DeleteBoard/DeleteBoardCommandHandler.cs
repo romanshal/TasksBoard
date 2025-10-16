@@ -1,6 +1,6 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
-using Common.Outbox.Interfaces.Factories;
+using Common.Outbox.Abstraction.Interfaces.Factories;
 using Common.Outbox.Extensions;
 using EventBus.Messages.Abstraction.Events;
 using MediatR;

@@ -1,8 +1,8 @@
 ﻿using Common.Blocks.Repositories;
-using Common.Outbox.Constants;
-using Common.Outbox.Entities;
-using Common.Outbox.Interfaces.Repositories;
-using Common.Outbox.ValueObjects;
+using Common.Outbox.Abstraction.Constants;
+using Common.Outbox.Abstraction.Entities;
+using Common.Outbox.Abstraction.Interfaces.Repositories;
+using Common.Outbox.Abstraction.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

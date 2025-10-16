@@ -1,6 +1,6 @@
-﻿using Common.Outbox.Constants;
-using Common.Outbox.Entities;
-using Common.Outbox.ValueObjects;
+﻿using Common.Outbox.Abstraction.Constants;
+using Common.Outbox.Abstraction.Entities;
+using Common.Outbox.Abstraction.ValueObjects;
 using Dapper;
 using EventBus.Messages.Abstraction.Events;
 using MassTransit;
@@ -66,11 +66,8 @@ namespace Common.Outbox.Services
                 var updateSql =
                     """
                     UPDATE outboxevents
-                    SET "LastModifiedAt" = v.LastModifiedAt,
-                        "Status" = v.Status
-                    FROM (VALUES
-                        {0}
-                    ) AS v(Id, LastModifiedAt, Status)
+                    SET "LastModifiedAt" = v.LastModifiedAt, "Status" = v.Status
+                    FROM (VALUES {0}) AS v(Id, LastModifiedAt, Status)
                     WHERE "Id" = v.Id::uuid
                     """;
 
@@ -117,9 +114,9 @@ namespace Common.Outbox.Services
 
             updateQueue.Enqueue(new OutboxUpdate 
             { 
-                Id = outboxEvent.Id, 
-                LastModifiedAt = DateTime.UtcNow, 
-                Status = OutboxEventStatuses.Sent 
+                Id = outboxEvent.Id,
+                LastModifiedAt = DateTime.UtcNow,
+                Status = OutboxEventStatuses.Sent
             });
         }
 

@@ -1,6 +1,6 @@
-﻿using Common.Outbox.Constants;
-using Common.Outbox.Entities;
-using Common.Outbox.Interfaces.Factories;
+﻿using Common.Outbox.Abstraction.Constants;
+using Common.Outbox.Abstraction.Entities;
+using Common.Outbox.Abstraction.Interfaces.Factories;
 using EventBus.Messages.Abstraction.Events;
 using Newtonsoft.Json;
 

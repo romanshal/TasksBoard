@@ -1,5 +1,5 @@
 ﻿using Common.Blocks.Interfaces.UnitOfWorks;
-using Common.Outbox.Interfaces.Repositories;
+using Common.Outbox.Abstraction.Interfaces.Repositories;
 using Common.Outbox.Repositories;
 
 namespace Common.Outbox.Extensions

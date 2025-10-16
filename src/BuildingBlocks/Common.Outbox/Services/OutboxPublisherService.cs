@@ -1,6 +1,6 @@
 ﻿using Common.Blocks.Interfaces.UnitOfWorks;
-using Common.Outbox.Constants;
-using Common.Outbox.Entities;
+using Common.Outbox.Abstraction.Constants;
+using Common.Outbox.Abstraction.Entities;
 using Common.Outbox.Extensions;
 using EventBus.Messages.Abstraction.Events;
 using MassTransit;

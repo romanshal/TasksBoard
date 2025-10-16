@@ -1,4 +1,4 @@
-﻿using Common.Outbox.Constants;
+﻿using Common.Outbox.Abstraction.Constants;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

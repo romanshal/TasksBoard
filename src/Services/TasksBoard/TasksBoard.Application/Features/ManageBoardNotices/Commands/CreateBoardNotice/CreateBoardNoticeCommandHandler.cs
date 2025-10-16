@@ -2,7 +2,7 @@
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
 using Common.Outbox.Extensions;
-using Common.Outbox.Interfaces.Factories;
+using Common.Outbox.Abstraction.Interfaces.Factories;
 using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;

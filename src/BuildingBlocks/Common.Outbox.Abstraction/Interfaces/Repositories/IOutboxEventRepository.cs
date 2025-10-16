@@ -1,8 +1,8 @@
 ﻿using Common.Blocks.Interfaces.Repositories;
-using Common.Outbox.Entities;
-using Common.Outbox.ValueObjects;
+using Common.Outbox.Abstraction.Entities;
+using Common.Outbox.Abstraction.ValueObjects;
 
-namespace Common.Outbox.Interfaces.Repositories
+namespace Common.Outbox.Abstraction.Interfaces.Repositories
 {
     public interface IOutboxEventRepository : IRepository<OutboxEvent, OutboxId>
     {

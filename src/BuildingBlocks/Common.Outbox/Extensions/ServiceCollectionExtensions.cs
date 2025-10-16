@@ -1,11 +1,10 @@
-﻿using Common.Outbox.Factories;
-using Common.Outbox.Interfaces.Factories;
+﻿using Common.Outbox.Abstraction.Interfaces.Factories;
+using Common.Outbox.Factories;
+using Common.Outbox.Handlers;
 using Common.Outbox.Services;
-using Common.Outbox.ValueObjects;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using System.Data;
 
 namespace Common.Outbox.Extensions
 {
@@ -28,14 +27,5 @@ namespace Common.Outbox.Extensions
 
             return services;
         }
-    }
-
-    public class OutboxIdTypeHandler : SqlMapper.TypeHandler<OutboxId>
-    {
-        public override void SetValue(IDbDataParameter parameter, OutboxId value)
-        => parameter.Value = value.Value;
-
-        public override OutboxId Parse(object value)
-            => OutboxId.Of((Guid)value);
     }
 }

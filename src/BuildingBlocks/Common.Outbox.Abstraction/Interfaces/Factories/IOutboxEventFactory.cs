@@ -1,7 +1,7 @@
-﻿using Common.Outbox.Entities;
+﻿using Common.Outbox.Abstraction.Entities;
 using EventBus.Messages.Abstraction.Events;
 
-namespace Common.Outbox.Interfaces.Factories
+namespace Common.Outbox.Abstraction.Interfaces.Factories
 {
     public interface IOutboxEventFactory
     {

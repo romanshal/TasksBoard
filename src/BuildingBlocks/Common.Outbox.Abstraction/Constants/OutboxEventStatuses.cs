@@ -1,4 +1,4 @@
-﻿namespace Common.Outbox.Constants
+﻿namespace Common.Outbox.Abstraction.Constants
 {
     public static class OutboxEventStatuses
     {

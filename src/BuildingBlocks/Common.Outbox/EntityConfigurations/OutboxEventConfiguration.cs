@@ -1,5 +1,5 @@
-﻿using Common.Outbox.Entities;
-using Common.Outbox.ValueObjects;
+﻿using Common.Outbox.Abstraction.Entities;
+using Common.Outbox.Abstraction.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

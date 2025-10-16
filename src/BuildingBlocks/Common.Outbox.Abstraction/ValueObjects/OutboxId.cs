@@ -1,6 +1,6 @@
 ﻿using Common.Blocks.ValueObjects;
 
-namespace Common.Outbox.ValueObjects
+namespace Common.Outbox.Abstraction.ValueObjects
 {
     public sealed class OutboxId : GuidValueObject<OutboxId>
     {

@@ -1,7 +1,7 @@
 ﻿using Common.Blocks.Entities;
-using Common.Outbox.ValueObjects;
+using Common.Outbox.Abstraction.ValueObjects;
 
-namespace Common.Outbox.Entities
+namespace Common.Outbox.Abstraction.Entities
 {
     public class OutboxEvent : BaseEntity<OutboxId>
     {

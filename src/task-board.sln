@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.Messages.Abstracti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Hubs", "BuildingBlocks\Common.Hubs\Common.Hubs.csproj", "{2797EFE4-D3EE-4707-81A6-DB6C6FFDBE80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Outbox.Abstraction", "BuildingBlocks\Common.Outbox.Abstraction\Common.Outbox.Abstraction.csproj", "{A0AC17A6-43C4-49EA-BC81-EDFAD02D46CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,10 @@ Global
 		{2797EFE4-D3EE-4707-81A6-DB6C6FFDBE80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2797EFE4-D3EE-4707-81A6-DB6C6FFDBE80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2797EFE4-D3EE-4707-81A6-DB6C6FFDBE80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0AC17A6-43C4-49EA-BC81-EDFAD02D46CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0AC17A6-43C4-49EA-BC81-EDFAD02D46CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0AC17A6-43C4-49EA-BC81-EDFAD02D46CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0AC17A6-43C4-49EA-BC81-EDFAD02D46CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -253,6 +259,7 @@ Global
 		{158D4E56-D128-4AB7-A627-79BFBECABB9C} = {3C61DA57-25FB-4367-871A-D150F562672F}
 		{299ACD9A-85BE-4348-A086-57DB0C4FA81F} = {3C61DA57-25FB-4367-871A-D150F562672F}
 		{2797EFE4-D3EE-4707-81A6-DB6C6FFDBE80} = {3C61DA57-25FB-4367-871A-D150F562672F}
+		{A0AC17A6-43C4-49EA-BC81-EDFAD02D46CF} = {3C61DA57-25FB-4367-871A-D150F562672F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {035AB995-90D6-4002-8BCD-783C17C3C72D}
