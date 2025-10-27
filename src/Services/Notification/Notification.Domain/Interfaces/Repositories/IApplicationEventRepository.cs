@@ -8,35 +8,35 @@ namespace Notification.Domain.Interfaces.Repositories
     public interface IApplicationEventRepository : IRepository<ApplicationEvent, ApplicationEventId>
     {
         Task<IEnumerable<ApplicationEvent>> GetPaginatedByAccountIdAsync(
-            AccountId accountId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            AccountId accountId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<ApplicationEvent>> GetNewPaginatedByAccountIdAsync(
-            AccountId accountId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            AccountId accountId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<ApplicationEvent>> GetNewByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<ApplicationEvent>> GetByIdsAsync(
-            IEnumerable<ApplicationEventId> ids, 
+            IEnumerable<ApplicationEventId> ids,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<ApplicationEvent>> GetNewByCreatedDateAsync(
-            DateTime date, 
+            DateTime date,
             CancellationToken cancellationToken = default);
 
         Task<int> CountByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default);
 
         Task<int> CountNewByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default);
     }
 }

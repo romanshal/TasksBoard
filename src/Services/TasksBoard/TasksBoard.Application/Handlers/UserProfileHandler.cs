@@ -1,4 +1,5 @@
 ﻿using Common.gRPC.Interfaces.Services;
+using Common.gRPC.Models;
 using TasksBoard.Application.Models.UserProfiles;
 
 namespace TasksBoard.Application.Handlers
@@ -25,27 +26,16 @@ namespace TasksBoard.Application.Handlers
         {
             if (values is null) return;
 
-            var list = values as IList<T> ?? [.. values];
-            if (list.Count == 0) return;
-
             var userIds = values
                 .Select(accountIdSelector)
                 .Where(id => id != Guid.Empty)
                 .ToHashSet();
 
-            var userProfiles = await _profileService.ResolveAsync(userIds, cancellationToken);
+            if (userIds.Count == 0) return;
 
-            if (userProfiles.Count > 0)
-            {
-                foreach (var value in values)
-                {
-                    var accountId = accountIdSelector(value);
-                    if (userProfiles.TryGetValue(accountId, out var profile) && profile != null)
-                    {
-                        accountProfileSetter(value, profile.Username, profile.Email);
-                    }
-                }
-            }
+            var profiles = await _profileService.ResolveAsync(userIds, cancellationToken);
+
+            SeedProfileValues(values, profiles, accountIdSelector, accountProfileSetter);
         }
 
         public async Task HandleMany(
@@ -63,17 +53,26 @@ namespace TasksBoard.Application.Handlers
 
             var profiles = await _profileService.ResolveAsync(allIds, cancellationToken);
 
-            foreach (var (items, idSelector, setter) in mappings)
+            foreach (var (items, idSelector, setter) in mappings) 
             {
-                if (items == null) continue;
+                if (items == null) continue; 
 
-                foreach (var item in items)
+                SeedProfileValues(items, profiles, idSelector, setter); 
+            }
+        }
+
+        private static void SeedProfileValues<T>(
+            IEnumerable<T> values,
+            IReadOnlyDictionary<Guid, UserProfile> profiles,
+            Func<T, Guid> idSelector,
+            Action<T, string, string?> setter)
+        {
+            foreach (var value in values)
+            {
+                var id = idSelector(value);
+                if (profiles.TryGetValue(id, out var profile))
                 {
-                    var id = idSelector(item);
-                    if (profiles.TryGetValue(id, out var profile))
-                    {
-                        setter(item, profile.Username, profile.Email);
-                    }
+                    setter(value, profile.Username, profile.Email);
                 }
             }
         }

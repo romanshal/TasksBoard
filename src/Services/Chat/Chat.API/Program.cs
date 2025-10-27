@@ -4,8 +4,8 @@ using Chat.Infrastructure;
 using Chat.Infrastructure.Data.Contexts;
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
+using Common.Monitoring.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 

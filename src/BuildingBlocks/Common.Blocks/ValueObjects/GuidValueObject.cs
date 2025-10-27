@@ -19,7 +19,7 @@ namespace Common.Blocks.ValueObjects
 
         public static TSelf Of(string value)
         {
-            if(!Guid.TryParse(value, out var guid))
+            if (!Guid.TryParse(value, out var guid))
             {
                 throw new ArgumentException($"{nameof(value)} cannot convert to Guid");
             }

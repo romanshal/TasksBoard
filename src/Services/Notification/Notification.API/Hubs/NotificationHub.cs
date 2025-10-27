@@ -20,7 +20,7 @@ namespace Notification.API.Hubs
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            if(TryExtractUserId(out var userId))
+            if (TryExtractUserId(out var userId))
             {
                 connectionService.Remove(userId, Context.ConnectionId);
             }

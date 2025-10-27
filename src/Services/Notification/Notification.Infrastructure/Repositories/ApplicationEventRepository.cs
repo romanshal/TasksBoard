@@ -14,9 +14,9 @@ namespace Notification.Infrastructure.Repositories
         ILoggerFactory loggerFactory) : Repository<ApplicationEvent, ApplicationEventId>(context, loggerFactory), IApplicationEventRepository
     {
         public async Task<IEnumerable<ApplicationEvent>> GetPaginatedByAccountIdAsync(
-            AccountId accountId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            AccountId accountId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -29,7 +29,7 @@ namespace Notification.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<ApplicationEvent>> GetNewByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken)
         {
             return await DbSet
@@ -41,7 +41,7 @@ namespace Notification.Infrastructure.Repositories
 
         //TODO: change this to VO
         public async Task<IEnumerable<ApplicationEvent>> GetByIdsAsync(
-            IEnumerable<ApplicationEventId> ids, 
+            IEnumerable<ApplicationEventId> ids,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -50,7 +50,7 @@ namespace Notification.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<ApplicationEvent>> GetNewByCreatedDateAsync(
-            DateTime date, 
+            DateTime date,
             CancellationToken cancellationToken = default)
         {
             return await DbSet.
@@ -61,9 +61,9 @@ namespace Notification.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<ApplicationEvent>> GetNewPaginatedByAccountIdAsync(
-            AccountId accountId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            AccountId accountId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -76,7 +76,7 @@ namespace Notification.Infrastructure.Repositories
         }
 
         public async Task<int> CountByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -85,7 +85,7 @@ namespace Notification.Infrastructure.Repositories
         }
 
         public async Task<int> CountNewByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet

@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Authentication.Domain\Authentication.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Security\2FA\" />
+  </ItemGroup>
+
 </Project>

@@ -15,8 +15,8 @@ namespace TasksBoard.Infrastructure.Repositories
     {
         public async Task<Board?> GetAsync(
             BoardId id,
-            bool noTracking = true, 
-            bool include = true, 
+            bool noTracking = true,
+            bool include = true,
             CancellationToken cancellationToken = default)
         {
             var query = DbSet.Where(board => board.Id == id);

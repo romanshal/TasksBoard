@@ -6,7 +6,7 @@ using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Infrastructure.Data.Contexts;
 using Authentication.Infrastructure.Factories;
 using Authentication.Infrastructure.Repositories;
-using Authentication.Infrastructure.Security;
+using Authentication.Infrastructure.Security.JWT;
 using Authentication.Infrastructure.UnitOfWorks;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;

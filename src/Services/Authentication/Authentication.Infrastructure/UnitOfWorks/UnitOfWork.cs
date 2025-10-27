@@ -3,7 +3,6 @@ using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Domain.ValueObjects;
 using Authentication.Infrastructure.Data.Contexts;
-using Common.Blocks.Repositories;
 using Common.Blocks.UnitOfWorks;
 
 namespace Authentication.Infrastructure.UnitOfWorks

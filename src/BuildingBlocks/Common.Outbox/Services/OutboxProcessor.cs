@@ -112,8 +112,8 @@ namespace Common.Outbox.Services
 
             await publishEndpoint.Publish(deserializedMessage, cancellationToken);
 
-            updateQueue.Enqueue(new OutboxUpdate 
-            { 
+            updateQueue.Enqueue(new OutboxUpdate
+            {
                 Id = outboxEvent.Id,
                 LastModifiedAt = DateTime.UtcNow,
                 Status = OutboxEventStatuses.Sent

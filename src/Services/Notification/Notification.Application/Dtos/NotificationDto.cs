@@ -12,7 +12,7 @@ namespace Notification.Application.Dtos
         public required DateTime CreatedAt { get; set; }
     }
 
-    public class NotificationGenericDto<T> where T: BaseEvent
+    public class NotificationGenericDto<T> where T : BaseEvent
     {
         public required Guid Id { get; set; }
         public required string Type { get; set; }

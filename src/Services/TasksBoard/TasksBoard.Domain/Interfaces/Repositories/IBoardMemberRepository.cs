@@ -8,26 +8,26 @@ namespace TasksBoard.Domain.Interfaces.Repositories
     public interface IBoardMemberRepository : IRepository<BoardMember, BoardMemberId>
     {
         Task<IEnumerable<BoardMember>> GetByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(
-            BoardId boardId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            BoardId boardId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<BoardMember?> GetByBoardIdAndAccountIdAsync(
             BoardId boardId,
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<BoardMember>> GetByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default);
 
         Task<int> CountByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken);
     }
 }

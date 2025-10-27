@@ -1,7 +1,7 @@
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
+using Common.Monitoring.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

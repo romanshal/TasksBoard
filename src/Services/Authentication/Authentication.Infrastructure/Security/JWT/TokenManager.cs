@@ -7,7 +7,7 @@ using Authentication.Infrastructure.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Authentication.Infrastructure.Security
+namespace Authentication.Infrastructure.Security.JWT
 {
     public class TokenManager(
         ITokenFactory tokenFactory,

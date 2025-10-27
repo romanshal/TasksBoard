@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Authentication.Infrastructure.Security
+namespace Authentication.Infrastructure.Security.JWT
 {
     public class TokenFactory(
         IOptions<JwtCofiguration> options,

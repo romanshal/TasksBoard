@@ -106,7 +106,7 @@ namespace Common.Blocks.UnitOfWorks
             if (_scope is IAsyncDisposable scopeAsyncDisposable) await scopeAsyncDisposable.DisposeAsync();
             else _scope.Dispose();
 
-            if(_context is IAsyncDisposable contextAsyncDisposable) await contextAsyncDisposable.DisposeAsync();
+            if (_context is IAsyncDisposable contextAsyncDisposable) await contextAsyncDisposable.DisposeAsync();
             else _context.Dispose();
         }
 

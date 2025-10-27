@@ -1,9 +1,9 @@
 using Common.Blocks.Middlewares;
+using Common.Monitoring.Extensions;
 using EventBus.Messages.Extensions;
 using Notification.Consumer.Builders;
 using Notification.Consumer.Services;
 using System.Reflection;
-using Common.Monitoring.Extensions;
 using static Common.gRPC.Protos.NotificationGrpc;
 
 var builder = WebApplication.CreateBuilder(args);

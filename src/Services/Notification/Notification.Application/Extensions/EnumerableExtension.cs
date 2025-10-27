@@ -1,5 +1,4 @@
-﻿using Common.Blocks.ValueObjects;
-using Notification.Domain.ValueObjects;
+﻿using Notification.Domain.ValueObjects;
 
 namespace Notification.Application.Extensions
 {

@@ -14,35 +14,35 @@ namespace TasksBoard.Domain.Interfaces.Repositories
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<Board>> GetPaginatedByUserIdAsync(
-            AccountId userId, 
-            int pageIndex = 1, 
+            AccountId userId,
+            int pageIndex = 1,
             int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<Board>> GetPaginatedByUserIdAndQueryAsync(
-            AccountId userId, 
-            string query, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            AccountId userId,
+            string query,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<IEnumerable<Board>> GetPaginatedPublicAsync(
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task<bool> HasAccessAsync(
             BoardId boardId,
-            AccountId userId, 
+            AccountId userId,
             CancellationToken cancellationToken = default);
 
         Task<int> CountByUserIdAsync(
-            AccountId userId, 
+            AccountId userId,
             CancellationToken cancellationToken = default);
 
         Task<int> CountByUserIdAndQueryAsync(
-            AccountId userId, 
-            string query, 
+            AccountId userId,
+            string query,
             CancellationToken cancellationToken = default);
 
         Task<int> CountPublicAsync(CancellationToken cancellationToken = default);

@@ -8,16 +8,16 @@ namespace TasksBoard.Domain.Interfaces.Repositories
     public interface IBoardAccessRequestRepository : IRepository<BoardAccessRequest, BoardAccessId>
     {
         Task<IEnumerable<BoardAccessRequest>> GetByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken);
 
         Task<BoardAccessRequest?> GetByBoardIdAndAccountId(
             BoardId boardId,
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken);
 
         Task<IEnumerable<BoardAccessRequest>> GetByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default);
     }
 }

@@ -15,7 +15,7 @@ namespace TasksBoard.Infrastructure.Repositories
         ILoggerFactory loggerFactory) : Repository<BoardAccessRequest, BoardAccessId>(context, loggerFactory), IBoardAccessRequestRepository
     {
         public async Task<IEnumerable<BoardAccessRequest>> GetByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken)
         {
             return await DbSet
@@ -26,7 +26,7 @@ namespace TasksBoard.Infrastructure.Repositories
 
         public async Task<BoardAccessRequest?> GetByBoardIdAndAccountId(
             BoardId boardId,
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken)
         {
             return await DbSet
@@ -36,7 +36,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardAccessRequest>> GetByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet

@@ -4,8 +4,8 @@ using Authentication.Infrastructure;
 using Authentication.Infrastructure.Data.Contexts;
 using Common.Blocks.Configurations;
 using Common.Blocks.Extensions;
-using Common.Monitoring.Extensions;
 using Common.Blocks.Middlewares;
+using Common.Monitoring.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -84,6 +84,7 @@ builder.Services.AddRateLimiter(options =>
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
     {
         var key = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
         return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
         {
             PermitLimit = 60,
@@ -142,5 +143,7 @@ app.MapHealthChecks("/hc", new HealthCheckOptions
     Predicate = _ => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
+
+app.UseRateLimiter();
 
 app.Run();

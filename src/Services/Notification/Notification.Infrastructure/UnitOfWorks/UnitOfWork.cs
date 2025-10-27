@@ -1,6 +1,4 @@
-﻿using Common.Blocks.Repositories;
-using Common.Blocks.UnitOfWorks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Common.Blocks.UnitOfWorks;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces.Repositories;
 using Notification.Domain.Interfaces.UnitOfWorks;

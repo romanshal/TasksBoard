@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Authentication.Infrastructure.Security
+namespace Authentication.Infrastructure.Security.JWT
 {
     public class UserClaimsService(
         UserManager<ApplicationUser> userManager,

@@ -7,7 +7,7 @@ namespace Authentication.Domain.Entities
         public string? FirstName { get; set; }
         public string? Surname { get; set; }
 
-        public virtual ApplicationUserImage Image { get; set; }
-        public virtual ICollection<ApplicationUserSession> RefreshTokens { get; set; }
+        public virtual ApplicationUserImage Image { get; set; } = default!;
+        public virtual ICollection<ApplicationUserSession> RefreshTokens { get; set; } = [];
     }
 }

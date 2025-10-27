@@ -1,7 +1,7 @@
 ﻿using Authentication.Domain.Entities;
 using Authentication.Infrastructure.Models;
 
-namespace Authentication.Infrastructure.Security
+namespace Authentication.Infrastructure.Security.JWT
 {
     public interface ITokenFactory
     {

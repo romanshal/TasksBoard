@@ -14,7 +14,7 @@ namespace TasksBoard.Infrastructure.Repositories
         ILoggerFactory loggerFactory) : Repository<BoardMember, BoardMemberId>(context, loggerFactory), IBoardMemberRepository
     {
         public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -27,9 +27,9 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardMember>> GetPaginatedByBoardIdAsync(
-            BoardId boardId, 
-            int pageIndex = 1, 
-            int pageSize = 10, 
+            BoardId boardId,
+            int pageIndex = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -45,8 +45,8 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<BoardMember?> GetByBoardIdAndAccountIdAsync(
-            BoardId boardId, 
-            AccountId accountId, 
+            BoardId boardId,
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -56,7 +56,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<BoardMember>> GetByAccountIdAsync(
-            AccountId accountId, 
+            AccountId accountId,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
@@ -67,7 +67,7 @@ namespace TasksBoard.Infrastructure.Repositories
         }
 
         public async Task<int> CountByBoardIdAsync(
-            BoardId boardId, 
+            BoardId boardId,
             CancellationToken cancellationToken)
         {
             return await DbSet

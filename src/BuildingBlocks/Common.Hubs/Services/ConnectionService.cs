@@ -22,17 +22,17 @@ namespace Common.Hubs.Services
 
         public async Task Remove(Guid userId, string connectionId)
         {
-            if(Connections.TryGetValue(userId, out var connectionIds))
+            if (Connections.TryGetValue(userId, out var connectionIds))
             {
                 if (connectionIds.Count == 0)
                 {
                     Connections.TryRemove(userId, out _);
                 }
             }
-   
+
         }
 
-        public IReadOnlyDictionary<Guid, IEnumerable<string>> GetConnectedUsers() => 
+        public IReadOnlyDictionary<Guid, IEnumerable<string>> GetConnectedUsers() =>
             Connections.ToDictionary(
                 k => k.Key,
                 v => v.Value.Select(c => c));

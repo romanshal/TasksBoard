@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 
-namespace Authentication.Infrastructure.Security
+namespace Authentication.Infrastructure.Security.JWT
 {
     internal static class TokenHasher
     {

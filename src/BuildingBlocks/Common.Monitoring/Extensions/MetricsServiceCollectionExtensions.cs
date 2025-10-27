@@ -33,7 +33,7 @@ namespace Common.Monitoring.Extensions
                         Boundaries = [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 10]
                     }))
                 .WithTracing(builder => builder
-                    .ConfigureResource(r => 
+                    .ConfigureResource(r =>
                     {
                         r.AddService(serviceName: serviceName, serviceVersion: serviceVersion);
                         r.AddAttributes(
@@ -71,8 +71,8 @@ namespace Common.Monitoring.Extensions
                             }
                         };
                     })
-                    .AddEntityFrameworkCoreInstrumentation(optons => 
-                    { 
+                    .AddEntityFrameworkCoreInstrumentation(optons =>
+                    {
                         optons.SetDbStatementForText = true;
                     })
                     .AddHttpClientInstrumentation(options =>

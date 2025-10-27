@@ -39,7 +39,7 @@ namespace Notification.Application.Mappings
             };
         }
 
-        private T GetNotificationPay<T>(string paylaod) where T: BaseEvent
+        private T GetNotificationPay<T>(string paylaod) where T : BaseEvent
         {
             return JsonSerializer.Deserialize<T>(paylaod)!;
         }
