@@ -15,6 +15,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { InternalServerErrorComponent } from './error/internal-server-error/internal-server-error.component';
 import { NotificationComponent } from './notification/notification.component';
 import { ExternalCallbackComponent } from './auth/external-callback/external-callback.component';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { TwoFactorComponent } from './auth/two-factor/two-factor.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
@@ -22,6 +25,9 @@ const routes: Routes = [
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'external-callback', component: ExternalCallbackComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'two-factor', component: TwoFactorComponent },
 
   { path: 'board/:boardid', component: BoardComponent, canActivate: [AuthGuard] },
   { path: 'boards', component: BoardsListComponent, canActivate: [AuthGuard] },

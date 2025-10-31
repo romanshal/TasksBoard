@@ -48,6 +48,7 @@ export class SignupComponent implements OnInit {
     this.isLoading = true;
 
     if (this.signupForm.invalid) {
+      this.isLoading = false;
       return;
     }
 
@@ -74,5 +75,9 @@ export class SignupComponent implements OnInit {
         this.errorMessage = error.description;
       }
     });
+  }
+
+  onSignin(){
+    this.router.navigate(['/signin']);
   }
 }

@@ -36,7 +36,7 @@ namespace Authentication.Infrastructure.Security.JWT
             return (tokenPair, session.DeviceId);
         }
 
-        public async Task<(TokenPairModel tokens, string deviceId)> RotateAsync(
+        public async Task<TokenPairModel> RotateAsync(
             GenerateTokensModel model,
             string oldRefreshToken,
             string deviceId,
@@ -75,7 +75,7 @@ namespace Authentication.Infrastructure.Security.JWT
                 RefreshTokenExpiredAt = newSession.ExpiresAtUtc
             };
 
-            return (tokenPair, newSession.DeviceId);
+            return tokenPair;
         }
 
         public async Task RevokeAsync(

@@ -1,10 +1,12 @@
 ﻿using Authentication.API.Extensions;
 using Authentication.API.Models.Requests.Authentication;
-using Authentication.API.Models.Responses;
+using Authentication.Application.Features.Authentications.Commands.ForgotPassword;
 using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Application.Features.Authentications.Commands.Logout;
 using Authentication.Application.Features.Authentications.Commands.RefreshToken;
 using Authentication.Application.Features.Authentications.Commands.Register;
+using AutoMapper;
+using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +16,12 @@ namespace Authentication.API.Controllers
 {
     [ApiController]
     [Route("api/authentication")]
-    public class AuthenticationController(IMediator mediator) : ControllerBase
+    public class AuthenticationController(
+        IMediator mediator,
+        IMapper mapper) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         [AllowAnonymous]
@@ -28,21 +33,14 @@ namespace Authentication.API.Controllers
 
             var result = await _mediator.Send(new LoginCommand
             {
-                Username = request.Username,
+                UsernameOrEmail = request.UsernameOrEmail,
                 Password = request.Password,
                 UserIp = userIp,
-                UserAgent = userAgent
+                UserAgent = userAgent,
+                RememberMe = request.RememberMe
             }, cancellationToken);
 
-            this.SetRefreshTokenCookies(result.RefreshToken);
-
-            return Ok(new AuthenticationResponse
-            {
-                UserId = result.UserId,
-                AccessToken = result.AccessToken,
-                ExpiredAt = result.AccessTokenExpiredAt,
-                DeviceId = result.DeviceId
-            });
+            return this.MapResponse(result, _mapper);
         }
 
         [HttpPost]
@@ -62,15 +60,7 @@ namespace Authentication.API.Controllers
                 UserAgent = userAgent
             }, cancellationToken);
 
-            this.SetRefreshTokenCookies(result.RefreshToken);
-
-            return Ok(new AuthenticationResponse
-            {
-                UserId = result.UserId,
-                AccessToken = result.AccessToken,
-                ExpiredAt = result.AccessTokenExpiredAt,
-                DeviceId = result.DeviceId
-            });
+            return this.MapResponse(result, _mapper);
         }
 
         [HttpPost]
@@ -93,15 +83,21 @@ namespace Authentication.API.Controllers
                 DeviceId = request.DeviceId
             }, cancellationToken);
 
-            this.SetRefreshTokenCookies(result.RefreshToken);
+            return this.MapResponse(result, _mapper);
+        }
 
-            return Ok(new AuthenticationResponse
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+
+            if (result.IsFailure)
             {
-                UserId = result.UserId,
-                AccessToken = result.AccessToken,
-                ExpiredAt = result.AccessTokenExpiredAt,
-                DeviceId = result.DeviceId
-            });
+                this.MapErrors(result.Error);
+            }
+
+            return NoContent();
         }
 
         [HttpDelete]
@@ -118,6 +114,11 @@ namespace Authentication.API.Controllers
             {
                 UserId = userId
             }, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                this.MapErrors(result.Error);
+            }
 
             Response.Cookies.Delete("refresh_token");
 

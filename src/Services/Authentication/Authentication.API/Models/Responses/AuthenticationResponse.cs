@@ -6,5 +6,6 @@
         public required string AccessToken { get; set; }
         public required DateTime ExpiredAt { get; set; }
         public required string DeviceId { get; set; }
+        public bool TwoFactorEnabled { get; set; }
     }
 }

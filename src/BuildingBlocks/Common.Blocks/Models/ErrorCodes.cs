@@ -12,5 +12,7 @@
         public const string Forbidden = "forbidden";
         public const string AlreadyExist = "already.exist";
         public const string Invalid = "invalid";
+        public const string Locked = "locked";
+        public const string NotAllowed = "not.allowed";
     }
 }

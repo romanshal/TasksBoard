@@ -19,7 +19,7 @@ namespace Common.Blocks.Extensions
 
                 try
                 {
-                    logger.LogInformation($"Migrating database associated with context {typeof(TContext).Name}");
+                    logger.LogInformation("Migrating database associated with context {context}", typeof(TContext).Name);
 
                     var retry = Policy.Handle<NpgsqlException>()
                             .WaitAndRetry(
@@ -27,16 +27,16 @@ namespace Common.Blocks.Extensions
                                 sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                                 onRetry: (exception, retryCount, context) =>
                                 {
-                                    logger.LogError($"Retry {retryCount} of {context.PolicyKey} at {context.OperationKey}, due to: {exception}.");
+                                    logger.LogError("Retry {retry} of {policyKey} at {operationKey}, due to: {exception}.", retryCount, context.PolicyKey, context.OperationKey, exception);
                                 });
 
                     retry.Execute(() => InvokeSeeder(seeder, context, services));
 
-                    logger.LogInformation($"Migrated database associated with context {typeof(TContext).Name}");
+                    logger.LogInformation("Migrated database associated with context {context}", typeof(TContext).Name);
                 }
                 catch (NpgsqlException ex)
                 {
-                    logger.LogError(ex, $"An error occurred while migrating the database used on context {typeof(TContext).Name}");
+                    logger.LogError(ex, "An error occurred while migrating the database used on context {context}", typeof(TContext).Name);
                 }
             }
 

@@ -1,7 +1,7 @@
 ﻿using Authentication.API.Extensions;
 using Authentication.Application.Features.Authentications.Commands.ExternalLogin;
 using Authentication.Application.Features.Authentications.Commands.ExternalLoginCallback;
-using Common.Blocks.Models;
+using Common.Blocks.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -64,11 +64,7 @@ namespace Authentication.API.Controllers
 
             if (result.IsFailure)
             {
-                return result.Error.Code switch
-                {
-                    ErrorCodes.AlreadyExist => Conflict(result.Error.Description),
-                    _ => BadRequest(result.Error.Description),
-                };
+                this.MapErrors(result.Error);
             }
 
             var returnParams = new List<KeyValuePair<string, string?>>
@@ -81,7 +77,7 @@ namespace Authentication.API.Controllers
 
             var url = QueryHelpers.AddQueryString(returnUrl, returnParams);
 
-            this.SetRefreshTokenCookies(result.Value.RefreshToken);
+            this.SetRefreshTokenCookies(result.Value.RefreshToken!);
 
             return Redirect(url);
         }

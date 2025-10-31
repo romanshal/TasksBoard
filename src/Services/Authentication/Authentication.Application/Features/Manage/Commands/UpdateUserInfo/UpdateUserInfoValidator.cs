@@ -1,8 +1,7 @@
-﻿using Authentication.Application.Features.Manage.Commands.UpdateUserInfo;
-using Authentication.Domain.Constants.Validations.Messages;
+﻿using Authentication.Domain.Constants.Validations.Messages;
 using FluentValidation;
 
-namespace Authentication.Application.Validators.Manage
+namespace Authentication.Application.Features.Manage.Commands.UpdateUserInfo
 {
     public class UpdateUserInfoValidator : AbstractValidator<UpdateUserInfoCommand>
     {
@@ -10,19 +9,19 @@ namespace Authentication.Application.Validators.Manage
         {
             RuleFor(p => p.Id)
                 .NotEqual(Guid.Empty)
-                .WithMessage(ManageMessages.UserIdRequired);
+                .WithMessage(BaseMessages.UserIdRequired);
 
             RuleFor(p => p.Email)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(ManageMessages.EmailRequired)
+                .WithMessage(BaseMessages.EmailRequired)
                 .EmailAddress()
-                .WithMessage(ManageMessages.EmailInvalid);
+                .WithMessage(BaseMessages.EmailInvalid);
 
             RuleFor(p => p.Username)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(ManageMessages.UserIdRequired);
+                .WithMessage(BaseMessages.UserIdRequired);
         }
     }
 }

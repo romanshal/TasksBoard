@@ -1,5 +1,4 @@
-﻿
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Text.Json;
 
 namespace Common.Blocks.Models.ApiResponses

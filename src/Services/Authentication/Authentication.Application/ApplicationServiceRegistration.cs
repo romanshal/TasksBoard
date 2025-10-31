@@ -1,4 +1,5 @@
-﻿using Common.Blocks.Behaviours;
+﻿using Authentication.Application.Handlers;
+using Common.Blocks.Behaviours;
 using Common.Cache.Behaviours;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,8 @@ namespace Authentication.Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            services.AddScoped<SignInHandler>();
 
             return services;
         }

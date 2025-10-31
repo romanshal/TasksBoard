@@ -1,8 +1,7 @@
-﻿using Authentication.Application.Features.Authentications.Commands.RefreshToken;
-using Authentication.Domain.Constants.Validations.Messages;
+﻿using Authentication.Domain.Constants.Validations.Messages;
 using FluentValidation;
 
-namespace Authentication.Application.Validators.Authentications
+namespace Authentication.Application.Features.Authentications.Commands.RefreshToken
 {
     public class RefreshTokenValidator : AbstractValidator<RefreshTokenCommand>
     {
@@ -10,7 +9,7 @@ namespace Authentication.Application.Validators.Authentications
         {
             RuleFor(p => p.UserId)
                 .NotEqual(Guid.Empty)
-                .WithMessage(AuthenticationMessages.UserIdRequired);
+                .WithMessage(BaseMessages.UserIdRequired);
 
             RuleFor(p => p.RefreshToken)
                 .NotNull()

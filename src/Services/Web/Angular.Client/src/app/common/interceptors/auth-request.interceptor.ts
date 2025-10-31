@@ -5,10 +5,21 @@ import { AuthService } from "../services/auth/auth.service";
 import { Router } from "@angular/router";
 import { AuthSessionService } from "../services/auth-session/auth-session.service";
 
+type IgnoreEntry = string | RegExp;
+
 @Injectable()
 export class AuthRequestInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+
+  private readonly ignoreUrls: IgnoreEntry[] = [
+    '/refresh',
+    '/assets/',
+    '/signin',
+    '/signup',
+    '/forgot-password',
+    /\/external\/v\d+\//
+  ];
 
   constructor(
     private authService: AuthService,
@@ -24,11 +35,9 @@ export class AuthRequestInterceptor implements HttpInterceptor {
       authReq = this.addToken(req, token);
     }
 
-    const isRefreshRequest = req.url.includes('/refresh');
-
     return next.handle(authReq).pipe(
       catchError(error => {
-        if (error instanceof HttpErrorResponse && !isRefreshRequest) {
+        if (error instanceof HttpErrorResponse && this.isIgnored(req.url)) {
           if (error.status === 400) {
             this.router.navigate(['/bad-request']);
           } else if (error.status === 401) {
@@ -54,6 +63,30 @@ export class AuthRequestInterceptor implements HttpInterceptor {
         'X-Requested-With': 'XMLHttpRequest'
       }
     });
+  }
+
+  private isIgnored(url: string): boolean {
+    const path = url.split('?')[0].split('#')[0];
+
+    for (const entry of this.ignoreUrls) {
+      if (typeof entry === 'string') {
+        if (entry.endsWith('/')) {
+          if (path.startsWith(entry)) {
+            return true;
+          }
+        } else {
+          if (path === entry) {
+            return true;
+          }
+        }
+      } else if (entry instanceof RegExp) {
+        if (entry.test(path)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private handle401Error(req: HttpRequest<any>, next: HttpHandler) {

@@ -1,5 +1,4 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.Login;
-using Authentication.Application.Validators.Authentications;
 using FluentAssertions;
 
 namespace Authentication.Tests.Units.Application.Validators.Authentications

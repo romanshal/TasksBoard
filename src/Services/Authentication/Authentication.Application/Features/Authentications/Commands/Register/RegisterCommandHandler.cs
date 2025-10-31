@@ -1,8 +1,10 @@
 ﻿using Authentication.Application.Dtos;
+using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Models;
 using Common.Blocks.Exceptions;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -13,20 +15,19 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ITokenManager tokenService,
-        ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, AuthenticationDto>
+        ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, Result<AuthenticationDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly ITokenManager _tokenService = tokenService;
         private readonly ILogger<RegisterCommandHandler> _logger = logger;
 
-        public async Task<AuthenticationDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AuthenticationDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByNameAsync(request.Username);
             if (user is not null)
             {
-                _logger.LogWarning("User with name {username} is already exist.", request.Username);
-                throw new AlreadyExistException($"User with name {request.Username} is already exist.");
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.AlreadyExist(request.Username));
             }
 
             user = new ApplicationUser
@@ -39,7 +40,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
             if (!createResult.Succeeded)
             {
                 _logger.LogCritical("Can't create new user with username: {username}. Errors: {errors}.", request.Username, string.Join("; ", createResult.Errors));
-                throw new Exception($"Can't create new user with username: {request.Username}. Errors: {string.Join("; ", createResult.Errors)}.");
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.SignupFaulted);
             }
 
             var addRoleResult = await _userManager.AddToRoleAsync(user, "user");
@@ -47,7 +48,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
             if (!addRoleResult.Succeeded)
             {
                 _logger.LogCritical("Can't add role to user: {username}. Errors: {errors}.", request.Username, string.Join("; ", addRoleResult.Errors));
-                throw new Exception($"Can't add role to user: {request.Username}. Errors: {string.Join("; ", addRoleResult.Errors)}.");
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.SignupFaulted);
             }
 
             await _signInManager.SignInAsync(user, false, "Password");
@@ -60,7 +61,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Register
             if (tokens is null || string.IsNullOrEmpty(tokens?.AccessToken) || string.IsNullOrEmpty(tokens?.RefreshToken))
             {
                 _logger.LogCritical("Can't create access or refresh tokens for user {id}.", user.Id);
-                throw new InvalidOperationException("Can't create access or refresh tokens.");
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.SignupFaulted);
             }
 
             return new AuthenticationDto

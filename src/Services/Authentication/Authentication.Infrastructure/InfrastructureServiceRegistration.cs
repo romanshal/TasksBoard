@@ -7,6 +7,7 @@ using Authentication.Infrastructure.Data.Contexts;
 using Authentication.Infrastructure.Factories;
 using Authentication.Infrastructure.Repositories;
 using Authentication.Infrastructure.Security.JWT;
+using Authentication.Infrastructure.Security.TwoFactor;
 using Authentication.Infrastructure.UnitOfWorks;
 using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
@@ -63,6 +64,8 @@ namespace Authentication.Infrastructure
             services.AddScoped<IUserClaimsService, UserClaimsService>();
 
             services.AddSingleton<IDeviceFactory, DeviceFactory>();
+
+            services.AddScoped<ITwoFactorCodeSender, TwoFactorCodeSender>();
 
             services
                 .AddHealthChecks()

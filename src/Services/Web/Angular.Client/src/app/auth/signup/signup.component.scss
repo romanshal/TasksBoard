@@ -1,8 +1,24 @@
+//color
 $primary-color: #1D63ED;
-$secondary-color: #8e44ad;
-$text-color: #333;
+$secondary-color: #31363e;
+
+//text color
+$primary-text-color: #31363e;
+$primary-text-color-shadow: lighten($primary-text-color, 40%);
+$secondary-text-color: #ffffff;
+
 $form-background: #ffffff;
+
 $border-radius: 8px;
+
+$font-size: 16px;
+$font-size-small: 12px;
+
+$font-weight: 600;
+
+$box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+
+$margin-indent: 20px;
 
 // Общие стили
 .auth-container {
@@ -12,25 +28,99 @@ $border-radius: 8px;
   align-items: center;
   min-height: 89vh;
 
+
+  .link-span {
+    color: $primary-text-color !important;
+    text-decoration: none;
+    font-size: $font-size;
+    font-weight: $font-weight;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+
+    &:active {
+      opacity: 0.85;
+    }
+  }
+
   .auth-section {
     background-color: $form-background;
-    padding: 30px;
+    padding: 0 25px 25px;
     border-radius: $border-radius;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 300px;
+    max-width: 310px;
     border: 1px solid #c9cace;
-    margin-bottom: 30px;
+    margin-bottom: $margin-indent;
 
     header {
+      margin: $margin-indent 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      gap: $margin-indent;
+
+      i {
+        padding-top: $margin-indent;
+      }
+
       h2 {
         text-align: center;
-        margin-bottom: 20px;
-        color: $text-color;
+        color: $primary-text-color;
+      }
+
+      .back-arrow {
+        text-align: left !important;
+        cursor: pointer;
       }
     }
 
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: $margin-indent;
+      font-size: $font-size;
+      color: #fff;
+      background-color: $primary-color;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &.loading-button {
+        background-color: #f0f0f0;
+        color: black;
+        cursor: default;
+      }
+    }
+
+    span {
+      font-size: $font-size;
+      color: $primary-text-color-shadow;
+    }
+
+    .auth-title {
+      font-size: $font-size;
+      color: $primary-text-color-shadow;
+      text-align: center;
+      margin-bottom: $margin-indent;
+    }
+
     .auth-form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
 
       .auth-error {
         display: flex;
@@ -55,36 +145,41 @@ $border-radius: 8px;
 
       .form-group {
         position: relative;
-        margin-bottom: 15px;
 
         input {
           width: 100%;
           padding: 15px;
-          font-size: 16px;
-          border: 1px solid lighten($text-color, 40%);
+          font-size: $font-size;
+          color: $primary-text-color;
+          border: 1px solid $primary-text-color-shadow;
           border-radius: 4px;
           box-sizing: border-box;
           outline: none;
 
+          &:hover {
+            box-shadow: $box-shadow
+          }
+
           &:focus {
+            color: $primary-text-color;
             border-color: $primary-color;
             outline: none;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+            box-shadow: $box-shadow
           }
 
           &:focus~.input-label,
           &:focus:valid~.input-label {
             top: -10px;
             left: 10px;
-            font-size: 16px;
+            font-size: $font-size;
             color: $primary-color;
           }
 
           &:not(:focus):valid~.input-label {
             top: -10px;
             left: 10px;
-            font-size: 16px;
-            color: $text-color;
+            font-size: $font-size;
+            color: $primary-text-color;
           }
 
           &.invalid {
@@ -101,8 +196,8 @@ $border-radius: 8px;
           transition: all 0.3s ease;
           background-color: $form-background;
           padding: 0 5px;
-          font-size: 16px;
-          color: #999;
+          font-size: $font-size;
+          color: $primary-text-color;
           pointer-events: none;
         }
 
@@ -114,44 +209,28 @@ $border-radius: 8px;
           color: #dc3545;
         }
       }
-
-      button {
-        width: 100%;
-        padding: 15px;
-        font-size: 16px;
-        color: #fff;
-        background-color: $primary-color;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-          background-color: darken($primary-color, 10%);
-        }
-
-        &.loading-button {
-          background-color: #f0f0f0;
-          color: black;
-          cursor: default;
-        }
-      }
-      
     }
 
     // Адаптивные стили
     @media screen and (max-width: 768px) {
-      .auth-form {
-        padding: 20px;
-        width: 90%;
-      }
+      // .auth-form {
+      //   padding: 20px;
+      //   width: 90%;
+      // }
 
       h2 {
         font-size: 18px;
       }
     }
 
+    @media (max-width: 360px) {
+      .link-span {
+        align-self: flex-end;
+      }
+    }
+
     .br {
+      color: $primary-text-color-shadow;
       width: 100%;
       display: flex;
       flex-direction: row;
@@ -160,11 +239,10 @@ $border-radius: 8px;
       font-size: 12px;
       font-weight: 500;
       margin: 0;
-      padding: 24px 0 0 0;
 
       span {
         text-transform: uppercase;
-        font-size: 12px;
+        font-size: $font-size-small;
         font-weight: 500;
         display: contents;
 
@@ -175,7 +253,7 @@ $border-radius: 8px;
           height: .5em;
           margin-right: 6px;
         }
-  
+
         &::after {
           content: "";
           border-bottom: 1px solid #c9cace;
@@ -187,15 +265,17 @@ $border-radius: 8px;
     }
 
     .auth-externals {
+      display: flex;
       margin-top: 15px;
+      gap: 15px;
 
       button {
         display: flex;
         width: 100%;
         padding: 15px;
         margin: 10px 0px;
-        font-size: 16px;
-        color: $text-color;
+        font-size: $font-size;
+        color: $primary-text-color;
         background-color: #ffffff;
         border: 1px solid #c9cace;
         border-radius: 4px;
@@ -203,7 +283,8 @@ $border-radius: 8px;
         transition: background-color 0.3s ease;
 
         &:hover {
-          background-color: lightgray;
+          // background-color: $primary-text-color-shadow;
+          box-shadow: $box-shadow
         }
 
         .google-logo {
@@ -218,6 +299,8 @@ $border-radius: 8px;
 
         .google-description {
           margin-left: 35px;
+          color: $primary-text-color;
+          font-weight: $font-weight;
         }
 
         .facebook-logo {
@@ -232,6 +315,8 @@ $border-radius: 8px;
 
         .facebook-description {
           margin-left: 35px;
+          color: $primary-text-color;
+          font-weight: $font-weight;
         }
       }
     }
@@ -250,12 +335,12 @@ $border-radius: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 18px;
-      color: #333;
+      font-size: $font-size;
+      color: $primary-text-color-shadow;
 
       a {
-        font-weight: 700 !important;
-        font-size: 18px;
+        font-weight: $font-weight;
+        font-size: $font-size;
         text-decoration: underline;
       }
     }

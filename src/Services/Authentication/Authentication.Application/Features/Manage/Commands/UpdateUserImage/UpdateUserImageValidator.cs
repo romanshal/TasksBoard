@@ -1,8 +1,7 @@
-﻿using Authentication.Application.Features.Manage.Commands.UpdateUserImage;
-using Authentication.Domain.Constants.Validations.Messages;
+﻿using Authentication.Domain.Constants.Validations.Messages;
 using FluentValidation;
 
-namespace Authentication.Application.Validators.Manage
+namespace Authentication.Application.Features.Manage.Commands.UpdateUserImage
 {
     public class UpdateUserImageValidator : AbstractValidator<UpdateUserImageCommand>
     {
@@ -10,7 +9,7 @@ namespace Authentication.Application.Validators.Manage
         {
             RuleFor(p => p.Id)
                 .NotEqual(Guid.Empty)
-                .WithMessage(ManageMessages.UserIdRequired);
+                .WithMessage(BaseMessages.UserIdRequired);
 
             RuleFor(p => p.Image)
                 .NotNull()

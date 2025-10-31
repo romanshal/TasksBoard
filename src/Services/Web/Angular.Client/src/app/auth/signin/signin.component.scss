@@ -1,1 +1,56 @@
 @import '../signup/signup.component.scss';
+
+.double-vale {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    .remember {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        color: #222;
+        font-size: 14px;
+        line-height: 1;
+
+        &__checkbox {
+            width: 18px !important;
+            height: 18px;
+            margin: 0;
+            accent-color: $primary-color;
+        }
+
+        &__text {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    .link-span {
+        color: $primary-text-color !important;
+        text-decoration: none;
+        font-size: $font-size;
+        font-weight: $font-weight;
+        white-space: nowrap;
+        cursor: pointer;
+        outline: none;
+
+        &:hover,
+        &:focus {
+            text-decoration: underline;
+        }
+
+        &:active {
+            opacity: 0.85;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .remember {
+            justify-content: flex-start;
+        }
+    }
+}

@@ -1,74 +1,76 @@
 ﻿using Authentication.Application.Dtos;
+using Authentication.Application.Handlers;
+using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Secutiry;
-using Authentication.Domain.Models;
-using Common.Blocks.Exceptions;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentications.Commands.Login
 {
-    public class LoginCommandHandler(
+    internal class LoginCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ITokenManager tokenService,
-        ILogger<LoginCommandHandler> logger) : IRequestHandler<LoginCommand, AuthenticationDto>
+        SignInHandler signInHandler,
+        ILogger<LoginCommandHandler> logger) : IRequestHandler<LoginCommand, Result<AuthenticationDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly ITokenManager _tokenService = tokenService;
+        private readonly SignInHandler _signInHandler = signInHandler;
         private readonly ILogger<LoginCommandHandler> _logger = logger;
 
-        public async Task<AuthenticationDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AuthenticationDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByNameAsync(request.Username);
+            ApplicationUser? user;
+            if (request.UsernameOrEmail.Contains('@'))
+                user = await _userManager.FindByEmailAsync(request.UsernameOrEmail);
+            else
+                user = await _userManager.FindByNameAsync(request.UsernameOrEmail);
+
             if (user is null)
             {
-                _logger.LogWarning("User with name {username} not found.", request.Username);
-                throw new UnauthorizedException($"User with name {request.Username} not found.");
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.UserNotFound(request.UsernameOrEmail));
+            }
+            //else if (!user.EmailConfirmed)
+            //{
+            //    return Result.Failure<AuthenticationDto>(AuthenticationErrors.EmailNotConfirmed);
+            //}
+            else if (await _userManager.IsLockedOutAsync(user))
+            {
+                _logger.LogWarning("Signin is locked for user: {username}.", request.UsernameOrEmail);
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.Locked);
+            }
+            else if (user.TwoFactorEnabled)
+            {
+                return new AuthenticationDto
+                {
+                    TwoFactorEnabled = true,
+                    AccessToken = null,
+                    AccessTokenExpiredAt = null,
+                    RefreshToken = null,
+                    RefreshTokenExpiredAt = null,
+                    UserId = user.Id,
+                    DeviceId = null
+                };
             }
 
-            var signInResult = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
+            var signInResult = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, false, false);
             if (!signInResult.Succeeded)
             {
-                if (signInResult.IsLockedOut)
+                if (signInResult.IsNotAllowed)
                 {
-                    _logger.LogWarning("Signin is locked for user: {username}.", request.Username);
-                    throw new LockedException($"Your account is temporarily locked. Please contact support for assistance.");
-                }
-                else if (signInResult.IsNotAllowed)
-                {
-                    _logger.LogWarning("Signin is not allowed for user {username}.", request.Username);
-                    throw new NotAllowedException($"Signin is not allowed for user {request.Username}."); //TODO: change this later
+                    _logger.LogWarning("Signin is not allowed for user {username}.", user.UserName);
+                    return Result.Failure<AuthenticationDto>(AuthenticationErrors.NotAllowed);
                 }
 
-                _logger.LogWarning("Signin faulted for user: {username}.", request.Username);
-                throw new SigninFaultedException($"The username or password you entered is incorrect. Please try again.");
+                _logger.LogWarning("Signin faulted for user: {username}.", user.UserName);
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.Invalid);
             }
 
             //await _signInManager.SignInAsync(user, false, "Password");
 
-            var generateModel = new GenerateTokensModel(user, request.UserAgent, request.UserIp);
-
-            var (tokens, deviceId) = await _tokenService.IssueAsync(generateModel, cancellationToken);
-            if (tokens is null || string.IsNullOrEmpty(tokens?.AccessToken) || string.IsNullOrEmpty(tokens?.RefreshToken))
-            {
-                _logger.LogCritical("Can't create access or refresh tokens for user with id '{id}'.", user.Id);
-                throw new InvalidOperationException("Can't create access or refresh tokens.");
-            }
-
-            _logger.LogInformation("Success signin for user: {username}.", request.Username);
-
-            return new AuthenticationDto
-            {
-                AccessToken = tokens.AccessToken,
-                AccessTokenExpiredAt = tokens.AccessTokenExpiredAt,
-                RefreshToken = tokens.RefreshToken,
-                RefreshTokenExpiredAt = tokens.RefreshTokenExpiredAt,
-                UserId = user.Id,
-                DeviceId = deviceId
-            };
+            return await _signInHandler.HandleAsync(user, request.UserAgent, request.UserIp, cancellationToken);
         }
     }
 }

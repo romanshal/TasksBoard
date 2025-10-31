@@ -9,7 +9,7 @@ namespace Authentication.Domain.Interfaces.Secutiry
             GenerateTokensModel model,
             CancellationToken cancellationToken = default);
 
-        Task<(TokenPairModel tokens, string deviceId)> RotateAsync(
+        Task<TokenPairModel> RotateAsync(
             GenerateTokensModel model,
             string oldRefreshToken,
             string deviceId,

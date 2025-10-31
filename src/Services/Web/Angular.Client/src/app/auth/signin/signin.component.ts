@@ -33,8 +33,9 @@ export class SigninComponent implements OnInit {
     private router: Router
   ) {
     this.signinForm = this.fb.group({
-      username: [''],
-      password: ['']
+      usernameOrEmail: [''],
+      password: [''],
+      rememberMe: [false]
     });
   }
 
@@ -47,6 +48,7 @@ export class SigninComponent implements OnInit {
     this.isLoading = true;
 
     if (this.signinForm.invalid) {
+      this.isLoading = false;
       return;
     }
 
@@ -73,6 +75,14 @@ export class SigninComponent implements OnInit {
         this.errorMessage = error.description;
       }
     });
+  }
+
+  onForgotPassword() {
+    this.router.navigate(['/forgot-password']);
+  }
+
+  onSignup(){
+    this.router.navigate(['/signup']);
   }
 
   externalSignin(provider: string) {

@@ -1,8 +1,7 @@
 ﻿using Authentication.Application.Dtos;
+using Authentication.Application.Handlers;
 using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Secutiry;
-using Authentication.Domain.Models;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -11,15 +10,15 @@ using System.Security.Claims;
 
 namespace Authentication.Application.Features.Authentications.Commands.ExternalLoginCallback
 {
-    public class ExternalLoginCallbackCommandHandler(
+    internal class ExternalLoginCallbackCommandHandler(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        ITokenManager tokenService,
+        SignInHandler signInHandler,
         ILogger<ExternalLoginCallbackCommandHandler> logger) : IRequestHandler<ExternalLoginCallbackCommand, Result<AuthenticationDto>>
     {
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly ITokenManager _tokenService = tokenService;
+        private readonly SignInHandler _signInHandler = signInHandler;
         private readonly ILogger<ExternalLoginCallbackCommandHandler> _logger = logger;
 
         public async Task<Result<AuthenticationDto>> Handle(ExternalLoginCallbackCommand request, CancellationToken cancellationToken)
@@ -111,26 +110,7 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
                 }
             }
 
-            var generateModel = new GenerateTokensModel(user, request.UserAgent, request.UserIp);
-
-            var (tokens, devoceId) = await _tokenService.IssueAsync(generateModel, cancellationToken);
-            if (tokens is null || string.IsNullOrEmpty(tokens?.AccessToken) || string.IsNullOrEmpty(tokens?.RefreshToken))
-            {
-                _logger.LogCritical("Can't create access or refresh tokens for user with id '{id}'.", user.Id);
-                return Result.Failure<AuthenticationDto>(ExternalAuthenticationErrors.CantCreate);
-            }
-
-            _logger.LogInformation("Success external signin for user: {username}.", user.UserName);
-
-            return new AuthenticationDto
-            {
-                AccessToken = tokens.AccessToken,
-                AccessTokenExpiredAt = tokens.AccessTokenExpiredAt,
-                RefreshToken = tokens.RefreshToken,
-                RefreshTokenExpiredAt = tokens.RefreshTokenExpiredAt,
-                UserId = user.Id,
-                DeviceId = devoceId
-            };
+            return await _signInHandler.HandleAsync(user, request.UserAgent, request.UserIp, cancellationToken);
         }
     }
 }

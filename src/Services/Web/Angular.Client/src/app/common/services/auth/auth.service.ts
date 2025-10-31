@@ -9,6 +9,7 @@ import { SignupRequestModel } from '../../models/auth/auth.signup.model';
 import { Response } from '../../models/response/response.model';
 import { AuthSessionService } from '../auth-session/auth-session.service';
 import { AuthEventService } from '../auth-event/auth-event.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class AuthService {
     private http: HttpClient,
     private sessionStorageService: SessionStorageService,
     private authSessionService: AuthSessionService,
-    private authEventService: AuthEventService
+    private authEventService: AuthEventService,
+    private router: Router
   ) {
     this.authEventService.onRefreshToken().subscribe(() => {
       this.refresh().subscribe();
@@ -34,10 +36,14 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials, { withCredentials: true })
       .pipe(
         map((response: any) => {
-          this.authSessionService.setAccessToken(response.accessToken);
-          this.authSessionService.setDeviceId(response.deviceId);
+          if (response.result.twoFactorEnabled) {
+            this.router.navigate(['/two-factor']);
+          }
 
-          return new TokenResponseModel(response.userId);
+          this.authSessionService.setAccessToken(response.result.accessToken);
+          this.authSessionService.setDeviceId(response.result.deviceId);
+
+          return new TokenResponseModel(response.result.userId);
         }),
         catchError((error) => {
           // Handle the error here
@@ -72,10 +78,10 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, credentials)
       .pipe(
         map((response: any) => {
-          this.authSessionService.setAccessToken(response.accessToken);
-          this.authSessionService.setDeviceId(response.deviceId);
+          this.authSessionService.setAccessToken(response.result.accessToken);
+          this.authSessionService.setDeviceId(response.result.deviceId);
 
-          return new TokenResponseModel(response.userId);
+          return new TokenResponseModel(response.result.userId);
         }),
         catchError((error) => {
           // Handle the error here
@@ -98,10 +104,25 @@ export class AuthService {
     return this.http.post<TokenResponseModel>(this.baseUrl + url, body, { withCredentials: true })
       .pipe(
         tap((response: any) => {
-          this.authSessionService.setAccessToken(response.accessToken);
+          this.authSessionService.setAccessToken(response.result.accessToken);
         }),
         catchError((error: HttpErrorResponse) => {
           console.log('refresh error');
+          return throwError(() => error.error);
+        })
+      );
+  }
+
+  forgotPassowrd(form: any) {
+    const url = '/forgot-password';
+
+    return this.http.post(this.baseUrl + url, form)
+      .pipe(
+        tap((response: any) => {
+
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.log('forgot-password error');
           return throwError(() => error.error);
         })
       );

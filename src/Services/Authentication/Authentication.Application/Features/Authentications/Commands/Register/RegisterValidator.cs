@@ -1,8 +1,7 @@
-﻿using Authentication.Application.Features.Authentications.Commands.Register;
-using Authentication.Domain.Constants.Validations.Messages;
+﻿using Authentication.Domain.Constants.Validations.Messages;
 using FluentValidation;
 
-namespace Authentication.Application.Validators.Authentications
+namespace Authentication.Application.Features.Authentications.Commands.Register
 {
     public class RegisterValidator : AbstractValidator<RegisterCommand>
     {
@@ -11,7 +10,7 @@ namespace Authentication.Application.Validators.Authentications
             RuleFor(p => p.Username)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(AuthenticationMessages.UsernameRequired);
+                .WithMessage(BaseMessages.UsernameRequired);
 
             RuleFor(p => p.Password)
                 .NotNull()
@@ -23,9 +22,9 @@ namespace Authentication.Application.Validators.Authentications
             RuleFor(p => p.Email)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage(AuthenticationMessages.EmailRequired)
+                .WithMessage(BaseMessages.EmailRequired)
                 .EmailAddress()
-                .WithMessage(AuthenticationMessages.EmailInvalid);
+                .WithMessage(BaseMessages.EmailInvalid);
         }
     }
 }

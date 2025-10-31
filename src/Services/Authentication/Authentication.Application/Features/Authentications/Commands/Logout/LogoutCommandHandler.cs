@@ -1,6 +1,7 @@
-﻿using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Constants.AuthenticationErrors;
+using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Secutiry;
-using Common.Blocks.Exceptions;
+using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -11,20 +12,19 @@ namespace Authentication.Application.Features.Authentications.Commands.Logout
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ITokenManager tokenService,
-        ILogger<LogoutCommandHandler> logger) : IRequestHandler<LogoutCommand, Unit>
+        ILogger<LogoutCommandHandler> logger) : IRequestHandler<LogoutCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly ITokenManager _tokenService = tokenService;
         private readonly ILogger<LogoutCommandHandler> _logger = logger;
 
-        public async Task<Unit> Handle(LogoutCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
-                _logger.LogWarning("User with id '{userId}' not found.", request.UserId);
-                throw new UnauthorizedException($"User with id '{request.UserId}' not found.");
+                return Result.Failure(AuthenticationErrors.UserNotFound());
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
@@ -33,7 +33,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Logout
 
             await _signInManager.SignOutAsync();
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

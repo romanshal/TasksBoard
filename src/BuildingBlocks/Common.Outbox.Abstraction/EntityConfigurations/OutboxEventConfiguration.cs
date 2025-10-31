@@ -3,7 +3,7 @@ using Common.Outbox.Abstraction.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Common.Outbox.EntityConfigurations
+namespace Common.Outbox.Abstraction.EntityConfigurations
 {
     public class OutboxEventConfiguration : IEntityTypeConfiguration<OutboxEvent>
     {

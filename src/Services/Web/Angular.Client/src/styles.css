@@ -1,13 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
-body, html {
+:root {
+  --app-font-family: 'Times New Roman', Times, Georgia, serif;
+}
+
+/* базовая настройка */
+html,
+body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: var(--app-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* body,
+html {
+  margin: 0;
+  padding: 0;
+} */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0; /* Цвет заднего фона */
+  background-color: #f0f0f0;
+  /* Цвет заднего фона */
   min-height: 100vh;
 }
-

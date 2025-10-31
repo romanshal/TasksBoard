@@ -1,8 +1,11 @@
 <div class="auth-container">
   <div class="auth-section">
     <header>
-      <h2>Sign up</h2>
+      <h2>Create Your ClickingUp Account</h2>
     </header>
+
+    <p class="auth-title">Sign up to access comprehensive tasks features.</p>
+
     <form class="auth-form" (ngSubmit)="onSubmit()" [formGroup]="signupForm">
       <div class="auth-error" *ngIf="showErrors">
         <span class="error-logo"></span>
@@ -16,7 +19,8 @@
         <label class="input-label">Username*</label>
         <div *ngIf="formSubmitted && signupForm.controls['username'].errors" class="invalid-feedback">
           <div *ngIf="signupForm.controls['username'].errors?.['required']">Username is required</div>
-          <div *ngIf="signupForm.controls['username'].errors?.['minlength']">Username is must be at least 3 characters long</div>
+          <div *ngIf="signupForm.controls['username'].errors?.['minlength']">Username is must be at least 3 characters
+            long</div>
           <div *ngIf="signupForm.controls['username'].errors?.['maxlength']">Username cannot exceed 20 characters</div>
         </div>
       </div>
@@ -37,7 +41,8 @@
         <label class="input-label">Password*</label>
         <div *ngIf="formSubmitted && signupForm.controls['password'].errors" class="invalid-feedback">
           <div *ngIf="signupForm.controls['password'].errors?.['required']">Password is required</div>
-          <div *ngIf="signupForm.controls['password'].errors?.['minlength']">Password is must be at least 8 characters long</div>
+          <div *ngIf="signupForm.controls['password'].errors?.['minlength']">Password is must be at least 8 characters
+            long</div>
         </div>
       </div>
       <button *ngIf="!isLoading" type="submit">Continue</button>
@@ -48,25 +53,25 @@
     </form>
 
     <div class="br">
-      <span>OR</span>
+      <span>OR CONTINUE WITH</span>
     </div>
 
     <div class="auth-externals">
       <button>
         <span class="google-logo"></span>
-        <span class="google-description"> Continue with Google</span>
+        <span class="google-description">Google</span>
       </button>
       <button>
         <span class="facebook-logo"></span>
-        <span class="facebook-description"> Continue with Facebook</span>
+        <span class="facebook-description">Facebook</span>
       </button>
     </div>
   </div>
 
   <div class="alternative-section">
-    <nav class="alternative-card">
+    <span class="alternative-card">
       Already have an account?&nbsp;
-      <a href="/signin">Sign in</a>
-    </nav>
+      <span class="link-span" role="link" (click)="onSignin()">Sign In</span>
+    </span>
   </div>
 </div>

@@ -1,8 +1,12 @@
 <div class="auth-container">
   <div class="auth-section">
     <header>
-      <h2>Sign in</h2>
+      <!-- <i class="fa-solid fa-computer-mouse fa-2xl" style="color: #f48024;"></i> -->
+      <h2>Welcome Back to ClickingUp</h2>
     </header>
+
+    <p class="auth-title">Enter your username and password to continue.</p>
+
     <form class="auth-form" (ngSubmit)="onSubmit()" [formGroup]="signinForm">
       <div class="auth-error" *ngIf="showErrors">
         <span class="error-logo"></span>
@@ -11,11 +15,12 @@
       </div>
 
       <div class="form-group">
-        <input formControlName="username" type="username"
-          [ngClass]="{ 'invalid': formSubmitted && signinForm.controls['username'].errors }" required />
+        <input formControlName="usernameOrEmail" type="username"
+          [ngClass]="{ 'invalid': formSubmitted && signinForm.controls['usernameOrEmail'].errors }" required />
         <label class="input-label">Username or email address*</label>
-        <div *ngIf="formSubmitted && signinForm.controls['username'].errors" class="invalid-feedback">
-          <div *ngIf="signinForm.controls['username'].errors?.['required']">Username or email address is required</div>
+        <div *ngIf="formSubmitted && signinForm.controls['usernameOrEmail'].errors" class="invalid-feedback">
+          <div *ngIf="signinForm.controls['usernameOrEmail'].errors?.['required']">Username or email address is required
+          </div>
         </div>
       </div>
       <div class="form-group">
@@ -26,6 +31,14 @@
           <div *ngIf="signinForm.controls['password'].errors?.['required']">Password is required</div>
         </div>
       </div>
+      <div class="form-group double-vale">
+        <label class="remember" [attr.for]="'remember-me'">
+          <input id="remember-me" type="checkbox" formControlName="rememberMe" class="remember__checkbox" />
+          <span>Remember me</span>
+        </label>
+
+        <span class="link-span" role="link" (click)="onForgotPassword()">Forgot password</span>
+      </div>
       <button *ngIf="!isLoading" type="submit">Continue</button>
       <button class="loading-button" *ngIf="isLoading" disabled>
         <i class="fa-solid fa-spinner"></i>
@@ -34,25 +47,25 @@
     </form>
 
     <div class="br">
-      <span>OR</span>
+      <span>OR CONTINUE WITH</span>
     </div>
 
     <div class="auth-externals">
       <button (click)="externalSignin('google')">
         <span class="google-logo"></span>
-        <span class="google-description"> Continue with Google</span>
+        <span class="google-description">Google</span>
       </button>
       <button>
         <span class="facebook-logo"></span>
-        <span class="facebook-description"> Continue with Facebook</span>
+        <span class="facebook-description">Facebook</span>
       </button>
     </div>
   </div>
 
   <div class="alternative-section">
-    <nav class="alternative-card">
+    <span class="alternative-card">
       Don't have an account?&nbsp;
-      <a href="/signup">Sign up</a>
-    </nav>
+      <span class="link-span" role="link" (click)="onSignup()">Sign Up</span>
+    </span>
   </div>
 </div>

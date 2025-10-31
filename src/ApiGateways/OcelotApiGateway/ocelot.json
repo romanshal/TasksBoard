@@ -49,6 +49,18 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/forgot-password",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/authentication/forgot-password",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authentication.api",
+          "Port": 80
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/logout",
       "UpstreamHttpMethod": [ "DELETE" ],
       "DownstreamPathTemplate": "/api/authentication/logout",

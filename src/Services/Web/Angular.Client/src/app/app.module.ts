@@ -44,6 +44,9 @@ import { NotificationComponent } from './notification/notification.component';
 import { PaginatorNewComponent } from './common/paginator-new/paginator-new.component';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { ExternalCallbackComponent } from './auth/external-callback/external-callback.component';
+import { TwoFactorComponent } from './auth/two-factor/two-factor.component';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +81,10 @@ import { ExternalCallbackComponent } from './auth/external-callback/external-cal
     NotificationMenuModal,
     NotificationComponent,
     PaginatorNewComponent,
-    ExternalCallbackComponent
+    ExternalCallbackComponent,
+    TwoFactorComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
