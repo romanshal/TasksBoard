@@ -43,6 +43,40 @@ namespace Common.Blocks.Extensions
             return host;
         }
 
+        public static IHost MigrateDatabase<TContext>(this IHost host) where TContext : DbContext
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var logger = services.GetRequiredService<ILogger<TContext>>();
+                var context = services.GetService<TContext>()!;
+
+                try
+                {
+                    logger.LogInformation("Migrating database associated with context {context}", typeof(TContext).Name);
+
+                    var retry = Policy.Handle<NpgsqlException>()
+                            .WaitAndRetry(
+                                retryCount: 5,
+                                sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                                onRetry: (exception, retryCount, context) =>
+                                {
+                                    logger.LogError("Retry {retry} of {policyKey} at {operationKey}, due to: {exception}.", retryCount, context.PolicyKey, context.OperationKey, exception);
+                                });
+
+                    retry.Execute(context.Database.Migrate);
+
+                    logger.LogInformation("Migrated database associated with context {context}", typeof(TContext).Name);
+                }
+                catch (NpgsqlException ex)
+                {
+                    logger.LogError(ex, "An error occurred while migrating the database used on context {context}", typeof(TContext).Name);
+                }
+            }
+
+            return host;
+        }
+
         private static void InvokeSeeder<TContext>(Action<TContext, IServiceProvider> seeder, TContext context, IServiceProvider services)
             where TContext : DbContext
         {

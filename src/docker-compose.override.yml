@@ -32,7 +32,7 @@ services:
     ports:
         - "5432:5432"
     volumes:
-      - postgres_authentication:/var/lib/postgresql/data/
+      - postgres_authentication:/var/lib/postgresql
 
   tasksboarddb:
     container_name: tasksboarddb
@@ -43,7 +43,7 @@ services:
     ports:
         - "5433:5432"
     volumes:
-      - postgres_tasksboard:/var/lib/postgresql/data/
+      - postgres_tasksboard:/var/lib/postgresql
 
   chatdb:
     container_name: chatdb
@@ -54,7 +54,7 @@ services:
     ports:
         - "5434:5432"
     volumes:
-      - postgres_chat:/var/lib/postgresql/data/
+      - postgres_chat:/var/lib/postgresql
  
   notificationdb:
     container_name: notificationdb
@@ -65,7 +65,18 @@ services:
     ports:
         - "5435:5432"
     volumes:
-      - postgres_notification:/var/lib/postgresql/data/
+      - postgres_notification:/var/lib/postgresql
+
+  emailservicedb:
+    container_name: emailservicedb
+    environment:
+      <<: *db-env
+      POSTGRES_DB: tasks-board-email-db
+    restart: always
+    ports:
+        - "5436:5432"
+    volumes:
+      - postgres_email:/var/lib/postgresql
 
   pgadmin:
     container_name: pgadmin
@@ -318,6 +329,21 @@ services:
     ports:
       - "8005:80"
       - "9005:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  emailservice.api:
+    container_name: emailservice.api
+    environment:
+      <<: *default-env
+      "ConnectionStrings:EmailDbConnection": "Server=emailservicedb;Port=5432;Database=tasks-board-email-db;User Id=postgres;Password=postgres;"
+    depends_on:
+      - rabbitmq
+      - emailservicedb
+    ports:
+      - "8006:80"
+      - "9006:443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

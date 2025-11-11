@@ -18,24 +18,24 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
         private readonly Mock<ILogger<LoginCommandHandler>> logger;
         private readonly LoginCommandHandler sut;
 
-        public LoginCommandHandlerShould()
-        {
-            userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+        //public LoginCommandHandlerShould()
+        //{
+        //    userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
-            signinManager = new Mock<SignInManager<ApplicationUser>>(
-                userManager.Object,
-                Mock.Of<IHttpContextAccessor>(),
-                Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(),
-                Mock.Of<IOptions<IdentityOptions>>(),
-                Mock.Of<ILogger<SignInManager<ApplicationUser>>>(),
-                Mock.Of<IAuthenticationSchemeProvider>(),
-                Mock.Of<IUserConfirmation<ApplicationUser>>());
+        //    signinManager = new Mock<SignInManager<ApplicationUser>>(
+        //        userManager.Object,
+        //        Mock.Of<IHttpContextAccessor>(),
+        //        Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(),
+        //        Mock.Of<IOptions<IdentityOptions>>(),
+        //        Mock.Of<ILogger<SignInManager<ApplicationUser>>>(),
+        //        Mock.Of<IAuthenticationSchemeProvider>(),
+        //        Mock.Of<IUserConfirmation<ApplicationUser>>());
 
-            tokenService = new Mock<ITokenManager>();
+        //    tokenService = new Mock<ITokenManager>();
 
-            logger = new Mock<ILogger<LoginCommandHandler>>();
+        //    logger = new Mock<ILogger<LoginCommandHandler>>();
 
-            sut = new LoginCommandHandler(userManager.Object, signinManager.Object, tokenService.Object, logger.Object);
-        }
+        //    sut = new LoginCommandHandler(userManager.Object, signinManager.Object, tokenService.Object, logger.Object);
+        //}
     }
 }

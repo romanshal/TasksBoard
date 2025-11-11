@@ -13,7 +13,7 @@ namespace Authentication.Application.Handlers
     /// </summary>
     /// <param name="tokenManager">Token manager.</param>
     /// <param name="logger">Logger.</param>
-    internal sealed class SignInHandler(
+    public sealed class SignInHandler(
         ITokenManager tokenManager,
         ILogger<SignInHandler> logger)
     {

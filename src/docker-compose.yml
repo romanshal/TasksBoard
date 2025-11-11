@@ -13,6 +13,9 @@ services:
   notificationdb:
     image: postgres
 
+  emailservicedb:
+    image: postgres
+
   pgadmin:
     image: dpage/pgadmin4
 
@@ -76,11 +79,18 @@ services:
       context: .
       dockerfile: ApiGateways/OcelotApiGateway/Dockerfile
 
+  emailservice.api:
+    image: ${DOCKER_REGISTRY-}emailserviceapi
+    build:
+      context: .
+      dockerfile: Services/Email/EmailService.Api/Dockerfile
+
 volumes:
   postgres_authentication:
   postgres_tasksboard:
   postgres_chat:
   postgres_notification:
+  postgres_email:
   pgadmin:
   opensearch-data1:
   opensearch-data2:

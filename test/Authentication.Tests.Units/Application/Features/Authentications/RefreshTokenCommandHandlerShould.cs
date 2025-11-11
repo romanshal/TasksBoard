@@ -14,15 +14,15 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
         private readonly Mock<ILogger<RefreshTokenCommandHandler>> logger;
         private readonly RefreshTokenCommandHandler sut;
 
-        public RefreshTokenCommandHandlerShould()
-        {
-            userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+        //public RefreshTokenCommandHandlerShould()
+        //{
+        //    userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
-            tokenService = new Mock<ITokenManager>();
+        //    tokenService = new Mock<ITokenManager>();
 
-            logger = new Mock<ILogger<RefreshTokenCommandHandler>>();
+        //    logger = new Mock<ILogger<RefreshTokenCommandHandler>>();
 
-            sut = new RefreshTokenCommandHandler(userManager.Object, tokenService.Object, logger.Object);
-        }
+        //    sut = new RefreshTokenCommandHandler(userManager.Object, tokenService.Object, logger.Object);
+        //}
     }
 }

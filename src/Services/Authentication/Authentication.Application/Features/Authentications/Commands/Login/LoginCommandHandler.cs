@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentications.Commands.Login
 {
-    internal class LoginCommandHandler(
+    public class LoginCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         SignInHandler signInHandler,

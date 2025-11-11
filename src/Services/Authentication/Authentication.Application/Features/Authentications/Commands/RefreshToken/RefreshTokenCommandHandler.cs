@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentications.Commands.RefreshToken
 {
-    internal class RefreshTokenCommandHandler(
+    public class RefreshTokenCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInHandler signInHandler,
         ILogger<RefreshTokenCommandHandler> logger) : IRequestHandler<RefreshTokenCommand, Result<AuthenticationDto>>
