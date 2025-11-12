@@ -2,6 +2,9 @@
 using Common.Blocks.Models.ApiResponses;
 using FluentAssertions;
 using Newtonsoft.Json;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.DTOs.Boards;
 

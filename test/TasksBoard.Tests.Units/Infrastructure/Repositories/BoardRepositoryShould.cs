@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Threading.Tasks;
 using TasksBoard.Domain.Entities;
 using TasksBoard.Infrastructure.Data.Contexts;
 using TasksBoard.Infrastructure.Repositories;

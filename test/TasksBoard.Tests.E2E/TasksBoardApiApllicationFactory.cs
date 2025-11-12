@@ -8,10 +8,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using TasksBoard.Infrastructure.Data.Contexts;
 using Testcontainers.PostgreSql;
 
@@ -71,7 +74,7 @@ namespace TasksBoard.Tests.E2E
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
+            .AddInMemoryCollection(new Dictionary<string, string>
             {
                 ["ConnectionStrings:TasksBoardDbConnection"] = dbContainer.GetConnectionString(),
                 ["OpenSearch:IndexFormat"] = "{0:yyyy.MM.dd}",

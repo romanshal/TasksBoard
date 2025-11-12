@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using System;
+using System.Collections.Generic;
 using TasksBoard.Application.Features.ManageBoards.Commands.UpdateBoard;
 using TasksBoard.Application.Validators.ManageBoards;
 

@@ -69,7 +69,7 @@ namespace Authentication.API.Controllers
 
             var returnParams = new List<KeyValuePair<string, string?>>
             {
-                new("accessToken", result.Value.AccessToken),
+                new("accessToken", result.Value!.AccessToken),
                 new("accessTokenExpiredAt", result.Value.AccessTokenExpiredAt.ToString()),
                 new("userId", result.Value.UserId.ToString()),
                 new("deviceId", result.Value.DeviceId)

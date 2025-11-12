@@ -1,19 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Google.Protobuf" />
+		<PackageReference Include="Grpc.AspNetCore" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.32.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Common.Cache\Common.Cache.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Common.Cache\Common.Cache.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Protobuf Include="Protos\user.proto" GrpcServices="Client" />

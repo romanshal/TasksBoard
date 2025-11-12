@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using System;
+using System.Collections.Generic;
 using TasksBoard.Application.Features.BoardNotices.Queries.GetPaginatedBoardNoticesByBoardId;
 using TasksBoard.Application.Validators.BoardNotices;
 

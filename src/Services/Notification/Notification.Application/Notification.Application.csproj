@@ -1,23 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="15.0.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
-    <PackageReference Include="MediatR" Version="13.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+		<PackageReference Include="MediatR" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\Common.gRPC\Common.gRPC.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
-    <ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.gRPC\Common.gRPC.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
+		<ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

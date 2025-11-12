@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}"
 EndProject
@@ -94,6 +94,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Infrastructure.Postgres", "Services\Email\EmailService.Infrastructure.Postgres\EmailService.Infrastructure.Postgres.csproj", "{FBE51228-9DF8-4C8F-B4AD-1B1354546EC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Infrastructure.RabbitMQ", "Services\Email\EmailService.Infrastructure.RabbitMQ\EmailService.Infrastructure.RabbitMQ.csproj", "{257CEBBD-11C1-46BD-AB1B-89AA2B74387A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resourses", "Resourses", "{51263AB5-1950-4436-AA5E-748E9050D233}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		prometheus.yml = prometheus.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

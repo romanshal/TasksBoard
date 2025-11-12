@@ -1,20 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
+		<PackageReference Include="MassTransit.RabbitMQ" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="9.0.0" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
+	</ItemGroup>
 
 </Project>

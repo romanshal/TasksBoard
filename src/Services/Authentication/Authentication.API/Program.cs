@@ -97,7 +97,7 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

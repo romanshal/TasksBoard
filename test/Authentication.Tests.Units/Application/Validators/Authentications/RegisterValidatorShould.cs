@@ -1,5 +1,6 @@
 ﻿using Authentication.Application.Features.Authentications.Commands.Register;
 using FluentAssertions;
+using System.Collections.Generic;
 
 namespace Authentication.Tests.Units.Application.Validators.Authentications
 {

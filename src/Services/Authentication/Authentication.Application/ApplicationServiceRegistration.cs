@@ -19,7 +19,7 @@ namespace Authentication.Application
                 conf.AddOpenBehavior(typeof(UpdateCacheBehaviour<,>));
             });
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 

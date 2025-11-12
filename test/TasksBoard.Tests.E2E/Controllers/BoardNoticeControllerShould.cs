@@ -2,6 +2,7 @@
 using Common.Blocks.Models.ApiResponses;
 using FluentAssertions;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 using TasksBoard.Application.DTOs;
 
 namespace TasksBoard.Tests.E2E.Controllers

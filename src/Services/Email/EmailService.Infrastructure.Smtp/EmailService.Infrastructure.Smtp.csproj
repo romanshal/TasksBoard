@@ -1,24 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="BackgroundServices\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="BackgroundServices\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.14.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.8" />
-    <PackageReference Include="MimeKit" Version="4.14.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MailKit" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Options" />
+		<PackageReference Include="MimeKit" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\EmailService.Core\EmailService.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\EmailService.Core\EmailService.Core.csproj" />
+	</ItemGroup>
 
 </Project>

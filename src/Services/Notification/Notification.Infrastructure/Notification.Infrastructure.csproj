@@ -1,33 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+		<PackageReference Include="Grpc.Net.ClientFactory" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.71.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Cache\Common.Cache.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.gRPC\Common.gRPC.csproj" />
+		<ProjectReference Include="..\Notification.Application\Notification.Application.csproj" />
+		<ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\Common.Cache\Common.Cache.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\Common.gRPC\Common.gRPC.csproj" />
-    <ProjectReference Include="..\Notification.Application\Notification.Application.csproj" />
-    <ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Migrations\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Data\Migrations\" />
+	</ItemGroup>
 
 </Project>
