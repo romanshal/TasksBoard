@@ -10,19 +10,19 @@ namespace EmailService.Infrastructure.Postgres.Data.Configurations
         {
             builder
                 .ToTable("email_outbox")
-                .HasKey(k => k.Id);
+                .HasKey(k => k.MessageId);
 
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder.Property(p => p.MessageId).ValueGeneratedNever();
 
             builder.Property(e => e.MessageId)
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(e => e.To)
+            builder.Property(e => e.Recipient)
                 .IsRequired()
                 .HasMaxLength(500);
 
-            builder.Property(e => e.From)
+            builder.Property(e => e.Sender)
                 .IsRequired()
                 .HasMaxLength(500);
 
@@ -45,7 +45,6 @@ namespace EmailService.Infrastructure.Postgres.Data.Configurations
 
             builder.Ignore(i => i.Status);
 
-            builder.HasIndex(e => e.MessageId).IsUnique();
             builder.HasIndex(i => new { i.StatusId, i.NextAttemptAt });
 
             builder

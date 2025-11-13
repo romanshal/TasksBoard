@@ -1,10 +1,13 @@
-﻿using EmailService.Core.Interfaces;
+﻿using EmailService.Core.Constants;
+using EmailService.Core.Interfaces;
 using EmailService.Core.Interfaces.Repositories;
-using EmailService.Core.Models;
 using EmailService.Infrastructure.RabbitMQ.Options;
+using EventBus.Messages.Abstraction.Events;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Retry;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Collections.Concurrent;
@@ -27,10 +30,12 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
             PropertyNameCaseInsensitive = true
         };
 
-        private readonly ConcurrentQueue<EmailMessage> _buffer = new();
+        private readonly ConcurrentQueue<EmailMessageEvent> _buffer = new();
 
         private const int BatchSize = 50;
         private static readonly TimeSpan FlushInterval = TimeSpan.FromSeconds(5);
+
+        private readonly AsyncRetryPolicy _retryPolicy;
 
         public RabbitMqListener(IOptions<RabbitMqOptions> opts, IConnectionFactory connectionFactory, IInboxRepository outbox, ILogger<RabbitMqListener> logger)
         {
@@ -39,30 +44,89 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
             _logger = logger;
             _queue = _opts.QueueName;
             _connectionFactory = connectionFactory;
+
+            _retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(
+                    retryCount: 3,
+                    sleepDurationProvider: attempt => TimeSpan.FromMilliseconds(500 * Math.Pow(2, attempt - 1)),
+                    onRetry: (exception, timespan, attempt, context) =>
+                    {
+                        RabbitMqLoggerMessages.LogRetryAttempt(_logger, exception, attempt, timespan);
+                    });
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _conn = await _connectionFactory.CreateConnectionAsync(stoppingToken);
-            _channel = await _conn.CreateChannelAsync(cancellationToken: stoppingToken);
+            try
+            {
+                await InitializeRabbitMqAsync(stoppingToken);
 
-            await _channel.BasicQosAsync(0, _opts.PrefetchCount, false, stoppingToken);
-            await _channel.QueueDeclareAsync(queue: _queue, durable: true, exclusive: false, autoDelete: false, cancellationToken: stoppingToken);
+                await StartConsumerAsync(stoppingToken);
 
-            var consumer = new AsyncEventingBasicConsumer(_channel);
+                RabbitMqLoggerMessages.StartLogging(_logger, _queue);
+
+                await RunBatchLoopAsync(stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                RabbitMqLoggerMessages.LogOperationCancelled(_logger);
+            }
+            catch (Exception ex)
+            {
+                RabbitMqLoggerMessages.LogError(_logger, ex);
+                throw;
+            }
+        }
+
+        private async Task InitializeRabbitMqAsync(CancellationToken cancellationToken)
+        {
+            _conn = await _connectionFactory.CreateConnectionAsync("EmailService.API", cancellationToken);
+            _channel = await _conn.CreateChannelAsync(cancellationToken: cancellationToken);
+
+            await _channel.BasicQosAsync(0, _opts.PrefetchCount, false, cancellationToken);
+            await _channel.ExchangeDeclareAsync(_queue, "fanout", false, false, cancellationToken: cancellationToken);
+            await _channel.QueueDeclareAsync(
+                queue: _queue,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                cancellationToken: cancellationToken);
+
+            await _channel.QueueBindAsync(_queue, _queue, "", cancellationToken: cancellationToken);
+        }
+
+        private async Task StartConsumerAsync(CancellationToken cancellationToken)
+        {
+            var consumer = new AsyncEventingBasicConsumer(_channel!);
             consumer.ReceivedAsync += OnMessageAsync;
 
-            await _channel.BasicConsumeAsync(_queue, autoAck: false, consumer, cancellationToken: stoppingToken);
+            await _channel!.BasicConsumeAsync(
+                queue: _queue,
+                autoAck: false,
+                consumer: consumer,
+                cancellationToken: cancellationToken);
+        }
 
-            _logger.LogInformation("RabbitMQ listener started on queue {queue}", _queue);
-
-            while (!stoppingToken.IsCancellationRequested)
+        private async Task RunBatchLoopAsync(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(FlushInterval, stoppingToken);
-                await FlushBatchAsync();
+                try
+                {
+                    await Task.Delay(FlushInterval, cancellationToken);
+                    await FlushBatchAsync();
+                }
+                catch (OperationCanceledException)
+                {
+                    RabbitMqLoggerMessages.LogOperationCancelled(_logger);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    RabbitMqLoggerMessages.LogBatchFlushError(_logger, ex);
+                }
             }
-
-            await Task.Delay(Timeout.Infinite, stoppingToken);
         }
 
         private async Task OnMessageAsync(object sender, BasicDeliverEventArgs ea)
@@ -76,11 +140,11 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
             try
             {
                 var json = Encoding.UTF8.GetString(body);
-                var message = JsonSerializer.Deserialize<EmailMessage>(json, _options);
+                var message = JsonSerializer.Deserialize<EmailMessageEvent>(json, _options);
 
                 if (message is null)
                 {
-                    _logger.LogWarning("Received null or invalid payload, nack requeue=false");
+                    RabbitMqLoggerMessages.LogNullValue(_logger);
                     await _channel.BasicNackAsync(tag, false, false);
                     return;
                 }
@@ -96,14 +160,37 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing rabbit message, nack/requeue");
+                RabbitMqLoggerMessages.LogProccessingError(_logger, ex);
                 await _channel.BasicNackAsync(tag, false, true);
+            }
+        }
+
+        private async Task FlushBatchAsync()
+        {
+            List<EmailMessageEvent> batch;
+
+            if (_buffer.IsEmpty)
+                return;
+
+            batch = [.. _buffer];
+            _buffer.Clear();
+
+            try
+            {
+                await _retryPolicy.ExecuteAsync(() => _outbox.SaveBatchAsync(batch));
+                RabbitMqLoggerMessages.LogFlushSuccess(_logger, batch.Count);
+            }
+            catch (Exception ex)
+            {
+                foreach (var msg in batch)
+                    _buffer.Enqueue(msg);
             }
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Stopping RabbitMQ listener...");
+            RabbitMqLoggerMessages.StopLogging(_logger);
+
             _channel?.CloseAsync(cancellationToken);
             _conn?.CloseAsync(cancellationToken);
             await base.StopAsync(cancellationToken);
@@ -114,28 +201,6 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
             _channel?.Dispose();
             _conn?.Dispose();
             base.Dispose();
-        }
-
-        private async Task FlushBatchAsync()
-        {
-            List<EmailMessage> batch;
-
-            if (_buffer.IsEmpty)
-                return;
-
-            batch = [.. _buffer];
-            _buffer.Clear();
-
-            try
-            {
-                await _outbox.SaveBatchAsync(batch);
-                _logger.LogInformation("Flushed {count} messages to DB", batch.Count);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error flushing batch to DB");
-                // TODO: реализовать retry или requeue
-            }
         }
     }
 }

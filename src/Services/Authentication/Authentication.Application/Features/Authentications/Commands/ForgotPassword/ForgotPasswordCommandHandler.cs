@@ -28,6 +28,8 @@ namespace Authentication.Application.Features.Authentications.Commands.ForgotPas
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
+
+
             _logger.LogInformation("Password reset email sent to {Email}", request.Email);
 
             return Result.Success();

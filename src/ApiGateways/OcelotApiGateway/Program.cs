@@ -4,7 +4,7 @@ using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
-using OcelotApiGateway.Configurations;
+using OcelotApiGateway.Options;
 using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ builder.Services
 
 var retryPolicy = builder.Configuration
     .GetSection("RetryPolicy")
-    .Get<RetryPolicyConfiguration>() ?? throw new InvalidOperationException("Configurations 'RetryPolicy' not found.");
+    .Get<RetryPolicyOptions>() ?? throw new InvalidOperationException("Configurations 'RetryPolicy' not found.");
 
 // Add services to the container.
 builder.Configuration.AddJsonFile($"ocelot.json", optional: false, reloadOnChange: true);

@@ -3,6 +3,7 @@ using System;
 using EmailService.Infrastructure.Postgres.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmailService.Infrastructure.Postgres.Data.Migrations
 {
     [DbContext(typeof(EmailDbContext))]
-    partial class EmailDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251112105000_FixFieldsNaming")]
+    partial class FixFieldsNaming
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,10 +27,10 @@ namespace EmailService.Infrastructure.Postgres.Data.Migrations
 
             modelBuilder.Entity("EmailService.Infrastructure.Postgres.Data.Entities.EmailOutbox", b =>
                 {
-                    b.Property<string>("MessageId")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("message_id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<int>("Attempts")
                         .HasColumnType("integer")
@@ -50,6 +53,12 @@ namespace EmailService.Infrastructure.Postgres.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("last_error");
+
+                    b.Property<string>("MessageId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("message_id");
 
                     b.Property<DateTimeOffset?>("NextAttemptAt")
                         .HasColumnType("timestamp with time zone")
@@ -77,8 +86,12 @@ namespace EmailService.Infrastructure.Postgres.Data.Migrations
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("subject");
 
-                    b.HasKey("MessageId")
+                    b.HasKey("Id")
                         .HasName("pk_email_outbox");
+
+                    b.HasIndex("MessageId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_email_outbox_message_id");
 
                     b.HasIndex("StatusId", "NextAttemptAt")
                         .HasDatabaseName("ix_email_outbox_status_id_next_attempt_at");

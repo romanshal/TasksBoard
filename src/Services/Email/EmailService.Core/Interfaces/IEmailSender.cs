@@ -1,4 +1,4 @@
-﻿using EmailService.Core.Models;
+﻿using EventBus.Messages.Abstraction.Events;
 
 namespace EmailService.Core.Interfaces
 {
@@ -14,6 +14,6 @@ namespace EmailService.Core.Interfaces
         /// <param name="message">Message.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
-        Task SendAsync(EmailMessage message, CancellationToken cancellationToken = default);
+        Task SendAsync(EmailMessageEvent message, CancellationToken cancellationToken = default);
     }
 }

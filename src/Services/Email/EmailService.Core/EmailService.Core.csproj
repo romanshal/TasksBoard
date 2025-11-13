@@ -6,7 +6,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-		<PackageReference Include="MimeKit" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\BuildingBlocks\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
 	</ItemGroup>
 
 </Project>

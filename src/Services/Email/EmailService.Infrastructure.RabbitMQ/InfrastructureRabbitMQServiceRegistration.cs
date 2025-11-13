@@ -1,4 +1,5 @@
 ﻿using EmailService.Infrastructure.RabbitMQ.Listeners;
+using EmailService.Infrastructure.RabbitMQ.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
@@ -7,15 +8,17 @@ namespace EmailService.Infrastructure.RabbitMQ
 {
     public static class InfrastructureRabbitMQServiceRegistration
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructureRabbitMQServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var rabbitMqSection = configuration.GetRequiredSection("RabbitMQ");
+            var rabbtiMqOptions = rabbitMqSection.Get<RabbitMqOptions>()!;
+            services.Configure<RabbitMqOptions>(rabbitMqSection);
+
             services.AddSingleton<IConnectionFactory>(sp => new ConnectionFactory
             {
-                Port = 5672,
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "password",
-                Uri = new Uri("amqp://guest:guest@localhost:5672/")
+                UserName = rabbtiMqOptions.Username,
+                Password = rabbtiMqOptions.Password,
+                Uri = new Uri(rabbtiMqOptions.Uri)
             });
 
             services.AddHostedService<RabbitMqListener>();
@@ -23,6 +26,7 @@ namespace EmailService.Infrastructure.RabbitMQ
             services
                 .AddHealthChecks()
                 .AddRabbitMQ();
+
             return services;
         }
     }

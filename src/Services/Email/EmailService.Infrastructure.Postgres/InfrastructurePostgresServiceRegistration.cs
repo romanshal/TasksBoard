@@ -1,7 +1,10 @@
-﻿using EmailService.Infrastructure.Postgres.Data.Contexts;
+﻿using EmailService.Core.Interfaces.Repositories;
+using EmailService.Infrastructure.Postgres.Data.Contexts;
+using EmailService.Infrastructure.Postgres.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace EmailService.Infrastructure.Postgres
 {
@@ -15,6 +18,14 @@ namespace EmailService.Infrastructure.Postgres
                 options.UseNpgsql(connectionString);
                 options.UseSnakeCaseNamingConvention();
             });
+
+            services.AddSingleton(_ =>
+            {
+                return new NpgsqlDataSourceBuilder(connectionString).Build();
+            });
+
+            services.AddTransient<IInboxRepository, InboxRepository>();
+            services.AddTransient<IOutboxRespository, OutboxRepository>();
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

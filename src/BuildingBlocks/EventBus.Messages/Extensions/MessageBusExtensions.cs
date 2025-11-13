@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using EventBus.Messages.Abstraction.Events;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -24,6 +25,16 @@ namespace EventBus.Messages.Extensions
                         host.Password(configuration["MessageBroker:Password"]!);
                     });
                     configurator.ConfigureEndpoints(context);
+
+                    configurator.Message<EmailMessageEvent>(m =>
+                    {
+                        m.SetEntityName("email.send");
+                    });
+
+                    configurator.Publish<EmailMessageEvent>(p =>
+                    {
+                        p.ExchangeType = "fanout"; // или direct, в зависимости от логики
+                    });
                 });
 
                 services.Configure<MassTransitHostOptions>(conf =>

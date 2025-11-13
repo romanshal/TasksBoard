@@ -20,7 +20,7 @@ namespace Notification.API.Controllers
 
             if (result.IsFailure)
             {
-
+                //TODO: add response
             }
 
             return new Empty();

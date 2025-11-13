@@ -1,9 +1,9 @@
-﻿using EmailService.Core.Models;
+﻿using EventBus.Messages.Abstraction.Events;
 
 namespace EmailService.Core.Interfaces.Repositories
 {
     public interface IInboxRepository
     {
-        Task SaveBatchAsync(IList<EmailMessage> messages, CancellationToken cancellationToken = default);
+        Task SaveBatchAsync(IList<EmailMessageEvent> messages, CancellationToken cancellationToken = default);
     }
 }

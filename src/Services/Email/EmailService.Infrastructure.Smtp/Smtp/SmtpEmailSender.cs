@@ -1,6 +1,6 @@
 ﻿using EmailService.Core.Interfaces;
-using EmailService.Core.Models;
 using EmailService.Infrastructure.Smtp.Options;
+using EventBus.Messages.Abstraction.Events;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
@@ -24,7 +24,7 @@ namespace EmailService.Infrastructure.Smtp.Smtp
             _poolSemaphore = new SemaphoreSlim(_options.MaxPoolSize, _options.MaxPoolSize);
         }
 
-        public async Task SendAsync(EmailMessage message, CancellationToken cancellationToken = default)
+        public async Task SendAsync(EmailMessageEvent message, CancellationToken cancellationToken = default)
         {
             await _poolSemaphore.WaitAsync(cancellationToken);
 
@@ -38,7 +38,7 @@ namespace EmailService.Infrastructure.Smtp.Smtp
 
                 client.Timeout = _options.SendTimeoutMs;
 
-                _logger.LogDebug("Sending email MessageId={MessageId} To={To}", message.MessageId, message.To);
+                _logger.LogDebug("Sending email MessageId={MessageId} to={To}", message.MessageId, message.Recipient);
 
                 await client.SendAsync(mime, cancellationToken);
             }
@@ -54,11 +54,11 @@ namespace EmailService.Infrastructure.Smtp.Smtp
             }
         }
 
-        private MimeMessage BuildMime(EmailMessage msg)
+        private MimeMessage BuildMime(EmailMessageEvent msg)
         {
             var mime = new MimeMessage();
-            mime.From.Add(MailboxAddress.Parse(msg.From));
-            mime.To.Add(MailboxAddress.Parse(msg.To));
+            mime.From.Add(MailboxAddress.Parse(msg.Sender));
+            mime.To.Add(MailboxAddress.Parse(msg.Recipient));
             mime.Subject = msg.Subject ?? string.Empty;
             var body = new TextPart(msg.IsHtml ? "html" : "plain") { Text = msg.Body ?? string.Empty };
             mime.Body = body;

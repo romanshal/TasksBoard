@@ -1,6 +1,6 @@
-﻿namespace OcelotApiGateway.Configurations
+﻿namespace OcelotApiGateway.Options
 {
-    public class RetryPolicyConfiguration
+    public class RetryPolicyOptions
     {
         public int RetryCount { get; set; }
         public int RetryAttemptTimeout { get; set; }

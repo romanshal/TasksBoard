@@ -338,6 +338,11 @@ services:
     environment:
       <<: *default-env
       "ConnectionStrings:EmailDbConnection": "Server=emailservicedb;Port=5432;Database=tasks-board-email-db;User Id=postgres;Password=postgres;"
+      "RabbitMQ:Uri": "amqp://rabbitmq:5672"
+      "RabbitMQ:Username": "guest"
+      "RabbitMQ:Password": "guest"
+      "RabbitMQ:QueueName": "email.send"
+      "RabbitMQ:PrefetchCount": 20
     depends_on:
       - rabbitmq
       - emailservicedb
