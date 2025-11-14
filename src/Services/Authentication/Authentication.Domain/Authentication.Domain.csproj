@@ -17,6 +17,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
 	</ItemGroup>
 
 </Project>

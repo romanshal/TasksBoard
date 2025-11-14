@@ -27,7 +27,7 @@ namespace EmailService.Infrastructure.RabbitMQ.Proccessors
             Channel = await Connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
             await Channel.BasicQosAsync(0, _opts.PrefetchCount, false, cancellationToken);
-            await Channel.ExchangeDeclareAsync(QueueName, "fanout", false, false, cancellationToken: cancellationToken);
+            await Channel.ExchangeDeclareAsync(QueueName, "fanout", true, false, cancellationToken: cancellationToken);
             await Channel.QueueDeclareAsync(
                 queue: QueueName,
                 durable: true,

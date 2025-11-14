@@ -19,10 +19,6 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
         private readonly RabbitMqConnectionManager _connectionManager = connectionManager;
         private readonly BatchProcessor _batchProcessor = batchProcessor;
         private readonly ILogger<RabbitMqListener> _logger = logger;
-        private readonly JsonSerializerOptions _options = new()
-        {
-            PropertyNameCaseInsensitive = true
-        };
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -68,7 +64,11 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
             try
             {
                 var json = Encoding.UTF8.GetString(body);
-                var message = JsonSerializer.Deserialize<EmailMessageEvent>(json, _options);
+
+                using var doc = JsonDocument.Parse(json);
+                var messageElement = doc.RootElement.GetProperty("message");
+
+                var message = messageElement.Deserialize<EmailMessageEvent>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (message is null)
                 {
@@ -78,6 +78,8 @@ namespace EmailService.Infrastructure.RabbitMQ.Listeners
                 }
 
                 await _batchProcessor.Enqueue(message);
+
+                await channel.BasicAckAsync(tag, false);
             }
             catch (Exception ex)
             {

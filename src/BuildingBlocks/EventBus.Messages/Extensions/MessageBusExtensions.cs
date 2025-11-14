@@ -28,11 +28,12 @@ namespace EventBus.Messages.Extensions
 
                     configurator.Message<EmailMessageEvent>(m =>
                     {
-                        m.SetEntityName("email.send");
+                        m.SetEntityName("email-send");
                     });
 
                     configurator.Publish<EmailMessageEvent>(p =>
                     {
+                        p.Durable = true;
                         p.ExchangeType = "fanout"; // или direct, в зависимости от логики
                     });
                 });

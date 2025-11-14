@@ -20,6 +20,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Cache\Common.Cache.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\EventBus.Messages.Abstraction\EventBus.Messages.Abstraction.csproj" />
 		<ProjectReference Include="..\..\..\BuildingBlocks\EventBus.Messages\EventBus.Messages.csproj" />
 		<ProjectReference Include="..\Authentication.Domain\Authentication.Domain.csproj" />
 	</ItemGroup>

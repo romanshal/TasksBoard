@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Blocks\Common.Blocks.csproj" />
+		<ProjectReference Include="..\..\..\BuildingBlocks\Common.Monitoring\Common.Monitoring.csproj" />
 		<ProjectReference Include="..\EmailService.Infrastructure.Postgres\EmailService.Infrastructure.Postgres.csproj" />
 		<ProjectReference Include="..\EmailService.Infrastructure.RabbitMQ\EmailService.Infrastructure.RabbitMQ.csproj" />
 		<ProjectReference Include="..\EmailService.Infrastructure.Smtp\EmailService.Infrastructure.Smtp.csproj" />

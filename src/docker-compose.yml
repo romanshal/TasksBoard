@@ -49,35 +49,35 @@ services:
       context: .
       dockerfile: Services/Authentication/Authentication.API/Dockerfile
 
-  tasksboard.api:
-    image: ${DOCKER_REGISTRY-}tasksboardapi
-    build:
-      context: .
-      dockerfile: Services/TasksBoard/TasksBoard.API/Dockerfile
+  # tasksboard.api:
+  #   image: ${DOCKER_REGISTRY-}tasksboardapi
+  #   build:
+  #     context: .
+  #     dockerfile: Services/TasksBoard/TasksBoard.API/Dockerfile
 
-  chat.api:
-    image: ${DOCKER_REGISTRY-}chatapi
-    build:
-      context: .
-      dockerfile: Services/Chat/Chat.API/Dockerfile
+  # chat.api:
+  #   image: ${DOCKER_REGISTRY-}chatapi
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Chat/Chat.API/Dockerfile
 
-  notification.api:
-    image: ${DOCKER_REGISTRY-}notificationapi
-    build:
-      context: .
-      dockerfile: Services/Notification/Notification.API/Dockerfile  
+  # notification.api:
+  #   image: ${DOCKER_REGISTRY-}notificationapi
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Notification/Notification.API/Dockerfile  
       
-  notification.consumer:
-    image: ${DOCKER_REGISTRY-}notificationconsumer
-    build:
-      context: .
-      dockerfile: Services/Notification/Notification.Consumer/Dockerfile
+  # notification.consumer:
+  #   image: ${DOCKER_REGISTRY-}notificationconsumer
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Notification/Notification.Consumer/Dockerfile
 
-  ocelotapigateway:
-    image: ${DOCKER_REGISTRY-}ocelotapigateway
-    build:
-      context: .
-      dockerfile: ApiGateways/OcelotApiGateway/Dockerfile
+  # ocelotapigateway:
+  #   image: ${DOCKER_REGISTRY-}ocelotapigateway
+  #   build:
+  #     context: .
+  #     dockerfile: ApiGateways/OcelotApiGateway/Dockerfile
 
   emailservice.api:
     image: ${DOCKER_REGISTRY-}emailserviceapi

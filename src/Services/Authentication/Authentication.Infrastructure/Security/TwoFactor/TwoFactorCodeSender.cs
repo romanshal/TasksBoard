@@ -23,6 +23,7 @@ namespace Authentication.Infrastructure.Security.TwoFactor
 
         private async Task<bool> SendEmailAsync(string address, string token)
         {
+            //TODO: add add publish event for send email
             return true;
         }
 

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 using System.Collections.Concurrent;
-using System.Threading.Channels;
 
 namespace EmailService.Infrastructure.RabbitMQ.Proccessors
 {
@@ -18,12 +17,13 @@ namespace EmailService.Infrastructure.RabbitMQ.Proccessors
         private readonly AsyncRetryPolicy _retryPolicy;
         private readonly ILogger<BatchProcessor> _logger;
 
+        private readonly TimeSpan _flushInterval;
+        private readonly int _batchSize;
+
         private Task? _loopTask;
         private CancellationTokenSource? _cts;
 
         public int Count => _buffer.Count;
-        public TimeSpan FlushInterval;
-        public readonly int BatchSize;
 
         public BatchProcessor(IOptions<BatchOptions> options, IInboxRepository outbox, ILogger<BatchProcessor> logger)
         {
@@ -31,8 +31,8 @@ namespace EmailService.Infrastructure.RabbitMQ.Proccessors
             _logger = logger;
 
             var opt = options.Value;
-            FlushInterval = TimeSpan.FromMilliseconds(opt.FlushIntervalMs);
-            BatchSize = opt.BatchSize;
+            _flushInterval = TimeSpan.FromMilliseconds(opt.FlushIntervalMs);
+            _batchSize = opt.BatchSize;
 
             _retryPolicy = Policy
             .Handle<Exception>()
@@ -55,7 +55,7 @@ namespace EmailService.Infrastructure.RabbitMQ.Proccessors
         {
             _buffer.Enqueue(message);
 
-            if (_buffer.Count >= BatchSize)
+            if (Count >= _batchSize)
             {
                 await FlushAsync(cancellationToken);
             }
@@ -78,6 +78,9 @@ namespace EmailService.Infrastructure.RabbitMQ.Proccessors
             }
             catch (Exception ex)
             {
+                RabbitMqLoggerMessages.LogBatchFlushError(_logger, ex);
+
+                //TODO: add retry limiter
                 foreach (var msg in batch)
                     _buffer.Enqueue(msg);
             }
@@ -91,7 +94,7 @@ namespace EmailService.Infrastructure.RabbitMQ.Proccessors
             {
                 try
                 {
-                    await Task.Delay(FlushInterval, cancellationToken);
+                    await Task.Delay(_flushInterval, cancellationToken);
                     await FlushAsync(cancellationToken);
                 }
                 catch (OperationCanceledException)

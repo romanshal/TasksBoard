@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using EventBus.Messages.Extensions;
+using Authentication.Domain.Interfaces.Handlers;
+using Authentication.Infrastructure.Handlers;
 
 namespace Authentication.Infrastructure
 {
@@ -66,6 +70,9 @@ namespace Authentication.Infrastructure
             services.AddSingleton<IDeviceFactory, DeviceFactory>();
 
             services.AddScoped<ITwoFactorCodeSender, TwoFactorCodeSender>();
+            services.AddScoped<IEmailHandler, EmailHandler>();
+
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
             services
                 .AddHealthChecks()
