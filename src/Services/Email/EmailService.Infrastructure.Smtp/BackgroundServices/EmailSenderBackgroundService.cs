@@ -24,7 +24,7 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
 
             using IServiceScope scope = serviceScopeFactory.CreateScope();
             var outboxRespository = scope.ServiceProvider.GetRequiredService<IOutboxRespository>();
-            //var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+            var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
 
             while (!stoppingToken.IsCancellationRequested)
             {

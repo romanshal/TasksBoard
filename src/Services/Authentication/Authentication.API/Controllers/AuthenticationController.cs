@@ -1,6 +1,8 @@
 ﻿using Authentication.API.Extensions;
 using Authentication.API.Models.Requests.Authentication;
+using Authentication.Application.Features.Authentications.Commands.ConfirmEmail;
 using Authentication.Application.Features.Authentications.Commands.ForgotPassword;
+using Authentication.Application.Features.Authentications.Commands.GenerateEmailConfirmToken;
 using Authentication.Application.Features.Authentications.Commands.Login;
 using Authentication.Application.Features.Authentications.Commands.Logout;
 using Authentication.Application.Features.Authentications.Commands.RefreshToken;
@@ -48,16 +50,53 @@ namespace Authentication.API.Controllers
         [Route("register")]
         public async Task<IActionResult> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
         {
-            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var userAgent = Request.Headers.UserAgent.ToString();
-
             var result = await _mediator.Send(new RegisterCommand
             {
                 Username = request.Username,
                 Email = request.Email,
                 Password = request.Password,
+            }, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                this.MapErrors(result.Error);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("generate-confirm-email")]
+        public async Task<IActionResult> GenerateConfirmEmailAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GenerateEmailConfirmTokenCommand
+            {
+                UserId = userId
+            }, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                this.MapErrors(result.Error);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("confirm-email")]
+        public async Task<IActionResult> ConfirmEmailAsync([FromQuery] Guid userId, [FromQuery] string token, CancellationToken cancellationToken = default)
+        {
+            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgent = Request.Headers.UserAgent.ToString();
+
+            var result = await _mediator.Send(new ConfirmEmailCommand
+            {
+                UserAgent = userAgent,
                 UserIp = userIp,
-                UserAgent = userAgent
+                UserId = userId,
+                Token = token
             }, cancellationToken);
 
             return this.MapResponse(result, _mapper);

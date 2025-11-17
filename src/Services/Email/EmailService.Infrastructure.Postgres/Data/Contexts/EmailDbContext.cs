@@ -1,5 +1,4 @@
 ﻿using Common.Blocks.Contexts;
-using EmailService.Core.Constants;
 using EmailService.Infrastructure.Postgres.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;

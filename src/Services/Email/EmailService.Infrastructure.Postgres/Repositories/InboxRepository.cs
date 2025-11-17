@@ -30,7 +30,6 @@ namespace EmailService.Infrastructure.Postgres.Repositories
 
                 sb.Append($"(@MessageId{i}, " +
                     $"@Recipient{i}, " +
-                    $"@Sender{i}, " +
                     $"@Subject{i}, " +
                     $"@Body{i}, " +
                     $"@IsHtml{i}, " +
@@ -41,7 +40,6 @@ namespace EmailService.Infrastructure.Postgres.Repositories
 
                 parameters.Add($"MessageId{i}", m.MessageId);
                 parameters.Add($"Recipient{i}", m.Recipient);
-                parameters.Add($"Sender{i}", m.Sender);
                 parameters.Add($"Subject{i}", m.Subject);
                 parameters.Add($"Body{i}", m.Body);
                 parameters.Add($"IsHtml{i}", m.IsHtml);

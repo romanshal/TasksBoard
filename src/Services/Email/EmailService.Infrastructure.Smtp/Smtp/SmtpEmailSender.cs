@@ -57,7 +57,7 @@ namespace EmailService.Infrastructure.Smtp.Smtp
         private MimeMessage BuildMime(EmailMessageEvent msg)
         {
             var mime = new MimeMessage();
-            mime.From.Add(MailboxAddress.Parse(msg.Sender));
+            mime.From.Add(MailboxAddress.Parse(_options.Username));
             mime.To.Add(MailboxAddress.Parse(msg.Recipient));
             mime.Subject = msg.Subject ?? string.Empty;
             var body = new TextPart(msg.IsHtml ? "html" : "plain") { Text = msg.Body ?? string.Empty };

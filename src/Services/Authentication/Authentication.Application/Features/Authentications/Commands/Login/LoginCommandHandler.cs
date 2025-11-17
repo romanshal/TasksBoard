@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentications.Commands.Login
 {
-    public class LoginCommandHandler(
+    internal sealed class LoginCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         SignInHandler signInHandler,
@@ -32,10 +32,10 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
             {
                 return Result.Failure<AuthenticationDto>(AuthenticationErrors.UserNotFound(request.UsernameOrEmail));
             }
-            //else if (!user.EmailConfirmed)
-            //{
-            //    return Result.Failure<AuthenticationDto>(AuthenticationErrors.EmailNotConfirmed);
-            //}
+            else if (!user.EmailConfirmed)
+            {
+                return Result.Failure<AuthenticationDto>(AuthenticationErrors.EmailNotConfirmed);
+            }
             else if (await _userManager.IsLockedOutAsync(user))
             {
                 _logger.LogWarning("Signin is locked for user: {username}.", request.UsernameOrEmail);
@@ -68,7 +68,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
                 return Result.Failure<AuthenticationDto>(AuthenticationErrors.Invalid);
             }
 
-            //await _signInManager.SignInAsync(user, false, "Password");
+            await _signInManager.SignInAsync(user, false, "Password");
 
             return await _signInHandler.HandleAsync(user, request.UserAgent, request.UserIp, cancellationToken);
         }

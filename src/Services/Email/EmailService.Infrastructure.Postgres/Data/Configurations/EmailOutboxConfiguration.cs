@@ -22,10 +22,6 @@ namespace EmailService.Infrastructure.Postgres.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(500);
 
-            builder.Property(e => e.Sender)
-                .IsRequired()
-                .HasMaxLength(500);
-
             builder.Property(e => e.Subject)
                 .HasMaxLength(1000);
 

@@ -1,4 +1,5 @@
-﻿using Authentication.Domain.Entities;
+﻿using Authentication.Domain.Constants.Emails;
+using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Handlers;
 using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Abstraction.Events;
@@ -22,22 +23,21 @@ namespace Authentication.Application.Features.Authentications.Commands.ForgotPas
         public async Task<Result> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-            //if (user is null || !user.EmailConfirmed)
-            //{
-            //    // Не выдаём информацию о существовании аккаунта
-            //    _logger.LogInformation("Password reset requested for non-existing or unconfirmed email: {Email}", request.Email);
-            //    return Result.Success();
-            //}
+            if (user is null || !user.EmailConfirmed)
+            {
+                // Не выдаём информацию о существовании аккаунта
+                _logger.LogInformation("Password reset requested for non-existing or unconfirmed email: {Email}", request.Email);
+                return Result.Success();
+            }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
             var message = new EmailMessageEvent
             {
-                Sender = "test@gmail.com",
                 Recipient = user.Email!,
                 Subject = "Reset password",
-                Body = "Reset password code: " + encoded
+                Body = EmailTexts.ResetPassword(encoded)
             };
 
             await _emailHandler.HandleAsync(message, cancellationToken);

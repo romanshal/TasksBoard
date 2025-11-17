@@ -30,7 +30,7 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateA
             }
 
             // ManualEntryKey is the base32 secret (uppercase with spaces friendly to manual entry)
-            var manualKey = FormatKey(key);
+            var manualKey = FormatKey(key!);
 
             var email = user.Email!;
             var issuer = request.Issuer ?? "MyApp";
