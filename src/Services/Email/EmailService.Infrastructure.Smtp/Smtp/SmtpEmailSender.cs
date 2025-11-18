@@ -1,63 +1,62 @@
 ﻿using EmailService.Core.Interfaces;
 using EmailService.Infrastructure.Smtp.Options;
 using EventBus.Messages.Abstraction.Events;
+using MailKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using System.Collections.Concurrent;
 
 namespace EmailService.Infrastructure.Smtp.Smtp
 {
     internal sealed class SmtpEmailSender : IEmailSender, IDisposable
     {
         private readonly SmtpOptions _options;
-        private readonly ConcurrentBag<SmtpClient> _clients = [];
-        private readonly SemaphoreSlim _poolSemaphore;
         private readonly ILogger<SmtpEmailSender> _logger;
+        private readonly Lazy<IMailTransport> client;
 
         public SmtpEmailSender(IOptions<SmtpOptions> opts, ILogger<SmtpEmailSender> logger)
         {
             _options = opts.Value;
             _logger = logger;
-            _poolSemaphore = new SemaphoreSlim(_options.MaxPoolSize, _options.MaxPoolSize);
+            client = new Lazy<IMailTransport>(() =>
+            {
+                var smtpClient = new SmtpClient();
+                smtpClient.Connect(this._options.Host, this._options.Port,
+                    SecureSocketOptions.StartTlsWhenAvailable);
+                smtpClient.Authenticate(this._options.Username, this._options.Password);
+                smtpClient.NoOp();
+                smtpClient.Timeout = _options.SendTimeoutMs;
+
+                return smtpClient;
+            });
         }
 
         public async Task SendAsync(EmailMessageEvent message, CancellationToken cancellationToken = default)
         {
-            await _poolSemaphore.WaitAsync(cancellationToken);
-
-            SmtpClient? client = null;
-
             try
             {
-                client = await RentClientAsync(cancellationToken);
-
                 var mime = BuildMime(message);
-
-                client.Timeout = _options.SendTimeoutMs;
 
                 _logger.LogDebug("Sending email MessageId={MessageId} to={To}", message.MessageId, message.Recipient);
 
-                await client.SendAsync(mime, cancellationToken);
+                var cl = client.Value;
+
+                await client.Value.SendAsync(mime, cancellationToken);
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "SMTP send failed for MessageId={MessageId}", message.MessageId);
                 throw;
             }
-            finally
-            {
-                if (client is not null) ReturnClient(client);
-                _poolSemaphore.Release();
-            }
         }
 
         private MimeMessage BuildMime(EmailMessageEvent msg)
         {
             var mime = new MimeMessage();
-            mime.From.Add(MailboxAddress.Parse(_options.Username));
+            mime.From.Add(new MailboxAddress(_options.FromDisplayName, _options.FromAddress));
             mime.To.Add(MailboxAddress.Parse(msg.Recipient));
             mime.Subject = msg.Subject ?? string.Empty;
             var body = new TextPart(msg.IsHtml ? "html" : "plain") { Text = msg.Body ?? string.Empty };
@@ -67,69 +66,15 @@ namespace EmailService.Infrastructure.Smtp.Smtp
             return mime;
         }
 
-        private async Task<SmtpClient> RentClientAsync(CancellationToken cancellationToken = default)
-        {
-            if (_clients.TryTake(out var client))
-            {
-                if (client.IsConnected) return client;
-
-                try 
-                { 
-                    await client.DisconnectAsync(true, cancellationToken); 
-                } 
-                catch { }
-
-                client.Dispose();
-            }
-
-            var newClient = new SmtpClient
-            {
-                ServerCertificateValidationCallback = (s, c, h, e) => true // production: validate certs properly
-            };
-
-            await newClient.ConnectAsync(
-                _options.Host, 
-                _options.Port, 
-                _options.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto, 
-                cancellationToken);
-
-            if (!string.IsNullOrWhiteSpace(_options.Username))
-            {
-                await newClient.AuthenticateAsync(_options.Username, _options.Password ?? string.Empty, cancellationToken);
-            }
-
-            return newClient;
-        }
-
-        private void ReturnClient(SmtpClient client)
-        {
-            if (client.IsConnected)
-            {
-                _clients.Add(client);
-                return;
-            }
-
-            try 
-            {
-                client.Dispose(); 
-            } 
-            catch { }
-        }
-
         public void Dispose()
         {
-            while (_clients.TryTake(out var client))
+            try
             {
-                try 
-                {
-                    client.Disconnect(true); 
-                } 
-                catch { }
-
-                client.Dispose();
+                client.Value.Disconnect(true);
             }
+            catch { }
 
-            _poolSemaphore.Dispose();
+            client.Value.Dispose();
         }
     }
 }

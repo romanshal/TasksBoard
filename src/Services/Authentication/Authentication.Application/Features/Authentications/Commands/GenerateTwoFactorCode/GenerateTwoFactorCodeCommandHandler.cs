@@ -1,8 +1,10 @@
 ﻿using Authentication.Domain.Constants.AuthenticationErrors;
+using Authentication.Domain.Constants.Emails;
 using Authentication.Domain.Constants.TwoFactor;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Secutiry;
+using Authentication.Domain.Interfaces.Handlers;
 using Common.Blocks.Models.DomainResults;
+using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,10 +12,10 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateT
 {
     internal class GenerateTwoFactorCodeCommandHandler(
         UserManager<ApplicationUser> userManager,
-        ITwoFactorCodeSender sender) : IRequestHandler<GenerateTwoFactorCodeCommand, Result>
+        IEmailHandler emailHandler) : IRequestHandler<GenerateTwoFactorCodeCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly ITwoFactorCodeSender _sender = sender;
+        private readonly IEmailHandler _emailHandler = emailHandler;
 
         public async Task<Result> Handle(GenerateTwoFactorCodeCommand request, CancellationToken cancellationToken)
         {
@@ -30,10 +32,16 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateT
 
             var token = await _userManager.GenerateTwoFactorTokenAsync(user, request.Provider);
 
-            string address;
             if (request.Provider == TokenOptions.DefaultEmailProvider)
             {
-                address = user.Email!;
+                var message = new EmailMessageEvent
+                {
+                    Recipient = user.Email!,
+                    Subject = "2fa",
+                    Body = EmailTexts.TwoFactor(token)
+                };
+
+                await _emailHandler.HandleAsync(message, cancellationToken);
             }
             else if (request.Provider == TokenOptions.DefaultPhoneProvider)
             {
@@ -43,19 +51,14 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateT
                     return Result.Failure(TwoFactorErrors.NoPhone);
                 }
 
-                address = phone;
+                //TODO: add sms handler
             }
             else
             {
                 return Result.Failure(TwoFactorErrors.InvalidProvider);
             }
 
-            var result = await _sender.SendAsync(request.Provider, address, token);
-
-            if (!result) 
-                return Result.Failure(TwoFactorErrors.CantSend);
-            else 
-                return Result.Success();
+            return Result.Success();
         }
     }
 }

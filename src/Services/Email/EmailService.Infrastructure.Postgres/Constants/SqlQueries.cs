@@ -6,7 +6,6 @@
                 INSERT INTO email_outbox(
                     message_id, 
                     recipient, 
-                    sender, 
                     subject, 
                     body, 
                     is_html, 
@@ -30,8 +29,11 @@
                 UPDATE email_outbox
                 SET status_id = @StatusProgress
                 WHERE message_id IN (SELECT message_id FROM cte)
-                RETURNING message_id as MessageId, recipient as Recipient, sender as Sender,
-                          subject as Subject, body as Body, is_html as IsHtml
+                RETURNING message_id as MessageId, 
+                          recipient as Recipient,
+                          subject as Subject, 
+                          body as Body, 
+                          is_html as IsHtml
             ";
 
         public static readonly string SqlMarkSent = @"UPDATE email_outbox SET status_id = @Status WHERE message_id = @Id;";

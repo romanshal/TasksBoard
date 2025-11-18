@@ -16,7 +16,7 @@ namespace EmailService.Infrastructure.Smtp
 
             services.AddHostedService<EmailSenderBackgroundService>();
 
-            services.AddScoped<IEmailSender, SmtpEmailSender>();
+            services.AddSingleton<IEmailSender, SmtpEmailSender>();
 
             //services
             //    .AddHealthChecks();

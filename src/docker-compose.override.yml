@@ -197,6 +197,12 @@ services:
     ports:
       - '6379:6379'
 
+  mailhog:
+    container_name: mailhog
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
   authentication.api:
     container_name: authentication.api
     environment:
@@ -349,7 +355,10 @@ services:
       "RabbitMQ:Password": "guest"
       "RabbitMQ:QueueName": "email-send"
       "RabbitMQ:PrefetchCount": 20
+      "Smtp:Host": mailhog
+      "Smtp:Port": 1025
     depends_on:
+      - mailhog
       - rabbitmq
       - emailservicedb
     ports:

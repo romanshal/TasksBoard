@@ -13,8 +13,8 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
     {
         private readonly ILogger<EmailSenderBackgroundService> _logger = logger;
 
-        private int _pollingDelay = 10000;
-        private int _batchSize = 100;
+        private readonly int _pollingDelay = 10000;
+        private readonly int _batchSize = 100;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -42,7 +42,7 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
                     {
                         try
                         {
-                            //await emailSender.SendAsync(message, stoppingToken);
+                            await emailSender.SendAsync(message, stoppingToken);
                             await outboxRespository.MarkSentAsync(message.MessageId, stoppingToken);
                             EmailSenderLoggerMessages.LogSuccess(_logger, message.MessageId);
                         }

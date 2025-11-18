@@ -43,6 +43,9 @@ services:
   redis:
     image: redis:latest
 
+  mailhog:
+        image: 'mailhog/mailhog'
+
   authentication.api:
     image: ${DOCKER_REGISTRY-}authenticationapi
     build:
