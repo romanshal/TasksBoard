@@ -1,8 +1,8 @@
 ﻿using Authentication.Domain.Constants.Emails;
 using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Factories;
 using Authentication.Domain.Interfaces.Handlers;
 using Common.Blocks.Models.DomainResults;
-using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -14,10 +14,12 @@ namespace Authentication.Application.Features.Authentications.Commands.ForgotPas
     internal class ForgotPasswordCommandHandler(
         UserManager<ApplicationUser> userManager,
         IEmailHandler emailHandler,
+        IEmailMessageFactory emailMessageFactory,
         ILogger<ForgotPasswordCommandHandler> logger) : IRequestHandler<ForgotPasswordCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IEmailHandler _emailHandler = emailHandler;
+        private readonly IEmailMessageFactory _emailMessageFactory = emailMessageFactory;
         private readonly ILogger<ForgotPasswordCommandHandler> _logger = logger;
 
         public async Task<Result> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -33,12 +35,7 @@ namespace Authentication.Application.Features.Authentications.Commands.ForgotPas
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-            var message = new EmailMessageEvent
-            {
-                Recipient = user.Email!,
-                Subject = "Reset password",
-                Body = EmailTexts.ResetPassword(encoded)
-            };
+            var message = _emailMessageFactory.Create(EmailType.ResetPassword, user, encoded);
 
             await _emailHandler.HandleAsync(message, cancellationToken);
 

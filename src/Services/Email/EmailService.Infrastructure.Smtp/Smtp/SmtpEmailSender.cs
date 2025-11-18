@@ -4,7 +4,6 @@ using EventBus.Messages.Abstraction.Events;
 using MailKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -42,13 +41,11 @@ namespace EmailService.Infrastructure.Smtp.Smtp
 
                 _logger.LogDebug("Sending email MessageId={MessageId} to={To}", message.MessageId, message.Recipient);
 
-                var cl = client.Value;
-
                 await client.Value.SendAsync(mime, cancellationToken);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "SMTP send failed for MessageId={MessageId}", message.MessageId);
+                _logger.LogError(ex, "SMTP send failed for MessageId={MessageId}", message.MessageId);
                 throw;
             }
         }

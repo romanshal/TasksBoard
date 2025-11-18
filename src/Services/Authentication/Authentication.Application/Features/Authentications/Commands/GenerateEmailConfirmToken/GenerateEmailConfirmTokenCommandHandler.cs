@@ -2,9 +2,9 @@
 using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Constants.Emails;
 using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Factories;
 using Authentication.Domain.Interfaces.Handlers;
 using Common.Blocks.Models.DomainResults;
-using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,9 +12,11 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateE
 {
     internal sealed class GenerateEmailConfirmTokenCommandHandler(
         UserManager<ApplicationUser> userManager,
+        IEmailMessageFactory emailMessageFactory,
         IEmailHandler emailHandler) : IRequestHandler<GenerateEmailConfirmTokenCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IEmailMessageFactory _emailMessageFactory = emailMessageFactory;
         private readonly IEmailHandler _emailHandler = emailHandler;
 
         public async Task<Result> Handle(GenerateEmailConfirmTokenCommand request, CancellationToken cancellationToken)
@@ -30,12 +32,8 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateE
             }
 
             var confirmEmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var message = new EmailMessageEvent
-            {
-                Recipient = user.Email!,
-                Subject = "Confirm email",
-                Body = EmailTexts.ConfirmEmail(confirmEmailToken)
-            };
+
+            var message = _emailMessageFactory.Create(EmailType.ConfirmEmail, user, confirmEmailToken);
 
             await _emailHandler.HandleAsync(message, cancellationToken);
 

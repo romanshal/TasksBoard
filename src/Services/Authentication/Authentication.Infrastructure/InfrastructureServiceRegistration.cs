@@ -1,10 +1,13 @@
 ﻿using Authentication.Domain.Entities;
 using Authentication.Domain.Interfaces.Factories;
+using Authentication.Domain.Interfaces.Handlers;
 using Authentication.Domain.Interfaces.Repositories;
 using Authentication.Domain.Interfaces.Secutiry;
 using Authentication.Domain.Interfaces.UnitOfWorks;
 using Authentication.Infrastructure.Data.Contexts;
 using Authentication.Infrastructure.Factories;
+using Authentication.Infrastructure.Handlers;
+using Authentication.Infrastructure.Options;
 using Authentication.Infrastructure.Repositories;
 using Authentication.Infrastructure.Security.JWT;
 using Authentication.Infrastructure.UnitOfWorks;
@@ -12,14 +15,12 @@ using Common.Blocks.Interfaces.Repositories;
 using Common.Blocks.Interfaces.UnitOfWorks;
 using Common.Blocks.Repositories;
 using Common.Cache.Extensions;
+using EventBus.Messages.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using EventBus.Messages.Extensions;
-using Authentication.Domain.Interfaces.Handlers;
-using Authentication.Infrastructure.Handlers;
 
 namespace Authentication.Infrastructure
 {
@@ -27,6 +28,8 @@ namespace Authentication.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<ClientUrlsOption>(configuration.GetRequiredSection("ClientUrls"));
+
             var connectionString = configuration.GetConnectionString("AuthenticationDbConnection") ?? throw new InvalidOperationException("Connection string 'AuthenticationDbConnection' not found");
 
             services.AddDbContext<AuthenticationDbContext>(options =>
@@ -67,6 +70,7 @@ namespace Authentication.Infrastructure
             services.AddScoped<IUserClaimsService, UserClaimsService>();
 
             services.AddSingleton<IDeviceFactory, DeviceFactory>();
+            services.AddSingleton<IEmailMessageFactory, EmailMessageFactory>();
 
             services.AddScoped<IEmailHandler, EmailHandler>();
 

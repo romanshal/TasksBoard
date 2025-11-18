@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Authentication.Application.Features.Authentications.Commands.ExternalLoginCallback
 {
-    public record ExternalLoginCallbackCommand : UserOption, IRequest<Result<AuthenticationDto>>
+    public record ExternalLoginCallbackCommand : UserCredential, IRequest<Result<AuthenticationDto>>
     {
     }
 }

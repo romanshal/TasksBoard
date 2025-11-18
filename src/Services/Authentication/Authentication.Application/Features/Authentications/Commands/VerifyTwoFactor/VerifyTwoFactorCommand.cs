@@ -9,5 +9,5 @@ namespace Authentication.Application.Features.Authentications.Commands.VerifyTwo
         Guid UserId,
         string Provider,
         string Code, 
-        bool RememberMachine) : UserOption, IRequest<Result<AuthenticationDto>>;
+        bool RememberMachine) : UserCredential, IRequest<Result<AuthenticationDto>>;
 }

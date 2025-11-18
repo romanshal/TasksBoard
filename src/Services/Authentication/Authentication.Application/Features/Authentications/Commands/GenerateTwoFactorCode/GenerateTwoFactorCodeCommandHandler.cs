@@ -2,6 +2,7 @@
 using Authentication.Domain.Constants.Emails;
 using Authentication.Domain.Constants.TwoFactor;
 using Authentication.Domain.Entities;
+using Authentication.Domain.Interfaces.Factories;
 using Authentication.Domain.Interfaces.Handlers;
 using Common.Blocks.Models.DomainResults;
 using EventBus.Messages.Abstraction.Events;
@@ -12,9 +13,11 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateT
 {
     internal class GenerateTwoFactorCodeCommandHandler(
         UserManager<ApplicationUser> userManager,
+        IEmailMessageFactory emailMessageFactory,
         IEmailHandler emailHandler) : IRequestHandler<GenerateTwoFactorCodeCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IEmailMessageFactory _emailMessageFactory = emailMessageFactory;
         private readonly IEmailHandler _emailHandler = emailHandler;
 
         public async Task<Result> Handle(GenerateTwoFactorCodeCommand request, CancellationToken cancellationToken)
@@ -34,12 +37,7 @@ namespace Authentication.Application.Features.Authentications.Commands.GenerateT
 
             if (request.Provider == TokenOptions.DefaultEmailProvider)
             {
-                var message = new EmailMessageEvent
-                {
-                    Recipient = user.Email!,
-                    Subject = "2fa",
-                    Body = EmailTexts.TwoFactor(token)
-                };
+                var message = _emailMessageFactory.Create(EmailType.TwoFactor, user, token);
 
                 await _emailHandler.HandleAsync(message, cancellationToken);
             }

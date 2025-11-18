@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Authentication.Application.Features.Authentications.Commands.Login
 {
-    public record LoginCommand : UserOption, IRequest<Result<AuthenticationDto>>
+    public record LoginCommand : UserCredential, IRequest<Result<AuthenticationDto>>
     {
         public required string UsernameOrEmail { get; set; }
         public required string Password { get; set; }
