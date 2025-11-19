@@ -15,9 +15,7 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
             {
                 Username = "Test username",
                 Email = "testemail@gmail.com",
-                Password = "Test password",
-                UserIp = "",
-                UserAgent = ""
+                Password = "Test password"
             };
 
             sut.Validate(validCommand).IsValid.Should().BeTrue();
@@ -36,9 +34,7 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
             {
                 Username = "Test username",
                 Email = "testemail@gmail.com",
-                Password = "Test password",
-                UserIp = "",
-                UserAgent = ""
+                Password = "Test password"
             };
             yield return new object[] { validCommand with { Username = null } };
             yield return new object[] { validCommand with { Username = string.Empty } };

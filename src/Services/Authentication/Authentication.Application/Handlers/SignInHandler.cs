@@ -15,7 +15,7 @@ namespace Authentication.Application.Handlers
     /// <param name="logger">Logger.</param>
     public sealed class SignInHandler(
         ITokenManager tokenManager,
-        ILogger<SignInHandler> logger)
+        ILogger<SignInHandler> logger) : ISignInHandler
     {
         private readonly ITokenManager _tokenManager = tokenManager;
         private readonly ILogger<SignInHandler> _logger = logger;

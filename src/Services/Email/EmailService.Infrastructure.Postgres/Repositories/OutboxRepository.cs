@@ -15,7 +15,7 @@ namespace EmailService.Infrastructure.Postgres.Repositories
             await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
             await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-            // Claim rows using FOR UPDATE SKIP LOCKED pattern
+            // Claim rows using FOR UPDATE SKIP LOCKED
             var messages = (await connection.QueryAsync<EmailMessageEvent>(
                 SqlQueries.SqlFetchAndClaim,
                 new 

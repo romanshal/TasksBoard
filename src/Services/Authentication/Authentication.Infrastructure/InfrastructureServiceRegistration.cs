@@ -28,7 +28,7 @@ namespace Authentication.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<ClientUrlsOption>(configuration.GetRequiredSection("ClientUrls"));
+            services.Configure<FrontendUrlsOption>(configuration.GetRequiredSection("ClientUrls"));
 
             var connectionString = configuration.GetConnectionString("AuthenticationDbConnection") ?? throw new InvalidOperationException("Connection string 'AuthenticationDbConnection' not found");
 

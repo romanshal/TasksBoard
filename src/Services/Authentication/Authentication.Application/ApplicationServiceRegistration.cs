@@ -23,7 +23,7 @@ namespace Authentication.Application
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            services.AddScoped<SignInHandler>();
+            services.AddScoped<ISignInHandler, SignInHandler>();
 
             return services;
         }

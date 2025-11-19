@@ -1,41 +1,242 @@
-﻿using Authentication.Application.Features.Authentications.Commands.Login;
+﻿using Authentication.Application.Dtos;
+using Authentication.Application.Features.Authentications.Commands.Login;
+using Authentication.Application.Handlers;
+using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Secutiry;
+using Common.Blocks.Models;
+using Common.Blocks.Models.DomainResults;
+using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Moq.Language.Flow;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Authentication.Tests.Units.Application.Features.Authentications
 {
     public class LoginCommandHandlerShould
     {
-        private readonly Mock<UserManager<ApplicationUser>> userManager;
-        private readonly Mock<SignInManager<ApplicationUser>> signinManager;
-        private readonly Mock<ITokenManager> tokenService;
-        private readonly Mock<ILogger<LoginCommandHandler>> logger;
-        private readonly LoginCommandHandler sut;
+        private readonly Mock<UserManager<ApplicationUser>> _userManager;
+        private readonly Mock<SignInManager<ApplicationUser>> _signinManager;
+        private readonly ISetup<SignInManager<ApplicationUser>, Task<SignInResult>> _signinManagerSetup;
+        private readonly ISetup<UserManager<ApplicationUser>, Task<ApplicationUser>> _userManagerSetupFind;
+        private readonly ISetup<UserManager<ApplicationUser>, Task<bool>> _userManagerSetupIsLockd;
+        private readonly Mock<ISignInHandler> _signInHandler;
+        private readonly Mock<ILogger<LoginCommandHandler>> _logger;
+        private readonly LoginCommandHandler _sut;
+        private readonly ISetup<ISignInHandler, Task<Result<AuthenticationDto>>> _signInHandlerSetup;
 
-        //public LoginCommandHandlerShould()
-        //{
-        //    userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+        public LoginCommandHandlerShould()
+        {
+            _userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+            _userManagerSetupFind = _userManager
+                .Setup(s => s.FindByEmailAsync(It.IsAny<string>()));
+            _userManagerSetupIsLockd = _userManager
+                .Setup(s => s.IsLockedOutAsync(It.IsAny<ApplicationUser>()));
 
-        //    signinManager = new Mock<SignInManager<ApplicationUser>>(
-        //        userManager.Object,
-        //        Mock.Of<IHttpContextAccessor>(),
-        //        Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(),
-        //        Mock.Of<IOptions<IdentityOptions>>(),
-        //        Mock.Of<ILogger<SignInManager<ApplicationUser>>>(),
-        //        Mock.Of<IAuthenticationSchemeProvider>(),
-        //        Mock.Of<IUserConfirmation<ApplicationUser>>());
+            _signinManager = new Mock<SignInManager<ApplicationUser>>(
+                _userManager.Object,
+                Mock.Of<IHttpContextAccessor>(),
+                Mock.Of<IUserClaimsPrincipalFactory<ApplicationUser>>(),
+                Mock.Of<IOptions<IdentityOptions>>(),
+                Mock.Of<ILogger<SignInManager<ApplicationUser>>>(),
+                Mock.Of<IAuthenticationSchemeProvider>(),
+                Mock.Of<IUserConfirmation<ApplicationUser>>());
+            _signinManagerSetup = _signinManager
+                .Setup(s => s.PasswordSignInAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()));
 
-        //    tokenService = new Mock<ITokenManager>();
+            _signInHandler = new Mock<ISignInHandler>();
+            _signInHandlerSetup = _signInHandler.Setup(s => s.HandleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()));
 
-        //    logger = new Mock<ILogger<LoginCommandHandler>>();
+            _logger = new Mock<ILogger<LoginCommandHandler>>();
 
-        //    sut = new LoginCommandHandler(userManager.Object, signinManager.Object, tokenService.Object, logger.Object);
-        //}
+            _sut = new LoginCommandHandler(_userManager.Object, _signinManager.Object, _signInHandler.Object, _logger.Object);
+        }
+
+        [Fact]
+        public async Task ReturnValidAuthenticationDto_WhenUserExistAndValid()
+        {
+            var userId = Guid.Parse("193c2bae-715f-45be-826d-92d299710fbf");
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerSetupIsLockd.ReturnsAsync(false);
+
+            _signinManagerSetup.ReturnsAsync(SignInResult.Success);
+
+            var authenticationDto = new AuthenticationDto
+            {
+                AccessToken = Guid.NewGuid().ToString(),
+                RefreshToken = Guid.NewGuid().ToString(),
+                AccessTokenExpiredAt = DateTime.UtcNow,
+                RefreshTokenExpiredAt = DateTime.UtcNow,
+                UserId = userId,
+                DeviceId = Guid.NewGuid().ToString(),
+            };
+
+            _signInHandlerSetup.ReturnsAsync(authenticationDto);
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeNull().And.Be(authenticationDto);
+        }
+
+        [Fact]
+        public async Task ReturnNotFoundResult_WhenUserDoesntExist()
+        {
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync((ApplicationUser)null);
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeFalse();
+            actual.Value.Should().BeNull();
+            actual.Error.Should().NotBeNull();
+            actual.Error.Should().Be(AuthenticationErrors.UserNotFound(command.UsernameOrEmail));
+        }
+
+        [Fact]
+        public async Task ReturnEmailNotConfirmedResult_WhenEmailNotConfirmed()
+        {
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { EmailConfirmed = false, TwoFactorEnabled = false });
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeFalse();
+            actual.Value.Should().BeNull();
+            actual.Error.Should().NotBeNull();
+            actual.Error.Should().Be(AuthenticationErrors.EmailNotConfirmed);
+        }
+
+        [Fact]
+        public async Task ReturnLockedResult_WhenUserIsLocked() 
+        {
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerSetupIsLockd.ReturnsAsync(true);
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeFalse();
+            actual.Value.Should().BeNull();
+            actual.Error.Should().NotBeNull();
+            actual.Error.Should().Be(AuthenticationErrors.Locked);
+        }
+
+        [Fact]
+        public async Task ReturnTwoFactorResult_WhneTwoFactorEnabled()
+        {
+            var userId = Guid.Parse("193c2bae-715f-45be-826d-92d299710fbf");
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = true });
+            _userManagerSetupIsLockd.ReturnsAsync(false);
+
+            var authenticationDto = new AuthenticationDto
+            {
+                AccessToken = null,
+                RefreshToken = null,
+                AccessTokenExpiredAt = null,
+                RefreshTokenExpiredAt = null,
+                UserId = userId,
+                DeviceId = null,
+                TwoFactorEnabled = true
+            };
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeTrue();
+            actual.Value.Should().NotBeNull().And.Be(authenticationDto);
+        }
+
+        [Fact]
+        public async Task ReturnNotAllowedReslt_WhenSigninNotAllowed()
+        {
+            var userId = Guid.Parse("193c2bae-715f-45be-826d-92d299710fbf");
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerSetupIsLockd.ReturnsAsync(false);
+
+            _signinManagerSetup.ReturnsAsync(SignInResult.NotAllowed);
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeFalse();
+            actual.Value.Should().BeNull();
+            actual.Error.Should().NotBeNull();
+            actual.Error.Should().Be(AuthenticationErrors.NotAllowed);
+        }
+
+        [Fact]
+        public async Task ReturnInvalidReslt_WhenPasswordInvalid()
+        {
+            var userId = Guid.Parse("193c2bae-715f-45be-826d-92d299710fbf");
+            var command = new LoginCommand
+            {
+                UserIp = "0.0.0.1",
+                UserAgent = string.Empty,
+                UsernameOrEmail = "test@gmail.com",
+                Password = "Test1test",
+                RememberMe = true
+            };
+
+            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerSetupIsLockd.ReturnsAsync(false);
+
+            _signinManagerSetup.ReturnsAsync(SignInResult.Failed);
+
+            var actual = await _sut.Handle(command, CancellationToken.None);
+            actual.IsSuccess.Should().BeFalse();
+            actual.Value.Should().BeNull();
+            actual.Error.Should().NotBeNull();
+            actual.Error.Should().Be(AuthenticationErrors.Invalid);
+        }
     }
 }

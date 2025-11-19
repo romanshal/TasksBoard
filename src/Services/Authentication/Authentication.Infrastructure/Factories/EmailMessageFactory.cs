@@ -7,9 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace Authentication.Infrastructure.Factories
 {
-    internal class EmailMessageFactory(IOptions<ClientUrlsOption> option) : IEmailMessageFactory
+    internal class EmailMessageFactory(IOptions<FrontendUrlsOption> option) : IEmailMessageFactory
     {
-        private readonly ClientUrlsOption _urls = option.Value;
+        private readonly FrontendUrlsOption _urls = option.Value;
 
         public EmailMessageEvent Create(EmailType type, ApplicationUser user, string token)
         {

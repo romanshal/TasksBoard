@@ -13,8 +13,9 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
     {
         private readonly ILogger<EmailSenderBackgroundService> _logger = logger;
 
-        private readonly int _pollingDelay = 10000;
+        private readonly int _pollingDelayMs = 10000;
         private readonly int _batchSize = 100;
+        private readonly int _nextAttemptSeconds = 60;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -34,7 +35,7 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
 
                     if (messages.Count == 0)
                     {
-                        await Task.Delay(_pollingDelay, stoppingToken);
+                        await Task.Delay(_pollingDelayMs, stoppingToken);
                         continue;
                     }
 
@@ -49,7 +50,7 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
                         catch (Exception ex)
                         {
                             EmailSenderLoggerMessages.LogSendError(_logger, ex, message.MessageId);
-                            await outboxRespository.MarkFailedAsync(message.MessageId, ex.Message, nextAttemptSeconds: 60, stoppingToken);
+                            await outboxRespository.MarkFailedAsync(message.MessageId, ex.Message, nextAttemptSeconds: _nextAttemptSeconds, stoppingToken);
                             continue;
                         }
                     }
@@ -62,7 +63,7 @@ namespace EmailService.Infrastructure.Smtp.BackgroundServices
                 catch (Exception ex)
                 {
                     EmailSenderLoggerMessages.LogError(_logger, ex);
-                    await Task.Delay(_pollingDelay, stoppingToken);
+                    await Task.Delay(_pollingDelayMs, stoppingToken);
                 }
             }
         }

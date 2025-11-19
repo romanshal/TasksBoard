@@ -9,15 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentications.Commands.Login
 {
-    internal sealed class LoginCommandHandler(
+    public sealed class LoginCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        SignInHandler signInHandler,
+        ISignInHandler signInHandler,
         ILogger<LoginCommandHandler> logger) : IRequestHandler<LoginCommand, Result<AuthenticationDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly SignInHandler _signInHandler = signInHandler;
+        private readonly ISignInHandler _signInHandler = signInHandler;
         private readonly ILogger<LoginCommandHandler> _logger = logger;
 
         public async Task<Result<AuthenticationDto>> Handle(LoginCommand request, CancellationToken cancellationToken)

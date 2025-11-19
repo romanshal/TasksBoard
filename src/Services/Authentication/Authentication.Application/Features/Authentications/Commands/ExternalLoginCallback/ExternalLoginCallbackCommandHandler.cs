@@ -13,12 +13,12 @@ namespace Authentication.Application.Features.Authentications.Commands.ExternalL
     internal class ExternalLoginCallbackCommandHandler(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        SignInHandler signInHandler,
+        ISignInHandler signInHandler,
         ILogger<ExternalLoginCallbackCommandHandler> logger) : IRequestHandler<ExternalLoginCallbackCommand, Result<AuthenticationDto>>
     {
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly SignInHandler _signInHandler = signInHandler;
+        private readonly ISignInHandler _signInHandler = signInHandler;
         private readonly ILogger<ExternalLoginCallbackCommandHandler> _logger = logger;
 
         public async Task<Result<AuthenticationDto>> Handle(ExternalLoginCallbackCommand request, CancellationToken cancellationToken)

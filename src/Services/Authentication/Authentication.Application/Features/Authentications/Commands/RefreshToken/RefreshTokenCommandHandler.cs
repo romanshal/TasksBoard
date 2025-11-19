@@ -11,11 +11,11 @@ namespace Authentication.Application.Features.Authentications.Commands.RefreshTo
 {
     public class RefreshTokenCommandHandler(
         UserManager<ApplicationUser> userManager,
-        SignInHandler signInHandler,
+        ISignInHandler signInHandler,
         ILogger<RefreshTokenCommandHandler> logger) : IRequestHandler<RefreshTokenCommand, Result<AuthenticationDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly SignInHandler _signInHandler = signInHandler;
+        private readonly ISignInHandler _signInHandler = signInHandler;
         private readonly ILogger<RefreshTokenCommandHandler> _logger = logger;
 
         public async Task<Result<AuthenticationDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
