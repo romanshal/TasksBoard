@@ -24,8 +24,8 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
         private readonly Mock<UserManager<ApplicationUser>> _userManager;
         private readonly Mock<SignInManager<ApplicationUser>> _signinManager;
         private readonly ISetup<SignInManager<ApplicationUser>, Task<SignInResult>> _signinManagerSetup;
-        private readonly ISetup<UserManager<ApplicationUser>, Task<ApplicationUser>> _userManagerSetupFind;
-        private readonly ISetup<UserManager<ApplicationUser>, Task<bool>> _userManagerSetupIsLockd;
+        private readonly ISetup<UserManager<ApplicationUser>, Task<ApplicationUser>> _userManagerFindSetup;
+        private readonly ISetup<UserManager<ApplicationUser>, Task<bool>> _userManagerIsLockdSetup;
         private readonly Mock<ISignInHandler> _signInHandler;
         private readonly Mock<ILogger<LoginCommandHandler>> _logger;
         private readonly LoginCommandHandler _sut;
@@ -34,9 +34,9 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
         public LoginCommandHandlerShould()
         {
             _userManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
-            _userManagerSetupFind = _userManager
+            _userManagerFindSetup = _userManager
                 .Setup(s => s.FindByEmailAsync(It.IsAny<string>()));
-            _userManagerSetupIsLockd = _userManager
+            _userManagerIsLockdSetup = _userManager
                 .Setup(s => s.IsLockedOutAsync(It.IsAny<ApplicationUser>()));
 
             _signinManager = new Mock<SignInManager<ApplicationUser>>(
@@ -71,8 +71,8 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { EmailConfirmed = true, TwoFactorEnabled = false });
-            _userManagerSetupIsLockd.ReturnsAsync(false);
+            _userManagerFindSetup.ReturnsAsync(new ApplicationUser { EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerIsLockdSetup.ReturnsAsync(false);
 
             _signinManagerSetup.ReturnsAsync(SignInResult.Success);
 
@@ -105,7 +105,7 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync((ApplicationUser)null);
+            _userManagerFindSetup.ReturnsAsync((ApplicationUser)null);
 
             var actual = await _sut.Handle(command, CancellationToken.None);
             actual.IsSuccess.Should().BeFalse();
@@ -126,7 +126,7 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { EmailConfirmed = false, TwoFactorEnabled = false });
+            _userManagerFindSetup.ReturnsAsync(new ApplicationUser { EmailConfirmed = false, TwoFactorEnabled = false });
 
             var actual = await _sut.Handle(command, CancellationToken.None);
             actual.IsSuccess.Should().BeFalse();
@@ -147,8 +147,8 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { EmailConfirmed = true, TwoFactorEnabled = false });
-            _userManagerSetupIsLockd.ReturnsAsync(true);
+            _userManagerFindSetup.ReturnsAsync(new ApplicationUser { EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerIsLockdSetup.ReturnsAsync(true);
 
             var actual = await _sut.Handle(command, CancellationToken.None);
             actual.IsSuccess.Should().BeFalse();
@@ -170,8 +170,8 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = true });
-            _userManagerSetupIsLockd.ReturnsAsync(false);
+            _userManagerFindSetup.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = true });
+            _userManagerIsLockdSetup.ReturnsAsync(false);
 
             var authenticationDto = new AuthenticationDto
             {
@@ -202,8 +202,8 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = false });
-            _userManagerSetupIsLockd.ReturnsAsync(false);
+            _userManagerFindSetup.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerIsLockdSetup.ReturnsAsync(false);
 
             _signinManagerSetup.ReturnsAsync(SignInResult.NotAllowed);
 
@@ -227,8 +227,8 @@ namespace Authentication.Tests.Units.Application.Features.Authentications
                 RememberMe = true
             };
 
-            _userManagerSetupFind.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = false });
-            _userManagerSetupIsLockd.ReturnsAsync(false);
+            _userManagerFindSetup.ReturnsAsync(new ApplicationUser { Id = userId, EmailConfirmed = true, TwoFactorEnabled = false });
+            _userManagerIsLockdSetup.ReturnsAsync(false);
 
             _signinManagerSetup.ReturnsAsync(SignInResult.Failed);
 
