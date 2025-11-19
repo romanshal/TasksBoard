@@ -1,11 +1,7 @@
-﻿using Authentication.Application.Dtos;
-using Authentication.Application.Features.Authentications.Commands.GenerateEmailConfirmToken;
+﻿using Authentication.Application.Features.Authentications.Commands.GenerateEmailConfirmToken;
 using Authentication.Domain.Constants.AuthenticationErrors;
-using Authentication.Domain.Constants.Emails;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Handlers;
 using Common.Blocks.Models.DomainResults;
-using EventBus.Messages.Abstraction.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
