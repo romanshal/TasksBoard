@@ -3,7 +3,6 @@ using Authentication.Application.Features.Authentications.Commands.RefreshToken;
 using Authentication.Application.Handlers;
 using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Secutiry;
 using Common.Blocks.Models.DomainResults;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
