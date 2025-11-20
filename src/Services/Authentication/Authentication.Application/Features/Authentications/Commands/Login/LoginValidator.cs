@@ -17,7 +17,7 @@ namespace Authentication.Application.Features.Authentications.Commands.Login
                 .NotNull()
                 .NotEmpty().WithMessage(BaseMessages.UsernameRequired);
 
-            When(x => x.UsernameOrEmail.Contains('@'), () =>
+            When(x => !string.IsNullOrWhiteSpace(x.UsernameOrEmail) && x.UsernameOrEmail.Contains('@'), () =>
             {
                 RuleFor(p => p.UsernameOrEmail)
                 .EmailAddress()
