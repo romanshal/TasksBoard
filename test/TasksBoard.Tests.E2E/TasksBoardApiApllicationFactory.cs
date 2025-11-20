@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using DotNet.Testcontainers.Builders;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -17,6 +18,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TasksBoard.Infrastructure.Data.Contexts;
 using Testcontainers.PostgreSql;
+using Testcontainers.RabbitMq;
+using Testcontainers.Redis;
 
 namespace TasksBoard.Tests.E2E
 {
@@ -31,6 +34,21 @@ namespace TasksBoard.Tests.E2E
 
         private readonly PostgreSqlContainer dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
+            .WithCleanUp(true)
+            .Build();
+
+        private readonly RabbitMqContainer rabbitContainer = new RabbitMqBuilder()
+            .WithImage("rabbitmq:3-management")
+            .WithCleanUp(true)
+            .WithPortBinding(5672, true)
+            .WithPortBinding(15672, true)
+            .WithUsername("guest")
+            .WithPassword("guest")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5672))
+            .Build();
+
+        private readonly RedisContainer redisContainer = new RedisBuilder()
+            .WithImage("redis:latest")
             .WithCleanUp(true)
             .Build();
 
@@ -76,12 +94,20 @@ namespace TasksBoard.Tests.E2E
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
+                //postgres
                 ["ConnectionStrings:TasksBoardDbConnection"] = dbContainer.GetConnectionString(),
                 ["OpenSearch:IndexFormat"] = "{0:yyyy.MM.dd}",
                 ["Authentication:Jwt:Secret"] = "secretsecretsecretsecretsecretsecret",
                 ["Authentication:Jwt:Issuer"] = "https://localhost:7148",
                 ["Authentication:Jwt:ExpirationInMinutes"] = "480",
-                ["Authentication:Jwt:Audience"] = "https://localhost:7227"
+                ["Authentication:Jwt:Audience"] = "https://localhost:7227",
+
+                //rabbitmq
+                ["MessageBroker:Host"] = rabbitContainer.GetConnectionString(),
+
+                //redis
+                ["Cache:Redis:Url"] = redisContainer.GetConnectionString(),
+                ["Cache:Redis:Password"] = "redispassword"
             })
             .Build();
 
@@ -94,6 +120,8 @@ namespace TasksBoard.Tests.E2E
         public async Task InitializeAsync()
         {
             await dbContainer.StartAsync();
+            await rabbitContainer.StartAsync();
+            await redisContainer.StartAsync();
 
             var migrationAssembly = typeof(TasksBoardDbContext)
                 .GetTypeInfo()
@@ -114,6 +142,11 @@ namespace TasksBoard.Tests.E2E
             await tasksBoardDbContext.Database.MigrateAsync();
         }
 
-        async Task IAsyncLifetime.DisposeAsync() => await dbContainer.DisposeAsync();
+        async Task IAsyncLifetime.DisposeAsync()
+        {
+            await dbContainer.DisposeAsync();
+            await rabbitContainer.DisposeAsync();
+            await redisContainer.DisposeAsync();
+        }
     }
 }

@@ -21,13 +21,13 @@ namespace Common.Cache.Extensions
 
             services.AddStackExchangeRedisCache(options =>
             {
-                var connection = $"{cacheSettings.Redis.Host}:{cacheSettings.Redis.Port},password={cacheSettings.Redis.Password}";
+                var connection = $"{cacheSettings.Redis.Url},password={cacheSettings.Redis.Password}";
                 options.Configuration = connection;
             });
 
             var connectionMultiplexer = ConnectionMultiplexer.Connect(new ConfigurationOptions
             {
-                EndPoints = { $"{cacheSettings.Redis.Host}:{cacheSettings.Redis.Port}" },
+                EndPoints = { $"{cacheSettings.Redis.Url}" },
                 AbortOnConnectFail = false,
                 Ssl = false,
                 Password = cacheSettings.Redis.Password,
@@ -47,7 +47,7 @@ namespace Common.Cache.Extensions
 
             services
                 .AddHealthChecks()
-                .AddRedis($"{cacheSettings.Redis.Host}:{cacheSettings.Redis.Port}");
+                .AddRedis($"{cacheSettings.Redis.Url}");
 
             return services;
         }

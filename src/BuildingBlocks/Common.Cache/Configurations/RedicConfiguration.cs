@@ -1,4 +1,4 @@
 ﻿namespace Common.Cache.Configurations
 {
-    public record RedisConfiguration(string Host, string Port, string Password);
+    public record RedisConfiguration(string Url, string Password);
 }

@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace TasksBoard.Tests.E2E.Mappings
 {
     public class MapperConfigurationShould(
-        WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+        TasksBoardApiApllicationFactory factory) : IClassFixture<TasksBoardApiApllicationFactory>
     {
         [Fact]
         public void BeValid()

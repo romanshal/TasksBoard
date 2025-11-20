@@ -39,10 +39,10 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board, BoardId>())
+                .Setup(s => s.GetBoardRepository())
                 .Returns(boardRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardMember, BoardMemberId>())
+                .Setup(s => s.GetBoardMemberRepository())
                 .Returns(boardMemberRepository.Object);
             unitOfWork
                 .Setup(s => s.GetRepository<BoardPermission, BoardPermissionId>())

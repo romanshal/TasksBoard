@@ -2,6 +2,9 @@
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
 using Common.Outbox.Abstraction.Interfaces.Factories;
+using Common.Outbox.Abstraction.Interfaces.Repositories;
+using Common.Outbox.Extensions;
+using Common.Outbox.Repositories;
 using EventBus.Messages.Abstraction.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -23,6 +26,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
     {
         private readonly Mock<IBoardRepository> boardRepository;
         private readonly Mock<IBoardNoticeRepository> boardNoticeRepository;
+        private readonly Mock<IOutboxEventRepository> outboxEventRepository;
         private readonly Mock<IUnitOfWork> unitOfWork;
         private readonly Mock<IMapper> mapper;
         private readonly ISetup<IMapper, BoardNotice> mapperSetup;
@@ -34,14 +38,16 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
         {
             boardRepository = new Mock<IBoardRepository>();
             boardNoticeRepository = new Mock<IBoardNoticeRepository>();
+            outboxEventRepository = new Mock<IOutboxEventRepository>();
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board, BoardId>())
+                .Setup(s => s.GetBoardRepository())
                 .Returns(boardRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardNotice, BoardNoticeId>())
+                .Setup(s => s.GetBoardNoticeRepository())
                 .Returns(boardNoticeRepository.Object);
+
             unitOfWork
                 .Setup(u => u.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(), It.IsAny<CancellationToken>()))
                 .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
@@ -61,11 +67,12 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
         [Fact]
         public async Task ReturnBoardNoticeId_WhenBoardNoticeCreated()
         {
+            var boardId = Guid.Parse("332bb7fa-cd78-4fe9-a4d7-475ae374a019");
             var command = new CreateBoardNoticeCommand
             {
                 AuthorId = Guid.Empty,
                 AuthorName = string.Empty,
-                BoardId = Guid.Empty,
+                BoardId = boardId,
                 Definition = string.Empty,
                 BackgroundColor = string.Empty,
                 Rotation = string.Empty
@@ -73,10 +80,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             var noticeId = Guid.Parse("5b887771-030f-469d-9986-eeb6218ec0f8");
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
-                    OwnerId = AccountId.New(),
+                    Id = BoardId.Of(boardId),
+                    OwnerId = AccountId.Of("332bb7fa-cd78-4fe9-a4d7-475ae374a019"),
                     Name = string.Empty,
                     BoardMembers = []
                 });
@@ -93,6 +101,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 
             boardNoticeRepository
                 .Setup(s => s.Add(It.IsAny<BoardNotice>()));
+
+            //TODO: need to moq extension method ????
+            unitOfWork
+                .Setup(s => s.GetCustomRepository<object>())
+                .Returns(outboxEventRepository.Object);
 
             unitOfWork
                 .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))

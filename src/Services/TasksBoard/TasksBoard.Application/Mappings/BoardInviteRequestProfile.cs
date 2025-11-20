@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Blocks.ValueObjects;
 using TasksBoard.Application.DTOs;
 using TasksBoard.Application.Features.ManageBoardInvites.Command.CreateBoardInviteRequest;
 using TasksBoard.Domain.Constants.Statuses;
@@ -13,8 +14,8 @@ namespace TasksBoard.Application.Mappings
         {
             CreateMap<CreateBoardInviteRequestCommand, BoardInviteRequest>()
                 .ForMember(dest => dest.BoardId, opt => opt.MapFrom(src => BoardId.Of(src.BoardId)))
-                .ForMember(dest => dest.ToAccountId, opt => opt.MapFrom(src => BoardId.Of(src.ToAccountId)))
-                .ForMember(dest => dest.FromAccountId, opt => opt.MapFrom(src => BoardId.Of(src.FromAccountId)))
+                .ForMember(dest => dest.ToAccountId, opt => opt.MapFrom(src => AccountId.Of(src.ToAccountId)))
+                .ForMember(dest => dest.FromAccountId, opt => opt.MapFrom(src => AccountId.Of(src.FromAccountId)))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)BoardInviteRequestStatuses.Pending))
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Board, opt => opt.Ignore())

@@ -8,7 +8,7 @@
         public int PageIndex { get; private set; }
         public int PageSize { get; private set; }
 
-        private PaginatedList(IEnumerable<T> items, int pageIndex, int pagSize, int totalCount)
+        public PaginatedList(IEnumerable<T> items, int pageIndex, int pagSize, int totalCount)
         {
             Items = items;
             PageIndex = pageIndex;

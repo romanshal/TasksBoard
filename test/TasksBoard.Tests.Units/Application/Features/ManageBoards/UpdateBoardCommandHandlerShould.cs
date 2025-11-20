@@ -30,7 +30,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board, BoardId>())
+                .Setup(s => s.GetBoardRepository())
                 .Returns(boardRepository.Object);
             unitOfWork.Setup(u => u.TransactionAsync(
                 It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(),
@@ -52,7 +52,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
                     Id = BoardId.Of(boardId),
@@ -92,7 +92,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             var actual = await sut.Handle(command, CancellationToken.None);
@@ -100,7 +100,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
             actual.IsSuccess.Should().BeFalse();
             actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);
 
-            boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()), Times.Once);
+            boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
             boardRepository.VerifyNoOtherCalls();
         }
     }

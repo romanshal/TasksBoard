@@ -36,7 +36,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board, BoardId>())
+                .Setup(s => s.GetBoardRepository())
                 .Returns(boardRepository.Object);
 
             userProfile = new Mock<IUserProfileHandler>();
@@ -63,7 +63,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(board.Id, It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(board.Id, true, true, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(board);
 
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardProfile>(), new NullLoggerFactory()));
@@ -74,7 +74,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeNull().And.BeEquivalentTo(boardDto);
 
-            boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()), Times.Once);
+            boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
             boardRepository.VerifyNoOtherCalls();
         }
 
@@ -88,7 +88,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
             };
 
             boardRepository
-                .Setup(s => s.GetAsync(BoardId.Of(boardId), It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetAsync(BoardId.Of(boardId), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
             var actual = await sut.Handle(query, CancellationToken.None);

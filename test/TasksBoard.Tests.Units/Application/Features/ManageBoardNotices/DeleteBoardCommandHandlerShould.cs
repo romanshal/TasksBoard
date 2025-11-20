@@ -32,10 +32,10 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 
             unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork
-                .Setup(s => s.GetRepository<Board, BoardId>())
+                .Setup(s => s.GetBoardRepository())
                 .Returns(boardRepository.Object);
             unitOfWork
-                .Setup(s => s.GetRepository<BoardNotice, BoardNoticeId>())
+                .Setup(s => s.GetBoardNoticeRepository())
                 .Returns(boardNoticeRepository.Object);
 
             sut = new DeleteBoardNoticeCommandHandler(logger.Object, unitOfWork.Object);
@@ -44,10 +44,12 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
         [Fact]
         public async Task ReturnSuccessResult_WhenBoardNoticeDeleted()
         {
+            var boardId = Guid.Parse("a6be5312-d3d6-4102-8389-19a31f3f1c41");
+            var noticeId = Guid.Parse("c41f3111-74a0-4c03-8bf5-a2055aa37ece");
             var command = new DeleteBoardNoticeCommand
             {
-                BoardId = Guid.Empty,
-                NoticeId = Guid.Empty
+                BoardId = boardId,
+                NoticeId = noticeId
             };
 
             boardRepository
@@ -59,8 +61,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 .ReturnsAsync(new BoardNotice
                 {
                     AuthorId = AccountId.New(),
-                    //AuthorName = string.Empty,
-                    BoardId = BoardId.New(),
+                    BoardId = BoardId.Of(boardId),
                     Definition = string.Empty,
                     BackgroundColor = string.Empty,
                     Rotation = string.Empty
@@ -101,10 +102,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
         [Fact]
         public async Task ReturnNotFoundResult_WhenBoardNoticeDoesntExist()
         {
+            var boardId = Guid.Parse("6333298d-a54b-47fb-aaab-20a205fdca83");
             var noticeId = Guid.Parse("6333298d-a54b-47fb-aaab-20a205fdca83");
             var command = new DeleteBoardNoticeCommand
             {
-                BoardId = Guid.Empty,
+                BoardId = boardId,
                 NoticeId = noticeId
             };
 

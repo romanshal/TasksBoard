@@ -30,8 +30,8 @@ namespace TasksBoard.Tests.E2E.Controllers
                 AuthorId = _preconfig.User.UserId,
                 AuthorName = _preconfig.User.Username,
                 Definition = "Test notice",
-                BackgroundColor = "BackgroundColor",
-                Rotation = "Rotation"
+                BackgroundColor = "#606060",
+                Rotation = "120deg"
             };
 
             var createNoticeResponse = await httpClient.PostAsync($"api/managenotices/board/{boardId}", JsonContent.Create(request));
@@ -59,8 +59,8 @@ namespace TasksBoard.Tests.E2E.Controllers
                 AuthorId = _preconfig.User.UserId,
                 AuthorName = _preconfig.User.Username,
                 Definition = "Test notice",
-                BackgroundColor = "BackgroundColor",
-                Rotation = "Rotation"
+                BackgroundColor = "#606060",
+                Rotation = "120deg"
             };
 
             var createNoticeResponse = await httpClient.PostAsync($"api/managenotices/board/{boardId}", JsonContent.Create(request));
@@ -81,8 +81,8 @@ namespace TasksBoard.Tests.E2E.Controllers
             {
                 NoticeId = noticeId,
                 Definition = "Test notice",
-                BackgroundColor = "BackgroundColor",
-                Rotation = "Rotation"
+                BackgroundColor = "#606060",
+                Rotation = "120deg"
             };
 
             using var httpClient = _factory.CreateClient();
@@ -109,8 +109,8 @@ namespace TasksBoard.Tests.E2E.Controllers
             {
                 NoticeId = noticeId,
                 Definition = "Test notice",
-                BackgroundColor = "BackgroundColor",
-                Rotation = "Rotation"
+                BackgroundColor = "#606060",
+                Rotation = "120deg"
             };
 
             using var httpClient = _factory.CreateClient();
