@@ -88,6 +88,12 @@ services:
       context: .
       dockerfile: Services/Email/EmailService.Api/Dockerfile
 
+  angular-client:
+    image: angular-client:latest
+    build:
+      context: Services/Web/Angular.Client
+      dockerfile: Dockerfile
+
 volumes:
   postgres_authentication:
   postgres_tasksboard:

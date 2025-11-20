@@ -363,3 +363,9 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  angular-client:
+    container_name: angular-client
+    ports:
+      - "8080:80"
+    restart: always
