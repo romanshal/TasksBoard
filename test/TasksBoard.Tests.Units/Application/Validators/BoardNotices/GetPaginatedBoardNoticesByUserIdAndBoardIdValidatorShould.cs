@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardNotices
 {
     public class GetPaginatedBoardNoticesByUserIdAndBoardIdValidatorShould
     {
-        private readonly GetPaginatedBoardNoticesByUserIdAndBoardIdValidator sut = new();
+        private readonly GetPaginatedBoardNoticesByUserIdAndBoardIdValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -21,14 +21,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardNotices
                 PageSize = 10
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(GetPaginatedBoardNoticesByUserIdAndBoardIdQuery command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardInvites
 {
     public class GetBoardInviteRequestValidatorShould
     {
-        private readonly GetBoardInviteRequestValidator sut = new();
+        private readonly GetBoardInviteRequestValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -18,14 +18,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardInvites
                 AccountId = Guid.Parse("cd5e2136-cfb7-4c36-bb97-97be589a9ce1")
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(GetBoardInviteRequestByToAccountIdQuery command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

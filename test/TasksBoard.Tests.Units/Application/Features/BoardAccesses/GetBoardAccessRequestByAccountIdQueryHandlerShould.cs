@@ -21,28 +21,28 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 {
     public class GetBoardAccessRequestByAccountIdQueryHandlerShould
     {
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly Mapper mapper;
-        private readonly Mock<IUserProfileHandler> userProfile;
-        private readonly Mock<IBoardAccessRequestRepository> accessRepository;
-        private readonly Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>> logger;
-        private readonly GetBoardAccessRequestByAccountIdQueryHandler sut;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mapper _mapper;
+        private readonly Mock<IUserProfileHandler> _userProfile;
+        private readonly Mock<IBoardAccessRequestRepository> _accessRepository;
+        private readonly Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>> _logger;
+        private readonly GetBoardAccessRequestByAccountIdQueryHandler _sut;
 
         public GetBoardAccessRequestByAccountIdQueryHandlerShould()
         {
-            accessRepository = new Mock<IBoardAccessRequestRepository>();
+            _accessRepository = new Mock<IBoardAccessRequestRepository>();
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork
                 .Setup(s => s.GetBoardAccessRequestRepository())
-                .Returns(accessRepository.Object);
+                .Returns(_accessRepository.Object);
 
-            logger = new Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>>();
+            _logger = new Mock<ILogger<GetBoardAccessRequestByAccountIdQueryHandler>>();
 
-            mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>(), new NullLoggerFactory()));
+            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardAccessRequestProfile>(), new NullLoggerFactory()));
 
-            userProfile = new Mock<IUserProfileHandler>();
-            userProfile
+            _userProfile = new Mock<IUserProfileHandler>();
+            _userProfile
                 .Setup(h => h.Handle(
                     It.IsAny<IEnumerable<BaseDto>>(),
                     It.IsAny<Func<BaseDto, Guid>>(),
@@ -50,33 +50,35 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            sut = new GetBoardAccessRequestByAccountIdQueryHandler(unitOfWork.Object, logger.Object, mapper, userProfile.Object);
+            _sut = new GetBoardAccessRequestByAccountIdQueryHandler(_unitOfWork.Object, _logger.Object, _mapper, _userProfile.Object);
         }
 
         [Fact]
         public async Task RetunListOfAccessRequests_WhenAccessRequestsExist()
         {
+            var accountId = Guid.Parse("db85c851-c641-477f-ae33-f38e59d7a74e");
+            var boardId = Guid.Parse("d5e625d3-bdba-404a-afe1-4f558b5ec089");
             var command = new GetBoardAccessRequestByAccountIdQuery
             {
-                AccountId = Guid.Empty
+                AccountId = accountId
             };
 
             var list = new List<BoardAccessRequest>
             {
                 new() {
-                    BoardId = BoardId.New(),
-                    AccountId = AccountId.New(),
+                    BoardId = BoardId.Of(boardId),
+                    AccountId = AccountId.Of(accountId),
                     Status = 0
                 }
             };
 
-            accessRepository
+            _accessRepository
                 .Setup(s => s.GetByAccountIdAsync(It.IsAny<AccountId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(list);
 
-            var listDto = mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
+            var listDto = _mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeNullOrEmpty().And.BeEquivalentTo(listDto);
@@ -85,20 +87,21 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
         [Fact]
         public async Task ReturnEmptyList_WhenAccessRequestsDoesntExist()
         {
+            var accountId = Guid.Parse("db85c851-c641-477f-ae33-f38e59d7a74e");
             var command = new GetBoardAccessRequestByAccountIdQuery
             {
-                AccountId = Guid.Empty
+                AccountId = accountId
             };
 
             var list = new List<BoardAccessRequest>();
 
-            accessRepository
+            _accessRepository
                 .Setup(s => s.GetByAccountIdAsync(It.IsAny<AccountId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(list);
 
-            var listDto = mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
+            var listDto = _mapper.Map<IEnumerable<BoardAccessRequestDto>>(list);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().BeEmpty().And.BeEquivalentTo(listDto);

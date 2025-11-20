@@ -13,12 +13,12 @@ namespace Authentication.Application.Features.Authentications.Commands.VerifyTwo
     internal class VerifyTwoFactorCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        SignInHandler signInHandler,
+        ISignInHandler signInHandler,
         ILogger<VerifyTwoFactorCommandHandler> logger) : IRequestHandler<VerifyTwoFactorCommand, Result<AuthenticationDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly SignInHandler _signInHandler = signInHandler;
+        private readonly ISignInHandler _signInHandler = signInHandler;
         private readonly ILogger<VerifyTwoFactorCommandHandler> _logger = logger;
 
         public async Task<Result<AuthenticationDto>> Handle(VerifyTwoFactorCommand request, CancellationToken cancellationToken)

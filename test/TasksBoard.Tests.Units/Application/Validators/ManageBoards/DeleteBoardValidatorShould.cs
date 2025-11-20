@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoards
 {
     public class DeleteBoardValidatorShould
     {
-        private readonly DeleteBoardValidator sut = new();
+        private readonly DeleteBoardValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -19,14 +19,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoards
                 AccountId = Guid.Parse("9bc9e2e5-6580-498d-a551-4f520c1a445b")
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(DeleteBoardCommand command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

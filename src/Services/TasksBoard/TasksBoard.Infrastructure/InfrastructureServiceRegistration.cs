@@ -68,7 +68,7 @@ namespace TasksBoard.Infrastructure
                 .AddTransient<IBoardInviteRequestRepository, BoardInviteRequestRepository>()
                 .AddTransient<IBoardAccessRequestRepository, BoardAccessRequestRepsitory>();
 
-            services.AddOutbox(connectionString);
+            services.AddOutbox<TasksBoardDbContext>(connectionString);
 
             services
                 .AddHealthChecks()

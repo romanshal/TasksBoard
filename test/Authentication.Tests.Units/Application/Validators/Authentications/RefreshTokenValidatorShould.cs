@@ -7,7 +7,7 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
 {
     public class RefreshTokenValidatorShould
     {
-        private readonly RefreshTokenValidator sut = new();
+        private readonly RefreshTokenValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -21,14 +21,14 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
                 DeviceId = ""
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(RefreshTokenCommand command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

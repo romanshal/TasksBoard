@@ -17,28 +17,28 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 {
     public class DeleteBoardCommandHandlerShould
     {
-        private readonly Mock<IBoardRepository> boardRepository;
-        private readonly Mock<IBoardNoticeRepository> boardNoticeRepository;
-        private readonly Mock<ILogger<DeleteBoardNoticeCommandHandler>> logger;
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly DeleteBoardNoticeCommandHandler sut;
+        private readonly Mock<IBoardRepository> _boardRepository;
+        private readonly Mock<IBoardNoticeRepository> _boardNoticeRepository;
+        private readonly Mock<ILogger<DeleteBoardNoticeCommandHandler>> _logger;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly DeleteBoardNoticeCommandHandler _sut;
 
         public DeleteBoardCommandHandlerShould()
         {
-            boardRepository = new Mock<IBoardRepository>();
-            boardNoticeRepository = new Mock<IBoardNoticeRepository>();
+            _boardRepository = new Mock<IBoardRepository>();
+            _boardNoticeRepository = new Mock<IBoardNoticeRepository>();
 
-            logger = new Mock<ILogger<DeleteBoardNoticeCommandHandler>>();
+            _logger = new Mock<ILogger<DeleteBoardNoticeCommandHandler>>();
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork
                 .Setup(s => s.GetBoardRepository())
-                .Returns(boardRepository.Object);
-            unitOfWork
+                .Returns(_boardRepository.Object);
+            _unitOfWork
                 .Setup(s => s.GetBoardNoticeRepository())
-                .Returns(boardNoticeRepository.Object);
+                .Returns(_boardNoticeRepository.Object);
 
-            sut = new DeleteBoardNoticeCommandHandler(logger.Object, unitOfWork.Object);
+            _sut = new DeleteBoardNoticeCommandHandler(_logger.Object, _unitOfWork.Object);
         }
 
         [Fact]
@@ -52,11 +52,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 NoticeId = noticeId
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.ExistAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: true);
 
-            boardNoticeRepository
+            _boardNoticeRepository
                 .Setup(s => s.GetAsync(It.IsAny<BoardNoticeId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new BoardNotice
                 {
@@ -67,14 +67,14 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                     Rotation = string.Empty
                 });
 
-            boardNoticeRepository
+            _boardNoticeRepository
                 .Setup(s => s.Delete(It.IsAny<BoardNotice>()));
 
-            unitOfWork
+            _unitOfWork
                 .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
         }
@@ -89,11 +89,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 NoticeId = Guid.Empty
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.ExistAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: false);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();
             actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);
@@ -110,15 +110,15 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 NoticeId = noticeId
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.ExistAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: true);
 
-            boardNoticeRepository
+            _boardNoticeRepository
                 .Setup(s => s.GetAsync(It.IsAny<BoardNoticeId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();
             actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardNoticeErrors.NotFound);

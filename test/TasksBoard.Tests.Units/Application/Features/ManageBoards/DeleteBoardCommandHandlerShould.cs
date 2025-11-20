@@ -1,6 +1,9 @@
 ﻿using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
+using Common.Outbox.Abstraction.Entities;
 using Common.Outbox.Abstraction.Interfaces.Factories;
+using Common.Outbox.Abstraction.Interfaces.Repositories;
+using Common.Outbox.Abstraction.ValueObjects;
 using EventBus.Messages.Abstraction.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -19,31 +22,36 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
 {
     public class DeleteBoardCommandHandlerShould
     {
-        private readonly Mock<IBoardRepository> boardRepository;
-        private readonly Mock<ILogger<DeleteBoardCommandHandler>> logger;
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly Mock<IOutboxEventFactory> eventFactory;
-        private readonly DeleteBoardCommandHandler sut;
+        private readonly Mock<IBoardRepository> _boardRepository;
+        private readonly Mock<IOutboxEventRepository> _outboxRepository;
+        private readonly Mock<ILogger<DeleteBoardCommandHandler>> _logger;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<IOutboxEventFactory> _eventFactory;
+        private readonly DeleteBoardCommandHandler _sut;
 
         public DeleteBoardCommandHandlerShould()
         {
-            boardRepository = new Mock<IBoardRepository>();
+            _boardRepository = new Mock<IBoardRepository>();
+            _outboxRepository = new Mock<IOutboxEventRepository>();
 
-            logger = new Mock<ILogger<DeleteBoardCommandHandler>>();
+            _logger = new Mock<ILogger<DeleteBoardCommandHandler>>();
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork
                 .Setup(s => s.GetBoardRepository())
-                .Returns(boardRepository.Object);
-            unitOfWork
+                .Returns(_boardRepository.Object);
+            _unitOfWork
+                .Setup(s => s.GetRepository<OutboxEvent, OutboxId, IOutboxEventRepository>())
+                .Returns(_outboxRepository.Object);
+            _unitOfWork
                 .Setup(s => s.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result>>>(), It.IsAny<CancellationToken>()))
                 .Returns((Func<CancellationToken, Task<Result>> func, CancellationToken ct) => func(ct));
 
-            eventFactory = new Mock<IOutboxEventFactory>();
-            eventFactory
+            _eventFactory = new Mock<IOutboxEventFactory>();
+            _eventFactory
                 .Setup(s => s.Create(It.IsAny<BaseEvent>()));
 
-            sut = new DeleteBoardCommandHandler(logger.Object, unitOfWork.Object, eventFactory.Object);
+            _sut = new DeleteBoardCommandHandler(_logger.Object, _unitOfWork.Object, _eventFactory.Object);
         }
 
         [Fact]
@@ -57,7 +65,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                 AccountId = accountId
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                 {
@@ -80,14 +88,14 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                     return board;
                 });
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.Delete(It.IsAny<Board>()));
 
-            unitOfWork
+            _unitOfWork
                 .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
         }
@@ -102,11 +110,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoards
                 AccountId = Guid.Empty
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();
             actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);

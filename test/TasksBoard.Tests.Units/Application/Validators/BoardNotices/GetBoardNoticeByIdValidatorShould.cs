@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardNotices
 {
     public class GetBoardNoticeByIdValidatorShould
     {
-        private readonly GetBoardNoticeByIdValidator sut = new();
+        private readonly GetBoardNoticeByIdValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -18,14 +18,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardNotices
                 Id = Guid.Parse("f2e437c3-a4d3-409e-aa12-592ca1445903")
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(GetBoardNoticeByIdQuery command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

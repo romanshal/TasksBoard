@@ -17,41 +17,41 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 {
     public class CreateBoardCommandHandlerShould
     {
-        private readonly Mock<IBoardRepository> boardRepository;
-        private readonly Mock<IBoardMemberRepository> boardMemberRepository;
-        private readonly Mock<IRepository<BoardPermission, BoardPermissionId>> boardPermissionRepository;
-        private readonly Mock<IRepository<BoardMemberPermission, MemberPermissionId>> boardMemberPermissionRepository;
-        private readonly Mock<ILogger<CreateBoardCommandHandler>> logger;
-        private readonly Mock<IMapper> mapper;
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly CreateBoardCommandHandler sut;
+        private readonly Mock<IBoardRepository> _boardRepository;
+        private readonly Mock<IBoardMemberRepository> _boardMemberRepository;
+        private readonly Mock<IRepository<BoardPermission, BoardPermissionId>> _boardPermissionRepository;
+        private readonly Mock<IRepository<BoardMemberPermission, MemberPermissionId>> _boardMemberPermissionRepository;
+        private readonly Mock<ILogger<CreateBoardCommandHandler>> _logger;
+        private readonly Mock<IMapper> _mapper;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly CreateBoardCommandHandler _sut;
 
         public CreateBoardCommandHandlerShould()
         {
-            boardRepository = new Mock<IBoardRepository>();
-            boardMemberRepository = new Mock<IBoardMemberRepository>();
-            boardPermissionRepository = new Mock<IRepository<BoardPermission, BoardPermissionId>>();
-            boardMemberPermissionRepository = new Mock<IRepository<BoardMemberPermission, MemberPermissionId>>();
+            _boardRepository = new Mock<IBoardRepository>();
+            _boardMemberRepository = new Mock<IBoardMemberRepository>();
+            _boardPermissionRepository = new Mock<IRepository<BoardPermission, BoardPermissionId>>();
+            _boardMemberPermissionRepository = new Mock<IRepository<BoardMemberPermission, MemberPermissionId>>();
 
-            logger = new Mock<ILogger<CreateBoardCommandHandler>>();
+            _logger = new Mock<ILogger<CreateBoardCommandHandler>>();
 
-            mapper = new Mock<IMapper>();
+            _mapper = new Mock<IMapper>();
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork
                 .Setup(s => s.GetBoardRepository())
-                .Returns(boardRepository.Object);
-            unitOfWork
+                .Returns(_boardRepository.Object);
+            _unitOfWork
                 .Setup(s => s.GetBoardMemberRepository())
-                .Returns(boardMemberRepository.Object);
-            unitOfWork
+                .Returns(_boardMemberRepository.Object);
+            _unitOfWork
                 .Setup(s => s.GetRepository<BoardPermission, BoardPermissionId>())
-                .Returns(boardPermissionRepository.Object);
-            unitOfWork
+                .Returns(_boardPermissionRepository.Object);
+            _unitOfWork
                 .Setup(s => s.GetRepository<BoardMemberPermission, MemberPermissionId>())
-                .Returns(boardMemberPermissionRepository.Object);
+                .Returns(_boardMemberPermissionRepository.Object);
 
-            sut = new CreateBoardCommandHandler(logger.Object, unitOfWork.Object, mapper.Object);
+            _sut = new CreateBoardCommandHandler(_logger.Object, _unitOfWork.Object, _mapper.Object);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 OwnerNickname = string.Empty
             };
 
-            mapper
+            _mapper
                 .Setup(s => s.Map<Board>(command))
                 .Returns(new Board
                 {
@@ -74,24 +74,24 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                     Name = string.Empty
                 });
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.Add(It.IsAny<Board>()));
 
-            boardMemberRepository
+            _boardMemberRepository
                 .Setup(s => s.Add(It.IsAny<BoardMember>()));
 
-            boardPermissionRepository
+            _boardPermissionRepository
                 .Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync([]);
 
-            boardMemberPermissionRepository
+            _boardMemberPermissionRepository
                 .Setup(s => s.Add(It.IsAny<BoardMemberPermission>()));
 
-            unitOfWork
+            _unitOfWork
                 .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeEmpty().And.Be(boardId);

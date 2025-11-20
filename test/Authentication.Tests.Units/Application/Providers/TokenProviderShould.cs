@@ -7,12 +7,12 @@ namespace Authentication.Tests.Units.Application.Providers
     public class TokenProviderShould
     {
         //private readonly TokenProvider sut;
-        private readonly Mock<IOptions<JwtCofiguration>> options;
+        private readonly Mock<IOptions<JwtCofiguration>> _options;
 
         public TokenProviderShould()
         {
-            options = new Mock<IOptions<JwtCofiguration>>();
-            options
+            _options = new Mock<IOptions<JwtCofiguration>>();
+            _options
                 .Setup(s => s.Value)
                 .Returns(new JwtCofiguration
                 {

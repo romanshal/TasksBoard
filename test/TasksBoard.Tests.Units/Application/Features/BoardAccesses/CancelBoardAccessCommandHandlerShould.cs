@@ -17,29 +17,29 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
 {
     public class CancelBoardAccessCommandHandlerShould
     {
-        private readonly CancelBoardAccessCommandHandler sut;
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly Mock<ILogger<CancelBoardAccessCommandHandler>> logger;
-        private readonly Mock<IBoardAccessRequestRepository> repository;
-        private readonly Moq.Language.Flow.ISetup<IBoardAccessRequestRepository, Task<BoardAccessRequest?>> repositoryGetSetup;
+        private readonly CancelBoardAccessCommandHandler _sut;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<ILogger<CancelBoardAccessCommandHandler>> _logger;
+        private readonly Mock<IBoardAccessRequestRepository> _repository;
+        private readonly Moq.Language.Flow.ISetup<IBoardAccessRequestRepository, Task<BoardAccessRequest?>> _repositoryGetSetup;
 
         public CancelBoardAccessCommandHandlerShould()
         {
-            repository = new Mock<IBoardAccessRequestRepository>();
-            repositoryGetSetup = repository
+            _repository = new Mock<IBoardAccessRequestRepository>();
+            _repositoryGetSetup = _repository
                 .Setup(s => s.GetAsync(It.IsAny<BoardAccessId>(), It.IsAny<CancellationToken>()));
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(s => s.GetBoardAccessRequestRepository())
-                .Returns(repository.Object);
-            unitOfWork.Setup(u => u.TransactionAsync(
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork.Setup(s => s.GetBoardAccessRequestRepository())
+                .Returns(_repository.Object);
+            _unitOfWork.Setup(u => u.TransactionAsync(
                 It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(),
                 It.IsAny<CancellationToken>()))
             .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
 
-            logger = new Mock<ILogger<CancelBoardAccessCommandHandler>>();
+            _logger = new Mock<ILogger<CancelBoardAccessCommandHandler>>();
 
-            sut = new CancelBoardAccessCommandHandler(unitOfWork.Object, logger.Object);
+            _sut = new CancelBoardAccessCommandHandler(_unitOfWork.Object, _logger.Object);
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 RequestId = requestId
             };
 
-            repositoryGetSetup.ReturnsAsync(new BoardAccessRequest
+            _repositoryGetSetup.ReturnsAsync(new BoardAccessRequest
             {
                 Id = BoardAccessId.Of(requestId),
                 BoardId = BoardId.New(),
@@ -59,21 +59,21 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 Status = 1
             });
 
-            repository
+            _repository
                 .Setup(s => s.Update(It.IsAny<BoardAccessRequest>()));
 
-            unitOfWork
+            _unitOfWork
                 .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeEmpty().And.Be(requestId);
 
-            repository.Verify(s => s.GetAsync(It.IsAny<BoardAccessId>(), It.IsAny<CancellationToken>()), Times.Once);
-            repository.Verify(s => s.Update(It.IsAny<BoardAccessRequest>()), Times.Once);
-            repository.VerifyNoOtherCalls();
+            _repository.Verify(s => s.GetAsync(It.IsAny<BoardAccessId>(), It.IsAny<CancellationToken>()), Times.Once);
+            _repository.Verify(s => s.Update(It.IsAny<BoardAccessRequest>()), Times.Once);
+            _repository.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -85,17 +85,17 @@ namespace TasksBoard.Tests.Units.Application.Features.BoardAccesses
                 RequestId = requestId
             };
 
-            repositoryGetSetup
+            _repositoryGetSetup
                      .ReturnsAsync((BoardAccessRequest)null!);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsFailure.Should().BeTrue();
             actual.Error.Should().Be(BoardAccessErrors.NotFound);
 
-            repository.Verify(r => r.GetAsync(BoardAccessId.Of(requestId), It.IsAny<CancellationToken>()), Times.Once);
-            repository.Verify(r => r.Update(It.IsAny<BoardAccessRequest>()), Times.Never);
-            unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _repository.Verify(r => r.GetAsync(BoardAccessId.Of(requestId), It.IsAny<CancellationToken>()), Times.Once);
+            _repository.Verify(r => r.Update(It.IsAny<BoardAccessRequest>()), Times.Never);
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

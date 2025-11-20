@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardMembers
 {
     public class GetPaginatedBoardMembersByBoardIdValidatorShould
     {
-        private readonly GetPaginatedBoardMembersByBoardIdValidator sut = new();
+        private readonly GetPaginatedBoardMembersByBoardIdValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -20,14 +20,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardMembers
                 PageSize = 10
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(GetPaginatedBoardMembersByBoardIdQuery command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

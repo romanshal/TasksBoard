@@ -3,7 +3,6 @@ using Authentication.Application.Features.Authentications.Commands.Register;
 using Authentication.Application.Handlers;
 using Authentication.Domain.Constants.AuthenticationErrors;
 using Authentication.Domain.Entities;
-using Authentication.Domain.Interfaces.Secutiry;
 using Common.Blocks.Models.DomainResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -14,13 +13,13 @@ namespace Authentication.Application.Features.Authentications.Commands.ConfirmEm
     internal class ConfirmEmailCommandHandler(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        SignInHandler signInHandler,
+        ISignInHandler signInHandler,
         ILogger<RegisterCommandHandler> logger) : IRequestHandler<ConfirmEmailCommand, Result<AuthenticationDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
-        private readonly SignInHandler _signInHandler = signInHandler;
+        private readonly ISignInHandler _signInHandler = signInHandler;
         private readonly ILogger<RegisterCommandHandler> _logger = logger;
 
         public async Task<Result<AuthenticationDto>> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)

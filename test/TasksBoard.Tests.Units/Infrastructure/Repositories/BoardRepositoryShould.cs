@@ -12,19 +12,19 @@ namespace TasksBoard.Tests.Units.Infrastructure.Repositories
 {
     public class BoardRepositoryShould : IClassFixture<InfrastructureTestFixture>
     {
-        private readonly BoardRepository sut;
-        private readonly TasksBoardDbContext dbContext;
-        private readonly InfrastructureTestFixture fixture;
+        private readonly BoardRepository _sut;
+        private readonly TasksBoardDbContext _dbContext;
+        private readonly InfrastructureTestFixture _fixture;
 
         public BoardRepositoryShould(InfrastructureTestFixture fixture)
         {
-            this.fixture = fixture;
+            this._fixture = fixture;
 
             var loggerFactory = new Mock<ILoggerFactory>();
 
-            dbContext = fixture.GetDbContext();
+            _dbContext = fixture.GetDbContext();
 
-            sut = new BoardRepository(dbContext, loggerFactory.Object);
+            _sut = new BoardRepository(_dbContext, loggerFactory.Object);
         }
 
         [Fact]
@@ -36,10 +36,10 @@ namespace TasksBoard.Tests.Units.Infrastructure.Repositories
                 Name = "Test name"
             };
 
-            sut.Add(board);
-            var actual = await dbContext.SaveChangesAsync();
+            _sut.Add(board);
+            var actual = await _dbContext.SaveChangesAsync();
 
-            await using var localDbContext = fixture.GetDbContext();
+            await using var localDbContext = _fixture.GetDbContext();
             var boards = await localDbContext.Boards.ToArrayAsync();
 
             actual.Should().Be(1);

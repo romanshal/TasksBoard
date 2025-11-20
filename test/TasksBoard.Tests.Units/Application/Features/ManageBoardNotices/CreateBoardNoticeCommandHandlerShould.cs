@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Common.Blocks.Models.DomainResults;
 using Common.Blocks.ValueObjects;
+using Common.Outbox.Abstraction.Entities;
 using Common.Outbox.Abstraction.Interfaces.Factories;
 using Common.Outbox.Abstraction.Interfaces.Repositories;
-using Common.Outbox.Extensions;
-using Common.Outbox.Repositories;
+using Common.Outbox.Abstraction.ValueObjects;
 using EventBus.Messages.Abstraction.Events;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -24,44 +24,47 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
 {
     public class CreateBoardNoticeCommandHandlerShould
     {
-        private readonly Mock<IBoardRepository> boardRepository;
-        private readonly Mock<IBoardNoticeRepository> boardNoticeRepository;
-        private readonly Mock<IOutboxEventRepository> outboxEventRepository;
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly Mock<IMapper> mapper;
-        private readonly ISetup<IMapper, BoardNotice> mapperSetup;
-        private readonly Mock<IOutboxEventFactory> eventFactory;
-        private readonly Mock<ILogger<CreateBoardNoticeCommandHandler>> logger;
-        private readonly CreateBoardNoticeCommandHandler sut;
+        private readonly Mock<IBoardRepository> _boardRepository;
+        private readonly Mock<IBoardNoticeRepository> _boardNoticeRepository;
+        private readonly Mock<IOutboxEventRepository> _outboxEventRepository;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<IMapper> _mapper;
+        private readonly ISetup<IMapper, BoardNotice> _mapperSetup;
+        private readonly Mock<IOutboxEventFactory> _eventFactory;
+        private readonly Mock<ILogger<CreateBoardNoticeCommandHandler>> _logger;
+        private readonly CreateBoardNoticeCommandHandler _sut;
 
         public CreateBoardNoticeCommandHandlerShould()
         {
-            boardRepository = new Mock<IBoardRepository>();
-            boardNoticeRepository = new Mock<IBoardNoticeRepository>();
-            outboxEventRepository = new Mock<IOutboxEventRepository>();
+            _boardRepository = new Mock<IBoardRepository>();
+            _boardNoticeRepository = new Mock<IBoardNoticeRepository>();
+            _outboxEventRepository = new Mock<IOutboxEventRepository>();
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork
                 .Setup(s => s.GetBoardRepository())
-                .Returns(boardRepository.Object);
-            unitOfWork
+                .Returns(_boardRepository.Object);
+            _unitOfWork
                 .Setup(s => s.GetBoardNoticeRepository())
-                .Returns(boardNoticeRepository.Object);
+                .Returns(_boardNoticeRepository.Object);
+            _unitOfWork
+                .Setup(s => s.GetRepository<OutboxEvent, OutboxId, IOutboxEventRepository>())
+                .Returns(_outboxEventRepository.Object);
 
-            unitOfWork
+            _unitOfWork
                 .Setup(u => u.TransactionAsync(It.IsAny<Func<CancellationToken, Task<Result<Guid>>>>(), It.IsAny<CancellationToken>()))
                 .Returns((Func<CancellationToken, Task<Result<Guid>>> func, CancellationToken ct) => func(ct));
 
-            mapper = new Mock<IMapper>();
-            mapperSetup = mapper.Setup(s => s.Map<BoardNotice>(It.IsAny<CreateBoardNoticeCommand>()));
+            _mapper = new Mock<IMapper>();
+            _mapperSetup = _mapper.Setup(s => s.Map<BoardNotice>(It.IsAny<CreateBoardNoticeCommand>()));
 
-            eventFactory = new Mock<IOutboxEventFactory>();
-            eventFactory
+            _eventFactory = new Mock<IOutboxEventFactory>();
+            _eventFactory
                 .Setup(s => s.Create(It.IsAny<NewNoticeEvent>()));
 
-            logger = new Mock<ILogger<CreateBoardNoticeCommandHandler>>();
+            _logger = new Mock<ILogger<CreateBoardNoticeCommandHandler>>();
 
-            sut = new CreateBoardNoticeCommandHandler(unitOfWork.Object, mapper.Object, eventFactory.Object, logger.Object);
+            _sut = new CreateBoardNoticeCommandHandler(_unitOfWork.Object, _mapper.Object, _eventFactory.Object, _logger.Object);
         }
 
         [Fact]
@@ -79,7 +82,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
             };
             var noticeId = Guid.Parse("5b887771-030f-469d-9986-eeb6218ec0f8");
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Board
                 {
@@ -89,7 +92,7 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                     BoardMembers = []
                 });
 
-            mapperSetup.Returns(new BoardNotice
+            _mapperSetup.Returns(new BoardNotice
             {
                 Id = BoardNoticeId.Of(noticeId),
                 AuthorId = AccountId.New(),
@@ -99,19 +102,14 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 Rotation = string.Empty
             });
 
-            boardNoticeRepository
+            _boardNoticeRepository
                 .Setup(s => s.Add(It.IsAny<BoardNotice>()));
 
-            //TODO: need to moq extension method ????
-            unitOfWork
-                .Setup(s => s.GetCustomRepository<object>())
-                .Returns(outboxEventRepository.Object);
-
-            unitOfWork
+            _unitOfWork
                 .Setup(s => s.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeEmpty().And.Be(noticeId);
@@ -131,11 +129,11 @@ namespace TasksBoard.Tests.Units.Application.Features.ManageBoardNotices
                 Rotation = string.Empty
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            var actual = await sut.Handle(command, CancellationToken.None);
+            var actual = await _sut.Handle(command, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();
             actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);

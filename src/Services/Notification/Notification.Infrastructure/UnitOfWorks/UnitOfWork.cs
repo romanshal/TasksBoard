@@ -12,7 +12,7 @@ namespace Notification.Infrastructure.UnitOfWorks
     {
         public IApplicationEventRepository GetApplicationEventRepository()
         {
-            return base.Repository<ApplicationEvent, ApplicationEventId, IApplicationEventRepository>();
+            return base.GetRepository<ApplicationEvent, ApplicationEventId, IApplicationEventRepository>();
         }
     }
 }

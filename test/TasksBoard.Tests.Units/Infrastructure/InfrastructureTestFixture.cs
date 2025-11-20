@@ -10,17 +10,17 @@ namespace TasksBoard.Tests.Units.Infrastructure
 {
     public class InfrastructureTestFixture : IAsyncLifetime
     {
-        private readonly PostgreSqlContainer dbContainer = new PostgreSqlBuilder().Build();
+        private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder().Build();
 
         public TasksBoardDbContext GetDbContext()
         {
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            return new(new DbContextOptionsBuilder<TasksBoardDbContext>().UseNpgsql(dbContainer.GetConnectionString()).Options);
+            return new(new DbContextOptionsBuilder<TasksBoardDbContext>().UseNpgsql(_dbContainer.GetConnectionString()).Options);
         }
 
         public async Task InitializeAsync()
         {
-            await dbContainer.StartAsync();
+            await _dbContainer.StartAsync();
 
             var migrationAssembly = typeof(TasksBoardDbContext)
                 .GetTypeInfo()
@@ -29,7 +29,7 @@ namespace TasksBoard.Tests.Units.Infrastructure
                 .Name;
 
             var options = new DbContextOptionsBuilder<TasksBoardDbContext>()
-                .UseNpgsql(dbContainer.GetConnectionString(), npqsqlOptions =>
+                .UseNpgsql(_dbContainer.GetConnectionString(), npqsqlOptions =>
                     npqsqlOptions.MigrationsAssembly(migrationAssembly))
                 .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning))
                 .Options;
@@ -41,6 +41,6 @@ namespace TasksBoard.Tests.Units.Infrastructure
             await tasksBoardDbContext.Database.MigrateAsync();
         }
 
-        public async Task DisposeAsync() => await dbContainer.DisposeAsync();
+        public async Task DisposeAsync() => await _dbContainer.DisposeAsync();
     }
 }

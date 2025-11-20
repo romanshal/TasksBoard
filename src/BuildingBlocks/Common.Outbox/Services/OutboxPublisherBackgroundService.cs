@@ -71,7 +71,7 @@ namespace Common.Outbox.Services
                 OutboxLoggerMessages.LogIterationCompleted(logger, iterationCount, processedMessages, totalProcessedMessages);
 
                 // Simulate running Outbox processing every N seconds
-                //await Task.Delay(TimeSpan.FromSeconds(OutboxProcessorFrequency), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(OutboxProcessorFrequency), cancellationToken);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.Boards
 {
     public class CreateBoardValidatorShould
     {
-        private readonly CreateBoardValidator sut = new();
+        private readonly CreateBoardValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -20,14 +20,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.Boards
                 Name = "Test board",
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(CreateBoardCommand command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardNotices
 {
     public class CreateBoardNoticeValidatorShould
     {
-        private readonly CreateBoardNoticeValidator sut = new();
+        private readonly CreateBoardNoticeValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -23,14 +23,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.ManageBoardNotices
                 Rotation = "100deg"
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(CreateBoardNoticeCommand command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

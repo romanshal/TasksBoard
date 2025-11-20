@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardMembers
 {
     public class GetBoardMemberByBoardIdAndAccountIdValidatorShould
     {
-        private readonly GetBoardMemberByBoardIdAndAccountIdValidator sut = new();
+        private readonly GetBoardMemberByBoardIdAndAccountIdValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -19,14 +19,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardMembers
                 BoardId = Guid.Parse("dd2665b6-69e6-45c1-a3ed-3ab9ba78eae5")
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(GetBoardMemberByBoardIdAndAccountIdQuery command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

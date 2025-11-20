@@ -233,112 +233,112 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  # tasksboard.api:
-  #   container_name: tasksboard.api
-  #   environment:
-  #     <<: *default-env
-  #     "gRPC:Address": "https://authentication.api"
-  #     "ConnectionStrings:TasksBoardDbConnection": "Server=tasksboarddb;Port=5432;Database=tasks-board-db;User Id=postgres;Password=postgres;"
-  #     "OpenSearch:IndexFormat": "tasksboard.api-index-{0:yyyy.MM.dd}"
-  #     "MessageBroker:Host": amqp://rabbitmq:5672
-  #     "MessageBroker:UserName": guest
-  #     "MessageBroker:Password": guest
-  #     "MessageBroker:StartTimeout": 30
-  #     "MessageBroker:StopTimeout": 1
-  #     "Cache:Redis:Url": "redis:6379"
-  #     "Cache:Redis:Password": redispassword
-  #     "Cache:ExpirationTimeSeconds": 300
-  #   depends_on:
-  #     - authentication.api
-  #     - tasksboarddb
-  #     - rabbitmq
-  #     - redis
-  #   ports:
-  #     - "8001:80"
-  #     - "9001:443"
-  #   volumes:
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  tasksboard.api:
+    container_name: tasksboard.api
+    environment:
+      <<: *default-env
+      "gRPC:Address": "https://authentication.api"
+      "ConnectionStrings:TasksBoardDbConnection": "Server=tasksboarddb;Port=5432;Database=tasks-board-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "tasksboard.api-index-{0:yyyy.MM.dd}"
+      "MessageBroker:Host": amqp://rabbitmq:5672
+      "MessageBroker:UserName": guest
+      "MessageBroker:Password": guest
+      "MessageBroker:StartTimeout": 30
+      "MessageBroker:StopTimeout": 1
+      "Cache:Redis:Url": "redis:6379"
+      "Cache:Redis:Password": redispassword
+      "Cache:ExpirationTimeSeconds": 300
+    depends_on:
+      - authentication.api
+      - tasksboarddb
+      - rabbitmq
+      - redis
+    ports:
+      - "8001:80"
+      - "9001:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  # chat.api:
-  #   container_name: chat.api
-  #   environment:
-  #     <<: *default-env
-  #     "gRPC:Address": "https://authentication.api"
-  #     "ConnectionStrings:ChatDbConnection": "Server=chatdb;Port=5432;Database=tasks-board-chat-db;User Id=postgres;Password=postgres;"
-  #     "OpenSearch:IndexFormat": "chat.api-index-{0:yyyy.MM.dd}"
-  #     "Cache:Redis:Url": "redis:6379"
-  #     "Cache:Redis:Password": redispassword
-  #     "Cache:ExpirationTimeSeconds": 300
-  #   depends_on:
-  #     - authentication.api
-  #     - chatdb
-  #     - redis
-  #   ports:
-  #     - "8002:80"
-  #     - "9002:443"
-  #   volumes:
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  chat.api:
+    container_name: chat.api
+    environment:
+      <<: *default-env
+      "gRPC:Address": "https://authentication.api"
+      "ConnectionStrings:ChatDbConnection": "Server=chatdb;Port=5432;Database=tasks-board-chat-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "chat.api-index-{0:yyyy.MM.dd}"
+      "Cache:Redis:Url": "redis:6379"
+      "Cache:Redis:Password": redispassword
+      "Cache:ExpirationTimeSeconds": 300
+    depends_on:
+      - authentication.api
+      - chatdb
+      - redis
+    ports:
+      - "8002:80"
+      - "9002:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  # notification.api:
-  #   container_name: notification.api
-  #   environment:      
-  #     <<: *default-env
-  #     "gRPC:Address": "https://authentication.api"
-  #     "ConnectionStrings:NotificationDbConnection": "Server=notificationdb;Port=5432;Database=tasks-board-notification-db;User Id=postgres;Password=postgres;"
-  #     "OpenSearch:IndexFormat": "notification.api-index-{0:yyyy.MM.dd}"
-  #     "Cache:Redis:Url": "redis:6379"
-  #     "Cache:Redis:Password": redispassword
-  #     "Cache:ExpirationTimeSeconds": 300
-  #   depends_on:
-  #     - notificationdb
-  #     - redis 
-  #     - authentication.api
-  #   ports:
-  #     - "8003:80"
-  #     - "9003:443"
-  #   volumes:
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  notification.api:
+    container_name: notification.api
+    environment:      
+      <<: *default-env
+      "gRPC:Address": "https://authentication.api"
+      "ConnectionStrings:NotificationDbConnection": "Server=notificationdb;Port=5432;Database=tasks-board-notification-db;User Id=postgres;Password=postgres;"
+      "OpenSearch:IndexFormat": "notification.api-index-{0:yyyy.MM.dd}"
+      "Cache:Redis:Url": "redis:6379"
+      "Cache:Redis:Password": redispassword
+      "Cache:ExpirationTimeSeconds": 300
+    depends_on:
+      - notificationdb
+      - redis 
+      - authentication.api
+    ports:
+      - "8003:80"
+      - "9003:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  # notification.consumer:
-  #   container_name: notification.consumer
-  #   environment:
-  #     <<: *default-env
-  #     "gRPC:Address": "https://notification.api"
-  #     "OpenSearch:IndexFormat": notification.consumer-index-{0:yyyy.MM.dd}"
-  #     "MessageBroker:Host": amqp://rabbitmq:5672
-  #     "MessageBroker:UserName": guest
-  #     "MessageBroker:Password": guest
-  #     "MessageBroker:StartTimeout": 30
-  #     "MessageBroker:StopTimeout": 1 
-  #   depends_on:
-  #     - rabbitmq
-  #     - notification.api
-  #   ports:
-  #     - "8004:80"
-  #     - "9004:443"
-  #   volumes:
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  notification.consumer:
+    container_name: notification.consumer
+    environment:
+      <<: *default-env
+      "gRPC:Address": "https://notification.api"
+      "OpenSearch:IndexFormat": notification.consumer-index-{0:yyyy.MM.dd}"
+      "MessageBroker:Host": amqp://rabbitmq:5672
+      "MessageBroker:UserName": guest
+      "MessageBroker:Password": guest
+      "MessageBroker:StartTimeout": 30
+      "MessageBroker:StopTimeout": 1 
+    depends_on:
+      - rabbitmq
+      - notification.api
+    ports:
+      - "8004:80"
+      - "9004:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     
-  # ocelotapigateway:
-  #   container_name: ocelotapigateway
-  #   environment:
-  #     <<: *default-env
-  #     "OpenSearch:IndexFormat": "ocelotgateway.api-index-{0:yyyy.MM.dd}"
-  #   depends_on:
-  #     - authentication.api
-  #     - tasksboard.api
-  #     - chat.api
-  #     - notification.api
-  #   ports:
-  #     - "8005:80"
-  #     - "9005:443"
-  #   volumes:
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  ocelotapigateway:
+    container_name: ocelotapigateway
+    environment:
+      <<: *default-env
+      "OpenSearch:IndexFormat": "ocelotgateway.api-index-{0:yyyy.MM.dd}"
+    depends_on:
+      - authentication.api
+      - tasksboard.api
+      - chat.api
+      - notification.api
+    ports:
+      - "8005:80"
+      - "9005:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
   emailservice.api:
     container_name: emailservice.api

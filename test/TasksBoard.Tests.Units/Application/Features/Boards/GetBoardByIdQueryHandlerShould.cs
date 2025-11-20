@@ -21,29 +21,29 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
 {
     public class GetBoardByIdQueryHandlerShould
     {
-        private readonly Mock<IBoardRepository> boardRepository;
-        private readonly Mock<ILogger<GetBoardByIdQueryHandler>> logger;
-        private readonly Mock<IUserProfileHandler> userProfile;
-        private readonly IMapper mapper;
-        private readonly Mock<IUnitOfWork> unitOfWork;
-        private readonly GetBoardByIdQueryHandler sut;
+        private readonly Mock<IBoardRepository> _boardRepository;
+        private readonly Mock<ILogger<GetBoardByIdQueryHandler>> _logger;
+        private readonly Mock<IUserProfileHandler> _userProfile;
+        private readonly IMapper _mapper;
+        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly GetBoardByIdQueryHandler _sut;
 
         public GetBoardByIdQueryHandlerShould()
         {
-            boardRepository = new Mock<IBoardRepository>();
+            _boardRepository = new Mock<IBoardRepository>();
 
-            logger = new Mock<ILogger<GetBoardByIdQueryHandler>>();
+            _logger = new Mock<ILogger<GetBoardByIdQueryHandler>>();
 
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork
+            _unitOfWork = new Mock<IUnitOfWork>();
+            _unitOfWork
                 .Setup(s => s.GetBoardRepository())
-                .Returns(boardRepository.Object);
+                .Returns(_boardRepository.Object);
 
-            userProfile = new Mock<IUserProfileHandler>();
+            _userProfile = new Mock<IUserProfileHandler>();
 
-            mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardProfile>(), new NullLoggerFactory()));
+            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardProfile>(), new NullLoggerFactory()));
 
-            sut = new GetBoardByIdQueryHandler(logger.Object, unitOfWork.Object, mapper, userProfile.Object);
+            _sut = new GetBoardByIdQueryHandler(_logger.Object, _unitOfWork.Object, _mapper, _userProfile.Object);
         }
 
         [Fact]
@@ -62,20 +62,20 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 Name = string.Empty
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.GetAsync(board.Id, true, true, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(board);
 
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<BoardProfile>(), new NullLoggerFactory()));
             var boardDto = mapper.Map<BoardDto>(board);
 
-            var actual = await sut.Handle(query, CancellationToken.None);
+            var actual = await _sut.Handle(query, CancellationToken.None);
 
             actual.IsSuccess.Should().BeTrue();
             actual.Value.Should().NotBeNull().And.BeEquivalentTo(boardDto);
 
-            boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
-            boardRepository.VerifyNoOtherCalls();
+            _boardRepository.Verify(s => s.GetAsync(It.IsAny<BoardId>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+            _boardRepository.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -87,11 +87,11 @@ namespace TasksBoard.Tests.Units.Application.Features.Boards
                 Id = boardId
             };
 
-            boardRepository
+            _boardRepository
                 .Setup(s => s.GetAsync(BoardId.Of(boardId), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(value: null);
 
-            var actual = await sut.Handle(query, CancellationToken.None);
+            var actual = await _sut.Handle(query, CancellationToken.None);
 
             actual.IsSuccess.Should().BeFalse();
             actual.Error.Should().NotBeNull().And.BeEquivalentTo(BoardErrors.NotFound);

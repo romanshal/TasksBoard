@@ -12,27 +12,27 @@ namespace TasksBoard.Infrastructure.UnitOfWorks
     {
         public IBoardNoticeRepository GetBoardNoticeRepository()
         {
-            return base.Repository<BoardNotice, BoardNoticeId, IBoardNoticeRepository>();
+            return base.GetRepository<BoardNotice, BoardNoticeId, IBoardNoticeRepository>();
         }
 
         public IBoardRepository GetBoardRepository()
         {
-            return base.Repository<Board, BoardId, IBoardRepository>();
+            return base.GetRepository<Board, BoardId, IBoardRepository>();
         }
 
         public IBoardMemberRepository GetBoardMemberRepository()
         {
-            return base.Repository<BoardMember, BoardMemberId, IBoardMemberRepository>();
+            return base.GetRepository<BoardMember, BoardMemberId, IBoardMemberRepository>();
         }
 
         public IBoardAccessRequestRepository GetBoardAccessRequestRepository()
         {
-            return base.Repository<BoardAccessRequest, BoardAccessId, IBoardAccessRequestRepository>();
+            return base.GetRepository<BoardAccessRequest, BoardAccessId, IBoardAccessRequestRepository>();
         }
 
         public IBoardInviteRequestRepository GetBoardInviteRequestRepository()
         {
-            return base.Repository<BoardInviteRequest, BoardInviteId, IBoardInviteRequestRepository>();
+            return base.GetRepository<BoardInviteRequest, BoardInviteId, IBoardInviteRequestRepository>();
         }
     }
 }

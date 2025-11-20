@@ -12,7 +12,7 @@ namespace Chat.Infrastructure.UnitOfWorks
     {
         public IBoardMessageRepository GetBoardMessagesRepository()
         {
-            return base.Repository<BoardMessage, MessageId, IBoardMessageRepository>();
+            return base.GetRepository<BoardMessage, MessageId, IBoardMessageRepository>();
         }
     }
 }

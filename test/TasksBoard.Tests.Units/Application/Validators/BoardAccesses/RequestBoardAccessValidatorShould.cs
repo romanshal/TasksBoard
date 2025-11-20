@@ -8,7 +8,7 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardAccesses
 {
     public class RequestBoardAccessValidatorShould
     {
-        private readonly RequestBoardAccessValidator sut = new();
+        private readonly RequestBoardAccessValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -19,14 +19,14 @@ namespace TasksBoard.Tests.Units.Application.Validators.BoardAccesses
                 AccountId = Guid.Parse("dbe15649-33f7-4ef1-9709-a233731b94ba"),
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(RequestBoardAccessCommand command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

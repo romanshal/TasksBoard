@@ -12,7 +12,7 @@ namespace Authentication.Infrastructure.UnitOfWorks
     {
         public IApplicationUserImageRepository GetApplicationUserImageRepository()
         {
-            return base.Repository<ApplicationUserImage, ImageId, IApplicationUserImageRepository>();
+            return base.GetRepository<ApplicationUserImage, ImageId, IApplicationUserImageRepository>();
         }
     }
 }

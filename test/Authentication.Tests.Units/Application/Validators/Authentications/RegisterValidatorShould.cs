@@ -6,7 +6,7 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
 {
     public class RegisterValidatorShould
     {
-        private readonly RegisterValidator sut = new();
+        private readonly RegisterValidator _sut = new();
 
         [Fact]
         public void ReturnSuccess_WhenCommandValid()
@@ -18,14 +18,14 @@ namespace Authentication.Tests.Units.Application.Validators.Authentications
                 Password = "Test password"
             };
 
-            sut.Validate(validCommand).IsValid.Should().BeTrue();
+            _sut.Validate(validCommand).IsValid.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetInvalidCommands))]
         public void ReturnFailure_WhenCommandInvalid(RegisterCommand command)
         {
-            sut.Validate(command).IsValid.Should().BeFalse();
+            _sut.Validate(command).IsValid.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> GetInvalidCommands()

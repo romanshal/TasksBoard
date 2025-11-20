@@ -30,7 +30,6 @@ namespace Common.Blocks.UnitOfWorks
 
             if (!_repositories.TryGetValue(type, out object? value))
             {
-                //var repositoryInstance = _scope.ServiceProvider.GetRequiredService<IRepository<T, TId>>();
                 var repositoryInstance = new Repository<T, TId>(_context, _loggerFactory);
 
                 value = repositoryInstance;
@@ -115,7 +114,7 @@ namespace Common.Blocks.UnitOfWorks
             DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
 
-        protected TRepository Repository<TEntity, TId, TRepository>()
+        public TRepository GetRepository<TEntity, TId, TRepository>()
             where TEntity : class, IEntity<TId>
             where TId : ValueObject
             where TRepository : notnull, IRepository<TEntity, TId>
