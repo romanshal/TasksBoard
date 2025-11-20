@@ -45,7 +45,7 @@ Prerequisites:
 - **[Docker](https://docs.docker.com/get-docker/)**
 - **[Docker Compose](https://docs.docker.com/compose/)**
 - **[Node.js](https://nodejs.org/)**
-- **[.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)**
+- **[.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)**
 
 **Clone the repo**
 ```
